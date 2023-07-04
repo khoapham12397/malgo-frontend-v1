@@ -1,0 +1,21 @@
+.sidebar-item {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.btn-submit {
+  width: 100%;
+  background-color: darkcyan;
+  border-color: darkcyan;
+}
+
+.bold {
+  font-weight: bold;
+}
+.link {
+  text-decoration: none;
+  color: darkcyan;
+}
+.sidebar {
+  margin-left: 1%;
+}

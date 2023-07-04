@@ -1,0 +1,20 @@
+.contain-all {
+  display: flex;
+  margin-top: 10px;
+}
+
+.problem-list {
+  width: 75%;
+}
+.side-bar {
+  padding-left: 1%;
+}
+
+@media (max-width: 600px) {
+  .contain-all {
+    display: block;
+  }
+  .problem-list {
+    width: 100%;
+  }
+}

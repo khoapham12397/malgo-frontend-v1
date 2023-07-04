@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+:root {
+  --primary-color: #ece7e7;
+  --secondary-color: #888383;
+  --primary-component-color: #3b5998;
+  --secondary-component-color: #f8f9fa;
+  --header-color: #3f4147;
+  
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  margin: 0;
+  font-family: serif, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+pre {
+  background-color: #dddddd;
+  padding: 10px;
+  border-radius: 5px;
+}
+.d-flex {
+  display: flex;
+  margin-bottom: 10px;
+}
+.space-between {
+  display: flex;
+  justify-content: space-between;
+}
+#discuss-page .body-page {
+  display: flex;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 20px;
+}
+#discuss-page .header-bar {
+  display: flex;
+  justify-content: space-around;
+}
+
+#discuss-page .header-item {
+  font-size: 20px;
+  margin-top: 10px;
+  padding: 10px;
+  color: #666666;
+  font-weight: bold;
+}
+#discuss-page .header-item:hover {
+  color: orange;
+  cursor: pointer;
+}
+.thread-item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  box-shadow: 3px 3px #dddddd;
+  margin-bottom: 15px;
+  border-radius: 3px;
+}
+
+#discuss-page .thread-list {
+  width: 75%;
+  padding-right: 20px;
+}
+
+.tag {
+  padding: 5px;
+  margin: 5px;
+  background-color: #dddddd;
+  color: #666666;
+  border-radius: 5px;
+  align-items: center;
+  display: flex;
+}
+.tag:hover {
+  background-color: aqua;
+  cursor: pointer;
+}
+.tag-chosen {
+  padding: 5px;
+  margin: 5px;
+  background-color: #dddddd;
+  color: #666666;
+  border-radius: 5px;
+  background-color: orange;
+  align-items: center;
+  display: flex;
+}
+.avatar-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 90px;
+}
+.tag-thread-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+.btn-more {
+  border: none;
+  color: blue;
+}
+
+.btn-more:hover {
+  cursor: pointer;
+}
+
+.tag-thread-item {
+  margin: 5px;
+  padding: 5px;
+  background-color: #dddddd;
+  color: #666666;
+  border-radius: 5px;
+}
+.interact-item {
+  color: #666666;
+  font-size: 16px;
+  margin-left: 10px;
+  padding: 5px;
+  border-radius: 5px;
+}
+.interact-item:hover {
+  background-color: #eeeeee;
+  cursor: pointer;
+}
+.box-side-bar {
+  border: 0.5px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 25px 0px 25px;
+  box-shadow: 3px 3px #ddd;
+  margin-bottom: 20px;
+}
+.reply-btn {
+  margin-top: 10px;
+}
+.load-more {
+  font-size: 17px;
+}
+.load-more:hover {
+  cursor: pointer;
+  color: darkcyan;
+}
+.editor {
+  transition: opacity 1s ease-out;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+.editor-active {
+  display: block;
+  -webkit-animation: fadeIn 0s;
+  animation: fadeIn 0s;
+}
+.focus-cmt {
+  display: flex;
+  margin-bottom: 10px;
+  background-color: #ddd;
+}
+.category-item {
+  list-style: none;
+}
+.category-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.title-link {
+  text-decoration: none;
+  color: black;
+}
+.property-title{
+  padding-right: 10px;
+}
+.time-limit{
+  font-size: 19px;
+  display: flex;
+
+} 
+.memory-limit{
+  font-size: 19px;
+  display: flex;
+}
+.input-file{
+  font-size: 19px;
+  display: flex;
+}
+.output-file{
+  font-size: 19px;
+  display: flex;
+  margin-bottom: 10px;
+}
+.property-title {
+  color: gray;
+}
+@media (max-width: 600px) {
+  #discuss-page .thread-list {
+    width: 100%;
+    padding-right: 0px;
+  }
+  #discuss-page .body-page {
+    display: block;
+  }
+}

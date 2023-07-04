@@ -1,0 +1,94 @@
+.sidebar-item {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.btn-submit {
+  width: 100%;
+  background-color: darkcyan;
+  border-color: darkcyan;
+}
+
+.bold {
+  font-weight: bold;
+}
+.link {
+  text-decoration: none;
+  color: darkcyan;
+}
+.sidebar {
+  margin-left: 1%;
+}
+
+.note-box {
+  max-height: 0px;
+  overflow-y: hidden;
+  -webkit-transition: max-height 0.5s ease-in-out;
+  -moz-transition: max-height 0.5s ease-in-out;
+  -o-transition: max-height 0.5s ease-in-out;
+  transition: max-height 0.5s ease-in-out;
+}
+
+.note-box-open {
+  max-height: 2000px;
+  overflow-y: hidden;
+  -webkit-transition: max-height 0.5s ease-in-out;
+  -moz-transition: max-height 0.5s ease-in-out;
+  -o-transition: max-height 0.5s ease-in-out;
+  transition: max-height 0.5s ease-in-out;
+}
+
+.btn-control {
+  margin-right: 10px;
+}
+.img-upload {
+  margin: 10px;
+  width: 440px;
+}
+.main-container {
+  width: 75%;
+  padding-right: 2%;
+}
+.contain-all {
+  display: flex;
+}
+.note-item {
+  padding: 10px;
+  border: 1px solid #dddddd;
+}
+.slide-down,
+.slide-down-open {
+  max-height: 0px;
+  overflow-y: hidden;
+  -webkit-transition: max-height 0.5s ease-in-out;
+  -moz-transition: max-height 0.5s ease-in-out;
+  -o-transition: max-height 0.5s ease-in-out;
+  transition: max-height 0.5s ease-in-out;
+}
+.slide-down-open {
+  max-height: 2000px;
+}
+.math-tag {
+  padding: 5px;
+  background-color: cadetblue;
+  margin: 5px;
+  border-radius: 5px;
+}
+.edit-box-open {
+  visibility: visible;
+  border: 1px solid #ddd;
+  box-shadow: 3px 3px #dddddd;
+}
+.edit-box {
+  visibility: hidden;
+}
+
+@media (max-width: 600px) {
+  .main-container {
+    width: 100%;
+    padding-right: 0;
+  }
+  .contain-all {
+    display: block;
+  }
+}

@@ -1,0 +1,12 @@
+.img-note {
+  position: relative;
+}
+.note-text {
+  background-color: lightblue;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.sol-item:hover {
+  cursor: pointer;
+}

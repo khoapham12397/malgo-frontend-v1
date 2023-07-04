@@ -1,0 +1,31 @@
+.note-preview {
+  height: 0;
+  transform: scaleY(0);
+  transition: all 0.5s ease-in-out;
+  border: 1px solid #ddd;
+}
+.note-preview:active {
+  height: auto;
+  transform: scaleY(1);
+  border: 1px solid #ddd;
+}
+.remove-btn {
+  position: absolute;
+  top: 10%;
+  right: 2%;
+  z-index: 2;
+  color: gray;
+}
+.remove-btn:hover {
+  cursor: pointer;
+  color: darkgray;
+}
+.img-upload {
+  width: 47%;
+  position: relative;
+  float: left;
+}
+.math-editor {
+  padding: 10px;
+}
+

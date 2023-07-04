@@ -1,0 +1,23 @@
+.focus-cmt {
+  display: flex;
+  margin-bottom: 10px;
+  background-color: #ddd;
+}
+.interact-item {
+  color: #666666;
+  font-size: 16px;
+  margin-left: 10px;
+  padding: 5px;
+  border-radius: 5px;
+}
+.interact-item:hover {
+  background-color: #eeeeee;
+  cursor: pointer;
+}
+.load-more {
+  font-size: 17px;
+}
+.load-more:hover {
+  cursor: pointer;
+  color: darkcyan;
+}

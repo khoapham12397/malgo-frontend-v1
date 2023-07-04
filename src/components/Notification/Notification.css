@@ -1,0 +1,45 @@
+.dropdown-btn{
+    background-color: transparent;
+    border: none;
+    border-radius: 80px;
+    color: transparent;
+}
+.dropdown-btn:hover{
+    background-color: transparent;
+    color: transparent;
+}
+.dropdown-btn:focus {
+    background-color: transparent;
+    color: transparent;
+}
+
+.bell-icon{
+    color: green;
+    position: absolute;
+    right: -6px;
+}
+
+.bell-icon:hover {
+    color:white
+}
+.number-noti{
+    font-size: 17px;
+    font-weight: bold;
+    right: -25px;
+    top : 10px;
+    border-radius: 5px;
+    padding: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: red;
+    color: white;
+    position: absolute;
+}
+.noti-item{
+    color: grey;
+    background-color: #22272e;
+}
+.noti-item:hover{
+    background-color: #3f4147;
+    color: white;
+}

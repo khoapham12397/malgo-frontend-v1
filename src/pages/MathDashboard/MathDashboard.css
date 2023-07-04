@@ -1,0 +1,43 @@
+.sidebar-admin {
+  border: 1px solid #ddd;
+  width: 250px;
+  height: 100%;
+  position: fixed;
+  margin-top: -10px;
+  left: -1px;
+  background-color: dimgrey;
+  z-index: -1;
+}
+
+.sidebar-admin .item {
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  color: white;
+  cursor: pointer;
+}
+.main {
+  margin-left: 260px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: left;
+  margin-top: 10px;
+}
+.math-form {
+  border: 2px solid #ddd;
+  padding: 10px;
+  box-shadow: 3px 3px #ddd;
+  border-radius: 5px;
+}
+.problem-table {
+  border: 1px solid #ddd;
+  box-shadow: 3px 3px #ddd;
+}
+.prolemset-form {
+  border: 1px solid #ddd;
+  box-shadow: 3px 3px #ddd;
+  padding: 10px;
+  margin-top: 10px;
+  max-width: 300px;
+}
