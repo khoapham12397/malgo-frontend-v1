@@ -6,7 +6,6 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   plugins: [react(), svgr()],
   server: {
-    port: 3000,
-    base: '/malgo-frontend-v1/'
+    base: '/'
   }
 });
