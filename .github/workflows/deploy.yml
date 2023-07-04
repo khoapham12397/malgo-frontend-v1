@@ -37,6 +37,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v3
         with:
+          token: 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
           enablement: true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
