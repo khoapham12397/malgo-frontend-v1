@@ -1,4 +1,5 @@
 import { GameManager } from "../GameManager/GameManager";
+import { CameraCfg, MapCfg, TileCfg } from "../GameType";
 
 export {}
 type Position ={

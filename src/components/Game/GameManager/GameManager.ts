@@ -1,5 +1,4 @@
 import { MettarBot } from "../GameBot/MettartBot";
-import { Opponent } from "../GameCharacter/Opponent";
 import { Sasuke } from "../GameCharacter/Sasuke";
 import { SasukeV2 } from "../GameCharacter/SasukeV2";
 import { Trunks } from "../GameCharacter/Trunks";
@@ -27,7 +26,6 @@ export class GameManager{
 
 	imgWoodBox : HTMLImageElement;
 
-	opponent: null | Opponent;
 	
 	boxSlashCnt : Map<string,number>;
 	boxState : boolean;
@@ -85,7 +83,6 @@ export class GameManager{
 		this.bgImage.src = "bg8.avif";
 
 		this.mainCharacter = new SasukeV2(this, {x: 400, y: 220});
-		this.opponent = null;
 		this.boxSlashCnt = new Map();
 		this.boxState = false;
 		this.explosionList = [];

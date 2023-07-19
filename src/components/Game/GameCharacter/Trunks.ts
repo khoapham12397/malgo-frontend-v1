@@ -2,8 +2,9 @@ import { gameConfig } from "../GameConfig";
 import { GameManager } from "../GameManager/GameManager";
 import { Explosion } from "../UnmoveObject/Explosion";
 import { GAME_MODE } from "../GameContainer/GameContainerV2";
-import { MettarBot } from "../Game/GameBot/MettartBot";
+import { MettarBot } from "../GameBot/MettartBot";
 import { LongKi } from "../LongKi/LongKi";
+import { CameraCfg, MapCfg, TileCfg } from "../GameType";
 type Position ={
     x: number;
     y: number;
