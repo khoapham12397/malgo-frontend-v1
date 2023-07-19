@@ -12,8 +12,9 @@ const useUserAuth = () => {
     queryKey: ['user-auth'],
     queryFn: async () => {
       try {
+        alert('prepare to get token Silently')
         const accessToken = await getAccessTokenSilently();
-
+        alert(`get out token: ${accessToken}`);
         const response = await axiosInstance.post('auth/check', {
           accessToken
         });
