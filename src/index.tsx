@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { UserProvider } from './contexts/UserContext';
+// import { UserProvider } from './contexts/UserContext';
 
 const client = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 10, // 10 minutes
+      staleTime: 10 * 60 * 1000, // 10 minutes
       retry: 3
     }
   }
@@ -25,9 +25,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       }}
     >
       <QueryClientProvider client={client}>
-        <UserProvider>
-          <App />
-        </UserProvider>
+        {/* <UserProvider> */}
+        <App />
+        {/* </UserProvider> */}
       </QueryClientProvider>
     </Auth0Provider>
   </React.StrictMode>

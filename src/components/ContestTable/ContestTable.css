@@ -1,0 +1,19 @@
+.contest-table-header {
+  font-size: 24px;
+}
+
+.contest-table-title {
+  text-align: center;
+}
+
+.contest-table-link {
+  color: var(--primary-component-color);
+}
+
+.contest-table-link:hover {
+  cursor: pointer;
+}
+
+.contest-table-registered {
+  text-align: center;
+}

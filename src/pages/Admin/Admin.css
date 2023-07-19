@@ -1,0 +1,25 @@
+.admin-container {
+  margin-top: 50px;
+}
+
+.admin-submenu {
+  width: 200px;
+  font-size: 0.8rem;
+}
+
+.admin-submenu-list {
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 0;
+}
+
+.admin-submenu-item:hover {
+  cursor: pointer;
+  color: var(--primary-component-color);
+}
+
+.admin-submenu-item-active {
+  color: var(--primary-component-color);
+  font-weight: bold;
+}

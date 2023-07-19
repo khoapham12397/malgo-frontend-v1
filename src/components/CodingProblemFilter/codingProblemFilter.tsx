@@ -15,7 +15,7 @@ type TypeTagProps = {
   removeTypeTag: (ind: number) => void;
 };
 
-function TypeTag({ id, name, ind, removeTypeTag }: TypeTagProps) {
+function TypeTag({  name, ind, removeTypeTag }: TypeTagProps) {
   return (
     <div className='tag-item'>
       <button style={{ border: 'none' }} onClick={e => removeTypeTag(ind)}>
@@ -48,7 +48,7 @@ export const CodingProblemFilter = () => {
   const handleAddTag = (e: any) => {
     const ind = e.currentTarget.value;
     console.log('add tag: ind= ' + ind);
-    if (chosenTypes.includes(ind) || ind == 0) return;
+    if (chosenTypes.includes(ind) || ind === 0) return;
     let lst = [...chosenTypes];
     lst.push(ind);
     setChosenTypes(lst);
@@ -65,9 +65,9 @@ export const CodingProblemFilter = () => {
     );
 
     const params: GetProblemsParam = {
-      category: category == '0' ? null : (category as string),
-      startDif: startDif == 0 ? null : startDif,
-      endDif: endDif == 400 ? null : endDif,
+      category: category === '0' ? null : (category as string),
+      startDif: startDif === 0 ? null : startDif,
+      endDif: endDif === 400 ? null : endDif,
       page: 1,
       q: q.length > 0 ? q : null,
       tagList: tagList
@@ -135,7 +135,7 @@ export const CodingProblemFilter = () => {
             </Form.Select>
           </div>
 
-          <Form.Label>Dificulty</Form.Label>
+          <Form.Label>Difficulty</Form.Label>
 
           <MultiRangeSlider
             className='diff-range'
@@ -150,8 +150,15 @@ export const CodingProblemFilter = () => {
             }}
           />
           <div className='space-around'>
-            <Button onClick={handleFind}>Find</Button>
-            <Button>Reset</Button>
+            <Button
+              onClick={handleFind}
+              style={{ backgroundColor: '#3b5998', border: '#3b5998' }}
+            >
+              Find
+            </Button>
+            <Button style={{ backgroundColor: '#3b5998', border: '#3b5998' }}>
+              Reset
+            </Button>
           </div>
         </div>
       </div>

@@ -40,7 +40,6 @@ pre {
 }
 .d-flex {
   display: flex;
-  margin-bottom: 10px;
 }
 .space-between {
   display: flex;
@@ -51,8 +50,7 @@ pre {
 }
 
 .title {
-  font-weight: bold;
-  font-size: 20px;
+  font-size: 21px;
 }
 #discuss-page .header-bar {
   display: flex;
@@ -64,18 +62,16 @@ pre {
   margin-top: 10px;
   padding: 10px;
   color: #666666;
-  font-weight: bold;
 }
 #discuss-page .header-item:hover {
   color: orange;
   cursor: pointer;
 }
 .thread-item {
+  background-color: #ffffff;
   border: 1px solid #ddd;
   padding: 10px;
-  box-shadow: 3px 3px #dddddd;
   margin-bottom: 15px;
-  border-radius: 3px;
 }
 
 #discuss-page .thread-list {
@@ -84,27 +80,37 @@ pre {
 }
 
 .tag {
-  padding: 5px;
-  margin: 5px;
-  background-color: #dddddd;
-  color: #666666;
-  border-radius: 5px;
+  margin: 2px;
   align-items: center;
-  display: flex;
+  font-size: 14px;
+  display: inline-flex;
+  color: gray;
 }
+
 .tag:hover {
-  background-color: aqua;
+  color: #434141;
   cursor: pointer;
 }
 .tag-chosen {
+  font-size: 18px;
   padding: 5px;
   margin: 5px;
-  background-color: #dddddd;
-  color: #666666;
-  border-radius: 5px;
-  background-color: orange;
+  color: #3b5998;
+  border-bottom: 1px solid #3b5998;
   align-items: center;
   display: flex;
+  font-weight: bold;
+}
+.tag-thread {
+  font-size: 18px;
+  padding: 5px;
+  margin: 5px;
+  align-items: center;
+  display: flex;
+  color: #3d7ec5;
+}
+.tag-thread:hover{
+  cursor: pointer;
 }
 .avatar-icon {
   width: 60px;
@@ -143,11 +149,10 @@ pre {
   cursor: pointer;
 }
 .box-side-bar {
-  border: 0.5px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #ddd;
   padding: 5px 25px 0px 25px;
-  box-shadow: 3px 3px #ddd;
   margin-bottom: 20px;
+  background-color: white;
 }
 .reply-btn {
   margin-top: 10px;
@@ -177,13 +182,20 @@ pre {
 }
 .category-item {
   list-style: none;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  color: #3d7ec5;
+}
+
+.category-item:hover {
+  cursor: pointer;
 }
 .category-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 90px;
   margin-right: 10px;
-  margin-bottom: 10px;
 }
 .title-link {
   text-decoration: none;
@@ -210,6 +222,7 @@ pre {
   display: flex;
   margin-bottom: 10px;
 }
+
 .property-title {
   color: gray;
 }

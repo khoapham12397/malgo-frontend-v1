@@ -1,6 +1,5 @@
 import DropDownMenu from './ThreeDotMenu';
 import { BiCommentDetail, BiLike, BiShare } from 'react-icons/bi';
-import { useContext, useRef, useState } from 'react';
 import parse from 'html-react-parser';
 import { getAvatarLink } from '../../utils/utils';
 import { Link } from 'react-router-dom';
@@ -8,9 +7,8 @@ import { useDispatch } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { likeThreadInList } from '../../state/actions/threadListAction';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
-import { UserContext } from '../../contexts/UserContext';
 import { setShareResource, toggleFriendsModal } from '../../state/reducers/chatReducer';
-import { getFixedUsername } from '../../utils/getUser';
+import { getFixedUsername, getUsernameFromStorage } from '../../utils/getUser';
 
 
 interface ThreadItemProps {
@@ -21,8 +19,7 @@ export const ThreadSummary = ({ threadData }: ThreadItemProps) => {
   // id, author(username) + avatar username: + summary , created date , title
   
   const dispatch: Dispatch<any> = useDispatch();
-  const { user } = useContext(UserContext);
-  
+  const myUsername = getUsernameFromStorage();  
 
   const handleShareClick = ()=>{
     const shareResource = {
@@ -35,13 +32,13 @@ export const ThreadSummary = ({ threadData }: ThreadItemProps) => {
     
   }
   const handleLike = () => {
-    dispatch(likeThreadInList(threadData.id, user ? user.username : undefined));
+    dispatch(likeThreadInList(threadData.id, myUsername ? myUsername : undefined));
   };
 
   return (
     <div className='thread-item'>
       <div className='space-between'>
-        <div className='d-flex'>
+        <div className='d-flex' style={{alignItems:'center'}}>
           <img
             src={getAvatarLink(threadData.author.username)}
             className='avatar-icon'
@@ -66,7 +63,6 @@ export const ThreadSummary = ({ threadData }: ThreadItemProps) => {
         <MathJaxContext>
           <MathJax>{parse(threadData.content)}</MathJax>
         </MathJaxContext>
-        <p>{threadData.summary}</p>
       </div>
 
       <div className='space-between'>

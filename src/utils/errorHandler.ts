@@ -19,22 +19,24 @@ export const handleError = async (error: any) => {
   } else {
     console.error("Error's details:", error.response);
 
+    const { message } = error.response.data;
+
     switch (error.response.status) {
       case StatusCodes.BAD_REQUEST:
-        toast.error('Bad request!');
+        toast.error(message.length > 100 ? 'Bad request!' : message);
         break;
       case StatusCodes.UNAUTHORIZED:
       case StatusCodes.FORBIDDEN:
-        toast.error('You are not allowed to access!');
+        toast.error(message.length > 100 ? 'You are not allowed!' : message);
         break;
       case StatusCodes.NOT_FOUND:
-        toast.error('Resource not found!');
+        toast.error(message.length > 100 ? 'Resource not found!' : message);
         break;
       case StatusCodes.INTERNAL_SERVER_ERROR:
-        toast.error('Internal server error!');
+        toast.error(message.length > 100 ? 'Internal server error!' : message);
         break;
       default:
-        toast.error('Something went wrong!');
+        toast.error(message.length > 100 ? 'Something went wrong!' : message);
     }
   }
 };

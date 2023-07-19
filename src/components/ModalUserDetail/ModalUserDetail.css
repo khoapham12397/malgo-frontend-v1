@@ -1,0 +1,35 @@
+.modal-user-detail .modal-dialog {
+  max-width: 50%;
+}
+
+.modal-user-detail-id {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.modal-user-detail-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 20px;
+}
+
+.modal-user-detail-item-title {
+  font-weight: bold;
+}
+
+.user-detail-role {
+  font-weight: 600;
+}
+
+.user-detail-role.super-admin {
+  color: rgb(233, 30, 99);
+}
+
+.user-detail-role.admin {
+  color: green !important;
+}
+
+.user-detail-role.regular-user {
+  color: var(--primary-component-color) !important;
+}

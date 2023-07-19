@@ -1,52 +1,62 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { Modal } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux";
-import { UserContext } from "../../contexts/UserContext";
 import { RootState } from "../../state";
-import { loadInitFriendList } from "../../state/actions/chatAction";
+import { loadChatSessionP2PList, loadInitFriendList } from "../../state/actions/chatAction";
 import { toggleFriendsModal } from "../../state/reducers/chatReducer";
-import { getFixedUsername } from "../../utils/getUser";
+import { getFixedUsername, getUsernameFromStorage } from "../../utils/getUser";
 import { getAvatarLink } from "../../utils/utils";
 import './FriendListModal.css';
+
 type FriendsModalProps = {
-    handleChooseItem : (username: string) => void;
+    handleChooseItem : (username: string, sessionId: string | null) => void;
     exlusiveList: Array<string>;
 }
 
 export const FriendListModal = ({handleChooseItem, exlusiveList}: FriendsModalProps)=>{
-    const friendList = useSelector((state: RootState)=> state.chat.friendList);
+    //const friendList = useSelector((state: RootState)=> state.chat.friendList);
     const dispatch = useDispatch<any>();
-    const {user, setUser} = useContext(UserContext);
-    
-    const showFriendListModal = useSelector((state:RootState)=>state.chat.showFriendListModal);
+    const sessionP2PList = useSelector((state: RootState)=> state.chat.sessionP2PList);
 
+    const myUsername = getUsernameFromStorage();
+
+    const showFriendListModal = useSelector((state:RootState)=>state.chat.showFriendListModal);
+    const sessionLst = sessionP2PList?sessionP2PList.filter(session => {
+      exlusiveList.indexOf(session.partner) === -1
+    }):[];
+    
     useEffect(()=>{
-      console.log("init friendList");
-      if(user && !friendList) {
+      //console.log("init friendList");
       
-        dispatch(loadInitFriendList(user.username));
+      if(myUsername && !sessionP2PList) {
+        loadChatSessionP2PList();
       }
-    },[user]);
+    },[myUsername]);
   
     const handleClose = ()=>{
       dispatch(toggleFriendsModal({}));
     }
   
-    return (<Modal show={showFriendListModal} onHide={handleClose}>
+    return (<Modal show={showFriendListModal} onHide={handleClose} size='sm'>
         <Modal.Header closeButton>
           <Modal.Title>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {sessionP2PList?
           <ul>
-            {friendList?friendList.map(item=> 
-            <li className='friend-item' key={item.username}
-              onClick ={()=>handleChooseItem(item.username)}
-              >
-              <img className="avatar-msg" src = {getAvatarLink(item.username)}/> {getFixedUsername(item.username)}
-            </li>):""}
-          </ul>
-            
+          {
+          sessionP2PList.map((item: ChatSessionP2P)=> 
+            <li className='friend-item' key={item.sessionId}
+              onClick ={()=>handleChooseItem(item.partner, item.sessionId)}
+            >
+              <img className="friend-item-avatar" src = {getAvatarLink(item.partner)}/> 
+              <span className='name'>{getFixedUsername(item.partner)}</span>
+            </li>)
+          }
+          </ul>:''
+          }
+         
         </Modal.Body>
         <Modal.Footer>
 

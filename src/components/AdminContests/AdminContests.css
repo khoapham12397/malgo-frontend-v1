@@ -1,0 +1,4 @@
+.admin-create-contest-button {
+  background-color: var(--primary-component-color);
+  border: var(--primary-component-color);
+}

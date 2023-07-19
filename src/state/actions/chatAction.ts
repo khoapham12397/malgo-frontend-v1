@@ -1,36 +1,38 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { toast } from 'react-hot-toast';
 import api from '../../config/axios2';
-import { addNewMessageForPost, addOneGroup, addOneMessageGroup, addOneMessageP2P, setChatSessionP2PList, setCurrentPost, setCurrentPostAndMessage, setFriendList, setGeneralChatGroupMode, setGroups, setGroupUsers, setMessageItems, setPostForGroup, setSessionP2PMessages, setShareResource } from '../reducers/chatReducer';
+import { addNewMessageForPost, addOneChatSessionP2P, addOneGroup, addOneMessageGroup, addOneMessageP2P, changePageMode, resetState, setChatSessionP2PList, setCurrentPost, setCurrentPostAndMessage, setFriendList, setGeneralChatGroupMode, setGroups, setGroupUsers, setMessageItems, setPostForGroup, setSeenSessionP2P, setSessionP2PMessages, setShareResource } from '../reducers/chatReducer';
 import store from '..';
  
-import socketIOClient from 'socket.io-client';
+import socketIOClient, { Socket } from 'socket.io-client';
 import { addFriendEvents, changeFriendEventStatus } from '../reducers/notificationReducer';
 import { FRIEND_REQUEST_STATUS } from '../../components/Notification/Notification';
 import { getAccessTokenFromStorage, getFixedUsername } from '../../utils/getUser';
-import { GROUP_MODE } from '../../pages/GroupPage/GroupPage';
+import { GROUP_MODE } from '../../pages/ChatPage/ChatPage';
 const urlPrefix = '/user2';
+
 export const MESSAGE_TYPE = {
     MESSAGE_P2P: 'MESSAGE_P2P',
     MESSAGE_GROUP: 'MESSAGE_GROUP',
     MESSAGE_GROUP_POST: 'MESSAGE_GROUP_POST',
 }
-let socket:any = null;
+export let socket: any = null;
 
 export const initSocketClient = (username: string) =>{
     if(socket!= null) return; 
+
     socket = (socketIOClient as any).connect(import.meta.env.VITE_URL);
 
     socket.on("connect", ()=>{
-        console.log("connect ok");
-       
+        console.log(`connect ok,socketId: ${socket.id}`);
+        
         socket.emit('auth', {
             accessToken: getAccessTokenFromStorage(),
         });
     });
     
     socket.on("send-id", (data: any)=>{
-        //console.log(data.id);
+        console.log('socket id get from sock server: '+data.id);
     });
     
     socket.on("new-message", (data:any)=>{
@@ -54,6 +56,7 @@ export const loadGroups = (username: string) =>{
                 creatorId: item.creatorId,
                 createdAt: item.createdAt,
                 mode: GROUP_MODE.GENERAL_CHAT,
+                generalChatSessionId: item.generalChatSessionId,
             }));
             
             if(result.successed) {
@@ -67,7 +70,7 @@ export const loadGroups = (username: string) =>{
 export const loadPosts = (groupId: string,username: string, direct: string ) =>{
     console.log(`load posts of group ${groupId}`);
     return function(dispatch :Dispatch) {
-        let url = `${urlPrefix}/group/${groupId}/post?limit=1&username=${username}`;
+        let url = `${urlPrefix}/group/${groupId}/post?limit=3&username=${username}`;
         const groupPosts = store.getState().chat.groupPosts;
         let isNew = true, manager : any = null;
         for(let i = 0;i< groupPosts.length;i++) {
@@ -144,6 +147,9 @@ export const loadCurrentPost = (post: PostData, username: string) =>{
 }
 
 export const submitMessage = (param: SubmitMessageParam) =>{
+    console.log('submit this msg');
+    console.log(socket!==null);
+    console.log(param);
     socket.emit("submit-message", param);
 }
 
@@ -152,8 +158,8 @@ export const loadInitFriendList = (username: string) =>{
         api.get(`${urlPrefix}/friends/${username}`)
         .then(result=>{
             if(result.data.successed) {
-                const friendList = result.data.data.friendList.map((item:string) => ({username: item}));
-                dispatch(setFriendList({friendList: friendList}));
+                //const friendList = result.data.data.friendList.map((item:string) => ({username: item}));
+                dispatch(setFriendList({friendList: result.data.data.friendList}));
             }
             else toast.error(result.data.message);
         })
@@ -176,7 +182,6 @@ const recieveMessage = (chatMessage: ChatMessages, type: string) =>{
                     ,latest: chatMessage.id}));
                 }
                 else {
-                /* TODO set unseen message count for post or chat channel */
                     chatState.postMessages.forEach(item=>{
                         if(item.postId == chatMessage.postId){
                             store.dispatch(addNewMessageForPost({chatMessage: chatMessage}));
@@ -185,13 +190,21 @@ const recieveMessage = (chatMessage: ChatMessages, type: string) =>{
                 }
                 break;
             case MESSAGE_TYPE.MESSAGE_GROUP:
-                store.dispatch(addOneMessageGroup({groupId: chatMessage.sessionId, message: chatMessage}));
-                break;        
-            case MESSAGE_TYPE.MESSAGE_P2P:
-                store.dispatch(addOneMessageP2P({
-                    message: chatMessage,
-                }));       
+                store.dispatch(addOneMessageGroup({sessionId: chatMessage.sessionId, message: chatMessage}));
                 break;
+                            
+            case MESSAGE_TYPE.MESSAGE_P2P:
+                const sessionList = store.getState().chat.sessionP2PList;
+                if(sessionList && sessionList.filter(item => item.sessionId===chatMessage.sessionId).length>0){
+                    store.dispatch(addOneMessageP2P({
+                        message: chatMessage,
+                    }));       
+                }
+                else {
+                    if(chatMessage.sessionId) getChatSessionP2P(chatMessage.sessionId);   
+                }
+                break;
+
         }
 }
 
@@ -289,6 +302,8 @@ export const acceptFriend = (params: AcceptFriendParam)=>{
                 dispatch(changeFriendEventStatus({id: params.requestId, status:FRIEND_REQUEST_STATUS.ACCEPT,
                     content : 'Accepted friend request'
                 }));
+                //loadInitFriendList();
+                
             }
         })
     }
@@ -357,7 +372,8 @@ export const loadGeneralChatMsg = async (groupId: string)=>{
                 store.dispatch(setGeneralChatGroupMode({
                     groupId: groupId,
                     messages: result.data.data.chatMessages,
-                }))                
+                    sessionId: result.data.data.sessionId,
+                }))      
             }
         })
     }
@@ -373,23 +389,78 @@ export const loadChatSessionP2PList =()=>{
             store.dispatch(setChatSessionP2PList({sessions: result.data.data.chatSessions}));
         }
     })
+    .catch(error => {
+        console.log(`error occur when fetch chat session`);
+        console.log(error);
+    })
 }
 
-export const loadChatSessionMessages = async (sessionId :string, partnerId: string) =>{
+export const loadChatSessionMessages = async (sessionId :string, partnerId: string, unseenCnt: number) =>{
     if(store.getState().chat.sessionP2PMessages.filter(item=>item.sessionId=== sessionId).length===0){
         const result= await api.get(urlPrefix + `/session/p2p/${sessionId}/message`);
         if(result.data.successed){
             store.dispatch(setSessionP2PMessages({
                 messages: result.data.data.chatMessages,
                 sessionId: sessionId,
-                sessionInfo: {partnerId: partnerId, title: partnerId} as ChatSessionInfo,
+                sessionInfo: {partnerId: partnerId, title: getFixedUsername(partnerId)} as ChatSessionInfo,
                 chatType: MESSAGE_TYPE.MESSAGE_P2P,
             }));      
         }
     }
-    else store.dispatch(setSessionP2PMessages({
-        sessionId: sessionId,
-        sessionInfo: {partnerId: partnerId, title: partnerId} as ChatSessionInfo,
-        chatType: MESSAGE_TYPE.MESSAGE_P2P,
-    }))
+    else {
+        
+        store.dispatch(setSessionP2PMessages({
+            sessionId: sessionId,
+            sessionInfo: {partnerId: partnerId, title: getFixedUsername(partnerId)} as ChatSessionInfo,
+            chatType: MESSAGE_TYPE.MESSAGE_P2P,
+        }));
+       
+    }
+    if(unseenCnt >0){
+        setSeenMsgSessionP2P(sessionId);
+    }
+}
+
+export const setSeenMsgSessionP2P = async (sessionId: string)=>{
+    const result = await api.get(urlPrefix+`/session/${sessionId}/seen`);
+    if(result.data.successed) {
+        store.dispatch(setSeenSessionP2P({sessionId: sessionId}));
+    }
+}
+
+export const getChatSessionP2P = async(sessionId: string)=>{
+    const result = await api.get(urlPrefix+`/session/${sessionId}`)
+    if(result.data.successed) {
+        store.dispatch(addOneChatSessionP2P({chatSession: result.data.data.chatSession}));
+    }
+}
+
+export const disconnectSocket = async ()=>{
+    if(socket){
+        socket.emit('disconnnect-user',{});
+    }    
+}
+export const changePageChatMode = (mode: string)=>{
+    return function(dispatch: Dispatch<any>) {
+        dispatch(changePageMode({mode: mode}));
+    }
+}
+type SendMessageP2PParam = {
+    username: string;
+    recieverId: string;
+    content: string;
+    sessionId: string | null;
+    referenceMessage: ReferenceMessage | null;
+}
+export const sendMessageP2PWithoutSession = async (param: SendMessageP2PParam)=>{
+    const result = await api.post('/user2/message', param);
+    if(result.status === 201 && result.data.successed){
+        const chatMessage = result.data.data.chatMessage;
+        
+
+    }
+}
+
+export const resetChatState = () =>{
+    store.dispatch(resetState({}));
 }

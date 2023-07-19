@@ -1,0 +1,15 @@
+.modal-delete-thread-id {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.modal-delete-thread-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 20px;
+}
+
+.modal-delete-thread-item-title {
+  font-weight: bold;
+}

@@ -1,0 +1,21 @@
+.submission-detail-modal .modal-dialog {
+  max-width: 50%;
+}
+
+.submission-detail-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  margin-bottom: 10px;
+}
+
+.submission-detail-item-title {
+  font-weight: bold;
+}
+
+.submission-detail-accepted {
+  color: #198754;
+}
+
+.submission-detail-failed {
+  color: rgb(219, 59, 35);
+}

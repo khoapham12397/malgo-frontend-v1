@@ -6,7 +6,6 @@ import parse from 'html-react-parser';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state';
 import { Dispatch } from '@reduxjs/toolkit';
-import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
 import {
   editMathProblem,
@@ -19,6 +18,7 @@ import { BiBookAdd } from 'react-icons/bi';
 import './MathProblemForm.css';
 import { Modal } from 'react-bootstrap';
 import { Table } from 'react-bootstrap';
+import { getUsernameFromStorage } from '../../utils/getUser';
 
 type TypeTagProps = {
   id: string;
@@ -60,17 +60,15 @@ type ProbSetModalProps = {
 };
 
 const ProbSetModal = ({ chosenList, setChosenList }: ProbSetModalProps) => {
-
   const [probSetList, setProbSetList] = useState<Array<any>>([]);
   const [show, setShow] = useState(false);
-  const {user, setUser} = useContext(UserContext);
 
   useEffect(() => {
-    // cai nay phai dang nhap moi lam duic d:
-
-    let url = (import.meta.env.VITE_API_URL as string)+ 'mathproblem/set?username';
-    
-    fetch('http://localhost:8080/api/mathproblem/set?username=test2')
+    // fetch('http://localhost:8080/api/mathproblem/set?username=test2')
+    const url =
+      (import.meta.env.VITE_API_URL as string) +
+      'mathproblem/set?username=test2';
+    fetch(url)
       .then(res => res.json())
       .then(result => {
         if (result.successed) {
@@ -154,8 +152,7 @@ function MathProblemForm({
   setNextProblems
 }: Props) {
   const dispatch: Dispatch<any> = useDispatch();
-  const { user } = useContext(UserContext);
-
+  const myUsername = getUsernameFromStorage();
   //const [problem, setProblem] = useState<MathProbItem | null>(null);
 
   const [show, setShow] = useState(false);
@@ -220,7 +217,7 @@ function MathProblemForm({
   const [category, setCategory] = useState('2');
 
   const handleShow = () => {
-    if (!user) {
+    if (!myUsername) {
       toast.error("You're not logged in!");
       return;
     }

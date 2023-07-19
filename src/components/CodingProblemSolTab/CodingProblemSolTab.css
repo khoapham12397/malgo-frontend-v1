@@ -1,0 +1,20 @@
+.codeforces-tag {
+    color: gray;
+}
+.container-sol-tab{
+    padding-left: 10px;
+}
+.tag-lst{
+    display: -ms-flexbox;
+    justify-content: flex-start;
+}
+.detail-box {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.header-sol-tab{
+    border-bottom: 1px solid #ddd;
+    color: gray;
+    margin-bottom: 20px;
+}

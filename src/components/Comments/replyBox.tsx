@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { useContext, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state';
@@ -11,7 +11,7 @@ import {
 } from '../../state/actions/threadAction';
 import { processText, formatMathExpr, getAvatarLink } from '../../utils/utils';
 import SmallLoader from '../SmallLoader/SmallLoader';
-import { UserContext } from '../../contexts/UserContext';
+import { getUsernameFromStorage } from '../../utils/getUser';
 
 type Props = {
   parentId: string;
@@ -21,7 +21,7 @@ type Props = {
 
 export const ReplyBox = ({ parentId, username, rootId }: Props) => {
   const textArea = useRef<HTMLTextAreaElement>(null);
-  const { user } = useContext(UserContext);
+  const myUsername = getUsernameFromStorage();
 
   const box = useRef<HTMLDivElement>(null);
   const dispatch: Dispatch<any> = useDispatch();
@@ -54,7 +54,7 @@ export const ReplyBox = ({ parentId, username, rootId }: Props) => {
         parentId: parentId,
         rootId: rootId,
         threadId: threadId,
-        username: user ? user.username : undefined
+        username: myUsername ? myUsername : undefined
       } as PostCommentParam)
     );
   };
@@ -69,7 +69,9 @@ export const ReplyBox = ({ parentId, username, rootId }: Props) => {
       </div>
       <div style={{ paddingLeft: '10px', width: '100%' }}>
         <div>
-          Reply: <span style={{ color: 'violet' }}>{username}</span> <BiShare />
+          Reply:{' '}
+          <span style={{ color: 'violet' }}>{username.split('@')[0]}</span>{' '}
+          <BiShare />
           <textarea
             className='form-control'
             autoFocus

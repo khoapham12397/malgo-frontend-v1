@@ -1,0 +1,17 @@
+.chosen-sub{
+    background-color: #3d7ec5;
+    color: white;
+    padding: 10px;
+    margin-right: 10px;
+}
+.sub-type-list{
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+.sub-type:hover{
+    cursor: pointer;
+}
+.sub-type{
+    margin-right: 10px;
+}

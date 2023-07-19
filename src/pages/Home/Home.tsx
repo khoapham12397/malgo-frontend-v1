@@ -1,20 +1,25 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
 import axiosInstance from '../../config/axiosInstance';
 import useUserAuth from '../../hooks/useUserAuth';
+import { RootState } from '../../state';
+import { initSocketClient, loadChatSessionP2PList } from '../../state/actions/chatAction';
 import { handleError } from '../../utils/errorHandler';
+import { getUsernameFromStorage } from '../../utils/getUser';
 import './Home.css';
 
 const Home: FunctionComponent = () => {
   const { isAuthenticated, userAuthQuery } = useUserAuth();
   const { getAccessTokenSilently } = useAuth0(); // TODO: just keep this for testing private button, will be removed later
-
+  console.log("vao day ")
   // TODO: just keep this for testing private button, will be removed later
   const handleClickPrivate = async () => {
     try {
       const accessToken = await getAccessTokenSilently();
+      console.log(`accessToken found: ${accessToken}`);
 
       const response = await axiosInstance.get('admin/users', {
         headers: {
@@ -27,8 +32,18 @@ const Home: FunctionComponent = () => {
       return error.message;
     }
   };
-  console.log('vao init home page');
-  console.log('isAuthenticated: ' + isAuthenticated);
+  const myUsername = getUsernameFromStorage();
+  const sessionP2PList = useSelector((state: RootState)=> state.chat.sessionP2PList);
+  
+  useEffect(()=>{
+    if(myUsername) {
+      initSocketClient(myUsername);
+      if(!sessionP2PList) {
+        loadChatSessionP2PList();
+      }
+    }
+  },[myUsername]);
+
   if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
 
   if (userAuthQuery.isError)

@@ -63,7 +63,7 @@ export const MathProblemFilter = ({ page }: Props) => {
   };
 
   const handleChangeCategory = (e: any) => {
-    console.log('set category to :' + e.currentTarget.value);
+    // console.log('set category to :' + e.currentTarget.value);
     setCategory(e.currentTarget.value);
   };
 
@@ -90,7 +90,7 @@ export const MathProblemFilter = ({ page }: Props) => {
         params.endDif +
         '&q=' +
         params.q;
-      console.log('link=' + link);
+      // console.log('link=' + link);
 
       tagList.forEach(item => {
         link += '&tag=' + item;
@@ -103,7 +103,7 @@ export const MathProblemFilter = ({ page }: Props) => {
     //dispatch(fetchMathProblems(params));
   };
   useEffect(() => {
-    console.log('page changed');
+    // console.log('page changed');
     if (page > 0) {
       let tagList: Array<string> = chosenTypes.map(
         item => problemCategories[item].id
@@ -120,14 +120,14 @@ export const MathProblemFilter = ({ page }: Props) => {
     }
   }, [page]);
   useEffect(() => {
-    console.log('create mathproblem filter');
+    // console.log('create mathproblem filter');
     if (problemCategories.length == 0) {
       dispatch(fetchMathCategoriesAndTags());
     }
   }, []);
 
   const removeTypeTag = (ind: number) => {
-    console.log('remove ' + ind);
+    // console.log('remove ' + ind);
     if (chosenTypes.includes(ind as never)) {
       var lst = [...chosenTypes];
       let index = lst.indexOf(ind as never);
@@ -200,8 +200,15 @@ export const MathProblemFilter = ({ page }: Props) => {
             }}
           />
           <div className='space-around'>
-            <Button onClick={handleFind}>Find</Button>
-            <Button>Reset</Button>
+            <Button
+              onClick={handleFind}
+              style={{ backgroundColor: '#3b5998', border: '#3b5998' }}
+            >
+              Find
+            </Button>
+            <Button style={{ backgroundColor: '#3b5998', border: '#3b5998' }}>
+              Reset
+            </Button>
           </div>
         </div>
       </div>

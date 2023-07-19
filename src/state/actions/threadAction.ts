@@ -29,6 +29,7 @@ export const fetchThread = (threadId: string, username: string | undefined) => {
       .then(result => {
         const data: setThreadDataParams = result.data;
         if (store.getState().thread.threadData.id != threadId) {
+          console.log('fetch thread');
           dispatch(setThread(data));
           if (data.thread.totalComments > 0) {
             dispatch(fetchRootComment(data.thread.id, username));

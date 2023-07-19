@@ -8,8 +8,8 @@ import { RootState } from '../../state';
 import './MathDashboard.css';
 import MathProblemForm from '../../components/MathProblemForm/MathProblemForm';
 import { toast } from 'react-hot-toast';
-import { UserContext } from '../../contexts/UserContext';
 import { getMathSet } from '../../state/actions/mathProblemListAction';
+import { getUsernameFromStorage } from '../../utils/getUser';
 
 type ChosenProblem = {
   id: string;
@@ -30,20 +30,21 @@ const ProblemSetForm = ({
   handleChangeMode
 }: ProblemSetProps) => {
   const [title, setTitle] = useState('');
-  const {user, setUser} = useContext(UserContext);
+  const myUsername = getUsernameFromStorage();
   const handleSubmit = () => {
+    if(!myUsername) return;
     const params: CreateMathProbSetParam = {
 
       numProb: problems.length,
       title: title,
-      username: user?user.username:'test2',
+      username: myUsername,
       problems: problems.map((item, index) => ({
         problemId: item.id,
         order: String(index + 1)
       }))
     };
-    
-    fetch('http://localhost:8080/api/mathproblem/set', {
+    const url = import.meta.env.VITE_API_URL + 'mathproblem/set'
+    fetch(url, {
       method: 'POST',
       body: JSON.stringify(params),
       headers: { 'Content-Type': 'application/json' }

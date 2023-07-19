@@ -1,8 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { useContext } from 'react';
 import { useDispatch } from 'react-redux';
-import { UserContext } from '../../contexts/UserContext';
 import { fetchChildComment } from '../../state/actions/threadAction';
+import { getUsernameFromStorage } from '../../utils/getUser';
 import { CommentItem } from './commentItem';
 
 type Props = {
@@ -12,7 +11,7 @@ type Props = {
 
 const CommentChildList = ({ manageChildCmt, rootCmtId }: Props) => {
   const dispatch: Dispatch<any> = useDispatch();
-  const { user } = useContext(UserContext);
+  const myUsername = getUsernameFromStorage();
 
   return (
     <div>
@@ -33,7 +32,7 @@ const CommentChildList = ({ manageChildCmt, rootCmtId }: Props) => {
                   rootCmtId,
                   manageChildCmt.size,
                   10,
-                  user ? user.username : undefined
+                  myUsername ? myUsername : undefined
                 )
               );
             }}

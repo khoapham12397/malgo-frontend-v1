@@ -1,0 +1,15 @@
+.modal-problem-result-id {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.modal-problem-result-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  margin-bottom: 20px;
+}
+
+.modal-problem-result-item-title {
+  font-weight: bold;
+}

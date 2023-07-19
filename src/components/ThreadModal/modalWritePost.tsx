@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, {  useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -9,10 +9,9 @@ import parse from 'html-react-parser';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state';
 import { Dispatch } from '@reduxjs/toolkit';
-import { postThread } from '../../state/actions/threadAction';
-import { UserContext } from '../../contexts/UserContext';
 import { fetchCategoriesAndTags } from '../../state/actions/threadBaseAction';
 import { toast } from 'react-hot-toast';
+import { getUsernameFromStorage } from '../../utils/getUser';
 
 type TypeTagProps = {
   id: string;
@@ -39,12 +38,13 @@ function TypeTag({ id, name, ind, removeTypeTag }: TypeTagProps) {
   );
 }
 type Props = {
+  type: string;
   handleSubmitThread :(params: any) => void;
 };
-function ModalWritePost({handleSubmitThread}: Props) {
-  const dispatch: Dispatch<any> = useDispatch();
-  const { user } = useContext(UserContext);
 
+function ModalWritePost({handleSubmitThread,type}: Props) {
+  const dispatch: Dispatch<any> = useDispatch();
+  const myUsername = getUsernameFromStorage();
   const [show, setShow] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [chosenTypes, setChosenTypes] = useState([] as Array<number>);
@@ -61,7 +61,7 @@ function ModalWritePost({handleSubmitThread}: Props) {
   const [category, setCategory] = useState('2');
 
   const handleShow = () => {
-    if (!user) {
+    if (!myUsername) {
       toast.error("You're not logged in!");
       return;
     }
@@ -87,7 +87,7 @@ function ModalWritePost({handleSubmitThread}: Props) {
       summary: null,
       title: title,
       tags: tagList,
-      username: user ? user.username : undefined
+      username: myUsername ? myUsername : undefined
     };
     
     handleSubmitThread(params);
@@ -118,9 +118,9 @@ function ModalWritePost({handleSubmitThread}: Props) {
   };
   return (
     <>
-      <button onClick={handleShow} className='btn-new-thread'>
+      <Button onClick={handleShow} className={type=='thread'?'btn-new-thread':'btn-new-postgroup'}>
       <BiPlusCircle />  Thread
-      </button>
+      </Button>
 
       <Modal show={show} onHide={handleClose} size='lg'>
         <Modal.Header closeButton>

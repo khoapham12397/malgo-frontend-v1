@@ -1,9 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { GROUP_MODE, GROUP_PAGE_MODE } from '../../pages/GroupPage/GroupPage';
+import { createSlice, current } from '@reduxjs/toolkit';
+import { GROUP_MODE, GROUP_PAGE_MODE } from '../../pages/ChatPage/ChatPage';
 import { MESSAGE_TYPE } from '../actions/chatAction';
 
-
-const initialState: ChatState = {
+export const initialChatState: ChatState = {
     groups : null,
     groupPosts: [],
     groupUsers: [],
@@ -13,9 +12,12 @@ const initialState: ChatState = {
 
     currentGroupId: null,
     currentSessionId: null,
+    
     currentPost : null,   
+    
     friendList: null,
     showFriendListModal: false,
+    
     shareResource: null,
     currentGroupMode: null,
     groupGeneralMessages: [],
@@ -23,6 +25,7 @@ const initialState: ChatState = {
     currentSessionIdP2P: null,
     currentChatType: null,
     currentSessionInfo: null,
+
     sessionP2PList: null,
     sessionP2PMessages: [],
 
@@ -30,16 +33,23 @@ const initialState: ChatState = {
     currentMessageP2PMode: [],
 
     pageMode : GROUP_PAGE_MODE.GROUP,
+    currentGeneralSessionId: null,
 }   
 
+
 const chatSlice = createSlice({
-    initialState : initialState,
+    initialState : initialChatState,
     name: "chat",
     reducers : {
+        resetState: (state,action) =>{
+            state = initialChatState;
+        },
         setGroups: (state,action) =>{
             state.groups = action.payload.groups;      
         },
         addOneGroup: (state,action) =>{
+            console.log('add one group');
+            console.log(action.payload.group);
             if(state.groups) state.groups.push(action.payload.group);
             else state.groups = [action.payload.group]; 
         },
@@ -66,8 +76,14 @@ const chatSlice = createSlice({
                 state.messageItems = [];
             }
             state.currentGroupId = action.payload.groupManagePost.groupId;
+            
             if(state.groups){
-                if(!action.payload.isNew) state.currentGroupMode = state.groups.filter(item=>item.id===groupId)[0].mode
+                const group =  state.groups.filter(item=>item.id===groupId)[0];
+                state.currentGeneralSessionId = group.generalChatSessionId;
+
+                if(!action.payload.isNew) {
+                    state.currentGroupMode = group.mode
+                }
                 else{ 
                     for(let i=0;i<state.groups.length;i++) {
                         if(state.groups[i].id === groupId) {
@@ -83,19 +99,26 @@ const chatSlice = createSlice({
         setCurrentGroup: (state,action)=>{
             state.currentGroupId = action.payload.groupId;
             const grs = state.groupPosts.filter(item => item.groupId === action.payload.groupId);
+            console.log(`set current group: ${action.payload.groupId}`);
             if(grs.length>0){
                 state.currentPost = grs[0].currentPost;
                 state.currentSessionId  = grs[0].currentPost?grs[0].currentPost.id:null;
                 console.log(grs[0].currentPost);
                 if(grs[0].currentPost){
                     const postId = grs[0].currentPost.id;
+                    console.log(`set messageItem of post: ${grs[0].currentPost.id}`);    
                     state.messageItems = state.postMessages.filter(item=> item.postId === postId)[0].messages;
                 }
                 else state.messageItems= [];
             }
             state.currentPosts = state.groupPosts.filter(item => item.groupId === action.payload.groupId)[0].posts;
             if(state.groups) {
-                state.currentGroupMode = state.groups.filter(item  => item.id == action.payload.groupId)[0].mode;
+                const x = state.groups.filter(item  => item.id == action.payload.groupId)[0];
+                
+                state.currentGroupMode = x.mode;
+                console.log(`set group: ${action.payload.groupId}`);
+                console.log(`set general session id: ${x.generalChatSessionId}`);
+                state.currentGeneralSessionId = x.generalChatSessionId;
             }            
         },
         setCurrentPost: (state, action) => {
@@ -215,7 +238,8 @@ const chatSlice = createSlice({
                     groupId : action.payload.groupId,
                     messages: msgs,
                     latestMsgId: msgs[msgs.length-1].id,
-                    oldestMsgId: msgs[0].id
+                    oldestMsgId: msgs[0].id,
+                    sessionId: action.payload.sessionId,
                 } as GroupManageChatMsg);
                 else {
                     state.groupGeneralMessages.push({
@@ -223,10 +247,11 @@ const chatSlice = createSlice({
                     messages:[],
                     latestMsgId: '',
                     oldestMsgId: '',
+                    sessionId: action.payload.sessionId,
                     });
                 }
                 state.messageItems = msgs;
-
+                
             }
             else {
                 state.messageItems = state.groupGeneralMessages.filter(item=> item.groupId=== action.payload.groupId)[0].messages;
@@ -234,29 +259,44 @@ const chatSlice = createSlice({
             state.currentPost = null;
         },
         addOneMessageGroup: (state,action)=>{
+            console.log('add one group message ');
+            console.log(action.payload);
+            let isCurrentGroup=false;
             for(let i=0;i<state.groupGeneralMessages.length;i++){
-                if(state.groupGeneralMessages[i].groupId === action.payload.groupId){
+                const sid = state.groupGeneralMessages[i].sessionId;
+
+                if(sid === action.payload.sessionId){
                     state.groupGeneralMessages[i].messages.push(action.payload.message);
                     state.groupGeneralMessages[i].latestMsgId= action.payload.message.id;
-                    break;
+                    
                 }
+
+                if(state.groupGeneralMessages[i].groupId === state.currentGroupId) 
+                    isCurrentGroup=true;
             }
-            if(state.currentGroupMode === GROUP_MODE.GENERAL_CHAT && state.currentGroupId === action.payload.groupId){
+        
+            if(state.currentGroupMode === GROUP_MODE.GENERAL_CHAT && isCurrentGroup){
+                //console.log('add to current messages');
                 state.messageItems = [...state.messageItems, action.payload.message];
             }
         },
+        
         setCurrentChat: (state,action) =>{
             console.log("set current chat");
     
             state.currentChatType = action.payload.chatType;
             state.currentSessionInfo = action.payload.sessionInfo;
             state.currentSessionId = action.payload.sessionId;
-            
+            state.messageItems = [];
+                    
         },
         setChatSessionP2PList: (state,action) =>{
             console.log('set sessions to state');
             console.log(action.payload.sessions);
             state.sessionP2PList = action.payload.sessions;
+        },
+        addOneChatSessionP2P: (state,action)=>{
+            state.sessionP2PList?.unshift(action.payload.chatSession);  
         },
         setSessionP2PMessages: (state,action)=>{
             
@@ -274,50 +314,94 @@ const chatSlice = createSlice({
             }
             else {
                 state.messageItems = state.sessionP2PMessages.filter(item=>item.sessionId === action.payload.sessionId)[0].messages;
-                
             }
+                  
 
             state.currentChatType = MESSAGE_TYPE.MESSAGE_P2P;
             state.currentSessionInfo = action.payload.sessionInfo;
             state.currentSessionIdP2P = action.payload.sessionId;
-
+            state.currentSessionId = action.payload.sessionId;
         },
+        
         addOneMessageP2P: (state,action)=>{
             for(let i=0;i<state.sessionP2PMessages.length;i++){
                 if(state.sessionP2PMessages[i].sessionId=== action.payload.message.sessionId){
                     state.sessionP2PMessages[i].messages.push(action.payload.message);
                     state.sessionP2PMessages[i].latestMsgId = action.payload.message.id;
-                    if(state.currentSessionIdP2P === action.payload.message.sessionId) {
-                        state.messageItems.push(action.payload.message);
-                    }
+                    
+                    
+                                        
+                    break;
                 }
             }
-            
+            if(state.sessionP2PList) {
+                for(let j=0;j<state.sessionP2PList.length;j++){
+                    if(state.sessionP2PList[j].sessionId === action.payload.message.sessionId) {
+                        const session = state.sessionP2PList[j];
+                        session.lastMessage = {
+                            authorId: action.payload.message.authorId,
+                            message: action.payload.message.content,
+                        }
+                        if( state.currentSessionIdP2P === action.payload.message.sessionId) {
+                            //state.messageItems.push(action.payload.message);
+                            state.currentMessageP2PMode.push(action.payload.message);                       
+                            if(state.pageMode === GROUP_PAGE_MODE.CHAT_P2P) {
+                                state.messageItems.push(action.payload.message);
+                            }
+                        }
+                        else {
+                            session.unseenCnt+=1;
+                        }
+                        if(j!= 0){
+                            state.sessionP2PList.splice(j,1);
+                            state.sessionP2PList.unshift(session);
+                        }
+                        break;
+                    }
+                }
+                //const session = state.sessionP2PList.filter(item => item.sessionId===action.payload.message.sessionId)[0];
+                
+            }
+
         },
         changePageMode: (state, action)=>{
             if(state.pageMode === action.payload.mode) return;
             if(state.pageMode === GROUP_PAGE_MODE.GROUP && action.payload.mode===GROUP_PAGE_MODE.CHAT_P2P){
-                // p2p=>group:
+                // group=>p2p:
                 state.currentMessageGroupMode= state.messageItems;
                 state.messageItems = state.currentMessageP2PMode;
-            
+                
+
             }
             if(state.pageMode=== GROUP_PAGE_MODE.CHAT_P2P && action.payload.mode === GROUP_PAGE_MODE.GROUP){
                 state.currentMessageP2PMode = state.messageItems;
                 state.messageItems = state.currentMessageGroupMode;                
             }
             state.pageMode = action.payload.mode;
-        }
+        },
+
+        setSeenSessionP2P : (state, action)=>{
+            if(!state.sessionP2PList) return;
+            console.log("set seen");
+            for(let i =0;i<state.sessionP2PList.length;i++){
+                if(state.sessionP2PList[i].sessionId === action.payload.sessionId) {
+                    state.sessionP2PList[i].unseenCnt = 0;
+                }
+            }
+        },
+       
     }
 });
+
 export const {
     setGroups, addOneGroup,setPostForGroup, setCurrentPost, 
     setMessageItems, setCurrentPostAndMessage,setFriendList,
     addNewMessageForPost, toggleFriendsModal,setShareResource,
-    setGroupUsers, setCurrentGroup,setGroupMode,
+    setGroupUsers, setCurrentGroup,setGroupMode, 
     setGeneralChatGroupMode,addOneMessageGroup, setCurrentChat,
     setChatSessionP2PList, setSessionP2PMessages,
-    addOneMessageP2P, changePageMode
+    addOneMessageP2P, changePageMode, setSeenSessionP2P,
+    addOneChatSessionP2P, resetState
 } = chatSlice.actions;
- 
+
 export default chatSlice.reducer; 

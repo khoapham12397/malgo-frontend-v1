@@ -9,12 +9,12 @@ import parse from 'html-react-parser';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state';
 import { Dispatch } from '@reduxjs/toolkit';
-import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
 import {
   fetchMathCategoriesAndTags,
   postMathProblem
 } from '../../state/actions/mathProblemListAction';
+import { getUsernameFromStorage } from '../../utils/getUser';
 
 type TypeTagProps = {
   id: string;
@@ -43,7 +43,7 @@ function TypeTag({ id, name, ind, removeTypeTag }: TypeTagProps) {
 
 function CreateMathProblemModal() {
   const dispatch: Dispatch<any> = useDispatch();
-  const { user } = useContext(UserContext);
+  const myUsername = getUsernameFromStorage();
 
   const [show, setShow] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -63,7 +63,7 @@ function CreateMathProblemModal() {
   const [category, setCategory] = useState('2');
 
   const handleShow = () => {
-    if (!user) {
+    if (!myUsername) {
       toast.error("You're not logged in!");
       return;
     }
@@ -87,7 +87,7 @@ function CreateMathProblemModal() {
       description: rawContent,
       title: title,
       tags: tagList,
-      username: user ? user.username : undefined,
+      username: myUsername ? myUsername: undefined,
       difficulty: difficulty,
       hint: hint
     };

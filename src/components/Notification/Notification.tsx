@@ -1,13 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Dropdown } from "react-bootstrap"
 import { BiBell } from "react-icons/bi"
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../contexts/UserContext";
 import { RootState } from "../../state";
 import { acceptFriend, getFriendRequest } from "../../state/actions/chatAction";
-import { getShares, postLookedShare } from "../../state/actions/notificationActions";
-import { getFixedUsername } from "../../utils/getUser";
+import { postLookedShare } from "../../state/actions/notificationActions";
+import { getFixedUsername, getUsernameFromStorage } from "../../utils/getUser";
 import { getAvatarLink } from "../../utils/utils";
 import './Notification.css';
 
@@ -80,8 +79,7 @@ const FriendEventContent = ({friendEvent}: FriendEvtContentProps) =>{
 
 export const Notification = () =>{
     const dispatch = useDispatch<any>();
-
-    const {user} = useContext(UserContext);
+    const myUsername = getUsernameFromStorage();
     const [lookedNotif, setLookedNotif] = useState(false);
 
     //const [notifications, setNotifications] = useState(null);
@@ -89,16 +87,16 @@ export const Notification = () =>{
     const friendEvents = useSelector((state: RootState)=> state.notification.friendEvents);
 
     const handleShareClick = (shareId: string) => {
-      if(user) postLookedShare(shareId, user.username);
+      if(myUsername) postLookedShare(shareId,myUsername);
     }
     
     useEffect(()=>{
-        if(user) {
+        if(myUsername) {
            
-            dispatch(getShares(user.username));
-            dispatch(getFriendRequest(user.username));
+            //dispatch(getShares(myUsername));
+            dispatch(getFriendRequest(myUsername));
         }
-    },[user]);
+    },[myUsername]);
 
     return (<Dropdown >
         <Dropdown.Toggle
@@ -121,7 +119,7 @@ export const Notification = () =>{
   
         <Dropdown.Menu style={{backgroundColor:'#22272e' }}>
             {shares?shares.map(share=>           
-            <Link key = {share.id} className='dropdown-item noti-item' to={`http://localhost:3000/${share.resourceLink}`} onClick={()=>handleShareClick(share.id)}>
+            <Link key = {share.id} className='dropdown-item noti-item' to={`${import.meta.env.VITE_FRONT_URL+share.resourceLink}`} onClick={()=>handleShareClick(share.id)}>
               <img src= {getAvatarLink(share.senderId)} className='avatar-msg'/> {getFixedUsername(share.senderId)} shared {share.resourceId} with you 
             </Link>
             ):""}

@@ -26,12 +26,22 @@ const notificationSlice = createSlice({
         setFriendEvents: (state, action) =>{
             
         },
+        
         addFriendEvents : (state, action) =>{
             if(!state.friendEvents) {
                 state.friendEvents = action.payload.friendEvents;
             }
-            else state.friendEvents = [...state.friendEvents, ...action.payload.friendEvents];
+            else {
+                //state.friendEvents = [...state.friendEvents, ...action.payload.friendEvents];
+                action.payload.friendEvents.forEach((item : any)=>{
+                    if(state.friendEvents && state.friendEvents.filter(evt => evt.id === item.id).length === 0){
+                        state.friendEvents.push(item);
+                    }
+                })
+            }
         },
+        
+
         changeFriendEventStatus: (state,action )=>{
             if(!state.friendEvents) return;
             for(let i=0; i< state.friendEvents.length;i++){

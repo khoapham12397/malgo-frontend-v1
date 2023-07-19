@@ -1,4 +1,4 @@
-.btn-new-thread{
+.btn-new-postgroup{
     background-color: #0d6efd;
     color: white;
     padding: 5px;
@@ -6,4 +6,9 @@
     display: flex;
     align-items: center;
     border-radius: 5px;
+}
+.btn-new-thread{
+    height: 50px;
+    border-top-right-radius:  0px;
+    border-bottom-right-radius: 0px;
 }

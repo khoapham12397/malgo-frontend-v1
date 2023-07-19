@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, {  useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -10,8 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state';
 import { Dispatch } from '@reduxjs/toolkit';
 import { editThread } from '../../state/actions/threadAction';
-import { UserContext } from '../../contexts/UserContext';
 import './threadModal.css';
+import { getUsernameFromStorage } from '../../utils/getUser';
 
 type TypeTagProps = {
   id: string;
@@ -47,8 +47,7 @@ function ModalEditThread({ threadData }: Props) {
   const [showPreview, setShowPreview] = useState(false);
   const [chosenTypes, setChosenTypes] = useState([] as Array<number>);
   const [title, setTitle] = useState('');
-  const { user } = useContext(UserContext);
-
+  const myUsername = getUsernameFromStorage();
   const handleClose = () => {
     setShow(false);
   };
@@ -76,7 +75,7 @@ function ModalEditThread({ threadData }: Props) {
       title: title,
       tags: tagList,
       id: threadData.id,
-      username: user ? user.username : undefined
+      username: myUsername ? myUsername : undefined
     };
     dispatch(editThread(params));
     setShow(false);

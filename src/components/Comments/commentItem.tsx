@@ -7,8 +7,8 @@ import parse from 'html-react-parser';
 import { likeComment } from '../../state/actions/threadAction';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import SmallLoader from '../SmallLoader/SmallLoader';
-import { UserContext } from '../../contexts/UserContext';
 import { getAvatarLink } from '../../utils/utils';
+import { getFixedUsername, getUsernameFromStorage } from '../../utils/getUser';
 
 type CommentItemProps = {
   commentData: CommentData;
@@ -17,7 +17,7 @@ type CommentItemProps = {
 
 export const CommentItem = ({ commentData, isFetched }: CommentItemProps) => {
   const dispatch: Dispatch<any> = useDispatch();
-  const { user } = useContext(UserContext);
+  const myUsername = getUsernameFromStorage();
 
   const cmt = useRef<HTMLDivElement>(null);
   const focusComment = useSelector(
@@ -58,7 +58,7 @@ export const CommentItem = ({ commentData, isFetched }: CommentItemProps) => {
       likeComment(
         commentData.id,
         commentData.rootId,
-        user ? user.username : undefined
+        myUsername?myUsername : undefined
       )
     );
   };
@@ -86,7 +86,7 @@ export const CommentItem = ({ commentData, isFetched }: CommentItemProps) => {
                   }}
                   style={{ color: 'blueviolet' }}
                 >
-                  {commentData.parent.author}{' '}
+                  {getFixedUsername(commentData.parent.author)}{' '}
                 </span>
                 <MathJaxContext>
                   <MathJax> {parse(commentData.content)}</MathJax>

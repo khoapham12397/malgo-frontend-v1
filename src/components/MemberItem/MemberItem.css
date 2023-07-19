@@ -1,0 +1,23 @@
+.online-user{
+    width: 20px;
+    height: 20px;
+    color: green;
+    border-radius: 90px;
+    right: 10px;
+    top: 10px;
+    z-index: 10;
+    margin-left: 10px;
+}
+.member-menu{
+    padding: 0px;
+    background-color: transparent;
+}
+.member-menu:active{
+    background-color: transparent;
+}
+.member-menu .item{
+    margin: 0px;
+}
+.member-item:hover{
+    cursor: pointer;
+}

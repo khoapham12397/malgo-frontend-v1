@@ -111,6 +111,14 @@ type ThreadTag = {
   title: string;
 };
 
+type ThreadDataSummary=  {
+  id: string;
+  title: string;
+  authorId: string;
+  content: string;
+  likes: number | undefined;
+  totalComments: number | undefined;
+}
 type CodingProblemFilter = {
   page: number | null;
   category: string | null;
@@ -161,6 +169,11 @@ type EditThreadParams = {
   category: string;
   username: string | undefined;
 };
+type ContestSummary = {
+  id: string;
+  startTime: Date;
+  duration: number;
+} 
 type CodingProblem = {
   id: string;
   code: string;
@@ -177,6 +190,9 @@ type CodingProblem = {
   acceptedNumber: number;
   authors: Array<{ username: string }>;
   tags: Array<{ tagId: string }>;
+  contestId: string | null;
+  contest : ContestSummary | null;
+  codeforcesTag : Array<any>
 };
 
 type CreateMathProblemParam = {
@@ -287,6 +303,7 @@ type Group = {
   name: string;
   creatorId: string;
   createdAt: string;
+  generalChatSessionId: string;
   mode: string;
 }
 
@@ -326,13 +343,22 @@ type PostManageMsg = {
 
 type GroupManageChatMsg = {
   groupId: string;
+  sessionId: string;
   messages: Array<ChatMessages>;
   latestMsgId: string;
   oldestMsgId: string;
 }
-
+type PostData = {
+  id: string;
+  content: string;
+  authorId: string;
+  createdAt: number;
+  groupId: string;
+  title: string;
+}
 type Friend = {
   username: string;
+  isOnline: boolean | undefined |null;
 }
 type ChatSessionInfo = {
   title: string;
@@ -341,7 +367,7 @@ type ChatSessionInfo = {
 type ChatSessionP2P = {
   sessionId: string;
   partner: string;
-  lastMessage: ChatMessages;
+  lastMessage: {authorId : string; message: string};
   lastUpdate: number;
   unseenCnt: number;
   joinedAt: number;
@@ -353,7 +379,6 @@ type SessionMessage = {
   latestMsgId: string;
   oldestMsgId: string;
 }
-
 
 type ChatState = {
 
@@ -388,11 +413,15 @@ type ChatState = {
   currentMessageGroupMode: Array<ChatMessages>;
   currentMessageP2PMode: Array<ChatMessages>;
   pageMode: string;
+
+  currentGeneralSessionId: string | null;
+
 }
 
 
 type GroupUser = {
   username: string;
+  isOnline: boolean | undefined | null;
 }
 
 type ShareResourceParams = {
@@ -466,3 +495,113 @@ type AddUserToGroupParam={
   username2: string;
   groupId: string;
 }
+
+type SubmissionData = {
+  username: string;
+  id: string;
+  contestId: string | null;
+  problemId: string;
+  code: string;
+  language: string;
+  result: string;
+  status: Array<number>;
+  createTime: string;
+  statistic_info: any;
+}
+type SubmissionFilter = {
+  username: string | undefined;
+  contestId: string | undefined;
+  problemId: string | undefined;
+}
+
+
+type AlgorithmContest = {
+  id: string;
+  name: string;
+  start_time: number;
+  duration: number;
+  rating_floor: number;
+  rating_ceil: number;
+  has_register: boolean;
+};
+
+type CodingContestProblem = {
+  id: string;
+  contest_id: string;
+  time_limit: number;
+  memory_limit: number;
+  description: string;
+  points: number;
+  display_order: number;
+  author: Array<{ username: string }>;
+  testcases: string;
+  name: string;
+  points_loss_per_min: number;
+};
+
+type CodingLanguage = {
+  id: number;
+  name: string;
+};
+
+type CodingSubmission = {
+  ID: string;
+  Time: number;
+  Memory: number;
+  ProblemID: string;
+  Username: string;
+  Verdict: string;
+  SubmittedAt: string;
+  LanguageID: number;
+  SourceCode: string;
+};
+
+type CodingContestSubmission = {
+  id: string;
+  problem_id: string;
+  contest_id: string;
+  username: string;
+  submitted_at: string;
+  time: number;
+  memory: number;
+  language_id: number;
+  verdict: string;
+  points: number;
+  source_code: string;
+};
+
+type CodingSubmissionRecord = {
+  id: string;
+  problem_id: string;
+  contest_id: string;
+  username: string;
+  submitted_at: string;
+  time: number;
+  memory: number;
+  language_id: number;
+  verdict: string;
+  points: number;
+};
+
+type CodingContestProblemStatus = {
+  problem_id: string;
+  points: number | null;
+  minutes_to_solve: number | null;
+  penalty: number;
+};
+
+type CodingContestStanding = {
+  rank: number;
+  username: string;
+  total_points: number;
+  problem_statuses: Array<CodingContestProblemStatus>;
+};
+
+type User = {
+  username: string;
+  email: string;
+  auth0_id: string;
+  admin_type: string;
+  create_time: string;
+  is_disabled: boolean;
+};

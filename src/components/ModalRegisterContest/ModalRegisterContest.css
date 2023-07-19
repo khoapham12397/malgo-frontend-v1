@@ -1,0 +1,15 @@
+.modal-register-contest-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.modal-register-contest-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  margin-bottom: 20px;
+}
+
+.modal-register-contest-item-title {
+  font-weight: bold;
+}

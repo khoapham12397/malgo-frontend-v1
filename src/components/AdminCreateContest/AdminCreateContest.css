@@ -1,0 +1,25 @@
+.admin-create-contest-container {
+  border: 3px solid var(--primary-component-color);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.admin-create-contest-header {
+  font-size: 2rem;
+}
+
+.admin-create-contest-form-item {
+  margin: 50px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.admin-create-contest-form-label {
+  font-weight: bold;
+}
+
+.admin-create-contest-form-input {
+  padding: 10px;
+  border: 1px solid var(--primary-component-color);
+  border-radius: 5px;
+}

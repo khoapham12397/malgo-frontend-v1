@@ -13,7 +13,6 @@ import {
 } from 'react-router-dom';
 import { MathProblemFilter } from '../../components/MathProblemFilter/MathProblemFilter';
 import CreateMathProblemModal from '../../components/MathProblemModal/CreateMathProblemModal';
-import { UserContext } from '../../contexts/UserContext';
 import { RootState } from '../../state';
 import {
   fetchInit,
@@ -24,10 +23,10 @@ import './MathProblems.css';
 import parse from 'html-react-parser';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { formatMathExpr, processText } from '../../utils/utils';
+import { getFixedUsername, getUsernameFromStorage } from '../../utils/getUser';
 
 const MathProblems = () => {
   const dispatch: Dispatch<any> = useDispatch();
-  const { user, setUser } = useContext(UserContext);
 
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -45,6 +44,7 @@ const MathProblems = () => {
   const filter = useSelector(
     (state: RootState) => state.mathProblemList.filter
   );
+  const myUsername = getUsernameFromStorage();
   useEffect(() => {
     
     if(!problemSetList) {
@@ -96,13 +96,9 @@ const MathProblems = () => {
       link += '&tag=' + item;
     });
 
-    navigate('/mathproblems' + link);
+    navigate('/math' + link);
   };
   
-  const handleSetTestUser = () => {
-    setUser({ username: 'test2', email: 'test2@gmail.com' });
-    toast.success('you are logined as test2 user');
-  };
 
   return (
     <>
@@ -116,11 +112,10 @@ const MathProblems = () => {
         >
           <CreateMathProblemModal />
           <div>
-            {user ? (
-              <div>Wellcome {user.username.split('@')[0]}</div>
-            ) : (
-              <Button onClick={handleSetTestUser}>Login as test user</Button>
-            )}
+            {myUsername ? (
+              <div>Wellcome {getFixedUsername(myUsername)}</div>
+            ):'' 
+            }
           </div>
         </div>
         {filter.total ? (
@@ -159,18 +154,18 @@ const MathProblems = () => {
               </thead>
               <tbody>
                 {problems.map((item: MathProbSummary) => (
-                  <tr>
+                  <tr key = {item.id}>
                     <td>
                       <Link
                         style={{ fontWeight: 'bold', color: 'black' }}
-                        to={'/mathproblem/' + item.id}
+                        to={'/math/' + item.id}
                       >
                         {item.title}
                       </Link>
                     </td>
                     <td>
                       <MathJaxContext>
-                        <MathJax>
+                        <MathJax dynamic>
                           {parse(formatMathExpr(processText(item.description)))}
                         </MathJax>
                       </MathJaxContext>

@@ -1,0 +1,26 @@
+.single-contest-container {
+  margin-top: 50px;
+  /* height: 80vh; */
+}
+
+.single-contest-submenu {
+  width: 300px;
+  font-size: 0.8rem;
+}
+
+.single-contest-submenu-list {
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 0;
+}
+
+.single-contest-submenu-item:hover {
+  cursor: pointer;
+  color: var(--primary-component-color);
+}
+
+.submenu-item-active {
+  color: var(--primary-component-color);
+  font-weight: bold;
+}

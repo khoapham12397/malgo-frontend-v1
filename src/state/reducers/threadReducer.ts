@@ -264,5 +264,4 @@ export const {
   setPendingReplyComment,
   setPendingSendComment
 } = threadSlice.actions;
-
 export default threadSlice.reducer;

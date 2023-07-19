@@ -7,6 +7,7 @@ type CodingProblemInfo = {
     id: string;
     name: string;
   };
+  codeforcesTag: Array<string>;
   difficulty: number;
   practicePoint: number;
   acceptedNumber: number;

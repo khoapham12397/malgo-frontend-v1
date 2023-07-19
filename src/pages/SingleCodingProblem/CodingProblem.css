@@ -16,10 +16,9 @@
   border-right: 1px solid #ddd;
   text-align: center;
 }
-
 .left-side {
   width: 40%;
-  font-size: 20px;
+  font-size: 18px;
   height: 92vh;
   overflow-y: scroll;
   border-right: 1px solid #ddd;
@@ -34,4 +33,7 @@
 }
 .right-side {
   width: 60%;
+}
+#description{
+  font-family: 'arial';
 }

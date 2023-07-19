@@ -3,8 +3,8 @@ import { Dropdown } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 import { BiPlusCircle } from 'react-icons/bi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { UserContext } from '../../contexts/UserContext';
 import { getRelationship, requestFriend } from '../../state/actions/chatAction';
+import { getUsernameFromStorage } from '../../utils/getUser';
 import ModalEditThread from '../ThreadModal/modalEditThread';
 
 type Props = {
@@ -16,33 +16,34 @@ const RelTwoUser= {
   ONE_REQUEST_TWO: 'ORT',
   TWO_REQUEST_ONE: 'TRO',
 }
+
+
 export const ThreadOptionMenu = ({ threadData }: Props) => {
   const [myThread, setMyThread] = useState(false);
   const [relationship, setRelationship] = useState<string|null>(null);
-
-  const { user } = useContext(UserContext);
+  const myUsername = getUsernameFromStorage();
   useEffect(()=>{
     
-    if(user) {
-      getRelationship(user.username,threadData.author.username)
+    if(myUsername) {
+      getRelationship(myUsername,threadData.author.username)
       .then(relationship=>{
         //console.log(`relationship: ${relationship}`);
         setRelationship(relationship);
       });     
     }
-  },[user,threadData.author.username]);
+  },[myUsername,threadData.author.username]);
 
   useEffect(() => {
-    if (!user) return;
-    if (threadData.author.username === user.username) {
+    if (!myUsername) return;
+    if (threadData.author.username === myUsername) {
       setMyThread(true);
     }
     else setMyThread(false);
   }, [threadData]);
 
   const handleAddFriend = (username: string)=>{
-    if(user) {
-      requestFriend(user.username, username)
+    if(myUsername) {
+      requestFriend(myUsername , username)
       .then(result=>{
         toast.success("Send Friend Request Successed");
         setRelationship(RelTwoUser.ONE_REQUEST_TWO);

@@ -17,7 +17,7 @@ export const MathNoteItem = ({ mathNote, type }: Props) => {
   }, []);
 
   return (
-    <div style={{ marginTop: '10px' }}>
+    <div className='mathnote'>
       {type == 'solution' ? (
         <div className='sol-item' onClick={() => setShow(!show)}>
           {' '}
@@ -39,7 +39,7 @@ export const MathNoteItem = ({ mathNote, type }: Props) => {
           </MathJaxContext>
           <div style={{ marginTop: '10px', marginBottom: '10px' }}>
             {mathNote.imageLink.map(item => (
-              <img width='100%' src={item} key={item} />
+              <img width='100%' src={import.meta.env.VITE_URL+item} key={item} />
             ))}
           </div>
         </div>

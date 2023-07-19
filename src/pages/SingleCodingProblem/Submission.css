@@ -1,0 +1,37 @@
+.submission-container {
+  padding: 10px;
+}
+
+.submission-container:hover {
+  cursor: pointer;
+}
+
+.submission-card {
+  margin: 20px 0;
+}
+
+.submission-accepted {
+  color: #198754;
+}
+
+.submission-processing {
+  color: var(--primary-component-color);
+}
+
+.submission-processing::after {
+  content: '...';
+}
+
+.submission-failed {
+  color: rgb(219, 59, 35);
+}
+
+.submission-card-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  margin: 5px 0;
+}
+
+.submission-card-item-title {
+  font-weight: bold;
+}

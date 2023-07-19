@@ -9,33 +9,34 @@ import { Table } from 'react-bootstrap';
 import { BiBookAdd, BiEdit, BiLink, BiNote, BiStar } from 'react-icons/bi';
 import { MathEditor } from '../../components/MathEditor/MathEditor';
 import { TestLogin } from '../../components/TestLogin/TestLogin';
-import { UserContext } from '../../contexts/UserContext';
 import { MathNoteItem } from '../../components/MathNoteItem/MathNoteItem';
-import { getAccessTokenFromStorage } from '../../utils/getUser';
+import {  getUsernameFromStorage } from '../../utils/getUser';
 import { getMathProblem } from '../../state/actions/mathProblemListAction';
 
 export function SingleMathProblem() {
-  const { problemId } = useParams();
+  const { id } = useParams();
   const [problemState, setProblemState] = useState<MathProbState | null>(null);
   const [tags, setTags] = useState<Array<MathProblemTag>>([]);
   const [showTags, setShowTags] = useState(false);
   const [showType, setShowType] = useState('');
   const noteArea = useRef<HTMLTextAreaElement>(null);
-  const { user, setUser } = useContext(UserContext);
+  
+  const myUsername = getUsernameFromStorage();
 
   //show note | solution | editor
 
   const problemTags = useSelector(
     (state: RootState) => state.mathProblemList.problemTags
   );
+  
 
   useEffect(() => {
     
-    let url = import.meta.env.VITE_API_URL + 'mathproblem/problem/' + problemId;
-    if (user) url += '?username=' + user.username;
+    //let url = import.meta.env.VITE_API_URL + 'mathproblem/problem/' + problemId;
+    //if (user) url += '?username=' + user.username;
 
-    if(problemId) {
-      getMathProblem(problemId, user?user.username:undefined)
+    if(id) {
+      getMathProblem(id, myUsername?myUsername:undefined)
       .then(result => {
         const problemState: MathProbState = {
           mathProblem: result.data.mathProblem,
@@ -92,7 +93,7 @@ export function SingleMathProblem() {
       </div>
 
       <div className='contain-all'>
-        <div className='main-container'>
+        <div className='container-all'>
           {problemState != null ? (
             <MathProblemItem mathProbData={problemState.mathProblem} />
           ) : (

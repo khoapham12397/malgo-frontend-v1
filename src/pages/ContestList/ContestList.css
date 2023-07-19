@@ -1,0 +1,95 @@
+.main-container{
+    display: flex;   
+    width: 100%;   
+}
+.list-type{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #DDD;
+    padding-bottom: 10px;
+}
+.left-sidebar{
+    width: 100%;
+    margin-bottom: 10px;
+    border: 1px solid #DDD;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+}
+.contest-type{
+    padding-right: 10px;
+    padding-bottom: 5px;
+    font-size: 20px;
+    color: #3d7ec5;
+}
+.contest-type:hover{
+    cursor: pointer;
+}
+.chosen-type{
+    font-weight: bold;  
+    color: black;
+}
+
+.header-item{
+    border-bottom: 1px solid #DDD;
+    padding: 10px;
+    padding-left: 20px;
+    font-size: 22px;
+    background-color: #DDD;
+}
+.left-sidebar .item{
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    padding-left: 20px;
+    list-style: none;
+    font-weight: lighter;
+}
+.category-lst{
+    border: 1px solid #ddd;
+    padding: 0px;
+    margin: 0px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+.left-sidebar .header{
+    font-size: 22px;
+    border-bottom: 1px solid #ddd;
+}
+.left-sidebar .box{
+    margin-top: 10px;
+}
+.rated-range{
+    color: grey;
+    font-size: 14px;
+}
+
+.box .btn{
+    margin-top: 10px;
+}
+
+.contest-area{
+    padding-left: 20px;
+    width: 72%;
+}
+
+.contest-area .header{
+    font-size: 28px;
+}
+.contests {
+    
+    margin-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #DDD;
+}
+.link{
+    color: #3d7ec5;
+}
+.link:hover{
+    cursor: pointer;
+}
+.tbl-contest{
+    border: 1px solid #DDD;
+}

@@ -1,0 +1,22 @@
+.contest-filter-container {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-top: 43px;
+  width: 300px;
+  margin-left: 50px;
+}
+
+.contest-filter-header {
+  background-color: #696969;
+  padding: 10px;
+  color: white;
+  border-radius: 10px 10px 0 0;
+}
+
+.contest-filter-item {
+  padding: 10px;
+}
+
+.contest-filter-range-rating {
+  color: #888383;
+}

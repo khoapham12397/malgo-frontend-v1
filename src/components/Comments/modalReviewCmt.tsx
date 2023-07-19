@@ -16,7 +16,7 @@ function ModalReviewCmt({ comment, show, handleClose, handleSendCmt }: Props) {
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>You are posting...</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -31,7 +31,11 @@ function ModalReviewCmt({ comment, show, handleClose, handleSendCmt }: Props) {
           <Button variant='secondary' onClick={handleClose}>
             Close
           </Button>
-          <Button variant='primary' onClick={handleSendCmt}>
+          <Button
+            variant='primary'
+            onClick={handleSendCmt}
+            style={{ backgroundColor: '#3b5998', border: '#3b5998' }}
+          >
             Post
           </Button>
         </Modal.Footer>

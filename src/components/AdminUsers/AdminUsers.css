@@ -1,0 +1,28 @@
+.admin-users-table-username:hover {
+  cursor: pointer;
+  color: var(--primary-component-color) !important;
+}
+
+.admin-users-table-role {
+  font-weight: 600;
+}
+
+.admin-users-table-role.super-admin {
+  color: rgb(233, 30, 99) !important;
+}
+
+.admin-users-table-role.admin {
+  color: green !important;
+}
+
+.admin-users-table-role.regular-user {
+  color: var(--primary-component-color) !important;
+}
+
+.admin-users-table-disable {
+  text-align: center;
+}
+
+.user-disabled {
+  text-decoration: line-through;
+}

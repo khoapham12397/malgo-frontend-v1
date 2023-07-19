@@ -45,7 +45,7 @@
   margin: 10px;
   width: 440px;
 }
-.main-container {
+.container-all {
   width: 75%;
   padding-right: 2%;
 }
@@ -77,14 +77,14 @@
 .edit-box-open {
   visibility: visible;
   border: 1px solid #ddd;
-  box-shadow: 3px 3px #dddddd;
+  margin-bottom:  20px;
 }
 .edit-box {
   visibility: hidden;
 }
 
 @media (max-width: 600px) {
-  .main-container {
+  .container-all {
     width: 100%;
     padding-right: 0;
   }

@@ -3,7 +3,6 @@
   height: 50px;
   background-color: var(--primary-color);
   display: flex;
-  margin-top: 50px;
 }
 
 .footer-container .footer-item {
@@ -11,6 +10,7 @@
   display: flex;
   align-items: center;
   margin: 0 20px;
+  flex-wrap: wrap;
 }
 
 .footer-item.nav-links {

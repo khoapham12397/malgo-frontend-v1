@@ -1,19 +1,19 @@
-import { useContext, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { Button, Form, Modal } from "react-bootstrap"
 import { BiPlus, BiPlusCircle } from "react-icons/bi"
 import { useDispatch } from "react-redux"
-import { UserContext } from "../../contexts/UserContext"
 import { createGroup } from "../../state/actions/chatAction"
+import { getUsernameFromStorage } from "../../utils/getUser"
 
 export const CreateGroupModal = ()=>{
     const dispatch = useDispatch<any>();
     const [show, setShow] = useState(false);
+    const myUsername = getUsernameFromStorage();
 
-    const {user}= useContext(UserContext);
     const nameRef = useRef<HTMLInputElement>(null);
     const handleCreateGroup = ()=>{
-        if(user && nameRef.current && nameRef.current.value.length > 0) {
-            dispatch(createGroup(user.username, nameRef.current?.value));
+        if(myUsername && nameRef.current && nameRef.current.value.length > 0) {
+            dispatch(createGroup(myUsername, nameRef.current?.value));
             setShow(false);
         }
     }

@@ -1,0 +1,39 @@
+.contest-tab-ctl {
+  padding: 10px;
+  background-color: darkgray;
+  width: 50%;
+  border-right: 1px solid #ddd;
+  text-align: center;
+}
+
+.contest-tab-ctl:hover {
+  cursor: pointer;
+}
+
+.contest-tab-ctl-active {
+  background-color: darkslategrey;
+  color: white;
+  padding: 10px;
+  width: 50%;
+  border-right: 1px solid #ddd;
+  text-align: center;
+}
+
+.left-side {
+  width: 40%;
+  font-size: 1rem;
+  height: 92vh;
+  overflow-y: scroll;
+  border-right: 1px solid #ddd;
+}
+.lan-form {
+  width: 200px;
+}
+.btn-area {
+  display: flex;
+  justify-content: right;
+  margin-top: 10px;
+}
+.right-side {
+  width: 60%;
+}

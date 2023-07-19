@@ -1,0 +1,7 @@
+.single-contest-submission-table-verdict-accepted {
+  color: #198754 !important;
+}
+
+.single-contest-submission-table-verdict-failed {
+  color: rgb(219, 59, 35) !important;
+}

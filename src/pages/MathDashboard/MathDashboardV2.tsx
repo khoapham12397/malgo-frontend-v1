@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast';
 import { MathProblemEdit } from '../../components/MathProblemForm/MathProblemEdit';
 import { MathProbTable } from '../../components/MathProblemForm/MathProbTable';
 import { createMathSet } from '../../state/actions/mathProblemListAction';
+import { getUsernameFromStorage } from '../../utils/getUser';
 
 type ChosenProblem = {
   id: string;
@@ -26,10 +27,16 @@ const ProblemSetForm = ({ mode, handleChangeMode }: ProblemSetProps) => {
   const [chosenProblems, setChosenProblems] = useState<Array<ChosenProblem>>(
     []
   );
+  const myUsername = getUsernameFromStorage();
+
   const [chooseMode, setChooseMode] = useState(false);
   const [clickChoose, setClickChoose] = useState(false);
 
   const handleSubmit = () => {
+    if(!myUsername){
+      toast.error("you haven't logined yet");
+      return;
+    }
     const x = inpTitle.current ? inpTitle.current.value : '';
     if (chosenProblems.length == 0) {
       toast.error('Problem Set is empty');
@@ -42,7 +49,7 @@ const ProblemSetForm = ({ mode, handleChangeMode }: ProblemSetProps) => {
     const params: CreateMathProbSetParam = {
       numProb: chosenProblems.length,
       title: x,
-      username: 'test2',
+      username: myUsername,
 
       problems: chosenProblems.map((item, index) => ({
         problemId: item.id,
@@ -149,7 +156,7 @@ const MathPanel = () => {
   useEffect(() => {
     if (filter.page != 0 && filter.page != null) setPage(filter.page);
   }, [filter.page]);
-
+  
   return (
     <div>
       <div className='pagination'>

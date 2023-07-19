@@ -10,3 +10,8 @@
 .sol-item:hover {
   cursor: pointer;
 }
+
+.mathnote{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

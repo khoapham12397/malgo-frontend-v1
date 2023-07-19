@@ -1,14 +1,14 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import {  useEffect, useRef, useState } from 'react';
 import parse from 'html-react-parser';
 import { formatMathExpr, processText } from '../../utils/utils';
 import FileUploadMultiple from '../FileUploadMultiple/FileUploadMultiple';
 import { BsFillImageFill } from 'react-icons/bs';
 import { Button } from 'react-bootstrap';
-import { UserContext } from '../../contexts/UserContext';
 import './MathEditor.css';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { toast } from 'react-hot-toast';
 import { createMathNote, editMathNote } from '../../state/actions/mathProblemListAction';
+import { getUsernameFromStorage } from '../../utils/getUser';
 
 type Props = {
   mathProblem: MathProbItem;
@@ -30,7 +30,7 @@ export const MathEditor = ({
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  const { user, setUser } = useContext(UserContext);
+  const myUsername = getUsernameFromStorage();
 
   const [files, setFiles] = useState<Array<any>>([]);
 
@@ -60,7 +60,7 @@ export const MathEditor = ({
   }, [showType]);
 
   const handleSave = (addToSolution: boolean) => {
-    if (!user) {
+    if (!myUsername) {
       toast.error('You must login before');
       return;
     }
@@ -73,7 +73,7 @@ export const MathEditor = ({
 
     const param = !mathNote
       ? ({
-          username: user ? user.username : undefined,
+          username: myUsername ? myUsername: undefined,
           content: noteRaw,
           numImg: files.length,
           problemId: mathProblem.id,
@@ -84,7 +84,7 @@ export const MathEditor = ({
           content: noteRaw,
           oldImages: oldFiles,
           problemId: mathProblem.id,
-          username: user ? user.username : undefined
+          username: myUsername ? myUsername: undefined
         } as EditMathNoteParam);
     
     data.set('data', JSON.stringify(param));

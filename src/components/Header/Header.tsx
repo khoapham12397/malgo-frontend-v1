@@ -4,10 +4,12 @@ import { FaUserAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { ReactComponent as FavLogo } from '../../../favicon.svg';
 import './Header.css';
+import { Role } from '../../config/enums';
 
 const Header: FunctionComponent = () => {
   const navigate = useNavigate();
   const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const role = localStorage.getItem('role');
 
   const handleClickIcon = async () => {
     if (isAuthenticated) {
@@ -21,39 +23,49 @@ const Header: FunctionComponent = () => {
     <>
       <nav className='nav-container'>
         <div className='nav-container-item nav-left-items'>
-          <Link to='/' className='nav-logo-container'>
+          <Link to='algorithm' className='nav-logo-container'>
             <FavLogo />
           </Link>
 
           <div className='nav-links'>
-            <div className='subnav-container'>
-              <div className='nav-link subnav-btn'>
-                PROBLEM
-                <div className='subnav-content'>
-                  <Link to='coding' className='nav-link subnav-container-item'>
-                    Coding
-                  </Link>
-                  <Link to='mathproblems' className='nav-link subnav-container-item'>
-                    Math
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <Link to='algorithm' className='nav-link'>
+              ALGORITHM
+            </Link>
+
+            <Link to='math' className='nav-link'>
+              MATH
+            </Link>
 
             <Link to='contest' className='nav-link'>
               CONTEST
             </Link>
 
-            <Link to='threads/All' className='nav-link'>
-              DISCUSSION
+            <Link to='threads' className='nav-link'>
+              THREAD
             </Link>
 
             <Link to='rank' className='nav-link'>
               RANK
             </Link>
-            <Link to='group' className='nav-link'>GROUP</Link>
-            <Link to='dashboard/math' className='nav-link'>ADMIN</Link>
-
+            <Link to='submission/1' className='nav-link'>
+              STATUS
+            </Link>
+            {isAuthenticated &&
+              (role === Role.admin || role === Role.super_admin) && (
+                <Link to='admin' className='nav-link'>
+                  ADMIN
+                </Link>
+               
+              )}
+              <Link to='chat' className='nav-link'>
+                CHAT
+              </Link>
+              <Link to='game' className='nav-link'>
+                GAME
+              </Link>
+              <Link to='contest2' className='nav-link'>
+                CONTEST V2
+              </Link>
           </div>
         </div>
 

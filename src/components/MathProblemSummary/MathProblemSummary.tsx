@@ -6,7 +6,6 @@ import parse from 'html-react-parser';
 import { processText, formatMathExpr } from '../../utils/utils';
 import { Link } from 'react-router-dom';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
-import { UserContext } from '../../contexts/UserContext';
 import { Table } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state';

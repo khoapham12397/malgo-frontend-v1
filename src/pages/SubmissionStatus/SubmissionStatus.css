@@ -1,0 +1,18 @@
+.green{
+    color: green;
+    font-weight: bold;
+}
+.gray {
+    color: gray;
+    font-weight: bold;
+}
+.blue {
+    color: blue;
+    font-weight: bold;
+}
+.submission-id{
+    color: #3d7ec5;
+}
+.submission-id:hover{
+    cursor: pointer;
+}

@@ -27,7 +27,7 @@ export const fetchThreads = (
       '&page=' +
       page;
     if (username != undefined) url += '&username=' + username;
-    
+    console.log(`fetch threads with username: ${username}`);
     fetch(url, {method: 'GET', headers :{'Authorization': `Bearer ${getAccessTokenFromStorage()}`}})
       .then(res => res.json())
       .then(result => {
@@ -80,4 +80,3 @@ export const likeThreadInList = (
       });
   };
 };
-

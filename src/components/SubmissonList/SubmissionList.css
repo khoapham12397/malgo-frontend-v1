@@ -1,0 +1,50 @@
+.info-item  {
+    align-items:  center;
+    width: 26%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.info-item-extend {
+    display: flex;
+    align-items:  center;
+}
+.info-item-extend:hover{
+    cursor: pointer;
+}
+.show {
+    display: block;
+}
+.hidden{
+    display: none;
+}
+.submission-row{
+    display: flex;
+    width:100%;
+    padding: 5px;
+}
+.problem-title{
+    color: #3d7ec5;
+    font-weight: bold;
+}
+.user-acc {
+    color: gray;
+    font-weight: bold;
+}
+.submission-item{
+    border-bottom: 1px solid #DDD;
+    font-size: 18px;
+}
+.accepted-row {
+    padding: 10px;
+}
+.normal-row{
+    background-color: azure;
+}
+.submission-list {
+    border: 1px solid #DDD;
+    margin-left: 10px;
+}
+.red{
+    color: red;
+    font-weight: bold;
+}

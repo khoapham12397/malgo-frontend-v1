@@ -1,0 +1,27 @@
+.single-contest-standing-table-title {
+  text-align: center;
+}
+
+.single-contest-standing-table-title .standing-header {
+  font-size: 0.8rem;
+}
+
+.single-contest-standing-table-body {
+  text-align: center;
+}
+
+.single-contest-standing-table-body .standing-points {
+  color: green;
+  font-size: 1.5rem;
+}
+
+.single-contest-standing-table-body .standing-minutes {
+  font-size: 0.7rem;
+  color: grey;
+}
+
+.single-contest-standing-table-body .standing-penalty {
+  color: red;
+  font-size: 0.8rem;
+  font-weight: normal;
+}
