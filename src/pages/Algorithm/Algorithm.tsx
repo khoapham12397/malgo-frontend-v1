@@ -22,7 +22,7 @@ import { initSocketClient } from '../../state/actions/chatAction';
 
 const Algorithm = () => {
   const navigate = useNavigate();
-  //const { isAuthenticated, userAuthQuery } = useUserAuth();
+  const { isAuthenticated, userAuthQuery } = useUserAuth();
   const { logoutUser } = useLogout();
   const dispatch: Dispatch<any> = useDispatch();
   const problems = useSelector(
@@ -35,34 +35,9 @@ const Algorithm = () => {
   const [searcParams] = useSearchParams();
   const page = searcParams.get('page')
 
-  const {getAccessTokenSilently, loginWithRedirect} = useAuth0();
-  const [isAuthen, setIsAuthen] = useState(false);
 
   useEffect(() => {
     //dispatch(fetchCpCategoriesAndTags());
-    
-    getAccessTokenSilently()
-    .then(async accessToken => {
-      alert('get token :'+ accessToken);
-      const response = await axiosInstance.post('auth/check', {accessToken});
-      if(response.data.success) {
-        const data = response.data;
-        localStorage.setItem('username', data.username);
-        sessionStorage.setItem('username', data.username);
-        setAccessTokenToStorage(data.token);
-        localStorage.setItem('email', data.email);
-        localStorage.setItem('role', data.role);
-        initSocketClient(data.username);
-        setIsAuthen(true);
-      } 
-    })
-    .catch(error=>{
-      //toast.error('logined error');
-      alert('get token error');
-      loginWithRedirect();
-      setIsAuthen(true);
-    })
-
     
     if(!page) {
       fetchInit(dispatch);
@@ -80,8 +55,8 @@ const Algorithm = () => {
     dispatch(fetchCProblems(params));
 
   }, [page]);
-//  if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
-  /*
+  if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
+  
   if (userAuthQuery.isError)
     return <pre>{JSON.stringify(userAuthQuery.error)}</pre>;
 
@@ -89,8 +64,7 @@ const Algorithm = () => {
     toast.error('Your account has been disabled');
     logoutUser();
   }
-  */
-  if(!isAuthen) return <Spinner/> 
+  
   const handleChangePage = (page: number) => {
     
     navigate('/algorithm?page='+page);
