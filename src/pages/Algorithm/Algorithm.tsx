@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PaginationControl } from 'react-bootstrap-pagination-control';
 import Table from 'react-bootstrap/Table';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,10 +15,14 @@ import {
 } from '../../state/actions/codingProblemListAction';
 import { toast } from 'react-hot-toast';
 import { FcAddressBook, FcOk } from 'react-icons/fc';
+import { useAuth0 } from '@auth0/auth0-react';
+import axiosInstance from '../../config/axiosInstance';
+import { setAccessTokenToStorage } from '../../utils/getUser';
+import { initSocketClient } from '../../state/actions/chatAction';
 
 const Algorithm = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, userAuthQuery } = useUserAuth();
+  //const { isAuthenticated, userAuthQuery } = useUserAuth();
   const { logoutUser } = useLogout();
   const dispatch: Dispatch<any> = useDispatch();
   const problems = useSelector(
@@ -31,13 +35,36 @@ const Algorithm = () => {
   const [searcParams] = useSearchParams();
   const page = searcParams.get('page')
 
+  const {getAccessTokenSilently, loginWithRedirect} = useAuth0();
+  const [isAuthen, setIsAuthen] = useState(false);
+
   useEffect(() => {
     //dispatch(fetchCpCategoriesAndTags());
+    
+    getAccessTokenSilently()
+    .then(async accessToken => {
+      const response = await axiosInstance.post('auth/check', {accessToken});
+      if(response.data.success) {
+        const data = response.data;
+        localStorage.setItem('username', data.username);
+        sessionStorage.setItem('username', data.username);
+        setAccessTokenToStorage(data.token);
+        localStorage.setItem('email', data.email);
+        localStorage.setItem('role', data.role);
+        initSocketClient(data.username);
+        setIsAuthen(true);
+      } 
+    })
+    .catch(error=>{
+      //toast.error('logined error');
+      loginWithRedirect();
+    })
+
+    
     if(!page) {
       fetchInit(dispatch);
       return;
     }
-  
     const params: GetProblemsParam = {
       category: filter.category,
       startDif: filter.startDif,
@@ -50,9 +77,8 @@ const Algorithm = () => {
     dispatch(fetchCProblems(params));
 
   }, [page]);
-  
-  if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
-
+//  if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
+  /*
   if (userAuthQuery.isError)
     return <pre>{JSON.stringify(userAuthQuery.error)}</pre>;
 
@@ -60,7 +86,8 @@ const Algorithm = () => {
     toast.error('Your account has been disabled');
     logoutUser();
   }
-
+  */
+  if(!isAuthen) return <Spinner/> 
   const handleChangePage = (page: number) => {
     
     navigate('/algorithm?page='+page);
