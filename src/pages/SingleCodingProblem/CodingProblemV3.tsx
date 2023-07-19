@@ -5,9 +5,6 @@ import parse from 'html-react-parser';
 
 import { Button, Form } from 'react-bootstrap';
 import '../SingleCodingProblem/style.css';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../state';
-import { formatMathExpr } from '../../utils/utils';
 import { Editor, loader } from '@monaco-editor/react';
      
 import { languages } from './Constants/LanguageOptions';
@@ -17,20 +14,18 @@ import { getUsernameFromStorage } from '../../utils/getUser';
 import { toast } from 'react-hot-toast';
 import { SubmissionList } from '../../components/SubmissonList/SubmissionList';
 import { CodingProblemSolTab } from '../../components/CodingProblemSolTab/CodingProblemSolTab';
+import { formatMathExpr } from '../../utils/utils';
 
 export const CodingProblemV3 = () => {
   const { problemId } = useParams();
   const [problem, setProblem] = useState<CodingProblem | null>(null);
-  const [tags, setTags] = useState<Array<string>>([]);
   const editorRef = useRef<any>(null);
   const [theme, setTheme] = useState('');
   const [language, setLanguage] = useState<number>(8);
   const [mode, setMode] = useState('description');
   const [cntSubmision, setCntSubmission] = useState(0);
 
-  const problemTags = useSelector(
-    (state: RootState) => state.codingProblemList.problemTags
-  );
+  
 
 
   loader.init().then(monaco => {

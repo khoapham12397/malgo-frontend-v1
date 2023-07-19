@@ -16,9 +16,6 @@ import {
 import { toast } from 'react-hot-toast';
 import { FcAddressBook, FcOk } from 'react-icons/fc';
 import { useAuth0 } from '@auth0/auth0-react';
-import axiosInstance from '../../config/axiosInstance';
-import { setAccessTokenToStorage } from '../../utils/getUser';
-import { initSocketClient } from '../../state/actions/chatAction';
 
 const Algorithm = () => {
   const navigate = useNavigate();
@@ -34,7 +31,7 @@ const Algorithm = () => {
   
   const [searcParams] = useSearchParams();
   const page = searcParams.get('page')
-
+  const {loginWithRedirect} = useAuth0();
 
   useEffect(() => {
     //dispatch(fetchCpCategoriesAndTags());
@@ -53,7 +50,11 @@ const Algorithm = () => {
     };
 
     dispatch(fetchCProblems(params));
-
+    setTimeout(() => {
+      if(!isAuthenticated){
+        loginWithRedirect();
+      }
+    }, 500);
   }, [page]);
   if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
   
