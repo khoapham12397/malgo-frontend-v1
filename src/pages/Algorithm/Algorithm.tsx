@@ -43,6 +43,7 @@ const Algorithm = () => {
     
     getAccessTokenSilently()
     .then(async accessToken => {
+      alert('get token :'+ accessToken);
       const response = await axiosInstance.post('auth/check', {accessToken});
       if(response.data.success) {
         const data = response.data;
@@ -57,7 +58,9 @@ const Algorithm = () => {
     })
     .catch(error=>{
       //toast.error('logined error');
+      alert('get token error');
       loginWithRedirect();
+      setIsAuthen(true);
     })
 
     
