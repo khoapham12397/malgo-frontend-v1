@@ -150,7 +150,7 @@ export class GameContainerV2 extends React.Component<any,MyState>{
 
     initSocket(){
         
-        if(!this.socket.current){            
+        if(!this.socket.current && this.myUsername){            
             this.socket.current = socket;
             this.setState({...this.state, socketId: socket.id});
             
@@ -349,6 +349,11 @@ export class GameContainerV2 extends React.Component<any,MyState>{
     }    
    
     render(): React.ReactNode {
+        if(!this.myUsername) {
+            <div className="game-container">
+                <div>You haven't logined</div>
+            </div>
+        }
         return <div className="game-container">
 		
         <canvas ref = {this.bufferCanvas} style={{display:"none"}} width = {screenWidth} height = {screenHeight}  ></canvas>
