@@ -57,7 +57,7 @@ export const SubmissionStatus = ()=>{
 
     const handleChangePage = (page: number)=>{
         console.log(`change to page: ${page}`)
-        navigate(`/status/${page}`);
+        navigate(`/submission/${page}`);
     }
     const pollingStatus = async () =>{
         let first=true;

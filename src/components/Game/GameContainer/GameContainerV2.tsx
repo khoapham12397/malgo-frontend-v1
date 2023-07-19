@@ -349,11 +349,7 @@ export class GameContainerV2 extends React.Component<any,MyState>{
     }    
    
     render(): React.ReactNode {
-        if(!this.myUsername) {
-            return (<div className="game-container">
-                <div>You haven't logined</div>
-            </div>);
-        }
+       
         return <div className="game-container">
 		
         <canvas ref = {this.bufferCanvas} style={{display:"none"}} width = {screenWidth} height = {screenHeight}  ></canvas>
@@ -386,7 +382,8 @@ export class GameContainerV2 extends React.Component<any,MyState>{
                 </div>:
                 <div className='init-screen' style={{width: screenWidth, height: screenHeight}}>
                     <img src='bg8.png' width={screenWidth} height={screenHeight} className='img-init'/>
-                    <Button onClick={this.handleGameRequest} className='btn-start'>Start</Button>
+                    {this.myUsername?<Button onClick={this.handleGameRequest} className='btn-start'>Start</Button>
+                    :<div >Please login before</div>}
                 </div>
             }
         <div>
@@ -413,7 +410,11 @@ export class GameContainerV2 extends React.Component<any,MyState>{
                 </tbody>
                 
             </Table>:""}
-            
+            <img src='panel.png' width={0} height={0}/>
+            <img src='fire.png' width ={0} height={0}/>
+            <img src='grass-card.png'width ={0} height={0}/>
+            <img src='fire-card.png'width ={0} height={0}/>
+
         </div>
         </div>
         <div style={{height:'500px'}}/>
