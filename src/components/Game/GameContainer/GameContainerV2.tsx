@@ -350,9 +350,9 @@ export class GameContainerV2 extends React.Component<any,MyState>{
    
     render(): React.ReactNode {
         if(!this.myUsername) {
-            <div className="game-container">
+            return (<div className="game-container">
                 <div>You haven't logined</div>
-            </div>
+            </div>);
         }
         return <div className="game-container">
 		
