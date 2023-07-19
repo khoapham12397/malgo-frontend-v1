@@ -50,11 +50,7 @@ const Algorithm = () => {
     };
 
     dispatch(fetchCProblems(params));
-    setTimeout(() => {
-      if(!isAuthenticated){
-        loginWithRedirect();
-      }
-    }, 500);
+    
   }, [page]);
   if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
   

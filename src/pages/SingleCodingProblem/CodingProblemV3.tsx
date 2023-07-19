@@ -17,16 +17,13 @@ import { CodingProblemSolTab } from '../../components/CodingProblemSolTab/Coding
 import { formatMathExpr } from '../../utils/utils';
 
 export const CodingProblemV3 = () => {
-  const { problemId } = useParams();
+  const { id: problemId } = useParams();
   const [problem, setProblem] = useState<CodingProblem | null>(null);
   const editorRef = useRef<any>(null);
   const [theme, setTheme] = useState('');
   const [language, setLanguage] = useState<number>(8);
   const [mode, setMode] = useState('description');
   const [cntSubmision, setCntSubmission] = useState(0);
-
-  
-
 
   loader.init().then(monaco => {
     import('monaco-themes/themes/Oceanic Next.json').then((data: any) => {

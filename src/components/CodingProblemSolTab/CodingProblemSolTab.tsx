@@ -80,8 +80,8 @@ export const CodingProblemSolTab = ({problem}: Props)=>{
             <tbody>
                 {relatedProblems.map((item:any) => 
                 <tr>
-                    <td><Link className="link" to={'/codingproblemV2/'+item.id}>{item.id}</Link></td>
-                    <td><Link className="link" to={'/codingproblemV2/'+item.id}>{item.title}</Link></td>
+                    <td><Link className="link" to={'/algorithm/'+item.id}>{item.id}</Link></td>
+                    <td><Link className="link" to={'/algorithm/'+item.id}>{item.title}</Link></td>
                     <td>{item.difficulty}</td>
                     <td>
                         {item.codeforcesTag.map((tag:any)=>

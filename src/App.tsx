@@ -18,6 +18,7 @@ import MathProblems from './pages/MathProblems/MathProblems';
 import Profile from './pages/Profile/Profile';
 import Rank from './pages/Rank/Rank';
 import { CodingProblemV2 } from './pages/SingleCodingProblem/CodingProblemV2';
+import { CodingProblemV3 } from './pages/SingleCodingProblem/CodingProblemV3';
 import SingleContest from './pages/SingleContest/SingleContest';
 import { SingleContestPage } from './pages/SingleContestPage/SingleContestPage';
 import { SingleMathProblem } from './pages/SingleMathProblem/SingleMathProblem';
@@ -38,7 +39,7 @@ function App() {
             <Route path='/' element={<Algorithm />} />
 
             <Route path='algorithm' element={<Algorithm />} />
-            <Route path='algorithm/:id' element={<CodingProblemV2 />} />
+            <Route path='algorithm/:id' element={<CodingProblemV3 />} />
 
             <Route path='math' element={<MathProblems />} />
             <Route path='math/:id' element={<SingleMathProblem />} />
@@ -65,6 +66,7 @@ function App() {
             <Route path='submission/:page' element = {<SubmissionStatus/>}/>
             <Route path='contest2' element = {<ContestList/>}/>
             <Route path='singlecontest/:contestId' element = {<SingleContestPage/>}/>
+            
           </Routes>
           <Footer />
         </BrowserRouter>
