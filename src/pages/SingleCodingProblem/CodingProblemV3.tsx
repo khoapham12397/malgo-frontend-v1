@@ -134,7 +134,7 @@ export const CodingProblemV3 = () => {
             <div id='description' style={{ padding: '10px' ,fontFamily:'arial'}}>
               <h2>{problem != null ? problem.title : ''}</h2>
               <MathJaxContext>
-                <MathJax>
+                <MathJax dynamic>
                   {problem == null
                     ? ''
                     : parse(formatMathExpr(problem.description))}
