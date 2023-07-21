@@ -26,6 +26,7 @@ import { SingleMathSet } from './pages/SingleMathSet/SingleMathSet';
 import SingleThread from './pages/SingleThread/SingleThread';
 import { SubmissionStatus } from './pages/SubmissionStatus/SubmissionStatus';
 import Threads from './pages/Threads/Threads';
+import { ThreadSearch } from './pages/ThreadSearch/ThreadSearch';
 import store from './state';
 
 function App() {
@@ -66,7 +67,7 @@ function App() {
             <Route path='submission/:page' element = {<SubmissionStatus/>}/>
             <Route path='contest2' element = {<ContestList/>}/>
             <Route path='singlecontest/:contestId' element = {<SingleContestPage/>}/>
-            
+            <Route path='search/thread' element={<ThreadSearch/>}/>
           </Routes>
           <Footer />
         </BrowserRouter>
