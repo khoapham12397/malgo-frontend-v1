@@ -110,7 +110,7 @@ export const SubmissionList = ({problemId, problemTitle,cnt}: Props) =>{
 
     useInterval(async ()=>{
         await pollingStatus();
-    },isPolling?2000:null);
+    },isPolling?3000:null);
     const handleChangePage = (page: number) =>{
         setPage(page);
     }
@@ -134,7 +134,7 @@ export const SubmissionList = ({problemId, problemTitle,cnt}: Props) =>{
                 {submissions.map((item : SubmissionData,index: number)=> 
                 <div className={"submission-item "+ (item.result==="ACCEPTED"?'accepted-row':'normal-row')}>
                     <div className="submission-row">
-                        <span className="info-item">{new Date(item.createTime).toLocaleString()}</span>
+                        <span className="info-item time" >{new Date(item.createTime).toLocaleString()}</span>
                         <div className="info-item user-acc">{getFixedUsername(item.username)}</div> 
 
                         <div className="info-item"><span className={calColor(item.result)}>{item.result}</span></div>
@@ -151,7 +151,7 @@ export const SubmissionList = ({problemId, problemTitle,cnt}: Props) =>{
                         </SyntaxHighlighter>
                         <ul>
                             {item.status.map((tc,index)=>
-                            <li>Testcase {index+1}: <span className={calColor(judgeStatus[tc])}>{tc > 7?'RUNTIME_ERROR':judgeStatus[tc]}</span></li>
+                            <li> <span className="testcase-item">Testcase {index+1}:</span> <span className={calColor(judgeStatus[tc.id])}>{tc.id > 7?'RUNTIME_ERROR':judgeStatus[tc.id]}</span></li>
                             )}
                         </ul>
                     </div>

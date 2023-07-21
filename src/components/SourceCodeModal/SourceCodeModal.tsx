@@ -1,3 +1,5 @@
+import { AnyAsyncThunk } from "@reduxjs/toolkit/dist/matchers";
+import { useEffect } from "react";
 import { Modal } from "react-bootstrap"
 import { calColor } from "../../utils/utils";
 
@@ -24,6 +26,7 @@ export const SourceCodeModal = ({showSrcModal, toggleSrcModal,submission}: Props
 
     }    
     
+
     return(
     <>
         <Modal show={showSrcModal} onHide={handleClose} size='lg'>
@@ -40,9 +43,9 @@ export const SourceCodeModal = ({showSrcModal, toggleSrcModal,submission}: Props
                 </pre>
                 <div>
                     <ul>
-                    {submission?submission.status.map((item,index)=>
+                    {submission?submission.status.map((item:any ,index)=>
                     <li key={index}>
-                        Test {index + 1}: <span className={calColor(judgeStatus[item])}>{judgeStatus[item]}</span>
+                        Test {index + 1}: <span className={calColor(judgeStatus[item.id])}>{judgeStatus[item.id]}</span>
                     </li>):''}    
                     </ul>
                     

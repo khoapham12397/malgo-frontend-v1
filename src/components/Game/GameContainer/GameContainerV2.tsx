@@ -383,7 +383,7 @@ export class GameContainerV2 extends React.Component<any,MyState>{
                 <div className='init-screen' style={{width: screenWidth, height: screenHeight}}>
                     <img src='bg8.png' width={screenWidth} height={screenHeight} className='img-init'/>
                     {this.myUsername?<Button onClick={this.handleGameRequest} className='btn-start'>Start</Button>
-                    :<div >Please login before</div>}
+                    :<div className='start-btn'>Please login before</div>}
                 </div>
             }
         <div>

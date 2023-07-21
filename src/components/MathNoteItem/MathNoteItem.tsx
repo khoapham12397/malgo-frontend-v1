@@ -39,7 +39,7 @@ export const MathNoteItem = ({ mathNote, type }: Props) => {
           </MathJaxContext>
           <div style={{ marginTop: '10px', marginBottom: '10px' }}>
             {mathNote.imageLink.map(item => (
-              <img width='100%' src={import.meta.env.VITE_URL+item} key={item} />
+              <img width='100%' src={import.meta.env.VITE_API_URL+item} key={item} />
             ))}
           </div>
         </div>

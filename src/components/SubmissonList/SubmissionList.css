@@ -1,8 +1,8 @@
 .info-item  {
     align-items:  center;
-    width: 26%;
-    padding-left: 10px;
-    padding-right: 10px;
+    width: 25%;
+    display: flex;
+    justify-content: center;
 }
 .info-item-extend {
     display: flex;
@@ -34,9 +34,7 @@
     border-bottom: 1px solid #DDD;
     font-size: 18px;
 }
-.accepted-row {
-    padding: 10px;
-}
+
 .normal-row{
     background-color: azure;
 }
@@ -47,4 +45,10 @@
 .red{
     color: red;
     font-weight: bold;
+}
+.submission-row .time {
+    font-size: 16px;
+}
+.testcase-item {
+    width: 300px;
 }

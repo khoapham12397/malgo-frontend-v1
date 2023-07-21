@@ -8,32 +8,6 @@ const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL
 });
 
-instance.interceptors.request.use(function (config) {
-  // Do something before request is sent
-  return config;
-}, function (error) {
-  // Do something with request error
-  return Promise.reject(error);
-});
-
-// Add a response interceptor
-instance.interceptors.response.use(function (response) {
-
-  return response;
-}, function (error) {
-  //ignore ping
-  if(!error.request.responseURL.endsWith('api/protected/ping')) {
-    //alert(error.response.toString());
-    alert(error.toString());
-    if (error.response.data.error.message) {
-      toast.error(error.response.data.error.message);
-    } else {
-      toast.error('Ooops, The server was unable to complete your request. We will be back soon :(');
-    }
-  }
-  return Promise.reject(error);
-});
-
 
 const auth_type = 'Bearer';
 

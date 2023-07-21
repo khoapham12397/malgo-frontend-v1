@@ -99,10 +99,15 @@ export const CodingProblemV3 = () => {
       data.maxScore = problem.totalPoint;
       data.penaltyTime = (Date.now() - (new Date(problem.contest.startTime)).getTime())/1000;
     }
-
-    const result = await api.post(url, data);
-    setCntSubmission(cntSubmision+1);
-    setMode('submission');
+    
+    api.post(url, data)
+    .then(result=>{
+      setCntSubmission(cntSubmision+1);
+      setMode('submission');
+    })
+    .catch(error=>{
+      toast.error(error.response.data.message);
+    })
   };
   
   return (

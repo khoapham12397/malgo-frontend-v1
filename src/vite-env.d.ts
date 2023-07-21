@@ -504,7 +504,11 @@ type SubmissionData = {
   code: string;
   language: string;
   result: string;
-  status: Array<number>;
+  status: Array<{
+    id: number;
+    time: null| number;
+    memory: number | null;
+  }>;
   createTime: string;
   statistic_info: any;
 }
