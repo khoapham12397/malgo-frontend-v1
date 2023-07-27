@@ -46,7 +46,8 @@ const Algorithm = () => {
       endDif: filter.endDif,
       page: page ? Number(page) : null,
       q: filter.q,
-      tagList: filter.tags
+      tagList: filter.tags,
+      init: undefined,
     };
 
     dispatch(fetchCProblems(params));
