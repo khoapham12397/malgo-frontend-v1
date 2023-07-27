@@ -1,0 +1,215 @@
+<div id="wiki-content">
+<h1 class="pt-4">Skip Lists</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/data-structures/">data-structures</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả</strong>: Vũ <em>chipchip</em> Phúc Hoàng</p>
+<p>A: <em>"Mày AC bài Z kiểu gì thế? Tao dùng set không được."</em><br/>
+B: <em>"Dễ mà mày, tao code Splay thôi. 400 dòng 20 phút ez gg."</em><br/>
+A: <em>"-_-"</em></p>
+<p>Câu chuyện thật tưởng như đùa trên cũng không phải là hiếm gặp. Splay Tree (hay nói rộng hơn, Balanced Binary Search Tree) là một cấu trúc dữ liệu toàn năng có thể giải quyết rất nhiều bài toán, tuy nhiên nó cũng là một thứ đáng khiếp sợ đối với dân competitive programmers vì độ khó code của nó. Trong một contest với áp lực thời gian căng thẳng, chẳng mấy ai dám code Balanced Binary Search Tree và còn đảm bảo code không bị bug nữa. Tuy nhiên, bạn không thể hoàn toàn tránh được nó, vẫn có những bài mà những thư viện có sẵn như std::set hay những cấu trúc đơn giản như Segment Tree, Fenwick Tree không thể giải được, và bạn vẫn phải nhờ cậy đến Splay Tree trong nỗi tuyệt vọng.</p>
+<p>May mắn thay, dân competitive programmers đã tìm ra cách sử dụng Skip Lists như một sự thay thế cho Balanced Binary Search Tree. Skip Lists với ý tưởng hết sức đơn giản dễ nhớ, cộng thêm với khả năng tùy biến tuyệt vời đã phần nào làm xua tan đi nỗi sợ code khó bug nhiều (trừ khi bạn có trình độ Da xua thượng thừa như nhân vật B trong đoạn hội thoại trên; trong trường hợp đó, bạn có thể bỏ qua bài viết này). Bài viết này sẽ giới thiệu cho các bạn những ý tưởng và cách sử dụng Skip Lists cơ bản nhất.</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#bài-toán-cơ-bản">Bài toán cơ bản</a></li><li><a href="#các-hướng-tiếp-cận">Các hướng tiếp cận</a></li><li><a href="#ý-tưởng-skip-lists">Ý tưởng Skip Lists</a></li><li><a href="#so-sánh-các-cấu-trúc-dữ-liệu">So sánh các cấu trúc dữ liệu</a></li><li><a href="#hướng-dẫn-chi-tiết">Hướng dẫn chi tiết</a></li><li><a href="#mở-rộng">Mở rộng</a></li><li><a href="#lời-kết">Lời kết</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="bài-toán-cơ-bản" href="#bài-toán-cơ-bản"></a>Bài toán cơ bản</h1>
+<p>Hãy lập trình một cấu trúc dữ liệu S có thể thực hiện các thao tác sau:</p>
+<ul>
+<li>Chèn một phần tử $x$ vào $S$.</li>
+<li>Xóa một phần tử $x$ khỏi $S$.</li>
+<li>Cho một phần tử $x$, tìm một phần tử gần $x$ nhất trong $S$.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="các-hướng-tiếp-cận" href="#các-hướng-tiếp-cận"></a>Các hướng tiếp cận</h1>
+<p>Ta sẽ xét một số cấu trúc dữ liệu (chưa đề cập đến Skip Lists) sử dụng để giải bài toán cơ bản trên:</p>
+<ul>
+<li>Sorted Array: Biểu diễn $S$ là một mảng các phần tử. Các phần tử trong mảng được sắp xếp theo thứ tự tăng dần.
+<ul>
+<li>Chèn: Dịch tất cả các phần tử bên phải vị trí cần chèn sang phải một chỉ số, rồi chèn phần tử cần chèn vào vị trí đó.</li>
+<li>Xóa: Dịch tất cả các phần tử bên phải phần tử bị xóa sang trái một chỉ số.</li>
+<li>Tìm: Tìm kiếm nhị phân phần tử.</li>
+<li>Độ phức tạp: $O(N*log(N))$ với thao tác khởi tạo, $O(N)$ với thao tác chèn/xóa, $O(log(N))$ với thao tác tìm kiếm.</li>
+</ul>
+</li>
+<li>Sorted Linked List: Biểu diễn $S$ là một danh sách liên kết chứa các phần tử. Các phần tử trong danh sách liên kết được sắp xếp theo thứ tự tăng dần.
+<ul>
+<li>Chèn: Thay đổi liên kết giữa phần tử cần chèn, phần tử đứng trước, và phần tử đứng sau.</li>
+<li>Xóa: Thay đổi liên kết giữa phần tử cần chèn, phần tử đứng trước, và phần tử đứng sau.</li>
+<li>Tìm: Duyệt $S$ từ đầu đến cuối.</li>
+<li>Độ phức tạp: $O(N)$ với các thao tác chèn/xóa/tìm. $O(N*log(N))$ với thao tác khởi tạo.</li>
+</ul>
+</li>
+<li>Binary Search Tree: Biểu diễn $S$ là một cây nhị phân tìm kiếm chứa các phần tử. Cây này có tính chất tất cả các nút thuộc cây con bên trái đều nhỏ hơn nút cha, và tất cả các nút thuộc cây con bên phải đều lớn hơn nút cha.
+<ul>
+<li>Chèn (Nhiều cách làm): Đi từ trên gốc xuống, so sánh phần tử được chèn với hai nút con, nếu có thì đi vào nút con, còn không thì thêm một nút vào cây chứa phần tử cần chèn.</li>
+<li>Xóa (Nhiều cách làm): Thay nút bị xóa bằng nút lớn nhất của cây con bên trái (và xóa nút đó đi), nếu không có cây con bên trái thì thay bằng nút nhỏ nhất của cây con bên phải, nếu không có con thì đơn giản là xóa đi.</li>
+<li>Tìm: Đi từ trên gốc xuống, so sánh phần tử cần tìm với hai nút con, đi vào cây con chứa nút cần tìm, cứ thế đến khi tìm được.</li>
+<li>Độ phức tạp: Với trường hợp trung bình, các thao tác này có độ phức tạp $O(log(N))$. Còn với trường hợp xấu nhất là $O(N)$.</li>
+</ul>
+</li>
+<li>Balanced Binary Search Tree: Giống Binary Search Tree, nhưng cây có thêm cơ chế tự cần bằng để tránh việc cây bị suy biến, luôn giữ chiều cao cây ở mức ổn định (thường là $O(log(N)$).</li>
+</ul>
+<p><strong><em>Lưu ý: Thao tác chèn và xóa đều phải đi qua thao tác tìm.</em></strong></p>
+<p>Ta nhận thấy mỗi cấu trúc dữ liệu kể trên đều có nhược điểm của nó. Sorted Array có thao tác chèn xóa chậm, Sorted Linked List có thao tác tìm chậm, Binary Search Tree có thể bị suy biến về chiều cao làm cho cả 3 thao tác đều chậm, Balanced Binary Search Tree hoàn hảo nhưng lại quá phức tạp để cài đặt trong giới hạn thời gian của competitive programming.</p>
+<p>Từ đó, Skip Lists, một phiên bản nâng cấp của Sorted Linked List, được sử dụng trong competitive programming như một sự thay thế cho Balanced Binary Search Tree. Về tộc độ và bộ nhớ, Skip Lists không thua gì Balanced Binary Search Tree, tuy nhiên lại dễ cài đặt hơn rất nhiều.</p>
+<h1 class="editable"><a class="anchor" id="ý-tưởng-skip-lists" href="#ý-tưởng-skip-lists"></a>Ý tưởng Skip Lists</h1>
+<p>Skip Lists là một phiên bản nâng cấp của Sorted Linked Lists. Ta hãy bắt đầu với một ví dụ về Sorted Linked List chứa 8 số và nghĩ cách cải thiện vấn đề của nó.</p>
+<p><img src="http://i.imgur.com/oHPvH3A.png" alt="Paint 1" /></p>
+<p>Sorted Linked List có ưu điểm lớn khi thao tác chèn xóa chỉ mất $O(1)$ (ta chỉ việc chỉnh sửa liên kết giữa phần tử được chèn/xóa và các phần tử đằng trước/sau). Tuy nhiên thao tác tìm kiếm lại mất $O(N)$ do phải duyệt từ đầu đến cuối.</p>
+<p><img src="http://i.imgur.com/rRXWDjb.png" alt="Paint 2" /></p>
+<p>Một ý tưởng để cân bằng điều này là ta thêm nhiều tầng liên kết, cứ lên một tầng số liên kết lại giảm còn một nửa. Khi tìm phần tử, ta sẽ duyệt từ trái sang phải nhưng sẽ nhảy xa hơn nhờ những liên kết trên các tầng cao, khi nào không nhảy được mới xuống tầng thấp hơn. Ý tưởng này khá giống với phương pháp nhảy lên tổ tiên thứ $2^K$ khi tìm Lowest Common Ancestor (LCA).</p>
+<p><img src="http://i.imgur.com/VWUnxgd.png" alt="Paint 3" /></p>
+<p>Trong hình trên, để tìm số $7$, ta sẽ nhảy thẳng từ $0$ đến $5$ bằng liên kết trên tầng thứ ba, sau đó nhảy từ $5$ đến $6$ bằng liên kết trên tầng thứ nhất. Ta tìm được $6$ là số gần nhất với $7$.</p>
+<p>Với cấu trúc này, ta có thể thực hiện thao tác tìm trong $O(log(N))$. Tuy nhiên việc chèn và xóa một phần tử vào sẽ làm thay đổi cấu trúc này. Chẳng hạn nếu ta chèn số $7$:</p>
+<p><img src="http://i.imgur.com/d7VVpxt.png" alt="Paint 4" /></p>
+<p>Như hình trên, cấu trúc của ta không còn "chuẩn", có nghĩa là chính xác tầng thứ nhất liên kết cách $2^0$, tầng thứ hai liên kết cách $2^1$, tầng thứ ba liên kết cách $2^2$, … Tuy nhiên, với cấu trúc như hình trên vẫn chạy tốt - chỉ có điều ở mỗi tầng ta có thể phải nhảy nhiều hơn một lần (chẳng hạn, muốn tìm số $7$, ở tầng thứ nhất ta phải nhảy đến hai lần $5$ ~&gt; $6$ ~&gt; $7$).</p>
+<p>Từ đó ta có nhận xét sau: Các liên kết trên mỗi tầng không nhất thiết phải chuẩn, tuy nhiên, nếu các độ dài giữa các liên kết xấp xỉ nhau và số liên kết ở tầng trên xấp xỉ bằng nửa số liên kết ở tầng dưới, thuật toán tìm kiếm vẫn chạy tốt và không mất quá nhiều lần nhảy ở mỗi tầng. Ta sẽ duy trì cấu trúc này bằng kĩ thuật tung đồng xu ngẫu nhiên:</p>
+<p><strong><em>Mỗi lần chèn một nút vào, đầu tiên ta xây dựng liên kết ở tầng thứ nhất cho nó. Sau đó ta tung đồng xu, nếu ngửa thì ta xây dựng liên kết ở tầng trên và tiếp tục tung đồng xu, còn nếu sấp ta dừng việc xây dựng liên kết lại.</em></strong></p>
+<p><img src="http://i.imgur.com/cRT7Bpe.png" alt="Paint 5" /></p>
+<p>Đây chính là Skip Lists - một cấu trúc dữ liệu được xây dựng bằng nhiều tầng Sorted Linked List được xây dựng một cách ngẫu nhiên, trong đó tầng cao chứa những bước nhảy dài hơn và tầng thấp chứa những bước nhảy ngắn hơn. Skip Lists cho phép ta thực hiện thao tác tìm kiếm với độ phức tạp xấp xỉ $O(log(N))$.</p>
+<h1 class="editable"><a class="anchor" id="so-sánh-các-cấu-trúc-dữ-liệu" href="#so-sánh-các-cấu-trúc-dữ-liệu"></a>So sánh các cấu trúc dữ liệu</h1>
+<p><img src="http://i.imgur.com/HupUh3y.png" alt="Table" /></p>
+<h1 class="editable"><a class="anchor" id="hướng-dẫn-chi-tiết" href="#hướng-dẫn-chi-tiết"></a>Hướng dẫn chi tiết</h1>
+<p>Học phải đi đôi với hành. Cách hiểu lý thuyết nhanh nhất là đập ngay vào bài tập. Ta sẽ đi chi tiết vào cách sử dụng Skip Lists để giải bài <a href="https://oj.vnoi.info/problem/cppset">CPPSET</a>. Bạn hãy đọc đề và ngẫm nghĩ một lúc trước khi đọc tiếp bài viết này. Bài giải ở dưới được code bằng ngôn ngữ C++98.</p>
+<p>CPPSET, đúng như tên gọi của nó, bạn có thể AC trong một nốt nhạc nếu sử dụng std::set của C++, một container đã được code sẵn bằng Reb-Black Tree (một loại Balanced Binary Search Tree) để thực hiện bài toán cơ bản nêu ở đầu. Để luyện tập, ta sẽ tự code một cái set "dỏm" bằng Skip Lists.</p>
+<p>Trước tiên ta cần xây dựng các struct biểu diễn Skip Lists. Ta sẽ có 3 struct: <code>SkipLists</code>, <code>Column</code>, <code>Cell</code>. <code>SkipLists</code> là một danh sách các <code>Column</code> liên kết với nhau. <code>Column</code> là một cột gồm các <code>Cell</code>, biểu diễn cho cột liên kết của một phần tử trong set của ta với các phần tử đằng trước và đằng sau. <code>Cell</code> là một liên kết cơ bản nhất trên một tầng của <code>Column</code>, chứa hai liên kết đến <code>Column</code> đằng trước và đằng sau. Để cho dễ hiểu, bạn hãy xem hình dưới.</p>
+<p><img src="http://i.imgur.com/jzabi8g.png" alt="Paint 6" /></p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">SkipLists</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">MAX_LEVEL</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span> <span class="c1">// Giới hạn số tầng, nên chọn một số khoảng log(N)</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">head</span><span class="p">,</span> <span class="o">*</span><span class="n">tail</span><span class="p">;</span> <span class="c1">// thêm 2 cột không có giá trị vào đầu và cuối để dễ xử lí</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Column</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">value</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Cell</span><span class="o">&gt;</span> <span class="n">cells</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Cell</span> <span class="p">{</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">previous_column</span><span class="p">,</span> <span class="o">*</span><span class="n">next_column</span><span class="p">;</span> <span class="c1">// Mỗi Cell có hai liên kết đến Column đằng trước và đằng sau (không giống trong hình chỉ vẽ một liên kết về đằng sau cho đơn giản)</span>
+<span class="p">};</span></code></pre>
+<p>Sau khi đã biết cách biểu diễn dữ liệu, ta sẽ code các hàm cho <code>SkipLists</code>. Set "dỏm" của chúng ta sẽ gồm 6 hàm sau:</p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">SkipLists</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">MAX_LEVEL</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">head</span><span class="p">,</span> <span class="o">*</span><span class="n">tail</span><span class="p">;</span>
+
+    <span class="n">SkipLists</span><span class="p">();</span> <span class="c1">// Khởi tạo</span>
+    <span class="kt">bool</span> <span class="n">empty</span><span class="p">();</span> <span class="c1">// Kiểm tra SkipLists có rỗng không</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">lower_bound</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="c1">// Tìm vị trí Column chứa giá trị nhỏ nhất không nhỏ hơn giá trị cần tìm</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">upper_bound</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="c1">// Tìm vị trí Column chứa giá trị nhỏ nhất lớn hơn giá trị cần tìm</span>
+    <span class="kt">void</span> <span class="n">insert</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="c1">// Chèn một phần tử mang giá trị cho trước vào SkipLists</span>
+    <span class="kt">void</span> <span class="n">erase</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="c1">// Xóa một phần tử mang giá trị cho trước khỏi SkipLists</span>
+<span class="p">};</span></code></pre>
+<p>Ta sẽ bắt đầu với constructor <code>SkipLists()</code>. Để khởi tạo <code>SkipLists</code>, ta sẽ tạo ra hai cột <code>head</code> và <code>tail</code> có chiều cao là số tầng tối đa, và tại liên kết giữa <code>head</code> và <code>tail</code> trên tất cả các <code>Cell</code>.</p>
+<pre class="highlight"><code><span class="n">SkipLists</span><span class="o">::</span><span class="n">SkipLists</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">head</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Column</span><span class="p">;</span>
+    <span class="n">tail</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Column</span><span class="p">;</span>
+    <span class="n">head</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">tail</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">MAX_LEVEL</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">head</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">.</span><span class="n">push_back</span><span class="p">((</span><span class="n">Cell</span><span class="p">){</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">tail</span><span class="p">});</span>
+        <span class="n">tail</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">.</span><span class="n">push_back</span><span class="p">((</span><span class="n">Cell</span><span class="p">){</span><span class="n">head</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Với hàm <code>empty()</code>, ta chỉ đơn giản kiểm tra liên kết cấp 0 (liên kết trực tiếp) của <code>head</code> có nối với <code>tail</code> không.</p>
+<pre class="highlight"><code><span class="kt">bool</span> <span class="n">SkipLists</span><span class="o">::</span><span class="n">empty</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">head</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">next_column</span> <span class="o">==</span> <span class="n">tail</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Với hàm <code>lower_bound()</code>, ta sẽ đi từ tầng cao nhất đến tầng thấp nhất, chừng nào nhảy về phía trước vẫn vào một phần tử có giá trị nhỏ hơn giá trị cần tìm thì ta cứ nhảy. Sau khi duyệt, ta sẽ đứng ở phần tử lớn nhất có giá trị nhỏ hơn giá trị cần tìm. Ta nhảy trên liên kết cấp 0 một lần nữa để lấy được <code>lower_bound()</code>.</p>
+<pre class="highlight"><code><span class="n">Column</span> <span class="o">*</span><span class="n">SkipLists</span><span class="o">::</span><span class="n">lower_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">iter</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">level</span> <span class="o">=</span> <span class="n">MAX_LEVEL</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">level</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">level</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span> <span class="o">!=</span> <span class="n">tail</span> <span class="o">&amp;&amp;</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">iter</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">next_column</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Hàm <code>upper_bound()</code> không khác gì <code>lower_bound()</code>, ngoại trừ việc thay dấu &lt; thành &lt;= lúc so sánh với <code>value</code>.</p>
+<pre class="highlight"><code><span class="n">Column</span> <span class="o">*</span><span class="n">SkipLists</span><span class="o">::</span><span class="n">upper_bound</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">iter</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">level</span> <span class="o">=</span> <span class="n">MAX_LEVEL</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">level</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">level</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span> <span class="o">!=</span> <span class="n">tail</span> <span class="o">&amp;&amp;</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">iter</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">next_column</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Với hàm <code>insert()</code>, ta sẽ chia thành 3 bước sau:</p>
+<ul>
+<li>Sử dụng <code>lower_bound()</code> để kiểm tra giá trị đã tồn tại trong <code>SkipLists</code> chưa. Nếu đã tồn tại, thoát khỏi hàm.</li>
+<li>Tạo ra một <code>Column</code> mới để chèn vào <code>SkipLists</code>. Ta sẽ sử dụng hàm <code>rand()</code> để tung đồng xu, xây dựng chiều cao cho <code>Column</code> này.</li>
+<li>Chèn <code>Column</code> vào <code>SkipLists</code>. Ta duyệt y như trong <code>lower_bound()</code> và <code>upper_bound()</code>, ở mỗi tầng chèn liên kết với <code>Column</code> vào hai cột đằng sau và đằng trước <code>Column</code>.</li>
+</ul>
+<pre class="highlight"><code><span class="kt">void</span> <span class="n">SkipLists</span><span class="o">::</span><span class="n">insert</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Kiểm tra value đã tồn tại chưa</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">temp</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">temp</span> <span class="o">!=</span> <span class="n">tail</span> <span class="o">&amp;&amp;</span> <span class="n">temp</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// Tạo inserted_column là cột chứa value để chèn vào SkipLists</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">inserted_column</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Column</span><span class="p">;</span>
+    <span class="n">inserted_column</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
+    <span class="n">inserted_column</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">.</span><span class="n">push_back</span><span class="p">((</span><span class="n">Cell</span><span class="p">){</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">});</span>
+    <span class="c1">// Tung đồng xu tăng chiều cao</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">inserted_column</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">MAX_LEVEL</span> <span class="o">&amp;&amp;</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">inserted_column</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">.</span><span class="n">push_back</span><span class="p">((</span><span class="n">Cell</span><span class="p">){</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">});</span>
+    <span class="p">}</span>
+    <span class="c1">// Duyệt để chèn</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">iter</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">level</span> <span class="o">=</span> <span class="n">MAX_LEVEL</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">level</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">level</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span> <span class="o">!=</span> <span class="n">tail</span> <span class="o">&amp;&amp;</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">iter</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">level</span> <span class="o">&lt;</span> <span class="n">inserted_column</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="p">{</span>
+            <span class="c1">// Nối iter với inserted_column, nối inserted_column với next_iter</span>
+            <span class="n">Column</span> <span class="o">*</span><span class="n">next_iter</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="p">;</span>
+            <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span> <span class="o">=</span> <span class="n">inserted_column</span><span class="p">;</span>
+            <span class="n">next_iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">previous_column</span> <span class="o">=</span> <span class="n">inserted_column</span><span class="p">;</span>
+            <span class="n">inserted_column</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">previous_column</span> <span class="o">=</span> <span class="n">iter</span><span class="p">;</span>
+            <span class="n">inserted_column</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span> <span class="o">=</span> <span class="n">next_iter</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Với hàm <code>erase()</code>, ta sẽ chia thành 3 bước sau:</p>
+<ul>
+<li>Sử dụng <code>lower_bound()</code> để kiểm tra giá trị đã tồn tại trong <code>SkipLists</code> chưa. Nếu không tồn tại, thoát khỏi hàm.</li>
+<li>Xóa cột chứa giá trị cần xóa khỏi <code>SkipLists</code> bằng cách nối từng liên kết giữa các <code>Cell</code> liền trước và liền sau nó trên từng tầng.</li>
+<li>Xóa cột chứa giá trị cần xóa để giải phóng bộ nhớ.</li>
+</ul>
+<pre class="highlight"><code><span class="kt">void</span> <span class="n">SkipLists</span><span class="o">::</span><span class="n">erase</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Kiểm tra value đã tồn tại chưa</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">erased_column</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">erased_column</span> <span class="o">==</span> <span class="n">tail</span> <span class="o">||</span> <span class="n">erased_column</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">!=</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// Duyệt để xóa</span>
+    <span class="n">Column</span> <span class="o">*</span><span class="n">iter</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">level</span> <span class="o">=</span> <span class="n">MAX_LEVEL</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">level</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">level</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span> <span class="o">!=</span> <span class="n">tail</span> <span class="o">&amp;&amp;</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">iter</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">iter</span> <span class="o">==</span> <span class="n">erased_column</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Nối previous_iter với next_iter</span>
+            <span class="n">Column</span> <span class="o">*</span><span class="n">previous_iter</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">previous_column</span><span class="p">,</span> <span class="o">*</span><span class="n">next_iter</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span><span class="p">;</span>
+            <span class="n">previous_iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">next_column</span> <span class="o">=</span> <span class="n">next_iter</span><span class="p">;</span>
+            <span class="n">next_iter</span><span class="o">-&gt;</span><span class="n">cells</span><span class="p">[</span><span class="n">level</span><span class="p">].</span><span class="n">previous_column</span> <span class="o">=</span> <span class="n">previous_iter</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">delete</span> <span class="n">erased_column</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Với 6 hàm trên, bạn đã có thể mô phỏng một cách đơn giản một cái set "dỏm" để giải bài này. Bạn hãy thử tự làm tiếp và nộp trên SPOJ nhé. Toàn bộ code cho bài CPPSET có thể xem ở <a href="http://ideone.com/53t3Eh">đây</a>.</p>
+<h1 class="editable"><a class="anchor" id="mở-rộng" href="#mở-rộng"></a>Mở rộng</h1>
+<ul>
+<li>Ở trên mới là một code Skip Lists đơn giản nhất mô phỏng std::set để giải bài CPPSET. Liệu bạn có thể code lại một std::set hoàn hảo bằng Skip Lists không? Hãy thử xem!</li>
+<li>Code trên sử dụng cả liên kết xuôi (<code>next_column</code>) và liên kết ngược (<code>previous_column</code>) để dễ xử lí. Bạn có thể code lại CPPSET mà không cần sử dụng liên kết ngược không?</li>
+<li>Khi xây dựng cột để chèn vào Skip Lists, ta sử dụng kĩ thuật tung đồng xu với xác suất 1/2 mỗi mặt để xây dựng chiều cao cột. Tại sao phải là 1/2, liệu có thể là một con số khác không? Bạn hãy thử các con số khác nhau, sử dụng cả phân tích lý thuyết và thực nghiệm, cho thấy độ hiệu quả của các con số khác.</li>
+<li>Hẳn bạn sẽ thắc mắc dùng Skip Lists làm gì khi nó cũng chỉ để thay std::set, mà std::set thì có sẵn rồi. Skip Lists có rất nhiều ứng dụng và khả năng tùy biến nâng cao mà sẽ được giới thiệu trong phần 2 của bài viết này, giúp nó làm được những điều std::set không thể làm được, đơn giản nhất là tìm phần thử lớn thứ k trong tập hợp. Bạn thử tự nghĩ cách tìm phần tử lớn thứ k trong Skip Lists xem.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="lời-kết" href="#lời-kết"></a>Lời kết</h1>
+<p>Trên đây là những gì cơ bản nhất các bạn có thể biết về Skip Lists, hi vọng các bạn có thể ứng dụng cấu trúc dữ liệu tuyệt vời này một cách hiệu quả trong các contests. Cá nhân mình thấy Skip Lists là một cấu trúc dữ liệu rất hay nhưng ít được sử dụng, competitive programmers Việt Nam chúng ta thường thích dùng Splay Tree hơn mặc dù chẳng mấy ai dám code lúc đi thi… Mình rất mong sau bài viết này mọi người sẽ dùng Skip Lists nhiều hơn.</p>
+<p>Những cách sử dụng Skip Lists nâng cao sẽ được giới thiệu trong phần 2, mọi người cùng đón đọc nhé.</p>
+</div>
+</div>
+</div>
+</div>

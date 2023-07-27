@@ -1,0 +1,682 @@
+<div id="wiki-content">
+<h1 class="pt-4">Tất tần tật về Cây Phân Đoạn (Segment Tree)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/data-structures/">data-structures</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#0-giới-thiệu">0. Giới thiệu</a><ul><li><a href="#ví-dụ">Ví dụ</a></li><li><a href="#cài-đặt">Cài đặt</a></li><li><a href="#áp-dụng">Áp dụng</a></li><li><a href="#phân-tích-thời-gian-chạy">Phân tích thời gian chạy</a><ul><li><a href="#thao-tác-loại-1">Thao tác loại 1</a></li><li><a href="#thao-tác-loại-2">Thao tác loại 2</a></li></ul></li><li><a href="#phân-tích-bộ-nhớ">Phân tích bộ nhớ</a></li></ul></li><li><a href="#1-segment-tree-cổ-điển">1. Segment Tree cổ điển</a><ul><li><a href="#ví-dụ-1">Ví dụ 1</a><ul><li><a href="#tóm-tắt-đề">Tóm tắt đề</a></li><li><a href="#lời-giải">Lời giải</a></li><li><a href="#định-lý">Định lý</a></li></ul></li><li><a href="#ví-dụ-2">Ví dụ 2</a></li></ul></li><li><a href="#2-lazy-propagation">2. Lazy Propagation</a><ul><li><a href="#tư-tưởng">Tư tưởng</a></li><li><a href="#bài-toán">Bài Toán</a></li><li><a href="#tóm-tắt-đề-1">Tóm tắt đề</a></li><li><a href="#phân-tích">Phân tích</a></li><li><a href="#cài-đặt-1">Cài đặt</a></li></ul></li><li><a href="#3-ứng-dụng-với-cấu-trúc-mảng-động">3. Ứng dụng với cấu trúc mảng động</a><ul><li><a href="#ví-dụ-1">Ví dụ</a></li><li><a href="#tóm-tắt-đề-2">Tóm tắt đề</a></li><li><a href="#phân-tích-1">Phân tích</a></li></ul></li><li><a href="#4-ứng-dụng-với-cấu-trúc-set">4. Ứng dụng với cấu trúc set</a></li><li><a href="#5-ứng-dụng-với-các-cấu-trúc-dữ-liệu-khác">5. Ứng dụng với các cấu trúc dữ liệu khác</a></li><li><a href="#6-ứng-dụng-trong-cây-có-gốc">6. Ứng dụng trong cây có gốc</a></li><li><a href="#7-persistent-segment-trees">7. Persistent Segment Trees</a></li><li><a href="#8-it-đoạn-thẳng">8. IT đoạn thẳng</a></li><li><a href="#9-chặt-nhị-phân-trên-segment-tree">9. Chặt nhị phân trên Segment tree</a><ul><li><a href="#bài-toán-1">Bài toán 1</a><ul><li><a href="#cách-giải">Cách giải</a></li></ul></li><li><a href="#bài-toán-2">Bài toán 2</a></li><li><a href="#bài-toán-3">Bài toán 3:</a></li></ul></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng:</a></li><li><a href="#đọc-thêm">Đọc thêm:</a></li><li><a href="#các-nguồn-tham-khảo">Các nguồn tham khảo:</a></li></ul></div>
+<p><strong>LƯU Ý</strong>:</p>
+<ul>
+<li>Khi Segment Tree mới được du nhập vào Việt Nam, một số tài liệu gọi là Interval Tree. Đây là cách gọi không chính xác, bởi <a href="https://en.wikipedia.org/wiki/Interval_tree">Interval Tree là một CTDL khác</a>.</li>
+<li>Tất cả hàm trong bài đều đánh số từ 1. Các nút của cây phân đoạn sẽ quản lý đoạn $[l,r]$</li>
+<li>Segment Tree còn có <a class="internal absent" href="https://vnoi.info/wiki/translate/codeforces/Efficient-and-easy-segment-trees">một cách cài đặt khác sử dụng ít bộ nhớ hơn</a> (tối đa $2*N$ phần tử), cài đặt ngắn hơn và chạy nhanh hơn. Tuy nhiên theo cá nhân mình không dễ hiểu bằng cách cài đặt trong bài viết này.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="0-giới-thiệu" href="#0-giới-thiệu"></a>0. Giới thiệu</h1>
+<p>Segment Tree là một cấu trúc dữ liệu được sử dụng rất nhiều trong các kỳ thi, đặc biệt là trong những bài toán xử lý trên dãy số.</p>
+<p>Segment Tree là một <a class="internal absent" href="https://vnoi.info/wiki/translate/wcipeg/tree">cây</a>. Cụ thể hơn, nó là một cây nhị phân đầy đủ (mỗi nút là lá hoặc có đúng 2 nút con), với mỗi nút quản lý một đoạn trên dãy số. Với một dãy số gồm $N$ phần tử, nút gốc sẽ lưu thông tin về đoạn $[1, N]$, nút con trái của nó sẽ lưu thông tin về đoạn $[1, ⌊N/2⌋]$ và nút con phải sẽ lưu thông tin về đoạn $[⌊N/2⌋+1, N]$. Tổng quát hơn: nếu nút $A$ lưu thông tin đoạn $[i, j]$, thì 2 con của nó: $A1$ và $A2$ sẽ lưu thông tin của các đoạn $[i, ⌊(i+j)/2⌋]$ và đoạn $[⌊(i+j)/2⌋ + 1, j]$.</p>
+<h2 class="editable"><a class="anchor" id="ví-dụ" href="#ví-dụ"></a>Ví dụ</h2>
+<p>Xét một dãy gồm 7 phần tử, Segment Tree sẽ quản lý các đoạn như sau:</p>
+<p><img src="https://vnoi.info/wiki/uploads/segment_tree_structure_example.png" /></p>
+<h2 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h2>
+<p>Để cài đặt, ta có thể dùng một mảng 1 chiều, phần tử thứ nhất của mảng thể hiện nút gốc. Phần tử thứ $id$ sẽ có 2 con là $2 * id$ (con trái) và $2 * id+1$ (con phải). Với cách cài đặt này, người ta đã chứng minh được bộ nhớ cần dùng cho ST không quá $4 * N$ phần tử.</p>
+<h2 class="editable"><a class="anchor" id="áp-dụng" href="#áp-dụng"></a>Áp dụng</h2>
+<p>Để dễ hình dung, ta lấy 1 ví dụ cụ thể:</p>
+<ul>
+<li>Cho dãy $N$ phần tử $(N \le 10^5)$. Ban đầu mỗi phần tử có giả trị 0.</li>
+<li>Có $Q$ truy vấn $(Q \le 10^5)$. Mỗi truy vấn có 1 trong 2 loại:
+<ol>
+<li>Gán giá trị $v$ cho phần tử ở vị trí $i$.</li>
+<li>Tìm giá trị lớn nhất cho đoạn $[i, j]$.</li>
+</ol>
+</li>
+</ul>
+<p>Cách đơn giản nhất là dùng 1 mảng $A$ duy trì giá trị các phần tử. Với thao tác 1 thì ta gán $A[i] = v$. Với thao tác 2 thì ta dùng 1 vòng lặp từ $i$ đến $j$ để tìm giá trị lớn nhất. Rõ ràng cách này có độ phức tạp là $O(N*Q)$ và không thể chạy trong thời gian cho phép.</p>
+<p>Cách dùng Segment Tree như sau:</p>
+<ul>
+<li>Với truy vấn loại 1, ta sẽ cập nhật thông tin của các nút trên cây ST mà đoạn nó quản lý chứa phần tử $i$.</li>
+<li>Với truy vấn loại 2, ta sẽ tìm tất cả các nút trên cây ST mà đoạn nó quản lý nằm trong $[i, j]$, rồi lấy max của các nút này.</li>
+</ul>
+<p>Cài đặt như sau:</p>
+<pre class="highlight"><code><span class="c1">// Truy vấn: A(i) = v</span>
+<span class="c1">// Hàm cập nhật trên cây ST, cập nhật cây con gốc id quản lý đọan [l, r]</span>
+<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// i nằm ngoài đoạn [l, r], ta bỏ qua nút i</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Đoạn chỉ gồm 1 phần tử, không có nút con</span>
+        <span class="n">ST</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Gọi đệ quy để xử lý các nút con của nút id</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+
+    <span class="c1">// Cập nhật lại giá trị max của đoạn [l, r] theo 2 nút con:</span>
+    <span class="n">ST</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">ST</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">],</span> <span class="n">ST</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="c1">// Truy vấn: tìm max đoạn [u, v]</span>
+<span class="c1">// Hàm tìm max các phần tử trên cây ST nằm trong cây con gốc id - quản lý đoạn [l, r]</span>
+<span class="kt">int</span> <span class="nf">get</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Đoạn [u, v] không giao với đoạn [l, r], ta bỏ qua đoạn này</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">INFINITY</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Đoạn [l, r] nằm hoàn toàn trong đoạn [u, v] mà ta đang truy vấn, ta trả lại</span>
+        <span class="c1">// thông tin lưu ở nút id</span>
+        <span class="k">return</span> <span class="n">ST</span><span class="p">[</span><span class="n">id</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="c1">// Gọi đệ quy với các con của nút id</span>
+    <span class="k">return</span> <span class="n">max</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span> <span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">));</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="phân-tích-thời-gian-chạy" href="#phân-tích-thời-gian-chạy"></a>Phân tích thời gian chạy</h2>
+<p>Mỗi thao tác truy vấn trên cây ST có độ phức tạp $O(\log{N})$. Để chứng minh điều này, ta xét 2 loại thao tác trên cây ST:</p>
+<ol>
+<li>Truy vấn 1 phần tử trên ST (giống thao tác <code>update</code> ở trên)</li>
+<li>Truy vấn nhiều phần tử trên ST (giống thao tác <code>get</code> ở trên)</li>
+</ol>
+<p>Đầu tiên ta có thể chứng minh được:</p>
+<ul>
+<li>Độ cao của cây ST không quá $O(\log{N})$.</li>
+<li>Tại mỗi độ sâu của cây, không có phần tử nào nằm trong 2 nút khác nhau của cây.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="thao-tác-loại-1" href="#thao-tác-loại-1"></a>Thao tác loại 1</h3>
+<p>Với thao tác này, ở mỗi độ sâu của cây, ta chỉ gọi đệ quy các con của không quá 1 nút. Phân tích đoạn code trên, ta xét các trường hợp:</p>
+<ul>
+<li>Phần tử cần xét không nằm trong đoạn $[l, r]$ do nút $id$ quản lý. Trường hợp này ta dừng lại, không xét tiếp.</li>
+<li>Phần tử cần xét nằm trong đoạn $[l, r]$ do nút $id$ quản lý. Ta xét các con của nút <code>id</code>. Tuy nhiên chỉ có 1 con của nút <code>id</code> chứa phần tử cần xét và ta sẽ phải xét tiếp các con của nút này. Với con còn lại, ta sẽ dừng ngay mà không xét các con của nó nữa.</li>
+</ul>
+<p>Do đó độ phức tạp của thao tác này không quá $O(\log{N})$.</p>
+<h3 class="editable"><a class="anchor" id="thao-tác-loại-2" href="#thao-tác-loại-2"></a>Thao tác loại 2</h3>
+<p>Với thao này, ta cũng chứng minh tương tự, nhưng ở mỗi độ sâu của cây, ta chỉ gọi hàm đệ quy với các con của không quá 2 nút.</p>
+<p>Ta chứng minh bằng phản chứng, giả sử ta gọi đệ quy với 3 nút khác nhau của cây ST (đánh dấu màu đỏ):</p>
+<p><img src="https://vnoi.info/wiki/uploads/segment_tree_proof_time_complexity.png" /></p>
+<p>Trong trường hợp này, rõ ràng toàn bộ đoạn của nút ở giữa quản lý nằm trong đoạn đang truy vấn. Do đó ta không cần phải gọi đệ quy các con của nút ở giữa. Từ đó suy ra vô lý, nghĩa là ở mỗi độ sâu ta chỉ gọi đệ quy với không quá 2 nút.</p>
+<h2 class="editable"><a class="anchor" id="phân-tích-bộ-nhớ" href="#phân-tích-bộ-nhớ"></a>Phân tích bộ nhớ</h2>
+<p>Ta xét 2 trường hợp:</p>
+<ul>
+<li>$N = 2^k$: Cây ST đầy đủ, ở độ sâu cuối cùng có đúng $2^k$ lá, và các độ sâu thấp hơn không có nút lá nào (và các nút này đều có đúng 2 con). Như vậy:
+<ul>
+<li>Tầng $k$: có $2^k$ nút</li>
+<li>Tầng $k-1$: có $2^{k-1}$ nút</li>
+<li>…
+Tổng số nút không quá $2^{k+1}$.</li>
+</ul>
+</li>
+<li>Với $N &gt; 2^k$ và $N &lt; 2^{k+1}$. Số nút của cây ST không quá số nút của cây ST với $N = 2^{k+1}$.</li>
+</ul>
+<p>Do đó, số nút của cây cho dãy $N$ phần tử, với $N \le 2^k$ là không quá $2^{k+1}$, giá trị này xấp xỉ $4 * N$. Bằng thực nghiệm, ta thấy dùng $4 * N$ là đủ.</p>
+<h1 class="editable"><a class="anchor" id="1-segment-tree-cổ-điển" href="#1-segment-tree-cổ-điển"></a>1. Segment Tree cổ điển</h1>
+<p>Tại sao lại gọi là cổ điển? Đây là dạng ST đơn giản nhất, chúng ta chỉ giải quyết truy vấn update một phần tử và truy vấn đoạn, mỗi nút lưu một loại dữ liệu cơ bản như số nguyên, boolean, …</p>
+<h2 class="editable"><a class="anchor" id="ví-dụ-1" href="#ví-dụ-1"></a>Ví dụ 1</h2>
+<p><strong>Bài toán</strong>: <a href="http://codeforces.com/contest/380/problem/C">380C-Codeforces</a></p>
+<h3 class="editable"><a class="anchor" id="tóm-tắt-đề" href="#tóm-tắt-đề"></a>Tóm tắt đề</h3>
+<p>Cho một dãy ngoặc độ dài $N$ $(N\le10^6)$, cho $M$ truy vấn có dạng $l_i, r_i (1\le l_i\le r_i \le N)$. Yêu cầu của bài toán là với mỗi truy vấn tìm một chuỗi con (không cần liên tiếp) của chuỗi từ $l_i$ đến $r_i$ dài nhất mà tạo thành dãy ngoặc đúng.</p>
+<h3 class="editable"><a class="anchor" id="lời-giải" href="#lời-giải"></a>Lời giải</h3>
+<p>Với mỗi nút(ví dụ như nút $id$, quản lý đoạn $[l, r]$) chúng ta lưu ba biến nguyên:</p>
+<ul>
+<li>
+<code>optimal</code>: Là kết quả tối ưu trong đoạn $[l, r]$.</li>
+<li>
+<code>open</code>: Số lượng dấu <code>(</code> sau khi đã xóa hết các phần tử thuộc dãy ngoặc đúng độ dài <code>optimal</code> trong đoạn.</li>
+<li>
+<code>close</code>: Số lượng dấu <code>)</code> sau khi đã xóa hết các phần tử thuộc dãy ngoặc đúng độ dài <code>optimal</code> trong đoạn.</li>
+</ul>
+<p>Ta tạo 1 kiểu dữ liệu cho 1 nút của cây ST như sau:</p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">Node</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">optimal</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">open</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">close</span><span class="p">;</span>
+
+    <span class="n">Node</span><span class="p">(</span><span class="kt">int</span> <span class="n">opt</span><span class="p">,</span> <span class="kt">int</span> <span class="n">o</span><span class="p">,</span> <span class="kt">int</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Khởi tạo struct Node</span>
+        <span class="n">optimal</span> <span class="o">=</span> <span class="n">opt</span><span class="p">;</span>
+        <span class="n">open</span> <span class="o">=</span> <span class="n">o</span><span class="p">;</span>
+        <span class="n">close</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span></code></pre>
+<p>Và ta khai báo cây ST như sau:</p>
+<pre class="highlight"><code><span class="n">Node</span> <span class="n">st</span><span class="p">[</span><span class="n">MAXN</span> <span class="o">*</span> <span class="mi">4</span><span class="p">];</span></code></pre>
+<h3 class="editable"><a class="anchor" id="định-lý" href="#định-lý"></a>Định lý</h3>
+<p>Để tính thông tin ở nút $id$ quản lý đoạn $[l, r]$, dựa trên 2 nút con $2*id$ và $2*id+1$, ta định nghĩa 1 thao tác kết hợp 2 nút của cây ST:</p>
+<pre class="highlight"><code><span class="n">Node</span> <span class="k">operator</span> <span class="o">+</span> <span class="p">(</span><span class="k">const</span> <span class="n">Node</span><span class="o">&amp;</span> <span class="n">left</span><span class="p">,</span> <span class="k">const</span> <span class="n">Node</span><span class="o">&amp;</span> <span class="n">right</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Node</span> <span class="n">res</span><span class="p">;</span>
+    <span class="c1">// min(số dấu "(" thừa ra ở cây con trái, và số dấu ")" thừa ra ở cây con phải)</span>
+    <span class="kt">int</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">left</span><span class="p">.</span><span class="n">open</span><span class="p">,</span> <span class="n">right</span><span class="p">.</span><span class="n">close</span><span class="p">);</span>
+
+    <span class="c1">// Để xây dựng kết quả tối ưu ở nút id, ta nối dãy ngoặc tối ưu ở 2 con, rồi thêm</span>
+    <span class="c1">// min(số "(" thừa ra ở con trái, số ")" thừa ra ở con phải).</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">optimal</span> <span class="o">=</span> <span class="n">left</span><span class="p">.</span><span class="n">optimal</span> <span class="o">+</span> <span class="n">right</span><span class="p">.</span><span class="n">optimal</span> <span class="o">+</span> <span class="n">tmp</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">res</span><span class="p">.</span><span class="n">open</span> <span class="o">=</span> <span class="n">left</span><span class="p">.</span><span class="n">open</span> <span class="o">+</span> <span class="n">right</span><span class="p">.</span><span class="n">open</span> <span class="o">-</span> <span class="n">tmp</span><span class="p">;</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">close</span> <span class="o">=</span> <span class="n">left</span><span class="p">.</span><span class="n">close</span> <span class="o">+</span> <span class="n">right</span><span class="p">.</span><span class="n">close</span> <span class="o">-</span> <span class="n">tmp</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Ban đầu ta có thể khởi tạo cây như sau:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">build</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Đoạn [l, r] chỉ có 1 phần tử.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">==</span> <span class="sc">'('</span><span class="p">)</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="k">else</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">build</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">);</span>
+    <span class="n">build</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+
+    <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<p>Để trả lời truy vấn, ta cũng làm tương tự như trong bài toán cơ bản:</p>
+<pre class="highlight"><code><span class="n">Node</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Trường hợp không giao nhau</span>
+        <span class="k">return</span> <span class="n">Node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Trường hợp [l, r] nằm hoàn toàn trong [u, v]</span>
+        <span class="k">return</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">query</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">+</span> <span class="n">query</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="ví-dụ-2" href="#ví-dụ-2"></a>Ví dụ 2</h2>
+<p><strong>Bài toán</strong>: <a href="http://www.spoj.com/problems/KQUERY/">SPOJ-KQUERY</a></p>
+<p><strong>Tóm đề</strong>:</p>
+<ul>
+<li>Cho một dãy số $a_i(1\le a_i \le 10^9)$ có $N(1\le N \le 30,000)$ phần tử</li>
+<li>Cho $Q(1\le Q \le 200,000)$ truy vấn có dạng 3 số nguyên là $l_i, r_i, k_i$ $(1\le l_i\le r_i\le N, 1\le k \le 10^9)$. Yêu cầu của bài toán là đếm số lượng số $a_j (l_i\le j \le r_i)$ mà $a_j\ge k$.</li>
+</ul>
+<p>Giả sử chúng ta có một mảng $b$ với $b_i=1$ nếu $a_i&gt;k$ và bằng $0$ nếu ngược lại. Thì chúng ta có thể dễ dàng trả lời truy vấn $(i, j, k)$ bằng cách lấy tổng từ $i$ đến $j$.</p>
+<p>Cách làm của bài này là xử lý các truy vấn theo một thứ tự khác, để ta có thể dễ dàng tính được mảng $b$. Kĩ năng này được gọi là <strong>xử lý offline</strong> (tương tự nếu ta trả lời các truy vấn theo đúng thứ tự trong input, thì được gọi là <strong>xử lý online</strong>):</p>
+<ul>
+<li>Sắp xếp các truy vấn theo thứ tự tăng dần của $k$.</li>
+<li>Lúc đầu mảng $b$ gồm toàn bộ các số 1.</li>
+<li>Với mỗi truy vấn, ta xem trong mảng $a$ có những phần tử nào lớn hơn giá trị $k$ của truy vấn trước, và nhỏ hơn giá trị $k$ của truy vấn hiện tại, rồi đánh dấu các vị trí đó trên mảng $b$ thành 0. Để làm được việc này một cách hiệu quả, ta cũng cần sắp xếp lại mảng $a$ theo thứ tự tăng dần.</li>
+</ul>
+<p>Ta tạo kiểu dữ liệu cho truy vấn:</p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">Query</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">k</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// so sánh 2 truy vấn để dùng vào việc sort.</span>
+<span class="kt">bool</span> <span class="k">operator</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">const</span> <span class="n">Query</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Query</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">k</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">k</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Phần xử lý chính sẽ như sau:</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span> <span class="n">Query</span> <span class="o">&gt;</span> <span class="n">queries</span><span class="p">;</span> <span class="c1">// các truy vấn</span>
+<span class="c1">// Đọc vào các truy vấn</span>
+<span class="n">readInput</span><span class="p">();</span>
+
+<span class="c1">// Sắp xếp các truy vấn</span>
+<span class="n">sort</span><span class="p">(</span><span class="n">queries</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">queries</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+<span class="c1">// Khởi tạo mảng id sao cho:</span>
+<span class="c1">// a[id[1]], a[id[2]], a[id[3]] là mảng a đã sắp xếp tăng dần.</span>
+
+<span class="c1">// Khởi tạo Segment Tree</span>
+
+<span class="k">for</span><span class="p">(</span><span class="n">Query</span> <span class="n">q</span> <span class="o">:</span> <span class="n">queries</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">&lt;=</span> <span class="n">q</span><span class="p">.</span><span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">b</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="c1">// Cập nhật cây Segment Tree.</span>
+        <span class="o">++</span><span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Vậy ta có thể viết hàm xây dựng cây như sau:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">build</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Nút id chỉ gồm 1 phần tử</span>
+        <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">build</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">);</span>
+    <span class="n">build</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+
+    <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<p>Một hàm cập nhật khi ta muốn gán lại một vị trí bằng 0:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// u nằm ngoài đoạn [l, r]</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+
+    <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<p>Và cuối cùng là thực hiện truy vấn lấy tổng một đoạn:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">get</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Đoạn [l, r] nằm ngoài đoạn [u, v]</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Đoạn [l, r] nằm hoàn toàn trong đoạn [u, v]</span>
+        <span class="k">return</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="2-lazy-propagation" href="#2-lazy-propagation"></a>2. Lazy Propagation</h1>
+<p>Đây là kĩ thuật được sử dụng trong ST để giảm độ phức tạp của ST với các truy vấn cập nhật đoạn.</p>
+<h2 class="editable"><a class="anchor" id="tư-tưởng" href="#tư-tưởng"></a>Tư tưởng</h2>
+<p>Giả sử ta cần cập nhật đoạn $[u, v]$. Dễ thấy ta không thể nào cập nhật tất cả các nút trên Segment Tree (do tổng số nút nằm trong đoạn $[u, v]$ có thể lên đến $O(N)$). Do đó, trong quá trình cập nhật, ta chỉ thay đổi giá trị ở các nút quản lý các đoạn to nhất nằm trong $[u, v]$. Ví dụ với $N = 7$, cây Segment tree như hình minh hoạ ở đầu bài. Giả sử bạn cần cập nhật $[1, 6]$:</p>
+<ul>
+<li>Bạn chỉ cập nhật giá trị ở các nút quản lý các đoạn $[1, 4]$ và $[5, 6]$.</li>
+<li>Giá trị của các nút quản lý các đoạn $[1, 2]$, $[3, 4]$, $[1, 1]$, $[2, 2]$, $[5, 5]$, … sẽ không đúng. Ta sẽ chỉ cập nhật lại giá trị của các nút này khi thật sự cần thiết (Do đó kĩ thuật này được gọi là lazy - lười biếng).</li>
+</ul>
+<p>Cụ thể, chúng ta cùng xem bài toán sau:</p>
+<h2 class="editable"><a class="anchor" id="bài-toán" href="#bài-toán"></a>Bài Toán</h2>
+<p><a href="https://oj.vnoi.info/problem/qmax2">VNOJ - QMAX2</a></p>
+<h2 class="editable"><a class="anchor" id="tóm-tắt-đề-1" href="#tóm-tắt-đề-1"></a>Tóm tắt đề</h2>
+<p>Cho dãy số $A$ với $N$ phần tử $(N \le 50,000)$. Bạn cần thực hiện 2 loại truy vấn:</p>
+<ol>
+<li>Cộng tất cả các số trong đoạn $[l, r]$ lên giá trị $val$.</li>
+<li>In ra giá trị lớn nhất của các số trong đoạn $[l, r]$.</li>
+</ol>
+<h2 class="editable"><a class="anchor" id="phân-tích" href="#phân-tích"></a>Phân tích</h2>
+<p>Thao tác 2 là thao tác cơ bản trên Segment Tree, đã được ta phân tích ở bài toán đầu tiên.</p>
+<p>Với thao tác 1, truy vấn đoạn $[u, v]$. Giả sử ta gọi $F(id)$ là giá trị lớn nhất trong đoạn mà nút $id$ quản lý. Trong lúc cập nhật, muốn hàm này thực hiện với độ phức tạp không quá $O(\log{N})$, thì khi đến 1 nút $id$ quản lý đoạn $[l, r]$ với đoạn $[l, r]$ nằm hoàn toàn trong đoạn $[u, v]$, thì ta không được đi vào các nút con của nó nữa (nếu không độ phức tạp sẽ là $O(N)$ do ta đi vào tất cả các nút nằm trong đoạn $[u, v]$). Để giải quyết, ta dùng kĩ thuật Lazy Propagation như sau:</p>
+<ul>
+<li>Lưu $T(id)$ với ý nghĩa, tất cả các phần tử trong đoạn $[l, r]$ mà nút $id$ quản lý đều được cộng thêm $T(id)$.</li>
+<li>Trước khi ta cập nhật hoặc lấy 1 giá trị của 1 nút $id'$ nào đó, ta phải đảm bảo ta đã "đẩy" giá trị của mảng $T$ ở tất cả các nút tổ tiên của $id'$ xuống $id'$. Để làm được điều này, ở các hàm <code>get</code> và <code>update</code>, trước khi gọi đệ quy xuống các con $2 * id$ và $2 * id+1$, ta phải gán:
+<ul>
+<li><code>T[id*2] += T[id]</code></li>
+<li><code>T[id*2+1] += T[id]</code></li>
+<li>
+<code>T[id] = 0</code> chú ý ta cần phải thực hiện thao tác này, nếu không mỗi phần tử của dãy sẽ bị cộng nhiều lần, do ta đẩy xuống nhiều lần.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Chú ý</strong>: Bài QMAX2 này có cách cài đặt khác không sử dụng Lazy Propagation, tuy nhiên sẽ không được trình bày ở đây.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt-1" href="#cài-đặt-1"></a>Cài đặt</h2>
+<p>Ta có kiểu dữ liệu cho 1 nút của ST như sau:</p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">Node</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">lazy</span><span class="p">;</span> <span class="c1">// giá trị T trong phân tích trên</span>
+    <span class="kt">int</span> <span class="n">val</span><span class="p">;</span> <span class="c1">// giá trị lớn nhất.</span>
+<span class="p">}</span> <span class="n">nodes</span><span class="p">[</span><span class="n">MAXN</span> <span class="o">*</span> <span class="mi">4</span><span class="p">];</span></code></pre>
+<p>Hàm "đẩy" giá trị $T$ xuống các con:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">down</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">lazy</span><span class="p">;</span>
+    <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">].</span><span class="n">lazy</span> <span class="o">+=</span> <span class="n">t</span><span class="p">;</span>
+    <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">].</span><span class="n">val</span> <span class="o">+=</span> <span class="n">t</span><span class="p">;</span>
+
+    <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">lazy</span> <span class="o">+=</span> <span class="n">t</span><span class="p">;</span>
+    <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">val</span> <span class="o">+=</span> <span class="n">t</span><span class="p">;</span>
+
+    <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">lazy</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+<p>Hàm cập nhật:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Khi cài đặt, ta LUÔN ĐẢM BẢO giá trị của nút được cập nhật ĐỒNG THỜI với</span>
+        <span class="c1">// giá trị lazy propagation. Như vậy sẽ tránh sai sót.</span>
+        <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">val</span> <span class="o">+=</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">lazy</span> <span class="o">+=</span> <span class="n">val</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">down</span><span class="p">(</span><span class="n">id</span><span class="p">);</span> <span class="c1">// đẩy giá trị lazy propagation xuống các con</span>
+
+    <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+
+    <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">val</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">].</span><span class="n">val</span><span class="p">,</span> <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">val</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p>Hàm lấy giá trị lớn nhất:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">get</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">INFINITY</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">nodes</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">down</span><span class="p">(</span><span class="n">id</span><span class="p">);</span> <span class="c1">// đẩy giá trị lazy propagation xuống các con</span>
+
+    <span class="k">return</span> <span class="n">max</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span>
+        <span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">));</span>
+    <span class="c1">// Trong các bài toán tổng quát, giá trị ở nút id có thể bị thay đổi (do ta đẩy lazy propagation</span>
+    <span class="c1">// xuống các con). Khi đó, ta cần cập nhật lại thông tin của nút id dựa trên thông tin của các con.</span>
+<span class="p">}</span></code></pre>
+<p>Đến đây các bạn đã nắm được kiến thức cơ bản về Segment Tree. Những phần tiếp theo nói về các kiến thức nâng cao - các mở rộng của ST. Bạn nên làm nhiều bài luyện tập (tham khảo ở cuối bài) trước khi nghiên cứu tiếp.</p>
+<h1 class="editable"><a class="anchor" id="3-ứng-dụng-với-cấu-trúc-mảng-động" href="#3-ứng-dụng-với-cấu-trúc-mảng-động"></a>3. Ứng dụng với cấu trúc mảng động</h1>
+<p>Trong loại bài toán này với mỗi nút của cây ta lưu lại một <code>vector</code> và một số biến khác.</p>
+<h2 class="editable"><a class="anchor" id="ví-dụ-1" href="#ví-dụ-1"></a>Ví dụ</h2>
+<p>Cách làm online cho bài <a href="https://oj.vnoi.info/problem/kquery">KQUERY</a>.</p>
+<h2 class="editable"><a class="anchor" id="tóm-tắt-đề-2" href="#tóm-tắt-đề-2"></a>Tóm tắt đề</h2>
+<ul>
+<li>Cho dãy $A$ với $N$ phần tử. Cần trả lời $Q$ truy vấn.</li>
+<li>Truy vấn: đếm số phần tử lớn hơn $k$ trong đoạn $[l, r]$.</li>
+<li>Giới hạn:
+<ul>
+<li>$N \le 30,000$</li>
+<li>$A_i \le 10^9$</li>
+<li>$Q \le 200,000$</li>
+</ul>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="phân-tích-1" href="#phân-tích-1"></a>Phân tích</h2>
+<ul>
+<li>Có $\log{N}$ nút mà ta cần xét khi trả lời truy vấn của đoạn $[u, v]$.</li>
+<li>Nếu trên mỗi nút chúng ta có thể lưu lại danh sách các phần tử đó theo thứ tự tăng dần, ta có thể tìm ra kết quả ở mỗi nút bằng tìm kiếm nhị phân.</li>
+</ul>
+<p>Vì thế với mỗi nút ta lưu lại một <code>vector</code> chứa các phần tử từ $l$ đến $r$ theo thứ tự tăng dần. Điều này có thể được thực hiện với bộ phức tạp bộ nhớ là $\mathcal{O}(N\log{N})$ do mỗi phần tử có thể ở tối đa $\mathcal{O}(\log{N})$ nút (độ sâu của cây không quá $\mathcal{O}(\log{N})$). Ở mỗi nút cha có ta có thể gộp hai nút con vào nút cha bằng phương pháp giống như <strong>Merge Sort</strong> (lưu lại hai biến chạy và so sánh lần lượt từng phần tử ở hai mảng) để có thể xây dựng cây trong $\mathcal{O}(N\log{N})$.</p>
+<p>Hàm xây cây có thể được như sau:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">build</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Đoạn gồm 1 phần tử. Ta dễ dàng khởi tạo nút trên ST.</span>
+        <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">l</span><span class="p">]);</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">build</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">);</span>
+    <span class="n">build</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+
+    <span class="n">merge</span><span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">].</span><span class="n">end</span><span class="p">(),</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">end</span><span class="p">(),</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">());</span>
+<span class="p">}</span></code></pre>
+<p>Và hàm truy vấn có thể cài đặt như sau:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">get</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Trả lời truy vấn (x, y, k)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Đếm số phần tử &gt; K bằng chặt nhị phân</span>
+        <span class="k">return</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="n">upper_bound</span><span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">end</span><span class="p">(),</span> <span class="n">k</span><span class="p">)</span> <span class="o">-</span> <span class="n">st</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">());</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p>Một ví dụ khác là bài <a href="http://codeforces.com/gym/100513/problem/C">Component Tree</a></p>
+<h1 class="editable"><a class="anchor" id="4-ứng-dụng-với-cấu-trúc-set" href="#4-ứng-dụng-với-cấu-trúc-set"></a>4. Ứng dụng với cấu trúc set</h1>
+<p>Ở cấu trúc này mỗi nút chúng ta lưu một <code>set</code>,<code>multiset</code>, <code>hashmap</code>, hoặc <code>unodered map</code> và một số biến khác.</p>
+<p>Đây là một bài toán ví dụ:
+Cho $n$ vector $a_1, a_2, a_3,…,a_n$ rỗng ban đầu. Chúng ta có thể thực hiện $m$ truy vấn trên những vector này:</p>
+<ol>
+<li>Truy vấn $A$ $p$ $k$ là thêm số $k$ vào cuối vector $a_p$.</li>
+<li>Truy vấn $C$ $l$ $r$ $k$ là xuất ra $\sum_{i=l}^rcount(a_i,k)$, với $count(a_i,k)$ là số lần xuất hiện của số $k$ trong vector $a_i$.</li>
+</ol>
+<p>Bài toán này chúng ta lưu lại mỗi nút của cây là một <code>multiset</code> $s$, với mỗi nút lưu số $k$ đúng $\sum_{i=l}^rcount(a_i,k)$ lần với độ phức tạp bộ nhớ chỉ $\mathcal{O}(q\log{n})$.</p>
+<p>Với mỗi truy vấn $C$ $x$ $y$ $k$ chúng ta sẽ in ra tổng của tất cả dùng cây phân đoạn và truy vấn trên set trong mỗi đoạn thuộc đoạn $x$ đến $y$ như truy trên truy vấn cây phân đoạn bình thường.</p>
+<p>Chúng ta sẽ không có hàm xây cây do các vector ban đầu đang là rỗng, nhưng chúng ta sẽ có thêm hàm cộng phần tử vào như sau:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// Thực hiện truy vấn A p k</span>
+    <span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">insert</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="k">return</span> <span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">&lt;=</span> <span class="n">mid</span><span class="p">)</span> <span class="n">add</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">else</span> <span class="n">add</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p>Và một hàm cho truy vấn 2:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">ask</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Trả lời C x y k</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">count</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">ask</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="n">ask</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="5-ứng-dụng-với-các-cấu-trúc-dữ-liệu-khác" href="#5-ứng-dụng-với-các-cấu-trúc-dữ-liệu-khác"></a>5. Ứng dụng với các cấu trúc dữ liệu khác</h1>
+<p>Cây phân đoạn còn có thể có thể sử dụng một cách linh hoạt với các cấu trúc dữ liệu khác như ở trên. Sử dụng một cây phân đoạn khác trên từng nút có thể giúp chúng ta truy vấn dễ dàng hơn trên mảng hai chiều. Trên đây cũng có thể là các loại cây như <strong>Cây tiền tố(Trie)</strong> hoặc cũng có thể là cấu trúc <strong>Disjoint Set</strong>. Sau đây mình xin giới thiệu một loại cây khác cũng sử dụng nhiều trong cây phân đoạn đó chính là <strong>Cây Fenwick (Binary Indexed Tree)</strong>:</p>
+<p>Như trên mỗi nút của cây sẽ là một cây <strong>Fenwick</strong> và có thể một số biến khác. Dưới đây là một bài toán ví dụ:</p>
+<p>Cho $n$ vectors $a_1,a_2,a_3,…,a_n$ rỗng ban đầu. Chúng ta cần thực hiện hai loại truy vấn:</p>
+<ol>
+<li>Truy vấn $A$ $p$ $k$ là thêm số $k$ vào đằng sau vector $a_p$.</li>
+<li>Truy vấn $C$ $l$ $r$ $k$ là xuất ra $\sum_{i=l}^rcount(a_i,j)$ với $j\le k$ với $count(a_i,j)$ là số lần xuất hiện $k$ trong $a_i$.</li>
+</ol>
+<p>Với bài toán này, ta cũng lưu lại ở một nút là một <code>vector</code> $v$ chứa số $k$ khi và chỉ khi $\sum_{i=l}^rcount(a_i,j)\ne 0$ (độ phức tạp bộ nhớ sẽ là $\mathcal{O}(q\log{n})$ ) (các số theo theo thứ tự tăng dần)</p>
+<p>Đầu tiên, đọc và lưu các truy vấn lại với mỗi truy vấn loại 1 ta sẽ thêm $v$ vào tất cả vector có chứa phần tử $p$. Sau đó ta tiến hành sắp xếp các truy vấn theo phương pháp <strong>Merge Sort</strong> đã nói ở trên và dùng hàm <code>unique</code> để loại các phần tử trùng.</p>
+<p>Sau đó chúng ta sẽ xây dụng ở mỗi nút một cây Fenwick có độ lớn bằng độ dài vector. Sau đây là hàm thêm giá trị:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">insert</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Thực hiện A p k</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">mid</span><span class="p">)</span>
+        <span class="n">insert</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">insert</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p>Hàm sắp xếp sau khi đã đọc hết các truy vấn:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">sort_</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="k">return</span> <span class="p">;</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">sort_</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">);</span>
+    <span class="n">sort_</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+
+    <span class="n">merge</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">id</span><span class="p">].</span><span class="n">end</span><span class="p">(),</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">id</span> <span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">end</span><span class="p">(),</span> <span class="n">v</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">());</span>
+<span class="p">}</span></code></pre>
+<p>Với mỗi truy vấn loại 1 ta làm như sau với mỗi nút x:</p>
+<pre class="highlight"><code><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fen</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">&amp;</span> <span class="o">-</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">fen</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">++</span><span class="p">;</span></code></pre>
+<p>Với tất cả $v[x][a]=k$:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">end</span><span class="p">(),</span> <span class="n">k</span><span class="p">)</span> <span class="o">-</span> <span class="n">v</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">();</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fen</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">&amp;</span> <span class="o">-</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">fen</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="k">return</span> <span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">mid</span><span class="p">)</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p>Còn lại việc tính toán truy vấn loại 2 trở nên dễ dàng hơn:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">ask</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Trả lời C x y-1 k</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">end</span><span class="p">(),</span> <span class="n">k</span><span class="p">)</span> <span class="o">-</span> <span class="n">v</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">begin</span><span class="p">();</span>
+        <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">-=</span> <span class="n">i</span> <span class="o">&amp;</span> <span class="o">-</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">ans</span> <span class="o">+=</span> <span class="n">fen</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="n">i</span><span class="p">];</span>
+        <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">ask</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">ask</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="6-ứng-dụng-trong-cây-có-gốc" href="#6-ứng-dụng-trong-cây-có-gốc"></a>6. Ứng dụng trong cây có gốc</h1>
+<p>Ta có thể thấy cây phân đoạn là một ứng dụng trong mảng, vì lí do đó nếu chúng ta có thể đổi cây thành các mảng, ta có thể dễ dàng xử lý các truy vấn trên cây. Đây là tư tưởng của <a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/heavy-light-decomposition">Heavy Light Decomposition</a>.</p>
+<p><strong>Bài tập ví dụ</strong>: <a href="http://codeforces.com/contest/396/problem/C">396C - On Changing Tree</a></p>
+<p>Gọi $h_v$ là độ cao tương ứng của nút $v$.</p>
+<p>Ta có với mỗi nút $u$ trong cây con gốc $v$ sau truy vấn một giá trị của nó sẽ tăng một lượng là $x+(h_u-h_v)*-k=x+k* h_v-k* h$. Kết quả của truy vấn 2 sẽ là $\sum_{i\in s}(k_i*h_{v_i}+x_i)-h_u*\sum_{i\in s}k_i$. Vì vậy ta chỉ cần tính hai giá trị là $\sum_{i\in s}(k_i* h_{v_i}+x_i)$ và $\sum_{i\in s}k_i$. Vậy với mỗi nút ta có thể lưu lại hai giá trị là $hkx=\sum x +h*k$ và $sk=\sum k$ (không cần lazy propagation do chúng ta chỉ update nút đầu tiên thỏa việc nằm trong đoạn.</p>
+<p>Với truy vấn cập nhật:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">r</span> <span class="o">||</span> <span class="n">l</span> <span class="o">&gt;=</span> <span class="n">f</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">return</span> <span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">f</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="p">{</span>
+        <span class="n">hkx</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">hkx</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+  			<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1LL</span> <span class="o">*</span> <span class="n">h</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+  			<span class="n">hkx</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">hkx</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+  			<span class="n">sk</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">sk</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+  			<span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">id</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p>Và truy vấn:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">ask</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1LL</span> <span class="o">*</span> <span class="n">h</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">*</span> <span class="n">sk</span><span class="p">[</span><span class="n">id</span><span class="p">])</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="p">(</span><span class="n">hkx</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">+</span> <span class="n">mod</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">mid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ans</span> <span class="o">+</span> <span class="n">ask</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">id</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">ans</span> <span class="o">+</span> <span class="n">ask</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="7-persistent-segment-trees" href="#7-persistent-segment-trees"></a>7. Persistent Segment Trees</h1>
+<p><strong>Persistent Data Structures</strong> là những cấu trúc dữ liệu được dùng khi chúng ta cần có <strong>toàn bộ lịch sử</strong> của các thay đổi trên 1 cấu trúc dữ liệu (CTDL).</p>
+<p>Các bạn có thể đọc thêm ở: <a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/persistent-data-structures">Persistent Data Structures</a></p>
+<h1 class="editable"><a class="anchor" id="8-it-đoạn-thẳng" href="#8-it-đoạn-thẳng"></a>8. IT đoạn thẳng</h1>
+<p><strong>Bài toán</strong></p>
+<p>Cho một tập hợp chứa các đường thẳng có dạng $ax + b$, mỗi đường thẳng được biểu diễn bằng một cặp số $(a, b)$. Cần thực hiện hai truy vấn:</p>
+<ol>
+<li>Thêm một đường thẳng vào tập hợp.</li>
+<li>Trả lời xem tại hoành độ $q$, điểm nào thuộc ít nhất một đường thẳng trong tập có tung độ lớn nhất. Nói cách khác, đường thẳng $(a, b)$ nào có $aq + b$ lớn nhất.</li>
+</ol>
+<p>Để giải bài toán này, hai cách phổ biến là ứng dụng <a class="internal absent" href="https://vnoi.info/wiki/translate/wcipeg/Convex-Hull-Trick">bao lồi</a> và sử dụng cây <a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/interval-tree-tap-doan-thang">Interval Tree lưu đoạn thẳng</a></p>
+<h1 class="editable"><a class="anchor" id="9-chặt-nhị-phân-trên-segment-tree" href="#9-chặt-nhị-phân-trên-segment-tree"></a>9. Chặt nhị phân trên Segment tree</h1>
+<p><strong>Nguồn:</strong> <a href="https://github.com/leduythuccs/leduythuccs.github.io/blob/master/_posts/2020-07-10-Binary-Search-on-Segment-Tree.md">Binary Search on Segment Tree</a></p>
+<p>Đây là một thao tác khá thường gặp khi dùng Segment tree, nó có tên gọi là <strong>chặt nhị phân trên Segment tree</strong>, tên tiếng anh là <em>"Binary search over/on Segment tree"</em>, hoặc là <em>"Walk on Segment tree"</em>.</p>
+<p>Trước hết, ta cần phải nắm được kiến thức cơ bản về Segment tree và chặt nhị phân. Bạn có thể tìm hiểu thuật toán <strong>chặt nhị phân</strong> ở <a class="internal absent" href="https://vnoi.info/wiki/algo/basic/binary-search">đây</a>.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-1" href="#bài-toán-1"></a>Bài toán 1</h2>
+<p>Cho một mảng các số nguyên $a$ có $n$ phần tử. Có $q$ truy vấn có dạng:</p>
+<ul>
+<li>$k$ : tìm $i$ nhỏ nhất sao cho $a[i] \le k$.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="cách-giải" href="#cách-giải"></a>Cách giải</h3>
+<p>Ta nhận thấy do $a[i] \le k$ và $i$ nhỏ nhất, cho nên $a[j] &gt; k$ với mọi $1 \le j &lt; i$.</p>
+<p>Do đó, $min(a[1], a[2], …, a[i]) = a[i]$.</p>
+<p>Đặt $f[i] = min(a[1], a[2], …, a[i])$.</p>
+<p><strong>Nhận xét 1:</strong> Việc tìm $i$ nhỏ nhất sao cho $a[i] \le k$ cũng tương ứng với việc tìm $i$ nhỏ nhất sao cho $f[i] \le k$.</p>
+<p><strong>Nhận xét 2:</strong> $f[i - 1] \ge f[i]$. Nói cách khác, $f$ là mảng không tăng.</p>
+<p>Vậy bài toán có thể phát biểu lại như sau:</p>
+<p>Cho một mảng các số nguyên $f$ đã "sắp xếp" giảm dần, có $q$ truy vấn có dạng:</p>
+<ul>
+<li>$k$ : tìm $i$ nhỏ nhất sao cho $f[i] \le k$.</li>
+</ul>
+<p>Rõ ràng bài toán này chỉ là bài toán chặt nhị phân cơ bản, vì mảng $f$ đã được "sắp xếp". Tới đây ta có thể trả lời các truy vấn trong độ phức tạp $O(\log{n})$. Code thì nó sẽ giống giống thế này:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span> 
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">mid</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span> 
+            <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">pos</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="bài-toán-2" href="#bài-toán-2"></a>Bài toán 2</h2>
+<p>Cho một mảng các số nguyên $a$ có $n$ phần tử. Có $q$ truy vấn có dạng:</p>
+<ul>
+<li>$i$ $x$ : gán $a[i] = x$.</li>
+<li>$k$ : tìm $i$ nhỏ nhất sao cho $a[i] \le k$</li>
+</ul>
+<p>Bài toán này giống <strong>bài toán 1</strong>, nhưng có thêm truy vấn cập nhật phần tử, điều này làm cho mảng $f$ bị thay đổi. Ta có thể sửa lại yêu cầu bài toán một chút, là có $3$ loại truy vấn:</p>
+<ul>
+<li>$i$ $x$ : gán $a[i] = x$.</li>
+<li>$k$ : tìm $i$ nhỏ nhất sao cho $a[i] \le k$</li>
+<li>$i$ : tính $min(a[1], a[2], …, a[i])$.</li>
+</ul>
+<p>Rõ ràng truy vấn 1 và 3 có thể thực hiện bằng Segment tree với độ phức tạp $O(\log{n})$, vậy thì tới đây bài toán quay về <strong>bài toán 1</strong>, chỉ có điều khi ta cần tính $f[i]$ thì ta phải gọi hàm trên Segment tree để lấy <em>min</em>, độ phức tạp cho việc trả lời truy vấn 2 là $O(\log^2{n})$:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">getMin</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mid</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span> 
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">mid</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span> 
+            <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">pos</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Nhưng nếu chỉ dừng ở đây thì đã không cần phải nhắc đến trong bài viết này rồi &lt;(") . Ta nhìn một chút vào cấu trúc cây Segment tree (quản lý <em>min</em>) dưới dây:</p>
+<p><img src="https://vnoi.info/wiki/uploads/segment-tree-extend_img1.png" /></p>
+<p>Giả sử ta cần tìm vị trí đầu tiên có giá trị không vượt quá $2$. Ta đứng từ gốc, xét $2$ con trái phải lần lượt có giá trị là $3$ và $2$:
+<img src="https://vnoi.info/wiki/uploads/segment-tree-extend_img2.png" /></p>
+<p>Do ta đang cần tìm giá trị không vượt quá $2$, nên ta chắc chắn kết quả không nằm trong cây con bên trái (vì <em>min</em> của cây con này là $3$, suy ra mọi phần tử được quản lý bởi cây con này đều lớn hơn $2$). Và do cây con phải có giá trị là $2$, suy ra kết quả chắc chắn nằm cây con này, ta đệ quy xuống cây con bên trái:</p>
+<p><img src="https://vnoi.info/wiki/uploads/segment-tree-extend_img3.png" /></p>
+<p>Tương tự, cây con này có $2$ cây con trái và phải, cả $2$ đều có giá trị là $2$, nghĩa là luôn tồn tại ít nhất một số có giá trị bằng $2$ trong cả $2$ cây con này, từ đó suy ra cả $2$ cây con đều có thể chứa kết quả ta cần tìm. Nhưng do ta muốn tìm vị trí có $i$ bé nhất, nên ta sẽ ưu tiên đi vào cây con bên trái (cây con này quản lý các vị trí nhỏ hơn các vị trí của cây con phải).</p>
+<p><img src="https://vnoi.info/wiki/uploads/segment-tree-extend_img4.png" /></p>
+<p>Lập luận tương tự thì ta sẽ biết được kết quả nằm ở cây con trái, lúc này cây chỉ quản lý duy nhất một phần tử nên ta có thể kết luận luôn vị trí cần tìm.</p>
+<p>Đoạn code mẫu cho việc tìm vị trí đầu tiên không vượt quá số $k$ có thể code như sau, lưu ý, trong code này mình xem mảng $st$ là mảng lưu giá trị của Segment tree, $3$ tham số $root, l, r$ thể hiện cho việc nút $root$ quản lý một đoạn từ $[l, r]$:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">root</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="n">root</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">k</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">//nếu cả đoạn [l, r] đều lớn hơn k thì không thỏa mãn</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="k">return</span> <span class="n">l</span><span class="p">;</span> <span class="c1">//khi đoạn có 1 phần tử thì đó là kết quả</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="n">root</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span> <span class="c1">//nếu min cây con trái không vượt quá k</span>
+        <span class="k">return</span> <span class="n">query</span><span class="p">(</span><span class="n">root</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="c1">//ngược lại thì kết quả nằm ở bên cây con phải</span>
+    <span class="k">return</span> <span class="n">query</span><span class="p">(</span><span class="n">root</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">//cout &lt;&lt; query(1, 1, n, k);</span></code></pre>
+<p>Hàm trên có độ phức tạp là $O(\log{n})$, bởi vì mỗi lần đệ quy chỉ gọi ra một hàm khác (từ một nút chỉ đi qua một nút khác), và số lần gọi đệ quy chính bằng độ cao của Segment tree.
+Tới đây ta đã xong <strong>bài toán 2</strong>.</p>
+<p>Lưu ý là, với các bài toán mà truy vấn cập nhật là một đoạn (thay vì một phần tử như <strong>bài toán 2</strong>), thì việc cài đặt hàm $query$ ở trên vẫn không đổi, chỉ có thêm vào <em>lazy</em> trước khi xét $2$ cây con trái phải, mình xin giành cho bạn đọc vậy.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-3" href="#bài-toán-3"></a>Bài toán 3:</h2>
+<p>Cho một mảng các số nguyên $a$ có $n$ phần tử. Có $q$ truy vấn có dạng:</p>
+<ul>
+<li>$i$ $x$ : gán $a[i] = x$.</li>
+<li>$L$ $k$ : tìm $i$ nhỏ nhất sao cho $L \le i$ và $a[i] \le k$</li>
+</ul>
+<p>Bài toán này khó hơn <strong>bài toán 2</strong> một chút, đó là có thêm một cận dưới của $i$ (thay vì tìm $i$ bé nhất, thì ta cần tìm $i$ bé nhất nhưng lớn hơn một số nào đó), ta có thể thay đổi code một tí như sau:</p>
+<p></p><pre class="highlight"><code><span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">root</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">lowerbound</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="n">root</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">k</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">//nếu cả đoạn [l, r] đều lớn hơn k thì không thỏa mãn</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="n">lowerbound</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">//ta chỉ xét những vị trí không nhỏ hơn lowerbound</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="k">return</span> <span class="n">l</span><span class="p">;</span> <span class="c1">//khi đoạn có 1 phần tử thì đó là kết quả</span>
+    <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> 
+    <span class="k">if</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="n">root</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span> <span class="c1">//nếu min cây con trái không vượt quá k</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="n">root</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">lowerbound</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="c1">//nếu cây con trái không tìm được kết quả &lt;=&gt; min nằm ngoài lowerbound</span>
+    <span class="c1">//thì ta sẽ tìm kết quả ở cây con phải</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">res</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  
+        <span class="n">res</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="n">root</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">lowerbound</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//cout &lt;&lt; query(1, 1, n, l, k);</span></code></pre>
+Code này có một chút lạ, khác so với code ở <strong>bài toán 2</strong> một chút, ở <strong>bài toán 2</strong>, thì mỗi lần đệ quy chỉ thăm duy nhất một con trái hoặc phải, nhưng ở code mới này thì một lần đệ quy có thể phải thăm cả $2$ con, lý do là vì có thể một cây con nó có <em>min</em> không vượt quá $k$, nhưng vị trí đạt <em>min</em> nó có thể nhỏ hơn $lowerbound$, vì thế ta phải tìm ở cây con khác.
+<p>Để đánh giá độ phức tạp code trên thì hơi rườm rà một chút, nhưng nó vẫn là $O(\log{n})$. Đại ý là ta có thể chứng minh số lần mà $r &lt; lowerbound$ sẽ không quá $O(\log{n})$.</p>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng:</h1>
+<ul>
+<li><a href="https://oj.vnoi.info/contest/segtree">VNOJ - Educational Segment Tree Contest</a></li>
+<li><a href="https://oj.vnoi.info/problem/qmax">VNOJ - QMAX</a></li>
+<li><a href="https://oj.vnoi.info/problem/nklineup">VNOJ - NKLINEUP</a></li>
+<li><a href="https://oj.vnoi.info/problem/gss">VNOJ - GSS</a></li>
+<li><a href="https://oj.vnoi.info/problem/lites">VNOJ - LITES</a></li>
+<li><a href="https://oj.vnoi.info/problem/dquery">VNOJ - DQUERY</a></li>
+<li><a href="https://oj.vnoi.info/problem/kquery">VNOJ - KQUERY</a></li>
+<li><a href="http://www.spoj.com/problems/FREQUENT/">FREQUENT</a></li>
+<li><a href="https://oj.vnoi.info/problem/kquery2">VNOJ - KQUERY2</a></li>
+<li><a href="http://www.spoj.com/problems/GSS2/">GSS2</a></li>
+<li><a href="http://www.spoj.com/problems/GSS3/">GSS3</a></li>
+<li><a href="http://www.spoj.com/problems/MULTQ3">MULTQ3</a></li>
+<li><a href="http://www.spoj.com/problems/POSTERS">POSTERS</a></li>
+<li><a href="http://www.spoj.com/problems/PATULJCI">PATULJCI</a></li>
+<li><a href="http://codeforces.com/problemset/problem/500/E">New Year Domino</a></li>
+<li><a href="http://codeforces.com/problemset/problem/292/E">Copying Data</a></li>
+<li><a href="http://codeforces.com/problemset/problem/446/">DZY Loves Fibonacci Numbers</a></li>
+<li><a href="http://www.codechef.com/JAN14/problems/FRBSUM">FRBSUM</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="đọc-thêm" href="#đọc-thêm"></a>Đọc thêm:</h1>
+<ul>
+<li><a href="https://drive.google.com/file/d/0BwcTB8a10LBweklLb1d6N1BPOG8/view?usp=sharing&amp;resourcekey=0-tq6X5R9Dnlt6Gr5kyTOTTA">Cấu trúc dữ liệu đặc biệt - Đoàn Mạnh Hùng</a></li>
+<li><a href="https://drive.google.com/file/d/0BwcTB8a10LBwcUlfTHg0NFFUbW8/view?usp=sharing&amp;resourcekey=0-J7PRHyxnAFQFB43n_sMz3A">Cấu trúc dữ liệu đặc biệt - Nguyễn Minh Hiếu</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="các-nguồn-tham-khảo" href="#các-nguồn-tham-khảo"></a>Các nguồn tham khảo:</h1>
+<ul>
+<li><a href="http://codeforces.com/blog/entry/15890">Codeforces</a></li>
+<li><a href="algo/basic/Tai-Lieu-Thuat-Toan">Một số vấn đề đáng chú ý trong môn Tin học</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

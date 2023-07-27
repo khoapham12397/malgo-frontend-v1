@@ -1,0 +1,74 @@
+<div id="wiki-content">
+<h1 class="pt-4">Số học 3 - Tính (a^b) % c</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/he/">he</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Nguồn: <a href="https://www.hackerearth.com/practice/notes/number-theory-1/">HackerEarth</a> và 1 số bài viết trên Wikipedia</p>
+<p>Người dịch: Bùi Việt Dũng</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#thuật-toán-ngây-thơ">Thuật toán "ngây thơ"</a></li><li><a href="#thuật-toán-chia-để-trị">Thuật toán "chia để trị"</a></li></ul></div>
+<p>Xét bài toán tính $a^b\%c$, với $\%$ là dấu đồng dư thức và $b$ có thể rất lớn (ví dụ $b \leq 10^{18}$).</p>
+<h1 class="editable"><a class="anchor" id="thuật-toán-ngây-thơ" href="#thuật-toán-ngây-thơ"></a>Thuật toán "ngây thơ"</h1>
+<p>$a^b$ có thể viết là $a.a.a.a…$ với $b$ chữ $a$. Do đó ta có thể nhân $b$ lần $a$ để có được kết quả.</p>
+<p></p><pre class="highlight"><code><span class="kt">long</span> <span class="kt">long</span> <span class="nf">power</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span> <span class="n">a</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">b</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">b</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ans</span> <span class="o">*=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="n">ans</span> <span class="o">%=</span> <span class="n">c</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+ <span class="p">}</span></code></pre>
+Trong mỗi lần lặp, biến $ans$ chứa kết quả được nhân với $a$. Ngoài ra, ta cần đảm bảo $a$ sẽ không vượt quá $c$ trong các lần lặp, vì thế ta lấy phần dư khi chia $ans$ cho $c$ (<code>ans = ans % c</code>). Ta làm được vậy là nhờ tính chất $(x.y) \% n = ((x \% n).(y \% n)) \% n$.
+<p>Vì vậy trong code trên ta tính $(ans.a)\%c$ bằng cách tính $((ans\%c).(a\%c))\%c$.</p>
+<p><strong>Độ phức tạp của thuật toán:</strong> $O(b)$.</p>
+<h1 class="editable"><a class="anchor" id="thuật-toán-chia-để-trị" href="#thuật-toán-chia-để-trị"></a>Thuật toán "chia để trị"</h1>
+<p>Dễ dàng nhận thấy thuật toán trên không hiệu quả, vì thế ta cần tìm thuật toán hiệu quả hơn. Ta có thể giải bài toán này với độ phức tạp $O(\log_{2}{b})$ bằng kĩ thuật <strong>lũy thừa bằng cách bình phương (exponentiation by squaring)</strong>. Kĩ thuật này chỉ cần $O(\log_{2}{b})$ lần bình phương và $O(\log_{2}{b})$ phép nhân để ra kết quả. Rõ ràng cách giải này hiệu quả hơn nhiều lần so với thuật toán "ngây thơ".</p>
+<p>Ta biết rằng $a^b$ có thể được viết dưới dạng:</p>
+<p>$a^b=(a^{\frac{b}{2}})^2$ nếu $b$ chia hết cho 2.</p>
+<p>$a^b=a.(a^{[\frac{b}{2}]})^2$ nếu $b$ không chia hết cho 2.</p>
+<p>$a^b=1$ nếu $b=0$.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">sqr</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">pow</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">MOD</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span> <span class="o">%</span> <span class="n">MOD</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">sqr</span><span class="p">(</span><span class="n">pow</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">%</span> <span class="n">MOD</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">sqr</span><span class="p">(</span><span class="n">pow</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">%</span> <span class="n">MOD</span><span class="p">)</span> <span class="o">%</span> <span class="n">MOD</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Giả sử ta có $a=2,b=5,c=5$, khi đó kết quả là $pow(2,5,5)$</p>
+<ol>
+<li>
+<p>Do $b$ lẻ, nên hàm $pow(2,5,5)$ gọi hàm $pow(2,2,5)$ để tính $2.pow(2,2,5)$</p>
+</li>
+<li>
+<p>Trong hàm $pow(2,2,5)$, do $b=2$ chẵn nên $pow(2,2,5)=pow(2,1,5)^2$</p>
+</li>
+<li>
+<p>Trong hàm $pow(2,1,5)$, do $b=1$ lẻ nên $pow(2,1,5)=2*pow(2,0,5)$.</p>
+</li>
+<li>
+<p>Trong hàm $pow(2,0,5)$, do $b=0$ nên ta trả về 1.</p>
+</li>
+<li>
+<p>Quay lại hàm $pow(2,1,5)$: hàm này trả về giá trị 2.</p>
+</li>
+<li>
+<p>Quay lại hàm $pow(2,2,5)$: hàm này trả về giá trị 4.</p>
+</li>
+<li>
+<p>Quay lại hàm $pow(2,5,5)$: hàm này trả về giá trị $(2.4^2)\%5=32\%5=2$.</p>
+</li>
+</ol>
+<p>Vậy ta có $2^5\%5=2$.</p>
+<p><strong>Độ phức tạp của thuật toán:</strong> $O(\log_{2}{b})$</p>
+</div>
+</div>
+</div>
+</div>

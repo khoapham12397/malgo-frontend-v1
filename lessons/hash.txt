@@ -1,0 +1,248 @@
+<div id="wiki-content">
+<h1 class="pt-4">Hash: A String Matching Algorithm</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/string/">string</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả</strong>: Lê Khắc Minh Tuệ</p>
+<p><strong>Chỉnh sửa</strong>: Nguyễn <em>RR</em> Thành Trung, Phạm Văn Hạnh</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a><ul><li><a href="#hoàn-cảnh">Hoàn cảnh</a></li><li><a href="#phát-biểu-bài-toán">Phát biểu bài toán</a></li><li><a href="#thuật-toán">Thuật toán:</a></li><li><a href="#mục-đích-bài-viết">Mục đích bài viết</a></li></ul></li><li><a href="#thuật-toán-hash">Thuật toán Hash</a><ul><li><a href="#ký-hiệu">Ký hiệu</a></li><li><a href="#mô-tả-thuật-toán">Mô tả thuật toán</a></li><li><a href="#mã-chương-trình">Mã chương trình</a></li><li><a href="#đánh-giá">Đánh giá</a></li></ul></li><li><a href="#chi-tiết-cài-đặt">Chi tiết cài đặt</a><ul><li><a href="#1-chọn-số-nguyên-tố-cho-hệ-cơ-số-và-modulo">1. Chọn số nguyên tố cho hệ cơ số và modulo</a></li><li><a href="#2-chọn-hệ-cơ-số">2. Chọn hệ cơ số</a></li><li><a href="#3-chọn-modulo">3. Chọn modulo</a></li><li><a href="#4-hash-tràn-số-và-hash-có-mod">4. Hash tràn số và Hash có MOD</a></li><li><a href="#5-một-số-lời-khuyên-nho-nhỏ">5. Một số lời khuyên nho nhỏ</a></li></ul></li><li><a href="#ứng-dụng">Ứng dụng</a><ul><li><a href="#longest-palindrome-substring">Longest palindrome substring</a></li><li><a href="#k-th-alphabetical-cyclic">k-th alphabetical cyclic</a></li><li><a href="#longest-substring-and-appear-at-least-k-times">Longest substring and appear at least k times</a></li></ul></li><li><a href="#đánh-giá-độ-chính-xác">Đánh giá độ chính xác</a><ul><li><a href="#trường-hợp-1">Trường hợp 1</a></li><li><a href="#trường-hợp-2">Trường hợp 2</a></li></ul></li><li><a href="#tổng-kết">Tổng kết</a><ul><li><a href="#thuật-toán-1">Thuật toán</a></li><li><a href="#cài-đặt">Cài đặt</a></li><li><a href="#ưu-điểm">Ưu điểm</a></li><li><a href="#nhược-điểm">Nhược điểm</a></li></ul></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng</a></li><li><a href="#các-nguồn-tham-khảo">Các nguồn tham khảo</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<h2 class="editable"><a class="anchor" id="hoàn-cảnh" href="#hoàn-cảnh"></a>Hoàn cảnh</h2>
+<p>Một lớp những bài toán rất được quan tâm trong khoa học máy tính nói chung và lập trình thi cử nói riêng, đó là <a class="internal absent" href="https://vnoi.info/wiki/algo/string/basic">xử lý xâu chuỗi</a>. Trong lớp bài toán này, người ta thường rất hay phải đối mặt với một bài toán: tìm kiếm xâu chuỗi.</p>
+<h2 class="editable"><a class="anchor" id="phát-biểu-bài-toán" href="#phát-biểu-bài-toán"></a>Phát biểu bài toán</h2>
+<ul>
+<li>Cho một đoạn văn bản, gồm $m$ ký tự.</li>
+<li>Cho một đoạn mẫu, gồm $n$ ký tự.</li>
+<li>Máy tính cần trả lời câu hỏi: đoạn mẫu xuất hiện bao nhiêu lần trong đoạn văn bản và chỉ ra các vị trí xuất hiện đó.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="thuật-toán" href="#thuật-toán"></a>Thuật toán:</h2>
+<p>Có rất nhiều thuật toán có thể giải quyết bài toán này. Người viết xin tóm tắt 2 thuật toán phổ biến được dùng trong các kì thi lập trình:</p>
+<ul>
+<li>
+<strong>Brute-force</strong>: Với một cách tiếp cận trực tiếp, chúng ta có thể thu được thuật toán để giải. Tuy nhiên độ phực tạp của nó là rất lớn trong trường hợp xấu nhất. Thuật toán brute-force so khớp tất cả các vị trí xuất hiện của đoạn mẫu trong đoạn văn bản. Cụ thể độ phức tạp cho thuật toán này là $O(mn)$.</li>
+<li>
+<strong><a class="internal absent" href="https://vnoi.info/wiki/translate/wcipeg/kmp">Knuth-Morris-Pratt</a></strong>: Hay còn được viết tắt là KMP, được phát minh vào năm 1974, bởi Donald Knuth, Vaughan Pratt và James H. Morris. Thuật toán này sử dụng một correction-array, là một thuật toán rất hiệu quả, có độ phức tạp là $O(m + n)$.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="mục-đích-bài-viết" href="#mục-đích-bài-viết"></a>Mục đích bài viết</h2>
+<p>Trong bài viết này, người viết chỉ tập trung vào thuật toán Hash (Tên chuẩn của thuật toán này là <a href="https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm">Rabin–Karp</a> hoặc <a href="https://en.wikipedia.org/wiki/Rolling_hash">Rolling Hash</a>, tuy nhiên ở Việt Nam thường được gọi là Hash). Theo như bản thân người viết đánh giá, đây là thuật toán rất hiệu quả đặc biệt là trong thi cử. Nó hiệu quả bởi 3 yếu tố: tốc độ thực thi, linh động trong việc sử dụng (ứng dụng hiệu quả) và sự đơn giản trong cài đặt.</p>
+<p>Đầu tiên, người viết xin được trình bày về thuật toán này. Sau đó, người viết sẽ trình bày một vài ứng dụng, cách sử dụng và phát triển thuật toán Hash trong các bài toán tin học.</p>
+<h1 class="editable"><a class="anchor" id="thuật-toán-hash" href="#thuật-toán-hash"></a>Thuật toán Hash</h1>
+<h2 class="editable"><a class="anchor" id="ký-hiệu" href="#ký-hiệu"></a>Ký hiệu</h2>
+<ul>
+<li>Tập hợp các chữ cái được sử dụng: $\Sigma$</li>
+<li>Đoạn con từ $i$ đến $j$ của một xâu $s$: $s[i..j]$</li>
+<li>Đoạn văn bản: $T[1..m]$</li>
+<li>Đoạn mẫu: $P[1..n]$</li>
+</ul>
+<p>Chúng ta cần tìm ra tất cả các vị trí $i (1 \le i \le m − n + 1)$ thỏa mãn: $T[i..i+n−1] = P$.</p>
+<h2 class="editable"><a class="anchor" id="mô-tả-thuật-toán" href="#mô-tả-thuật-toán"></a>Mô tả thuật toán</h2>
+<p>Để đơn giản, giả sử rằng $\Sigma = {a, b, …, z}$ (nói cách khác, $\Sigma$ chỉ gồm các chữ cái in thường). Để biểu diễn một xâu, thay vì dùng chữ cái, chúng ta sẽ chuyển sang biểu diễn dạng số. Ví dụ: xâu <code>aczd</code> được viết dưới dạng số là một dãy gồm 4 số: <code>(1,3,26,4)</code>. Như vậy, một xâu được biểu diễn dưới dạng một số ở hệ cơ số $base$ với $base &gt; 26$. Từ đây suy ra, 2 xâu bằng nhau khi và chỉ khi biểu diễn của 2 xâu ở hệ cơ số 10 giống nhau.</p>
+<p><strong>Lưu ý</strong>:</p>
+<ol>
+<li>Ở đây mình đổi chữ <code>a</code> thành số 1 chứ không phải số 0. Đây là chi tiết vô cùng quan trọng, để tránh 2 xâu: <code>abc</code> và <code>bc</code> bằng nhau khi đổi ra số. Bạn có thể đọc thêm chi tiết ở phần <a href="#chi-ti%E1%BA%BFt-c%C3%A0i-%C4%91%E1%BA%B7t">Chi tiết cài đặt</a>.</li>
+<li>Thông thường ta chọn $base$ là một số nguyên tố. Mình sẽ giải thích thêm trong phần <a href="#chi-ti%E1%BA%BFt-c%C3%A0i-%C4%91%E1%BA%B7t">Chi tiết cài đặt</a>.</li>
+</ol>
+<p>Đây chính là tư tưởng của thuật toán: đổi 2 xâu từ hệ cơ số $base$ ra hệ cơ số 10, rồi đem so sánh ở hệ cơ số 10. Tuy nhiên, chúng ta nhận thấy rằng, khi đổi 1 xâu ra biểu diễn ở hệ cơ số 10, biểu diễn này có thể rất lớn và nằm ngoài phạm vi lưu trữ số nguyên của máy tính.</p>
+<p>Để khắc phục điều này, chúng ta chuyển sang so sánh 2 biểu diễn của 2 xâu ở hệ cơ số 10 sau khi lấy phần dư cho một số nguyên đủ lớn. Cụ thể hơn: nếu biểu diễn trong hệ thập phân của xâu $a$ là $x$ và biểu diễn trong hệ thập phân của xâu $b$ là $y$, chúng ta sẽ coi $a$ bằng $b$ <em>‘khi và chỉ khi’</em> $x \bmod MOD = y \bmod MOD$ trong đó $MOD$ là một số nguyên đủ lớn.</p>
+<p><strong>Lưu ý</strong>: Lý do chọn $MOD$ là số nguyên tố được giải thích thêm trong phần <a href="#chi-ti%E1%BA%BFt-c%C3%A0i-%C4%91%E1%BA%B7t">Chi tiết cài đặt</a>.</p>
+<p>Dễ dàng nhận thấy việc so sánh $x \bmod MOD$ với $y \bmod MOD$ rồi kết luận $a$ có bằng với $b$ hay không là sai. $x \bmod MOD = y \bmod MOD$ chỉ là điều kiện cần để $a$ bằng $b$ chứ chưa phải điều kiện đủ. Tuy nhiên, chúng ta sẽ chấp nhận lập luận sai này trong thuật toán Hash. Và coi điều kiện cần như điều kiện đủ. Trên thực tế, lập luận sai này có thể dẫn đến kết quả sai nếu bạn không hiểu rõ mình đang làm gì. Để hiểu rõ về tỉ lệ sai của thuật toán Hash, các bạn đọc thêm phần <a href="#%C4%91%C3%A1nh-gi%C3%A1-%C4%91%E1%BB%99-ch%C3%ADnh-x%C3%A1c">Đánh giá độ chính xác</a>. Phần <a href="#chi-ti%E1%BA%BFt-c%C3%A0i-%C4%91%E1%BA%B7t">Chi tiết cài đặt</a> cũng nói thêm về cách tránh bị sai số khi cài đặt Hash.</p>
+<p>Để đơn giản trong việc trình bày tiếp thuật toán, chúng ta sẽ gọi biểu diễn của một xâu trong hệ thập phân sau khi lấy phần dư cho $MOD$ là mã Hash của xâu đó. Nhắc lại, 2 xâu bằng nhau <em>‘khi và chỉ khi’</em> mã Hash của 2 xâu bằng nhau.</p>
+<p>Trở lại bài toán ban đầu, chúng ta cần chỉ ra $P$ xuất hiện ở những vị trí nào trong $T$. Để làm được việc này, chúng ta chỉ cần duyệt qua mọi vị trí xuất phát có thể của $P$ trong $T$. Giả sử vị trí đó là $i$, chúng ta sẽ kiểm tra $T[i..i+n−1]$ có bằng với $P$ hay không. Để kiểm tra điều này, chúng ta cần tính được mã Hash của đoạn $T[i..i+n−1]$ và mã Hash của xâu $P$.</p>
+<p>Để tính mã Hash của xâu $P$ chúng ta chỉ cần làm đơn giản như sau:</p>
+<pre class="highlight"><code>const base = 31;
+hashP = 0
+for (i : 1 .. n)
+      hashP = (hashP * base + P[i] - 'a' + 1) mod MOD</code></pre>
+<p>Phần khó hơn của thuật toán Hash là: Tính mã Hash của một đoạn con $T[i..j]$ của xâu $T$ $(1 \le i \le j \le N)$.</p>
+<ul>
+<li>Để hình dung cho đơn giản, xét ví dụ sau: Xét xâu $s$ và biểu diễn của nó dưới cơ số $base$: $(4,1,2,5,1,7,8)$. Chúng ta cần lấy mã Hash của đoạn con từ phần tử thứ 3 đến phần tử thứ 6, nghĩa là cần lấy mã Hash của xâu $(2,5,1,7)$. Nhận thấy, để lấy được xâu $s[3..6]$, chỉ cần lấy số $s[1..6]$ là $(4,1,2,5,1,7)$ trừ cho số ($s[1..2]$ nhân với $base^4$) là $(4,1,0,0,0,0)$ ta sẽ thu được $(2,5,1,7)$.</li>
+<li>Để cài đặt ý tưởng này, chúng ta cần khởi tạo $base^x \bmod MOD$ với $(0 \le x \le m)$ và mã Hash của tất cả những tiền tố của $s$, cụ thể là mã Hash của những xâu $s[1..i]$ với $(1 \le i \le m)$.</li>
+</ul>
+<pre class="highlight"><code>pow[0] = 1
+for (i : 1 .. m)
+       pow[i] = (pow[i-1] * base) mod MOD
+
+
+hashT[0] = 0
+for (i : 1 .. m)
+       hashT[i] = (hashT[i-1] * base + T[i] - 'a') mod MOD
+</code></pre>
+<p>Trong đoạn code trên, chúng ta thu được mảng $pow[i]$ (lưu lại $base^i \bmod MOD$) và mảng $hashT[i]$ (lưu lại mã Hash của $T[1..i]$).</p>
+<ul>
+<li>Để lấy mã Hash của $T[i..j]$ ta viết hàm sau:</li>
+</ul>
+<pre class="highlight"><code>function getHashT(i, j):
+       // Chú ý rằng `- hashT[i - 1] * pow[j - i + 1]` có thể âm.
+       // Với 1 số ngôn ngữ như C++, toán tử mod sẽ trả kết quả sai với số âm.
+       // Do đó ta cần thêm "+ MOD * MOD" để đảm bảo kết quả luôn chính xác.
+       return (hashT[j] - hashT[i - 1] * pow[j - i + 1] + MOD * MOD) mod MOD</code></pre>
+<p>Bài toán chính đã được giải quyết, và đây là chương trình chính:</p>
+<pre class="highlight"><code>for (i : 1 .. m - n +1)
+      if hashP = getHashT(i, i + n - 1):
+              print("Match position: ", i)</code></pre>
+<h2 class="editable"><a class="anchor" id="mã-chương-trình" href="#mã-chương-trình"></a>Mã chương trình</h2>
+<p>Chương trình sau, tôi viết bằng ngôn ngữ C++, là lời giải cho bài <a href="https://oj.vnoi.info/problem/substr">SUBSTR</a>:</p>
+<pre class="highlight"><code><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">ll</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">base</span> <span class="o">=</span> <span class="mi">31</span><span class="p">;</span>
+<span class="k">const</span> <span class="n">ll</span> <span class="n">MOD</span> <span class="o">=</span> <span class="mi">1000000003</span><span class="p">;</span>
+<span class="k">const</span> <span class="n">ll</span> <span class="n">maxn</span> <span class="o">=</span> <span class="mi">1000111</span><span class="p">;</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="n">ll</span> <span class="n">POW</span><span class="p">[</span><span class="n">maxn</span><span class="p">],</span> <span class="n">hashT</span><span class="p">[</span><span class="n">maxn</span><span class="p">];</span>
+
+
+<span class="n">ll</span> <span class="nf">getHashT</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span><span class="kt">int</span> <span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">hashT</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">hashT</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">POW</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">MOD</span> <span class="o">*</span> <span class="n">MOD</span><span class="p">)</span> <span class="o">%</span> <span class="n">MOD</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Input</span>
+    <span class="n">string</span> <span class="n">T</span><span class="p">,</span> <span class="n">P</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">T</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="p">;</span>
+
+    <span class="c1">// Initialize</span>
+    <span class="kt">int</span> <span class="n">lenT</span> <span class="o">=</span> <span class="n">T</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">lenP</span> <span class="o">=</span> <span class="n">P</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="s">" "</span> <span class="o">+</span> <span class="n">T</span><span class="p">;</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="s">" "</span> <span class="o">+</span> <span class="n">P</span><span class="p">;</span>
+    <span class="n">POW</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Precalculate base^i</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">lenT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    	<span class="n">POW</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">POW</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">base</span><span class="p">)</span> <span class="o">%</span> <span class="n">MOD</span><span class="p">;</span>
+
+    <span class="c1">// Calculate hash value of T[1..i]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">lenT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    	<span class="n">hashT</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">hashT</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">base</span> <span class="o">+</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'a'</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">MOD</span><span class="p">;</span>
+
+    <span class="c1">// Calculate hash value of P</span>
+    <span class="n">ll</span> <span class="n">hashP</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">lenP</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    	<span class="n">hashP</span> <span class="o">=</span> <span class="p">(</span><span class="n">hashP</span> <span class="o">*</span> <span class="n">base</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'a'</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">MOD</span><span class="p">;</span>
+
+    <span class="c1">// Finding substrings of T equal to string P</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">lenT</span> <span class="o">-</span> <span class="n">lenP</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="p">(</span><span class="n">hashP</span> <span class="o">==</span> <span class="n">getHashT</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">lenP</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    		<span class="n">printf</span><span class="p">(</span><span class="s">"%d "</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="đánh-giá" href="#đánh-giá"></a>Đánh giá</h2>
+<p>Độ phức tạp của thuật toán là $O(m + n)$. Nhưng điều quan trọng là: chúng ta có thể kiểm tra 2 xâu có giống nhau hay không trong $O(1)$. Đây là điều tạo nên sự linh động cho thuật toán Hash. Ngoài sự linh động và tốc độ thực thi, chúng ta có thể thấy cài đặt thuật toán này thực sự rất đơn giản nếu so với các thuật toán xử lý xâu khác.</p>
+<h1 class="editable"><a class="anchor" id="chi-tiết-cài-đặt" href="#chi-tiết-cài-đặt"></a>Chi tiết cài đặt</h1>
+<p>Trong thuật toán hash, có hai yếu tố cần quan tâm là hệ cơ số (base) và modulo (mod).</p>
+<h2 class="editable"><a class="anchor" id="1-chọn-số-nguyên-tố-cho-hệ-cơ-số-và-modulo" href="#1-chọn-số-nguyên-tố-cho-hệ-cơ-số-và-modulo"></a>1. Chọn số nguyên tố cho hệ cơ số và modulo</h2>
+<p>Ý tưởng của thuật toán Hash là dựa trên một ngộ nhận sai lầm nhưng xảy ra sai sót với xác suất vô cùng nhỏ: $a \bmod M = b \bmod M &lt;=&gt; a = b$. Để xác suất xảy ra sai là $1/M$ cho một truy vấn, các bạn cần chọn hệ cơ số và modulo thỏa mãn đồng thời:</p>
+<ul>
+<li>$base$ là số nguyên tố lớn hơn các chữ cái của xâu <code>S</code>.</li>
+<li>$MOD$ là số nguyên tố.</li>
+</ul>
+<p>Phần chứng minh sai số bạn có thể đọc thêm trong <a href="http://rng-58.blogspot.sg/2017/02/hashing-and-probability-of-collision.html">blog rng_58</a>, tuy nhiên phần chứng minh rất phức tạp nên mình sẽ không trình bày ở đây.</p>
+<h2 class="editable"><a class="anchor" id="2-chọn-hệ-cơ-số" href="#2-chọn-hệ-cơ-số"></a>2. Chọn hệ cơ số</h2>
+<p>Mình khuyến khích các bạn chọn hệ cơ số &gt; 256 (Mình thường chọn là số nguyên tố 311). Nếu bạn chọn hệ cơ số là 31, bạn chỉ làm việc với xâu gồm toàn các kí tự in thường, và phải "mã hóa" các kí tự từ <code>a</code> đến <code>z</code> thành các số từ 1 đến 26. Điều này khiến code của bạn bị dài. Nếu bài toán cho xâu có các kí tự 'A'…'Z', 'a'..'z' và '0'…'9', việc bạn mã hóa chúng thành các số từ 1 đến 64 là phức tạp và không cần thiết.</p>
+<p>Chưa kể, nếu bạn quên mất không <code>+1</code> và mã hoá <code>a</code> thành <code>0</code> là hành động tự treo cổ vì rất dễ bị hack.</p>
+<p>Nếu bạn chọn hệ cơ số &gt; 256, bạn chỉ cần dùng mã ASCII của các kí tự là xong, và lại tránh bị hack.</p>
+<h2 class="editable"><a class="anchor" id="3-chọn-modulo" href="#3-chọn-modulo"></a>3. Chọn modulo</h2>
+<p>Nếu bạn không hiểu rõ về cách đánh giá độ chính xác của thuật Hash (trình bày ở mục <a href="#%C4%91%C3%A1nh-gi%C3%A1-%C4%91%E1%BB%99-ch%C3%ADnh-x%C3%A1c">Đánh giá độ chính xác</a>), bạn chỉ cần chọn 3-4 số nguyên tố khác nhau làm $MOD$. Bạn có thể tham khảo <a href="http://codeforces.com/contest/727/submission/21451704">code của Phạm Văn Hạnh</a>. Tuy nhiên các bạn cũng nên lưu ý là dùng nhiều $MOD$ quá cũng làm chương trình chạy chậm đi.</p>
+<h2 class="editable"><a class="anchor" id="4-hash-tràn-số-và-hash-có-mod" href="#4-hash-tràn-số-và-hash-có-mod"></a>4. Hash tràn số và Hash có MOD</h2>
+<p>Trên thực tế, khi cài đặt Hash sử dụng nhiều phép <code>mod</code> sẽ làm chương trình chạy chậm. Vì vậy, để tăng tốc độ, người ta thường cài đặt với $MOD = 2^{64}$. Do đó, nếu sử dụng kiểu dữ liệu số 64-bit, ta không cần dùng phép <code>mod</code> mà cứ để các phép tính tràn số. Kĩ thuật này được gọi là Hash tràn số. Tuy nhiên khi cài đặt như vậy có một vài chú ý:</p>
+<ul>
+<li>Việc sử dụng $MOD$ không phải là số nguyên tố (và hơn nữa lại là 1 số cố định) khiến cho hàm Hash không đủ tốt. Nếu test được sinh ngẫu nhiên, thì nó không có vấn đề gì cả. Nhưng ở trên Codeforces, vì những người thi cùng có thể "hack" code của bạn bằng test tự sinh, nên bạn hầu như không thể AC các bài Hash với Hash tràn số. Bạn có thể đọc thêm về cách sinh test giết Hash tràn số <a href="http://codeforces.com/blog/entry/4898">ở đây</a>. Cách giải quyết là dùng hash tràn số kết hợp với một $MOD$ khác.</li>
+<li>Nếu dùng Pascal, cần tắt báo tràn số (<code>$Q-</code>), nếu không chương trình sẽ chạy bị lỗi.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="5-một-số-lời-khuyên-nho-nhỏ" href="#5-một-số-lời-khuyên-nho-nhỏ"></a>5. Một số lời khuyên nho nhỏ</h2>
+<p>Chỉ so sánh mã hash của hai xâu có cùng độ dài. Hiển nhiên, hai xâu kí tự không cùng độ dài thì không bằng nhau. Điều này có thể giảm xác suất rủi ro khi hash một modulo đáng kể.</p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng" href="#ứng-dụng"></a>Ứng dụng</h1>
+<p>Như đã đề cập ở trên, thuật toán này sẽ có trường hợp chạy sai. Tất nhiên, bên cạnh việc sử dụng Hash, còn có nhiều thuật toán xử lý xâu chuỗi khác, mang lại sự chính xác tuyệt đối. Tôi tạm gọi những thuật toán đó là <em>‘thuật toán chuẩn’</em>. Việc cài đặt <em>‘thuật toán chuẩn’</em> có thể mang lại một tốc độ chạy chương trình cao hơn, độ chính xác của chương trình lớn hơn. Tuy nhiên, người làm bài sẽ phải trả giá là sự phức tạp khi cài đặt các <em>‘thuật toán chuẩn’</em> đó.</p>
+<p>Sử dụng Hash không chỉ giúp người làm bài dễ dàng cài đặt hơn mà quan trọng ở chỗ: Hash có thể làm được những việc mà <em>‘thuật toán chuẩn’</em> không làm được. Sau đây, tôi sẽ xét một vài ví dụ để chứng minh điều này.</p>
+<h2 class="editable"><a class="anchor" id="longest-palindrome-substring" href="#longest-palindrome-substring"></a><a href="https://oj.vnoi.info/problem/paliny">Longest palindrome substring</a></h2>
+<p>Bài toán đặt ra như sau: Bạn được cho một xâu $s$ độ dài $n (n \le 50,000)$. Bạn cần tìm độ dài của xâu đối xứng dài nhất gồm các kí tự liên tiếp trong $s$. (Xâu đối xứng là xâu đọc từ 2 chiều giống nhau).</p>
+<ul>
+<li>Một <em>‘thuật toán chuẩn’</em> không thể áp dụng vào bài toán này đó là thuật toán KMP. Ngoài KMP ra, có 2 <em>‘thuật toán chuẩn’</em> có thể áp dụng được. Thuật toán thứ nhất đó là sử dụng thuật toán Manacher để tính bán kính đối xứng tại tất cả vị trí trong xâu. Thuật toán thứ 2 đó là sử dụng Suffix Array và LCP (Longest Common Prefix) cho xâu được nối bởi $s$ và xâu $s$ viết theo thứ tự ngược lại. 2 thuật toán này đều không dễ, và nằm ngoài phạm vi bài viết, nên tôi chỉ nêu sơ qua mà không đi vào chi tiết.</li>
+<li>Bây giờ, chúng ta sẽ xét thuật toán <em>‘không chuẩn’</em> là thuật toán Hash. Để đơn giản, chúng ta xét trường hợp độ dài của xâu đối xứng là lẻ (trường hợp chẵn xử lý hoàn toàn tương tự).</li>
+<li>Giả sử xâu đối xứng độ dài lẻ dài nhất có độ dài là $l$. Dễ thấy, trong xâu $s$ tồn tại xâu đối xứng độ dài $l−2$, $l−4$,… Tuy nhiên, xâu $s$ không tồn tài xâu đối xứng độ dài $l+2$, $l+4$, … Như vậy, $s$ thỏa mãn tính chất chia nhị phân. Chúng ta sẽ chia nhị phân để tìm độ dài lớn nhất có thể. Với mỗi độ dài $l$, chúng ta cần kiểm tra xem trong xâu có tồn tại một xâu con là xâu đối xứng độ dài $l$ hay không. Để làm việc này, ta duyệt qua tất cả tất cả các xâu con độ dài $l$ trong $s$.</li>
+<li>Bài toán còn lại là: kiểm tra xem $s[i..j]$ với $(1 \le i \le j \le m; (j−i+1) \bmod 2 = 1)$ có phải là xâu đối xứng hay không.</li>
+<li>Cách làm như sau. Gọi $t$ là xâu $s$ viết theo thứ tự ngược lại. Bằng thuật toán Hash, chúng ta có thể kiểm tra được một xâu con nào đó của $t$ có bằng một xâu con nào đó của $s$ hay không. Như vậy, chúng ta cần kiểm tra $s[i..k]$ có bằng $t[n−j+1..n−k+1]$ hay không với $k$ là tâm đối xứng, nói cách khác $k = (i+j)/2$. Như vậy bài toán đã được giải. Độ phức tạp cho cách làm này là $O(n log(n))$.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="k-th-alphabetical-cyclic" href="#k-th-alphabetical-cyclic"></a>k-th alphabetical cyclic</h2>
+<p>Bài toán đặt ra như sau: Bạn được cho một dãy $a_1, a_2,… , a_n (n \le 50,000)$. Sắp xếp $n$ hoán vị vòng tròn của dãy này theo thứ tự từ điển. Cụ thể, các hoán vị vòng quanh của dãy này là $(a_1, a_2,… , a_n)$, $(a_2, a_3, …, a_n, a_1)$, $(a_3, a_4, …, a_n, a_1, a_2)$,… Dãy này có thứ tự từ điển nhỏ hơn dãy kia nếu số đầu tiên khác nhau của dãy này nhỏ hơn dãy kia. Yêu cầu bài toán là: In ra dãy có thứ tự từ điển lớn thứ $k$.</p>
+<ul>
+<li>Bài toán này có thể được giải bằng Suffix Array, tuy nhiên cách cài đặt phức tạp và không phải trọng tâm của bài viết nên tôi sẽ không nêu ra ở đây.</li>
+<li>Nếu tiếp cận một cách trực tiếp, chúng ta sẽ sinh ra tất cả các dãy hoán vị vòng quanh, rồi sau đó dùng một thuật toán sắp xếp để sắp xếp lại chúng theo thứ tự từ điển, cuối cùng chỉ việc in ra dãy thứ $k$ sau khi sắp xếp. Tuy nhiên độ phức tạp của thuật toán này là rất lớn và không thể đáp ứng được yêu cầu về thời gian. Cụ thể, cách này có độ phức tạp là $O(n^2 * log(n))$, đây là tích của độ phức tạp của sắp xếp và độ phức tạp của mỗi phép so sánh dãy.</li>
+<li>Vẫn giữ tư tưởng là sắp xếp lại tất cả các dãy hoán vị vòng quanh rồi in ra dãy đứng ở vị trí thứ $k$, chúng ta cố gắng cải tiến độ phức tạp của việc so sánh thứ tự từ điển của 2 dãy.</li>
+<li>Nhắc lại định nghĩa về thứ tự từ điển của 2 dãy: Xét 2 dãy $a$ và $b$ có cùng số phần tử. Gọi ví trí thứ $i$ là vị trí đầu tiên từ trái sang mà $a_i \ne b_i$. $a &lt; b \Leftrightarrow a_i &lt; b_i$. Như vậy, ta phải tìm đoạn tiền tố giống nhau dài nhất của $a$ và $b$, rồi so sánh kí tự tiếp theo. Để tìm được đoạn tiền tố giống nhau dài nhất, ta có thể sử dụng Hash kết hợp với chia nhị phân.</li>
+<li>Để giải được bài này, cần sử dụng thêm một kỹ thuật nhỏ nữa: Thay vì sinh ra tất cả các hoán vị vòng quanh, chúng ta chỉ cần nhân đôi dãy $a$ lên, dãy mới sẽ có $2n$ phần tử: $(a_1, a_2, …, a_n, a_1, a_2, …, a_n)$. Một hoán vị vòng quanh sẽ là một dãy con liên tiếp độ dài $n$ của dãy nhân đôi này.</li>
+</ul>
+<p>Từ đó ta thu được thuật toán với độ phức tạp $O(n*log^2(n))$</p>
+<h2 class="editable"><a class="anchor" id="longest-substring-and-appear-at-least-k-times" href="#longest-substring-and-appear-at-least-k-times"></a>Longest substring and appear at least k times</h2>
+<p>Bài toán đặt ra như sau: Bạn được cho xâu $s$ độ dài $n (n \le 50,000)$, bạn cần tìm ra xâu con của $s$ có độ dài lớn nhất, và xâu con này xuất hiện ít nhất $k$ lần.</p>
+<ul>
+<li>Bài toán này có thể được giải bằng Suffix Array, tuy nhiên cách cài đặt phức tạp và không phải trọng tâm của bài viết nên tôi sẽ không nêu ra ở đây.</li>
+<li>Tiếp tục bàn đến thuật toán Hash để thay thế thuật toán chuẩn. Nhận xét rằng, giả sử độ dài lớn nhất tìm được là $l$, thì với mọi $l′ \le l$, luôn tồn tại xâu có độ dài $l′$ xuất hiện ít nhất $k$ lần. Tuy nhiên, với mọi $l′ &gt; l$, không tồn tại xâu có độ dài $l′$ xuất hiện ít nhất $k$ lần (do $l$ đã là lớn nhất). Như vậy, $l$ thỏa mãn tính chất chia nhị phân. Chúng ta có thể áp dụng thuật toán tìm kiếm nhị phân để tìm ra $l$ lớn nhất.</li>
+<li>Bây giờ, với mỗi $l$ khi đang chia nhị phân, chúng ta sẽ phải kiểm tra liệu có tồn tại xâu con nào xuất hiện ít nhất $k$ lần hay không. Điều này được làm rất đơn giản, bằng cách sinh mọi mã Hash của các xâu con độ dài $k$ trong $s$. Sau đó sắp xếp lại các mã Hash này theo chiều tăng dần, rồi kiếm tra xem có một đoạn liên tiếp các mã Hash nào giống nhau độ dài $l$ hay không.</li>
+<li>Như vậy, độ phức tạp để chia nhị phân là $O(log(n))$, độ phức tạp của sắp xếp là $O(n log(n))$, vậy độ phức tạp của cả bài toán là $O(n log^2(n) )$.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="đánh-giá-độ-chính-xác" href="#đánh-giá-độ-chính-xác"></a>Đánh giá độ chính xác</h1>
+<p>Thông thường, khi sử dụng Hash, ta thường gặp phải 2 trường hợp như sau:</p>
+<ol>
+<li>Trả lời $Q$ truy vấn, mỗi truy vấn có dạng kiểm tra 2 đoạn con của 2 xâu có bằng nhau hay không</li>
+<li>Cho $N$ xâu, kiểm tra tất cả các xâu có phân biệt hay không.</li>
+</ol>
+<p>Giả sử ta chọn $MOD$ là một số nguyên tố khoảng $10^9$, và giả sử dữ liệu được sinh ngẫu nhiên và hàm hash của chúng ta đủ tốt để Hash của các xâu được phân bố đều và ngẫu nhiên.</p>
+<h2 class="editable"><a class="anchor" id="trường-hợp-1" href="#trường-hợp-1"></a>Trường hợp 1</h2>
+<p>Giả sử $Q$ khoảng $10^5$, và bộ test có $T = 100$ test.</p>
+<ul>
+<li>Với 2 xâu khác nhau, xác suất để nó có cùng Hash là xấp xỉ $1 / 10^9$. Như vậy, xác suất để trả lời đúng 1 truy vấn là: $1 - 1 / 10^9$.</li>
+<li>Ở trường hợp xấu nhất, ta có $Q$ truy vấn mà mỗi truy vấn là một cặp xâu khác nhau. Xác suất để ta trả lời đúng tất cả các truy vấn là: $(1 - 1 / 10^9)^Q$.</li>
+<li>Xác suất để ta trả lời đúng tất cả các truy vấn của tất cả các test là: $(1 - 1 / 10^9)^{Q * T}$.</li>
+</ul>
+<p>Thay số vào, xác suất để trả lời đúng tất cả các truy vấn là $0.9900$, đủ lớn để ta yên tâm qua tất cả các test, với điều kiện test không được sinh dựa trên $P$. (Chú ý nếu bạn đang thi những contest như Topcoder/Codeforces, người khác có thể đọc được $P$ của bạn và sinh test để challenge code của bạn).</p>
+<h2 class="editable"><a class="anchor" id="trường-hợp-2" href="#trường-hợp-2"></a>Trường hợp 2</h2>
+<p>Theo <a href="https://en.wikipedia.org/wiki/Birthday_problem">Birthday Paradox</a>, ta dễ dàng thấy rằng, nếu có $\sqrt{P} = 3*10^4$ xâu, xác suất để 2 xâu bằng nhau là rất lớn. Thật vậy, xác suất để tất cả các xâu khác nhau là:</p>
+<p>$(1 - 1 / 10^9) * (1 - 2 / 10^9) * (1 - 3 / 10^9) * … (1 - N / 10^9)$.</p>
+<p>Với $N = 30,000$, tích trên là $0.6376$, nghĩa là bạn có gần $0.40$ xác suất trả lời sai. Do vậy, bạn bắt buộc phải dùng nhiều $MOD$ khác nhau.</p>
+<h1 class="editable"><a class="anchor" id="tổng-kết" href="#tổng-kết"></a>Tổng kết</h1>
+<h2 class="editable"><a class="anchor" id="thuật-toán-1" href="#thuật-toán-1"></a>Thuật toán</h2>
+<p>Ý tưởng thuật toán Hash dựa trên việc đổi từ hệ cơ số lớn sang hệ thập phân, so sánh hai số thập phân lớn bằng cách so sánh phần dư của chúng với một số đủ lớn.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h2>
+<p>Khi cài đặt Hash, ta cần chọn:</p>
+<ul>
+<li>Hệ cơ số</li>
+<li>MOD</li>
+</ul>
+<p>Với những trang web mà người khác có thể đọc code bạn rồi tìm test sai (như Codeforces, Topcoder), nếu Hash tràn số hoặc MOD là 1 số nguyên biết trước, có thể sinh test để làm code bạn sai. Với những kỳ thi như HSG QG, IOI, ACM, và các Online Judge, thông thường sẽ không có những test như vậy. Tóm lại, khi chọn $MOD$ và hệ cơ số ta làm như sau:</p>
+<ul>
+<li>Chọn hệ cơ số là số nguyên tố lớn hơn số lượng ký tự (ví dụ 31, 71).</li>
+<li>Chọn $MOD$ đủ lớn theo nguyên tắc đã phân tích ở phần <a href="#%C4%91%C3%A1nh-gi%C3%A1-%C4%91%E1%BB%99-ch%C3%ADnh-x%C3%A1c">Đánh giá độ chính xác</a>.</li>
+<li>Nếu là Topcoder hoặc Codeforces, dùng kết hợp Hash tràn số và 1 $MOD$ đủ lớn.</li>
+<li>Nếu không phải Topcoder hay Codeforces, có thể dùng Hash tràn số. Nếu $MOD = 2^{64}$ chưa đủ lớn thì dùng thêm 1 $MOD$ nữa.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="ưu-điểm" href="#ưu-điểm"></a>Ưu điểm</h2>
+<p>Ưu điểm của thuật toán Hash là cài đặt rất dễ dàng. Linh động trong ứng dụng và có thể thay thế các thuật toán chuẩn ‘hầm hố’ khác.</p>
+<h2 class="editable"><a class="anchor" id="nhược-điểm" href="#nhược-điểm"></a>Nhược điểm</h2>
+<p>Nhược điểm của thuật toán Hash là tính chính xác. Mặc dù rất khó sinh test để có thể làm cho thuật toán chạy sai, nhưng không phải là không thể. Vì vậy, để nâng cao tính chính xác của thuật toán, người ta thường dùng nhiều modulo khác nhau để so sánh mã Hash (ví dụ như dùng 3 modulo một lúc).</p>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng</h1>
+<ul>
+<li><a href="https://oj.vnoi.info/problem/substr/">VNOJ - SUBSTR</a></li>
+<li><a href="https://oj.vnoi.info/problem/paliny/">VNOJ - PALINY</a></li>
+<li><a href="https://oj.vnoi.info/problem/dtksub/">VNOJ - DTKSUB</a></li>
+<li><a href="https://oj.vnoi.info/problem/dtcstr/">VNOJ - DTCSTR</a></li>
+<li><a href="https://oj.vnoi.info/problem/twoopers/">VNOJ - TWOOPERS</a></li>
+<li><a href="https://oj.vnoi.info/problem/vostr/">VNOJ - VOSTR</a></li>
+<li><a href="http://acm.sgu.ru/problem.php?contest=0&amp;problem=426">SGU 426</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="các-nguồn-tham-khảo" href="#các-nguồn-tham-khảo"></a>Các nguồn tham khảo</h1>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/String_searching_algorithm">Wikipedia - String Searching Algorithm</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm">Wikipedia - KMP</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Rabin-Karp_string_search_algorithm">Wikipedia - Rabin Karp</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Alphabetical_order">Wikipedia - Alphabetical Order</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

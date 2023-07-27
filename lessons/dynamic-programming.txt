@@ -1,0 +1,312 @@
+<div id="wiki-content">
+<h1 class="pt-4">Nhập môn Quy hoạch động</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/topcoder/">topcoder</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Nguồn: <a href="https://www.topcoder.com/community/data-science/data-science-tutorials/dynamic-programming-from-novice-to-advanced/">Topcoder</a>.</p>
+<p>Có rất nhiều bài toán được áp dụng <strong>quy hoạch động (QHĐ)</strong> (<strong>Dynamic Programming</strong>). QHĐ là một trong những kĩ thuật quan trọng. Bài viết này sẽ giúp bạn hiểu được <strong>QHĐ</strong> thông qua các ví dụ cụ thể.</p>
+<p>Note: Trong bài này có thể có nhiều phần bạn đã biết, bạn hoàn toàn có thể chuyển qua đọc phần khác.</p>
+<h1 class="editable"><a class="anchor" id="beginner" href="#beginner"></a>Beginner</h1>
+<h2 class="editable"><a class="anchor" id="qhđ-là-gì" href="#qhđ-là-gì"></a>QHĐ là gì ?</h2>
+<p><strong>QHĐ</strong> là kĩ thuật được được dùng khi có một công thức và một (hoặc một vài) trạng thái bắt đầu. Một bài toán được tính bởi các bài toán nhỏ hơn đã tìm ra trước đó. <strong>QHĐ</strong> có độ phức tạp đa thức nên sẽ chạy nhanh hơn quay lui và duyệt trâu.</p>
+<p>Để hiểu rõ hơn hãy xem ví dụ sau:</p>
+<blockquote>
+<p>Cho $N$ đồng xu và giá tiền của mỗi đồng ($V_0,V_1,…,V_{N-1}~$), và số $S$. Tìm số đồng xu nhỏ nhất để tổng giá trị của chúng bằng $S$ (số lượng đồng xu không giới hạn).</p>
+</blockquote>
+<p>Bây giờ chúng ta sẽ xây dựng thuật giải:</p>
+<p>Đầu tiên, cần tìm một trạng thái của bài toán.</p>
+<h2 class="editable"><a class="anchor" id="trạng-thái-là-gì" href="#trạng-thái-là-gì"></a>Trạng thái là gì ?</h2>
+<p>Trạng thái là một trường hợp, một bài toán con của bài toán lớn.</p>
+<p>Ví dụ, trạng thái trong bài này là số lượng xu nhỏ nhất để tổng bằng $i$, với $i \le S$. Để tìm ra trạng thái $i$, cần phải tìm tất cả các trạng thái $j$ mà $(j &lt; i)$. Một khi đã tìm ra trạng thái $i$, ta có thể dễ dàng tìm ra trạng thái của $i+1$.</p>
+<h2 class="editable"><a class="anchor" id="làm-thế-nào-để-tìm-được" href="#làm-thế-nào-để-tìm-được"></a>Làm thế nào để tìm được ?</h2>
+<p>Với mỗi $j$, $V_j \le i$, tìm số đồng xu nhỏ nhất để tổng bằng $i-V_j$. Giả sử nó bằng $m$. Nếu $m+1$ nhỏ hơn số lượng đồng xu hiện tại cho tổng $i$ thì ta cập nhập nó bằng $m+1$.</p>
+<p>Sau đây là ví dụ:
+Cho các đồng xu với giá tiền 1, 3 và 5.
+Và $S$ = 11.</p>
+<p>Đầu tiên, ta bắt đầu từ trạng thái 0, chúng ta có $f[0] = 0$.
+Xét đến tổng 1. Có duy nhất đồng xu 1 nhỏ hơn hoặc bằng tổng 1, nên ta có $f[1] = f[1-V_0] + 1 = f[0] + 1 = 1$.
+Xét đến tổng 2. Cũng giống như tổng trước, chỉ có 1 đổng xu $\le$ 2, có $f[2] = f[2-V_0] + 1 = f[1]+1 = 2$
+Đến tổng 3. Lần này có 2 đồng xu $\le$ 3 là 1 và 3.
+- Nếu ta chọn đồng 1, ta có $f[3] = f[3-V_0] + 1 = f[2] + 1 = 3$
+- Nếu ta chọn đồng 3, ta có $f[3] = f[3-V_1] + 1 = f[0] + 1 = 1$
+Rõ ràng là 1 $\le$ 3 nên ta chọn đồng 3 và $f[3] = 1$
+Xét tiếp đến tổng 4, rồi đến 11 bằng cách như trên.</p>
+<p><strong>Mã giả:</strong></p>
+<pre><code>Gán Min[i] bằng dương vô cùng với mọi i
+Min[0]=0
+
+For i = 1 to S
+For j = 0 to N - 1
+   If (Vj&lt;=i AND Min[i-Vj]+1&lt;Min[i])
+Then Min[i]=Min[i-Vj]+1
+Output Min[S]
+</code></pre>
+<p>Đây là lời giải cho tất cả các tổng:</p>
+<table width="400" cellspacing="0" cellpadding="5" class="formFrame" align="center">
+<tbody>
+<tr>
+<td nowrap="nowrap">Tổng</td>
+<td nowrap="nowrap">Lượng xu nhỏ nhất</td>
+<td nowrap="nowrap">Xu được chọn<br/>
+(tổng còn lại)</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>-</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1 (0)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2</td>
+<td>1 (1)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1</td>
+<td>3 (0)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>2</td>
+<td>1 (3)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>1</td>
+<td>5 (0)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>2</td>
+<td>3 (3)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>3</td>
+<td>1 (6)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>2</td>
+<td>3 (5)</td>
+</tr>
+<tr>
+<td>9</td>
+<td>3</td>
+<td>1 (8)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>2</td>
+<td>5 (5)</td>
+</tr>
+<tr>
+<td>11</td>
+<td>3</td>
+<td>1 (10)</td>
+</tr>
+</tbody>
+</table>
+<p>Vậy là chúng ta đã tìm được lời giải cho 3 đồng xu tổng bằng 11.
+Dựa vào bảng trên, ta có thể truy vết lại được những đồng xu nào được chọn để tối ưu bài toán.
+Bài QHĐ trên còn có một cách tiếp cận khác nữa. Lần này, ta sẽ không tính liên tiếp các tổng. Bắt đầu từ trạng thái 0. Thử nhét đồng xu thứ 1 vào các tổng đã tính. Nếu như tổng $t$ có số đồng xu ít hơn số đồng xu hiện tại thì tiến hành cập nhật. Rồi tiếp tục thử với đồng thứ 2, 3 cho đến khi thử hết các đồng. Ví dụ, nhét đồng 1 (giá trị 1) vào tổng 0 ta có tổng 1. Vì ta chưa tính tổng 1 nên $S[1] = 1$. Nhét đồng 1 vào tổng 1 ta có $S[2] = 2$. Tiếp tục làm như vậy với các tổng còn lại. Sau đồng 1, ta nhét đồng 2(giá trị 3) vào tổng 0 ta được 1, mà $S[3] = 3 &gt; 1$, ta cập nhật $S[3] = 1$. Tiếp tục nhét đồng 2 vào các tổng còn lại, cũng nhứ thử nhét các đồng xu khác.</p>
+<p>#Elementary</p>
+<p>Bây giờ, chúng ta cùng đến một khái niệm mới, <strong>công thức truy hồi (recurrent relation)</strong>, mối liên hệ giữa những trạng thái.</p>
+<p>Ví dụ:
+Cho một dãy N số - $A[1], A[2], …, A[N]$. Tìm dãy con không giảm dài nhất.</p>
+<p>Ta quy định trạng thái $S[i]$ là dãy con không giảm dài nhất kết thúc tại $A[i]$. Với $i&gt;1$ và $j&lt;i$, tính được $i$ khi tồn tại $A[j] \le A[i]$ (vì đây là dãy không giảm). Khi đó $S[i] = Max(S[i], S[j] + 1)$. Tiếp tục tính như vậy cho đến khi đến được trạng thái $S[N]$.</p>
+<p>Hãy xem bảng sau với dãy: 5, 3, 4, 8, 6, 7:</p>
+<table width="400" cellspacing="0" cellpadding="5" class="formFrame" align="center">
+<tbody>
+<tr>
+<td>I</td>
+<td>Độ dài dãy con<br/>
+không giảm dài nhất<br/>
+của i số đầu tiên</td>
+<td>Vị trí của kí tự cuối <br/>
+trong dãy</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>5</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>6</td>
+<td>4</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Bài luyện tập:</strong>
+Cho đồ thị vô hướng $G$ có $N$ đỉnh ($N \le 1000$) và các cạnh có trọng số dương. Tìm đường đi ngắn nhất từ đỉnh 1 đến đỉnh $N$ hoặc thông báo không tồn tại đường đi.
+Gợi ý: Tại mỗi bước, chọn ra trong số các đỉnh chưa thăm mà có đường đi từ 1, chọn ra đỉnh có đường đi ngắn nhất.</p>
+<p><strong>Các bài ví dụ khác:</strong></p>
+<ul>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4493&amp;pm=1259">ZigZag</a> – 2003 TCCC Semifinals 3.</li>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=5009&amp;pm=2402">BadNeighbors</a> – 2004 TCCC Round 4.</li>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=5006&amp;pm=1918">FlowerGarden</a> – 2004 TCCC Round 1.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="intermediate" href="#intermediate"></a>Intermediate</h1>
+<p>Tới đây bạn sẽ được làm quen với QHĐ 2 chiều.</p>
+<p><strong>Bài toán:</strong>
+Cho một bảng $M * N$, mỗi ô có một lượng táo. Bắt đầu từ ô trái trên, mỗi bước có thể đi sang phải hoặc xuống dưới. Bạn có thể ăn được nhiều nhất bao nhiêu quả táo ?</p>
+<p>Cách giải bài này cũng tương tự như những bài trước.</p>
+<p>Đầu tiên là phải xác định trạng thái là gì. Ở mỗi ô có nhiều nhất 2 cách có thể tới được ô đó, từ ô bên trái và ô phía trên. Do vậy, để tìm trạng thái hiện tại, ta phải tính trước các ô có thể đến được nó.</p>
+<p>Ta có công thức truy hồi sau:
+$S[i][j]=A[i][j] + max(S[i-1][j], if$ $ i&gt;0 ; S[i][j-1], if$ $j&gt;0)$
+(trong đó, $i$ là hàng, $j$ là cột, $A[i][j]$ là số táo ở ô $i,j$)
+$S[i][j]$ có thể được tính từ trái sang phải, từ trên xuống dưới, hoặc từ trên xuống, từ trái sang.</p>
+<p><strong>Mã giả:</strong></p>
+<pre><code>For i = 0 to N - 1
+   For j = 0 to M - 1
+   S[i][j] = A[i][j] +
+      max(S[i][j-1], if j&gt;0 ; S[i-1][j], if i&gt;0 ; 0)
+
+Output S[n-1][m-1]
+</code></pre>
+<p><strong>Ví dụ khác:</strong></p>
+<ul>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4709&amp;pm=1889">AvoidRoads</a> – 2003 TCO Semifinals 4</li>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4482&amp;pm=1592">ChessMetric</a> – 2003 TCCC Round 4</li>
+</ul>
+<p>#Upper-Intermediate</p>
+<p>Phần này sẽ giới thiệu với bạn những bài toán cùng với một số điều kiện.</p>
+<p><strong>Đây là một ví dụ cụ thể:</strong></p>
+<p>Cho đồ thị vô hướng $G$ có trọng số dương và $N$ đỉnh.</p>
+<p>Ban đầu bạn có số tiền là $M$. Để đi qua đỉnh $i$, bạn phải trả số tiền là $S[i]$. Và đương nhiên, nếu không đủ tiền thì bạn không đi được. Tìm đường đi ngắn nhất từ 1 tới $N$ thỏa mãn tiêu chí trên. Nếu có nhiều đường ngắn nhất, in ra đường với chi phí nhỏ nhất. Giới hạn: $1&lt;N \le 100 $; $0 \le M \le 100$; $0 \le S[i] \le 100$.</p>
+<p>Có thể dễ dàng thấy đây là một bài Dijkstra cơ bản, tuy nhiên chỉ khác ở chỗ nó có thêm một điều kiện. Trong bài toán Dijkstra cơ bản ta có $Min[i]$ , là độ dài đường đi ngắn nhất từ 1 tới $i$. Còn ở đây, chúng ta cần phải quan tâm đến số tiền còn lại. Do đó chúng ta có thể mở rộng mảng này thành $Min[i][j]$ , là độ dài đường đi ngắn nhất tới $i$, và còn lại số tiền là $j$. Bằng cách này bài toán đã được đưa về bài toán Dijkstra quen thuộc. Tại mỗi bước ta tìm trạng thái $(i,j)$ có quãng đường ngắn nhất, đánh dấu là đã thăm rồi update cho các trạng thái cạnh nó. Đáp án sẽ là $Min[N][j]$ có giá trị nhỏ nhất (và $j$ lớn nhất trong số các $Min[N][j]$ có cùng giá trị).</p>
+<p><strong>Mã giả:</strong></p>
+<pre><code>Gán mọi(i,j) là chưa thăm
+Gán Min[i][j] bằng dương vô cùng với mọi (i,j)
+
+Min[0][M]=0
+
+While(TRUE)
+
+    Trong số những trạng thái chưa thăm (i,j) tìm cái có Min[i][j]
+    nhỏ nhất. Giải sử nó là (k,l).
+
+    Nếu không tìm được (k,l) nào mà Min[k][l] nhỏ hơn dương vô cùng - thoát vòng lặp.
+
+    Đánh dấu (k,l) đã thăm
+
+    For All Neighbors p of Vertex k.
+       If (l-S[p]&gt;=0 AND
+        Min[p][l-S[p]]&gt;Min[k][l]+Dist[k][p])
+          Then Min[p][l-S[p]]=Min[k][l]+Dist[k][p]
+       i.e.
+    Nếu tại (i,j) có đủ tiền để đi qua p (l-S[p] là số tiền còn lại sau khi đi qua p), và đường đi ngắn nhất của (p,l-S[p]) lớn hơn [đường đi ngắn nhất tới (k,l)] + [khoảng cách từ k tới p)],
+    thì gán (i,j) bằn tổng này.
+    End For
+
+End While
+
+Tìm số nhỏ nhất trong các Min[N-1][j] (for all j, 0&lt;=j&lt;=M);
+Nếu có nhiều hơn một trạng thái, lấy trạng thái nào có j lớn nhất. Nếu không có (N-1,j) nào nhỏ hơn dương vô cùng - không tồn tại đường đi.
+</code></pre>
+<p><strong>Các bài luyện tập:</strong></p>
+<ul>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4705&amp;pm=1166">Jewelry</a> – 2003 TCO Online Round 4</li>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4555&amp;pm=1215">StripePainter</a> – SRM 150 Div 1</li>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=5072&amp;pm=2829">QuickSums</a> – SRM 197 Div 2</li>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4630&amp;pm=1861">ShortPalindromes</a> – SRM 165 Div 2</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="advanced" href="#advanced"></a>Advanced</h1>
+<p>Những bài sau đây sẽ cần một chút kĩ năng phân tích để có thể tối ưu chúng thành bài QHĐ.</p>
+<p><strong>Problem <a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=5854&amp;pm=2940">StarAdventure</a> – SRM 208 Div 1:</strong></p>
+<p>Cho ma trận M hàng, N cột ($N * M$). Mỗi ô có một lượng táo.
+Bạn đang ở ô góc trái trên. Bạn chỉ có thể đi xuống hoặc sang phải. Bạn cần tới ô góc phải dưới. Rồi quay lại ô trái trên bằng cách lên hoặc sang trái. Cuối cùng, bạn quay lại ô phải dưới.
+Tìm số táo nhiều nhất mà bạn có thể ăn được.
+Khi đi qua một ô, toàn bộ táo của ô đấy sẽ bị ăn hết.</p>
+<p>Giới hạn: $1 &lt; N, M \le 50$ mỗi ô có từ 0 đến 1000 quả táo.</p>
+<p>Đọc đến đây, hẳn bạn sẽ thấy cái đề này quen quen, nó chính là bài mở rộng của bài toán phần Intermediate. Ta có thể thử đưa bài toán này về thành bài toán trên. Để ý thấy đường đi từ ô góc phải dưới lên trái trên cũng có thể coi là một đường đi từ góc trái trên xuống. Như vậy, chúng ta phải xử lý bài toán với 3 đường đi từ trái trên xuống. Gọi 3 đường này là trái, giữa và phải. Khi 2 đường giao nhau (như hình dưới):</p>
+<p><img src="https://www.topcoder.com/i/education/dynProg_1.gif" alt="enter image description here" /></p>
+<p>thì nó cũng tương đương với hình sau:</p>
+<p><img src="https://www.topcoder.com/i/education/dynProg_2.gif" alt="enter image description here" /></p>
+<p>Bằng cách này, chúng ta đã có một cái nhìn khác về bài toán. Các đường này sẽ không giao nhau (trừ ô góc trái trên và phải dưới). Với mỗi hàng y (không phải hàng đầu và cuối), tọa độ x ở mỗi đường sẽ là ($x1[y]$ , $x2[y]$ và $x3[y]$ ) : $x1[y] &lt; x2[y] &lt; x3[y]$ . Ta xét hàng thứ y. Giả sử, ta xét $x1[y-1]$ , $x2[y-1]$ and $x3[y-1]$ và số táo hiện giờ thu được là nhiều nhất. Từ đó ta có thể tối ưu cho hàng $y$. Chúng ta cần tìm cách chuyển trạng thái. Gọi $Max[i][j][k]$ là lượng táo nhiều nhất thu được đến hàng $y-1$ với 3 đường đang dừng ở cột $i$, $j$, và $k$. Với hàng $y$, thêm vào $Max[i][j][k]$ số lượng táo ở các ô $(y,i)$ , $(y,j)$ and $(y,k)$. Vì chúng ta đang đi xuống. Sau đó, chúng ta xét đến những đường có thể sang phải. Để tránh việc giao nhau, ta xét lần lượt các bước ở trái, phải rồi giữa.</p>
+<p><strong>Bài luyện tập thêm:</strong></p>
+<ul>
+<li>
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4710&amp;pm=1996">MiniPaint</a> – SRM 178 Div 1</li>
+</ul>
+<p><strong>Note:</strong>
+Khi gặp một bài toán, hãy để ý xem nó có được giải trong thời gian đa thức không. Nếu có, thử xác định trạng thái của nó, cách chuyển trạng thái, và nếu không chuyển được trạng thái, hãy thử tối ưu nó về một bài QHĐ (như ví dụ ở trên).</p>
+<p><strong>Những bài đã đề cập ở trên:</strong></p>
+<ul>
+<li>TCCC ’03 Semifinals 3 Div I Easy –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4493&amp;pm=1259">ZigZag</a>
+</li>
+<li>TCCC ’04 Round 4 Div I Easy –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=5009&amp;pm=2402">BadNeighbors</a>
+</li>
+<li>TCCC ’04 Round 1 Div I Med –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=5006&amp;pm=1918">FlowerGarden</a>
+</li>
+<li>TCO ’03 Semifinals 4 Div I Easy –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4709&amp;pm=1889">AvoidRoads</a>
+</li>
+<li>TCCC ’03 Round 4 Div I Easy –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4482&amp;pm=1592">ChessMetric</a>
+</li>
+<li>TCO ’03 Round 4 Div I Med –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4705&amp;pm=1166">Jewelry</a>
+</li>
+<li>SRM 150 Div I Med –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4555&amp;pm=1215">StripePainter</a>
+</li>
+<li>SRM 197 Div II Hard –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=5072&amp;pm=2829">QuickSums</a>
+</li>
+<li>SRM 165 Div II Hard –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4630&amp;pm=1861">ShortPalindromes</a>
+</li>
+<li>SRM 208 Div I Hard –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=5854&amp;pm=2940">StarAdventure</a>
+</li>
+<li>SRM 178 Div I Hard –
+<a href="http://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4710&amp;pm=1996">MiniPaint</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>

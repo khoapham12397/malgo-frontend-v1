@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import './SingleMathProblem.css';
@@ -10,7 +10,7 @@ import { BiBookAdd, BiEdit, BiLink, BiNote, BiStar } from 'react-icons/bi';
 import { MathEditor } from '../../components/MathEditor/MathEditor';
 import { TestLogin } from '../../components/TestLogin/TestLogin';
 import { MathNoteItem } from '../../components/MathNoteItem/MathNoteItem';
-import {  getUsernameFromStorage } from '../../utils/getUser';
+import { getUsernameFromStorage } from '../../utils/getUser';
 import { getMathProblem } from '../../state/actions/mathProblemListAction';
 
 export function SingleMathProblem() {
@@ -20,7 +20,7 @@ export function SingleMathProblem() {
   const [showTags, setShowTags] = useState(false);
   const [showType, setShowType] = useState('');
   const noteArea = useRef<HTMLTextAreaElement>(null);
-  
+
   const myUsername = getUsernameFromStorage();
 
   //show note | solution | editor
@@ -28,16 +28,11 @@ export function SingleMathProblem() {
   const problemTags = useSelector(
     (state: RootState) => state.mathProblemList.problemTags
   );
-  
 
   useEffect(() => {
     
-    //let url = import.meta.env.VITE_API_URL + 'mathproblem/problem/' + problemId;
-    //if (user) url += '?username=' + user.username;
-
-    if(id) {
-      getMathProblem(id, myUsername?myUsername:undefined)
-      .then(result => {
+    if (id) {
+      getMathProblem(id, myUsername ? myUsername : undefined).then(result => {
         const problemState: MathProbState = {
           mathProblem: result.data.mathProblem,
           note: result.data.mathNote,
@@ -57,11 +52,10 @@ export function SingleMathProblem() {
             }
           }
         });
-        console.log(lst);
         setTags(lst);
       });
     }
-  }, []);
+  }, [id]);
 
   const handeChangeNoteAndSol = (note: MathNote, mySolution: MathSolution) => {
     if (!problemState) return;
@@ -99,7 +93,13 @@ export function SingleMathProblem() {
           ) : (
             ''
           )}
-          <div style={{ display: 'flex', justifyContent: 'right',marginBottom:'10px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'right',
+              marginBottom: '10px'
+            }}
+          >
             <Button className='btn btn-info' onClick={handleShowType}>
               {' '}
               <BiNote /> {showType == 'note' ? 'Close Note' : 'Note '}
@@ -121,7 +121,7 @@ export function SingleMathProblem() {
                 </Button>
               </div>
             </div>
-            
+
             <div className={showType == '' ? 'edit-box' : 'edit-box-open'}>
               <div
                 className={showType == 'editor' ? 'note-box-open' : 'note-box'}
@@ -224,6 +224,7 @@ export function SingleMathProblem() {
               <li>HSGSO 2015 P1</li>
             </ul>
           </div>
+          <div style={{ height: '180px' }} />
         </div>
       </div>
     </div>

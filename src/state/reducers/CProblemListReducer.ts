@@ -55,15 +55,12 @@ const CodingProblemListSlice = createSlice({
       state.filter = action.payload.filter;
     },
     setProblems: (state, action) => {
-      console.log('set problems:');
-      console.log(action.payload.problems);
-      console.log('set filter: ');
-      console.log(action.payload.filter);
+      
       state.problems = action.payload.problems;
       state.filter = action.payload.filter;
     },
     setCategoriesAndTags: (state, action) => {
-      console.log(action.payload.categories);
+      //console.log(action.payload.categories);
 
       state.problemCategories = [
         { id: '0', name: 'All' },

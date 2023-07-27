@@ -55,7 +55,7 @@ export const MathProblemFilter = ({ page }: Props) => {
 
   const handleAddTag = (e: any) => {
     const ind = e.currentTarget.value;
-    console.log('add tag: ind= ' + ind);
+    //console.log('add tag: ind= ' + ind);
     if (chosenTypes.includes(ind) || ind == 0) return;
     let lst = [...chosenTypes];
     lst.push(ind);
@@ -68,16 +68,15 @@ export const MathProblemFilter = ({ page }: Props) => {
   };
 
   const handleFind = (e: any) => {
-    let tagList: Array<string> = chosenTypes.map(
-      item => problemTags[item].id
-    );
+    let tagList: Array<string> = chosenTypes.map(item => problemTags[item].id);
     const params: GetProblemsParam = {
       category: category == '0' ? null : (category as string),
       startDif: startDif == 0 ? null : startDif,
       endDif: endDif == 400 ? null : endDif,
       page: 1,
       q: q.length > 0 ? q : null,
-      tagList: tagList
+      tagList: tagList,
+      init: undefined,
     };
 
     if (page == 0) {
@@ -96,7 +95,7 @@ export const MathProblemFilter = ({ page }: Props) => {
         link += '&tag=' + item;
       });
 
-      navigate('/mathproblems' + link);
+      navigate('/math' + link);
     } else {
       dispatch(fetchMathProblems(params));
     }
@@ -106,15 +105,17 @@ export const MathProblemFilter = ({ page }: Props) => {
     // console.log('page changed');
     if (page > 0) {
       let tagList: Array<string> = chosenTypes.map(
-        item => problemCategories[item].id
+        item => problemTags[item].id
       );
+      
       const params: GetProblemsParam = {
         category: category == '0' ? null : (category as string),
         startDif: startDif == 0 ? null : startDif,
         endDif: endDif == 400 ? null : endDif,
         page: page == 0 ? 1 : page,
         q: q.length > 0 ? q : null,
-        tagList: tagList
+        tagList: tagList,
+        init: undefined,
       };
       dispatch(fetchMathProblems(params));
     }

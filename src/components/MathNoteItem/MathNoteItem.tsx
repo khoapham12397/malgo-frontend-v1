@@ -2,6 +2,7 @@ import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import parse from 'html-react-parser';
 import { useEffect, useState } from 'react';
 import { BsFillCaretDownFill, BsFillCaretUpFill } from 'react-icons/bs';
+import { getFixedUsername } from '../../utils/getUser';
 import { formatMathExpr, processText } from '../../utils/utils';
 import './MathNoteItem.css';
 
@@ -21,7 +22,7 @@ export const MathNoteItem = ({ mathNote, type }: Props) => {
       {type == 'solution' ? (
         <div className='sol-item' onClick={() => setShow(!show)}>
           {' '}
-          Solution of {mathNote?.creatorId}{' '}
+          Solution of {getFixedUsername(mathNote?.creatorId)}{' '}
           {!show ? <BsFillCaretUpFill /> : <BsFillCaretDownFill />}
         </div>
       ) : (
@@ -32,14 +33,20 @@ export const MathNoteItem = ({ mathNote, type }: Props) => {
           <MathJaxContext>
             <MathJax>
               <div className='note-text'>
-                <div>Author by {mathNote?.creatorId}</div>
+                <div className='author-by'>
+                  Author by {getFixedUsername(mathNote?.creatorId)}
+                </div>
                 {parse(formatMathExpr(processText(mathNote.content)))}
               </div>
             </MathJax>
           </MathJaxContext>
           <div style={{ marginTop: '10px', marginBottom: '10px' }}>
             {mathNote.imageLink.map(item => (
-              <img width='100%' src={import.meta.env.VITE_API_URL+item} key={item} />
+              <img
+                width='100%'
+                src={import.meta.env.VITE_API_URL + item}
+                key={item}
+              />
             ))}
           </div>
         </div>

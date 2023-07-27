@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import parse from 'html-react-parser';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 
 type Props = {
   comment: string;
@@ -21,9 +21,7 @@ function ModalReviewCmt({ comment, show, handleClose, handleSendCmt }: Props) {
         <Modal.Body>
           <Form>
             <Form.Group className='mb-3'>
-              <MathJaxContext>
-                <MathJax>{parse(comment)}</MathJax>
-              </MathJaxContext>
+              <MathJax>{parse(comment)}</MathJax>
             </Form.Group>
           </Form>
         </Modal.Body>

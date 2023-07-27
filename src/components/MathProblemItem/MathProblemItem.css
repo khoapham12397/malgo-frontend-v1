@@ -10,3 +10,10 @@
 .hint-open {
   max-height: 2000px;
 }
+.share-btn-container {
+  border-radius: 8px;
+  display: flex;
+}
+.share-btn-container:hover {
+  cursor: pointer;
+}

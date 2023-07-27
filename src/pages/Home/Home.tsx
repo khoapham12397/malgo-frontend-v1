@@ -6,7 +6,10 @@ import Spinner from '../../components/Spinner/Spinner';
 import axiosInstance from '../../config/axiosInstance';
 import useUserAuth from '../../hooks/useUserAuth';
 import { RootState } from '../../state';
-import { initSocketClient, loadChatSessionP2PList } from '../../state/actions/chatAction';
+import {
+  initSocketClient,
+  loadChatSessionP2PList
+} from '../../state/actions/chatAction';
 import { handleError } from '../../utils/errorHandler';
 import { getUsernameFromStorage } from '../../utils/getUser';
 import './Home.css';
@@ -14,7 +17,7 @@ import './Home.css';
 const Home: FunctionComponent = () => {
   const { isAuthenticated, userAuthQuery } = useUserAuth();
   const { getAccessTokenSilently } = useAuth0(); // TODO: just keep this for testing private button, will be removed later
-  console.log("vao day ")
+  console.log('vao day ');
   // TODO: just keep this for testing private button, will be removed later
   const handleClickPrivate = async () => {
     try {
@@ -33,16 +36,18 @@ const Home: FunctionComponent = () => {
     }
   };
   const myUsername = getUsernameFromStorage();
-  const sessionP2PList = useSelector((state: RootState)=> state.chat.sessionP2PList);
-  
-  useEffect(()=>{
-    if(myUsername) {
+  const sessionP2PList = useSelector(
+    (state: RootState) => state.chat.sessionP2PList
+  );
+
+  useEffect(() => {
+    if (myUsername) {
       initSocketClient(myUsername);
-      if(!sessionP2PList) {
+      if (!sessionP2PList) {
         loadChatSessionP2PList();
       }
     }
-  },[myUsername]);
+  }, [myUsername]);
 
   if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
 

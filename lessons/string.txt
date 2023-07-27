@@ -1,0 +1,381 @@
+<div id="wiki-content">
+<h1 class="pt-4">Xâu trong C++</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/languages/">languages</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/languages/cpp/">cpp</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Bài viết sưu tầm trên mạng.</p>
+<h1 class="editable"><a class="anchor" id="0-kiểu-chuỗi-của-c-và-hạn-chế" href="#0-kiểu-chuỗi-của-c-và-hạn-chế"></a>0. Kiểu chuỗi của C và hạn chế</h1>
+<p>Khi mới học C, chắc các bạn đều rất bối rối khi làm việc với xâu ký tự, việc sử dụng con trỏ lưu xâu ký tự rất phức tạp, dễ gây lỗi khiến nhiều người cho rằng nó không bằng xâu ký tự trong Pascal.</p>
+<p>Các chương trình C++ có thể sử dụng chuỗi theo cách thức cũ của Ngôn ngữ C (trong bài viết này gọi là C-String): mảng các ký tự kết thúc bởi ký tự mã ASCII là 0 (ký tự <code>\0</code>) cùng với các hàm thư viện khai báo trong <code>&lt;string.h&gt;</code>. Có nhiều bất tiện khi dùng theo cách thức này:</p>
+<ul>
+<li>Người lập trình phải chủ động kiểm soát bộ nhớ cấp phát cho chuỗi ký tự. Nói chung là phải am hiểu và rất thông thạo về kỹ thuật dùng bộ nhớ và con trỏ thì chương trình mới tránh được các lỗi về kỹ thuật;</li>
+<li>Không thể gán giá trị hay sử dụng phép toán <code>+</code> (ghép chuỗi) và các phép toán so sánh như: <code>&gt;</code> (lớn hơn), <code>&lt;</code> (nhỏ hơn),… mà phải gọi các hàm thư viện trong <code>&lt;string.h&gt;</code>;</li>
+<li>Nếu dùng kỹ thuật cấp phát động thì phải quản lý việc cấp thêm bộ nhớ khi chuỗi dãn ra (chẳng hạn do ghép chuỗi) và phải hủy bộ nhớ (khi không dùng nữa) để tránh việc cạn kiệt bộ nhớ của máy tính trong trường hợp có nhiều chương trình hoạt động đồng thời.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="1-kiểu-chuỗi-string-trong-thư-viện-stl-của-c" href="#1-kiểu-chuỗi-string-trong-thư-viện-stl-của-c"></a>1. Kiểu chuỗi string trong thư viện STL của C++</h1>
+<p>Thư viện chuẩn STL (Standard Template Library) cung cấp kiểu <code>string</code> (xâu ký tự), giúp các bạn tránh khỏi hoàn toàn các phiền phức nêu trên.Các chỉ thị <code>#include</code> cần khai báo để sử dụng string:</p>
+<pre class="highlight"><code><span class="cp">#include &lt;string&gt;
+</span><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">;</span>
+<span class="c1">//using namespace std;</span></code></pre>
+<p>Nếu bạn muốn tận dụng các hàm của C-String, cần chuyển đổi giữa 2 kiểu dữ liệu này:</p>
+<ul>
+<li>
+<p>Chuyển từ <code>string</code> sang C-String:</p>
+<pre class="highlight"><code><span class="n">string</span> <span class="n">s</span><span class="p">;</span>
+<span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">();</span></code></pre>
+</li>
+<li>
+<p>Chuyển từ C-String sang <code>string</code>:</p>
+<pre class="highlight"><code><span class="kt">char</span><span class="o">*</span> <span class="n">s_old</span> <span class="o">=</span> <span class="s">"ABC"</span><span class="p">;</span>
+<span class="n">string</span> <span class="nf">s</span><span class="p">(</span><span class="n">s_old</span><span class="p">);</span></code></pre>
+</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="2-các-phương-thức-phép-toán-tiện-ích-của-kiểu-string" href="#2-các-phương-thức-phép-toán-tiện-ích-của-kiểu-string"></a>2. Các phương thức, phép toán tiện ích của kiểu string</h1>
+<p>Kiểu <code>string</code> của STL hỗ trợ các nhóm phương thức và phép toán tiện ích sau đây.</p>
+<h2 class="editable"><a class="anchor" id="a-các-phép-toán-và-phương-thức-cơ-bản" href="#a-các-phép-toán-và-phương-thức-cơ-bản"></a>a) Các phép toán và phương thức cơ bản</h2>
+<ul>
+<li>Các toán tử <code>+</code>, <code>+=</code> dùng để ghép hai chuỗi và cũng để ghép một ký tự vào chuỗi;</li>
+<li>Các phép so sánh theo thứ tự từ điển: <code>==</code> (bằng nhau), <code>!=</code> (khác nhau), <code>&gt;</code> (lớn hơn), <code>&gt;=</code> (lớn hơn hay bằng), <code>&lt;</code> (nhỏ hơn), <code>&lt;=</code> (nhỏ hơn hay bằng);</li>
+<li>Hàm <code>length()</code> và phép lấy chỉ số <code>[]</code> để duyệt từng ký tự của chuỗi: nếu <code>s</code> là biến kiểu <code>string</code> thì <code>s[i]</code> là ký tự thứ <code>i</code> của <code>s</code> với $0 \le i &lt; s.length()$;</li>
+<li>
+<p>Phép gán <code>=</code> dùng để gán biến kiểu <code>string</code> bằng một chuỗi, hoặc bằng <code>string</code> khác, chẳng hạn: <code>string s="ABCDEF"</code>; hay <code>s1=s2</code>; mà không cần copy xâu.</p>
+</li>
+<li>
+<p>Những constructor thường sử dụng nhất:</p>
+<pre class="highlight"><code><span class="n">string</span><span class="p">();</span>
+<span class="n">string</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">);</span>    <span class="c1">// char* là kiểu dữ liệu xâu của C</span>
+<span class="n">string</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span> <span class="n">str</span><span class="p">);</span></code></pre>
+</li>
+<li>
+<p>Có thể dùng toán tử <code>&lt;&lt;</code> với <code>cout</code> để xuất một chuỗi ra màn hình hoặc dùng toán tử <code>&gt;&gt;</code> với <code>cin</code> để nhập một chuỗi ký tự đến khi gặp một khoảng trống thì dừng.</p>
+<pre class="highlight"><code><span class="kt">char</span> <span class="n">st</span><span class="p">[]</span><span class="o">=</span><span class="s">"ABCDEF"</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">s</span><span class="p">;</span>
+<span class="n">s</span><span class="o">=</span><span class="s">"XYZ"</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">s</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="n">s</span><span class="o">=</span><span class="n">st</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">" : "</span> <span class="o">&lt;&lt;</span> <span class="n">s</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span></code></pre>
+</li>
+<li>
+<p>Một vấn đề thường nảy sinh trong các ứng dụng có sử dụng C-string: một C-String chưa khởi tạo cần được gán NULL. Tuy nhiên, rất nhiều hàm thư viện của C-String sẽ gặp sự cố trong thời gian chạy khi gặp đối tượng C-String là NULL. Chẳng hạn, lệnh</p>
+<pre class="highlight"><code><span class="kt">char</span><span class="o">*</span> <span class="n">x</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">strlen</span><span class="p">(</span><span class="n">x</span><span class="p">);</span></code></pre>
+<p>được một số trình biên dịch chấp nhận, nhưng với nhiều hiện thực khác của thư viện C-String, thì gặp lỗi trong thời gian chạy. string không gặp vấn đề này, ta hoàn toàn có thể cho 1 xâu là rỗng mà không gặp bất cứ lỗi nào: string s="";</p>
+</li>
+</ul>
+<p>String thực chất là một <code>vector&lt;char&gt;</code> có bổ sung thêm một số hàm và thuộc tính, do đó, nó có toàn bộ các tính chất của 1 vector, như hàm <code>size()</code>, <code>push_back()</code>, toán tử <code>[]</code>, …</p>
+<ul>
+<li>Các hàm từ <code>vector</code>:
+<ul>
+<li>
+<code>v.size()</code>: Số lượng phần tử</li>
+<li>
+<code>v.empty()</code>: Trả về 1 nếu chuỗi rỗng, 0 nếu ngược lại.</li>
+<li>
+<code>v.max_size()</code>: Trả về số lượng phần tử tối đa đã được cấp phát</li>
+<li>
+<code>v1 == v2</code>: Trả về 1 nếu hai chuỗi giống nhau</li>
+<li>
+<code>v1 != v2</code>: Trả về 1 nếu hai chuỗi khác nhau</li>
+<li>
+<code>v.begin()</code>: Trả về <strong>iterator</strong> đầu tiên của chuỗi</li>
+<li>
+<code>v.end()</code>: Trả về iterator cuối cùng của chuỗi (trỏ vào sau kí tự cuối cùng)</li>
+<li>
+<code>v.front()</code>: Trả về phần tử đầu tiên của chuỗi</li>
+<li>
+<code>v.back()</code>: Trả về phần tử cuối cùng của chuỗi</li>
+<li>
+<code>v1.swap(v2)</code>: Hoán đổi 2 chuỗi với nhau (giống việc hoán đổi giá trị của 2 biến)</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;conio.h&gt;
+#include &lt;string&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"Hello string"</span><span class="p">;</span> <span class="c1">// Khai báo biến kiểu string</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Noi dung string: "</span> <span class="o">&lt;&lt;</span> <span class="n">s</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// In nôi dung string ra màn hình</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Chieu dai cua string: "</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="c1">// Chiều dài</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Ky tu 0: "</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// In ký tự đầu tiên của xâu</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Ky tu 1: "</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// In ký tự thứ 2</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Ky tu 2: "</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// In ký tự thứ 3</span>
+    <span class="n">getchar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</li>
+<li>
+<p>Nhập một <code>string</code> trên 1 dòng (chú ý <code>cin</code> sẽ chỉ đọc đến dấu cách hoặc xuống dòng đầu tiên):
+<code>istream&amp; getline ( istream&amp; in, string&amp; str, char delimiter = ‘\n’);</code></p>
+<p>Đọc 1 dòng văn bản từ <code>istream in</code> (có thể là file hay đối tượng chuẩn cin) từng ký tự đến khi ký tự delimiter được nhập vào (mặc định là <code>\n</code>)</p>
+<pre class="highlight"><code><span class="c1">// getline with strings</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">str</span><span class="p">;</span>
+    <span class="kt">short</span> <span class="n">age</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Please enter full name and age"</span><span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">getline</span><span class="p">(</span> <span class="n">cin</span><span class="p">,</span> <span class="n">str</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">age</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Thank you "</span> <span class="o">&lt;&lt;</span> <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="s">"!</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="b-các-phương-thức-chèn-xóa-lấy-chuỗi-con" href="#b-các-phương-thức-chèn-xóa-lấy-chuỗi-con"></a>b) Các phương thức chèn, xóa, lấy chuỗi con:</h2>
+<ul>
+<li>
+<p>Phương thức <code>substr(int pos, int nchar)</code> trích ra chuỗi con của một chuỗi cho trước, ví dụ <code>str.substr(2,4)</code> trả về chuỗi con gồm 4 ký tự của chuỗi <code>str</code> kể từ ký tự ở vị trí thứ 2 (ký tự đầu tiên của chuỗi ở vị trí 0).</p>
+<pre class="highlight"><code><span class="c1">//get substring</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;conio.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">s</span><span class="o">=</span><span class="s">"ConCho chay qua rao"</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="c1">// cout &lt;&lt; new string(str.begin()+2, str.begin()+2+4);</span>
+    <span class="n">getchar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</li>
+<li>Phương thức <code>insert()</code> chèn thêm ký tự hay chuỗi vào một vị trí nào đó của chuỗi <code>str</code> cho trước. Có nhiều cách dùng phương thức này:
+<ul>
+<li>
+<code>str.insert(int pos, char* s)</code>; chèn <code>s</code> (mảng ký tự kết thúc <code>\0</code>) vào vị trí <code>pos</code> của <code>str</code>;</li>
+<li>
+<code>str.insert(int pos, string s)</code>; chèn chuỗi <code>s</code> (kiểu <code>string</code>) vào vị trí <code>pos</code> của chuỗi <code>str</code>;</li>
+<li>
+<code>str.insert(int pos, int n, int ch)</code>; chèn <code>n</code> lần ký tự <code>ch</code> vào vị trí <code>pos</code> của chuỗi <code>str</code>;</li>
+</ul>
+<pre class="highlight"><code><span class="c1">// inserting into a string</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;conio.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">str</span><span class="o">=</span><span class="s">"day la .. xau thu"</span><span class="p">;</span>
+    <span class="n">string</span> <span class="n">istr</span> <span class="o">=</span> <span class="s">"them"</span><span class="p">;</span>
+    <span class="n">str</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">istr</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">getchar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</li>
+<li>
+<p>Phương thức <code>str.erase(int pos, int n)</code> xóa <code>n</code> ký tự của chuỗi <code>str</code> kể từ vị trí <code>pos</code>; nếu không quy định giá trị <code>n</code> thì tất cả các ký tự của <code>str</code> từ vị trí <code>pos</code> trở đi sẽ bị xóa</p>
+<pre class="highlight"><code><span class="c1">// erase from a string</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;conio.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">str</span><span class="o">=</span><span class="s">"day cung la xau thu"</span><span class="p">;</span>
+    <span class="n">str</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">// " cung la xau thu"</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">str</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// " cung xau thu"</span>
+    <span class="n">getchar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="c-so-sánh" href="#c-so-sánh"></a>c) So sánh</h2>
+<p>Bạn có thể đơn giản là sử dụng những toán tử quan hệ (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) được định nghĩa sẵn. Tuy nhiên, nếu muốn so sánh một phần của một chuỗi thì sẽ cần sử dụng phương thức <code>compare()</code>:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">compare</span> <span class="p">(</span> <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">str</span> <span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">compare</span> <span class="p">(</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">s</span> <span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">compare</span> <span class="p">(</span> <span class="kt">size_t</span> <span class="n">pos1</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">n1</span><span class="p">,</span> <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">str</span> <span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">compare</span> <span class="p">(</span> <span class="kt">size_t</span> <span class="n">pos1</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">n1</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">s</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">compare</span> <span class="p">(</span> <span class="kt">size_t</span> <span class="n">pos1</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">n1</span><span class="p">,</span> <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">str</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">pos2</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">n2</span> <span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">compare</span> <span class="p">(</span> <span class="kt">size_t</span> <span class="n">pos1</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">n1</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">n2</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span></code></pre>
+<p>Hàm trả về 0 khi hai chuỗi bằng nhau và lớn hơn hoặc nhỏ hơn 0 cho trường hợp khác
+Ví dụ:</p>
+<pre class="highlight"><code><span class="c1">// comparing apples with apples</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">str1</span> <span class="p">(</span><span class="s">"green apple"</span><span class="p">);</span>
+    <span class="n">string</span> <span class="n">str2</span> <span class="p">(</span><span class="s">"red apple"</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">str1</span><span class="p">.</span><span class="n">compare</span><span class="p">(</span><span class="n">str2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str1</span> <span class="o">&lt;&lt;</span> <span class="s">" is not "</span> <span class="o">&lt;&lt;</span> <span class="n">str2</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">str1</span><span class="p">.</span><span class="n">compare</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">"apple"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"still, "</span> <span class="o">&lt;&lt;</span> <span class="n">str1</span> <span class="o">&lt;&lt;</span> <span class="s">" is an apple</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">str2</span><span class="p">.</span><span class="n">compare</span><span class="p">(</span><span class="n">str2</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">"apple"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"and "</span> <span class="o">&lt;&lt;</span> <span class="n">str2</span> <span class="o">&lt;&lt;</span> <span class="s">" is also an apple</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">str1</span><span class="p">.</span><span class="n">compare</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">str2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"therefore, both are apples</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="d-các-phương-thức-tìm-kiếm-và-thay-thế" href="#d-các-phương-thức-tìm-kiếm-và-thay-thế"></a>d) Các phương thức tìm kiếm và thay thế</h2>
+<ul>
+<li>
+<p>Phương thức <code>find()</code> tìm kiếm xem một ký tự hay một chuỗi nào đó có xuất hiện trong một chuỗi <code>str</code> cho trước hay không. Có nhiều cách dùng phương thức này:</p>
+<pre class="highlight"><code><span class="n">str</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span> <span class="n">t</span><span class="err">ì</span><span class="n">m</span> <span class="n">k</span><span class="err">ý</span> <span class="n">t</span><span class="err">ự</span> <span class="n">ch</span> <span class="n">k</span><span class="err">ể</span> <span class="n">t</span><span class="err">ừ</span> <span class="n">v</span><span class="err">ị</span> <span class="n">tr</span><span class="err">í</span> <span class="n">pos</span> <span class="err">đế</span><span class="n">n</span> <span class="n">cu</span><span class="err">ố</span><span class="n">i</span> <span class="n">chu</span><span class="err">ỗ</span><span class="n">i</span> <span class="n">str</span>
+<span class="n">str</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span> <span class="n">t</span><span class="err">ì</span><span class="n">m</span> <span class="nf">s</span> <span class="p">(</span><span class="n">m</span><span class="err">ả</span><span class="n">ng</span> <span class="n">k</span><span class="err">ý</span> <span class="n">t</span><span class="err">ự</span> <span class="n">k</span><span class="err">ế</span><span class="n">t</span> <span class="n">th</span><span class="err">ú</span><span class="n">c</span> <span class="err">‘\</span><span class="mi">0</span><span class="err">’</span><span class="p">)</span> <span class="n">k</span><span class="err">ể</span> <span class="n">t</span><span class="err">ừ</span> <span class="n">v</span><span class="err">ị</span> <span class="n">tr</span><span class="err">í</span> <span class="n">pos</span> <span class="err">đế</span><span class="n">n</span> <span class="n">cu</span><span class="err">ố</span><span class="n">i</span>
+<span class="n">str</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span> <span class="n">t</span><span class="err">ì</span><span class="n">m</span> <span class="n">chu</span><span class="err">ỗ</span><span class="n">i</span> <span class="n">s</span> <span class="n">k</span><span class="err">ể</span> <span class="n">t</span><span class="err">ừ</span> <span class="n">v</span><span class="err">ị</span> <span class="n">tr</span><span class="err">í</span> <span class="n">pos</span> <span class="err">đế</span><span class="n">n</span> <span class="n">cu</span><span class="err">ố</span><span class="n">i</span> <span class="n">chu</span><span class="err">ỗ</span><span class="n">i</span><span class="p">.</span></code></pre>
+<p>Nếu không quy định giá trị pos thì hiểu mặc nhiên là 0; nếu tìm có thì phương thức trả về vị trí xuất hiện đầu tiên, ngược lại trả về giá trị -1.</p>
+<pre class="highlight"><code><span class="c1">//find substring</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;conio.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">str</span><span class="o">=</span><span class="s">"ConCho chay qua rao"</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"chay"</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 7</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">str</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"Chay"</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// -1</span>
+    <span class="n">getchar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</li>
+<li>
+<p>Hàm tìm kiếm ngược (<code>rfind</code>)</p>
+<pre class="highlight"><code><span class="c1">//find from back</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;conio.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">str</span><span class="o">=</span><span class="s">"ConCho chay qua chay qua rao"</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"chay"</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 7</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">str</span><span class="p">.</span><span class="n">rfind</span><span class="p">(</span><span class="s">"chay"</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 16</span>
+    <span class="n">getchar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</li>
+<li>
+<p>Phương thức <code>replace()</code> thay thế một đoạn con trong chuỗi <code>str</code> cho trước (đoạn con kể từ một vị trí <code>pos</code> và đếm tới <code>nchar</code> ký tự ký tự về phía cuối chuỗi) bởi một chuỗi <code>s</code> nào đó, hoặc bởi <code>n</code> ký tự <code>ch</code> nào đó. Có nhiều cách dùng, thứ tự tham số như sau:</p>
+<pre class="highlight"><code><span class="n">str</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="kt">int</span> <span class="n">pos</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nchar</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">);</span>
+<span class="n">str</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="kt">int</span> <span class="n">pos</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nchar</span><span class="p">,</span> <span class="n">string</span> <span class="n">s</span><span class="p">);</span>
+<span class="n">str</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="kt">int</span> <span class="n">pos</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nchar</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ch</span><span class="p">);</span>
+
+<span class="n">string</span> <span class="n">str</span><span class="o">=</span><span class="s">"con cho la con cho con. Con meo ko phai la con cho"</span><span class="p">;</span>
+<span class="n">str</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s">"CHO"</span><span class="p">);</span> <span class="c1">// "con CHO la con cho con. Con meo ko phai la con cho";</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="n">getchar</span><span class="p">();</span></code></pre>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="e-tách-xâu" href="#e-tách-xâu"></a>e) Tách xâu</h2>
+<p>Trong việc xử lý xâu ký tự, không thể thiếu được các thao tác tách xâu ký tự thành nhiều xâu ký tự con thông qua các ký tự ngăn cách. Các hàm này có sẵn trong các ngôn ngữ khác như Visual Basic, Java, hay thậm chí là trong <code>&lt;string.h&gt;</code>. Với STL, các bạn có thể dễ dàng làm điều này với <code>stringstream</code>:</p>
+<pre class="highlight"><code><span class="n">string</span> <span class="n">S</span> <span class="o">=</span> <span class="s">"Xin chao tat ca cac ban"</span><span class="p">;</span> <span class="c1">// Khởi tạo giá trị của xâu</span>
+<span class="n">stringstream</span> <span class="nf">ss</span><span class="p">(</span><span class="n">S</span><span class="p">);</span> <span class="c1">// Khởi tạo stringstream từ xâu S</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="n">ss</span> <span class="o">&gt;&gt;</span> <span class="n">token</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Đọc lần lượt các phần của xâu. Các phần tách nhau bởi dấu cách hoặc xuống dòng.</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">token</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Output:</p>
+<pre class="highlight"><code>Xin
+chao
+tat
+ca
+cac
+ban</code></pre>
+<p>Chú ý rằng, cách này cũng có thể dễ áp dụng nếu bạn muốn chuyển số thành xâu (hoặc ngược lại), tách 1 xâu thành nhiều số.</p>
+<p>Nếu không muốn sử dụng <code>stringstream</code>, các bạn cũng có thể tự xây dựng hàm tách xâu như sau:</p>
+<pre class="highlight"><code><span class="n">string</span> <span class="n">S</span> <span class="o">=</span> <span class="s">"Xin chao tat ca cac ban"</span><span class="p">;</span> <span class="c1">// Khởi tạo giá trị của xâu</span>
+<span class="n">string</span><span class="o">::</span><span class="n">iterator</span> <span class="n">t</span><span class="p">,</span> <span class="n">t2</span><span class="p">;</span> <span class="c1">// Các biến lặp</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">split</span><span class="p">;</span> <span class="c1">// Mảng các xâu (lưu kết quả tách)</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">S</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">t</span><span class="o">&lt;</span><span class="n">S</span><span class="p">.</span><span class="n">end</span><span class="p">();)</span>
+<span class="p">{</span>
+    <span class="c1">// Lặp từ vị trí bắt đầu</span>
+    <span class="n">t2</span><span class="o">=</span><span class="n">find</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">S</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="sc">' '</span><span class="p">);</span> <span class="c1">// TÌm ký tự space ' ' đầu tiên</span>
+    <span class="c1">// kể từ vị trí t</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">t</span><span class="o">!=</span><span class="n">t2</span><span class="p">)</span> <span class="n">split</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">t2</span><span class="p">));</span> <span class="c1">// Lấy xâu ký tự giữa 2 vị trí</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t2</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// Chuyển sang vị trí sau</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">split</span><span class="err">ì</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">split</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// In mảng các xâu ký tự</span>
+<span class="n">getchar</span><span class="p">();</span></code></pre>
+<p>Output:</p>
+<pre class="highlight"><code><span class="n">Xin</span>
+<span class="n">chao</span>
+<span class="n">tat</span>
+<span class="n">ca</span>
+<span class="n">cac</span>
+<span class="n">ban</span></code></pre>
+<p>Đoạn chương tr.nh sử dụng các kỹ thuật sau</p>
+<ul>
+<li>Phương thức <code>find(vị_trí_đầu, vị_trí_cuối, ký_tự_tìm)</code> dùng để tìm vị trí đầu tiên của <code>ký_tự_tìm</code> bắt đầu từ <code>vị_trí_đầu</code>. Hàm này trả về vị trí của ký tự tìm được (nếu tìm thấy) hoặc <code>vị_trí_cuối</code> (nếu không tìm thấy)</li>
+<li>
+<code>string</code> có thể khởi tạo từ một đoạn ký tự con của một xâu ký tự khác với cú pháp <code>string(vị_trí_đầu, vị_trí_cuối)</code>
+</li>
+<li>Đoạn chương trình thực hiện tách các xâu ký tự kể cả trong trường hợp có nhiều ký tự <code>space</code> nằm liên tiếp nhau. Một cách đơn giản hơn là bạn có thể gọi hàm <code>strtok()</code> trong <code>string.h</code> để làm việc này, nhưng không may là hàm này thao tác trên <code>char*</code> chứ không phải <code>string</code>. Hàm thành viên <code>c_str()</code> sẽ giúp bạn chuyển từ <code>string</code> thành dạng <code>const charT* c_str () const</code>;</li>
+</ul>
+<p>Hàm này cũng tự động sinh ra ký tự null chèn vào cuối xâu.</p>
+<p>Từ prototype ta cũng thấy được hàm trả về một hằng chuỗi, điều này đồng nghĩa với việc ta không thể thay đổi chuỗi trả về.
+Gọi phương thức c_str();</p>
+<pre class="highlight"><code><span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"some_string"</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">strlen</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">())</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span></code></pre>
+<p>Sau đây là ví dụ bên trên được viết lại dùng hàm thành viên <code>c_str()</code> và các hàm trong <code>&lt;string.h&gt;</code></p>
+<pre class="highlight"><code><span class="c1">// strings vs c-strings</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;string.h&gt;
+#include &lt;string&gt;
+</span><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span><span class="o">*</span> <span class="n">cstr</span><span class="p">;</span>
+    <span class="kt">char</span><span class="o">*</span> <span class="n">p</span><span class="p">;</span>
+    <span class="n">string</span> <span class="n">str</span> <span class="p">(</span><span class="s">"Xin chao tat ca cac ban"</span><span class="p">);</span>
+    <span class="n">cstr</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span> <span class="p">[</span><span class="n">str</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">strcpy</span> <span class="p">(</span><span class="n">cstr</span><span class="p">,</span> <span class="n">str</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+    <span class="c1">// cstr là 1 bản sao c-string của str</span>
+    <span class="n">p</span><span class="o">=</span><span class="n">strtok</span> <span class="p">(</span><span class="n">cstr</span><span class="p">,</span><span class="s">" "</span><span class="p">);</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">p</span><span class="o">!=</span><span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">p</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">p</span><span class="o">=</span><span class="n">strtok</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="s">" "</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">delete</span><span class="p">[]</span> <span class="n">cstr</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Output:</p>
+<pre class="highlight"><code>Xin
+chao
+tat
+ca
+cac
+ban</code></pre>
+<h2 class="editable"><a class="anchor" id="f-chuyển-đổi-hàng-loạt-với-transform" href="#f-chuyển-đổi-hàng-loạt-với-transform"></a>f) Chuyển đổi hàng loạt với transform</h2>
+<pre class="highlight"><code><span class="n">OutputIterator</span> <span class="nf">transform</span><span class="p">(</span> <span class="n">InputIterator</span> <span class="n">first</span><span class="p">,</span>
+<span class="n">InputIterator</span> <span class="n">last</span><span class="p">,</span>
+<span class="n">OutputIterator</span> <span class="n">result</span><span class="p">,</span>
+<span class="n">UnaryOperation</span> <span class="n">unary_op</span> <span class="p">);</span>
+
+<span class="cp">#include &lt;cctype&gt; // for toupper
+#include &lt;string&gt;
+#include &lt;algorithm&gt; //for transform
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">char</span> <span class="nf">alphabet</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="kt">char</span> <span class="n">ch</span> <span class="o">=</span> <span class="sc">'a'</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">ch</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">string</span> <span class="n">s</span><span class="p">(</span><span class="s">"this is a lower case string"</span><span class="p">);</span>
+    <span class="n">transform</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">s</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">s</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">toupper</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">s</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">transform</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">s</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">s</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">alphabet</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="g-một-số-phương-thức-khác" href="#g-một-số-phương-thức-khác"></a>g) Một số phương thức khác</h2>
+<p>Còn nhiều phương thức tiện ích khác như: <code>append()</code>, <code>rfind()</code>, <code>find_first_not_of()</code>, <code>find_last_not_of()</code>, <code>swap()</code>. Cách dùng các hàm này đều được trình bày trong hệ thống hướng dẫn (help) của các môi trường có hỗ trợ STL (trong VC++ là MSDN). Ngoài ra các phương thức như <code>find_first_of()</code> tương tự như <code>find()</code>, <code>find_last_of()</code> tương tự như <code>rfind()</code></p>
+</div>
+</div>
+</div>
+</div>

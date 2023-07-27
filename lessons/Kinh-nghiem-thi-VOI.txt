@@ -1,0 +1,354 @@
+<div id="wiki-content">
+<h1 class="pt-4">Kinh nghiệm thi VOI</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/skill/">skill</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả</strong>:</p>
+<ul>
+<li>Trần Xuân Bách - HUS High School for Gifted Students</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#các-lỗi-sai-thường-gặp">Các lỗi sai thường gặp</a><ul><li><a href="#dịch-lỗi">Dịch lỗi</a></li><li><a href="#đọc-ghi-file-sai">Đọc/ghi file sai</a></li><li><a href="#lỗi-khi-input-output">Lỗi khi input/output</a><ul><li><a href="#in-thừa-debug">In thừa debug</a></li><li><a href="#đọc-chưa-hết-input">Đọc chưa hết input</a></li><li><a href="#output-thừa">Output thừa</a></li></ul></li><li><a href="#tràn-mảng">Tràn mảng</a></li><li><a href="#tràn-số">Tràn số</a><ul><li><a href="#tràn-số-khi-modulo">Tràn số khi modulo</a><ul><li><a href="#cách-giải-quyết">Cách giải quyết</a></li></ul></li><li><a href="#các-dạng-tràn-số-khác">Các dạng tràn số khác</a></li></ul></li><li><a href="#sử-dụng-iterator-và-stl">Sử dụng iterator và STL</a><ul><li><a href="#cộng-trừ-iterator-và-dereference">Cộng trừ iterator và dereference</a></li><li><a href="#các-hàm-stl-đặc-biệt-cần-lưu-ý">Các hàm STL đặc biệt cần lưu ý</a></li></ul></li><li><a href="#các-lỗi-sai-khác">Các lỗi sai khác</a><ul><li><a href="#truyền-ctdl-vào-hàm">Truyền CTDL vào hàm</a></li><li><a href="#reset-mảng">Reset mảng</a></li></ul></li><li><a href="#fast-i-o">Fast I/O</a><ul><li><a href="#không-dùng-endl">Không dùng endl</a></li><li><a href="#dùng-sync_with_stdio-và-cin-tie">Dùng sync_with_stdio và cin.tie</a></li></ul></li></ul></li><li><a href="#những-kinh-nghiệm-khác">Những kinh nghiệm khác</a><ul><li><a href="#tối-ưu">Tối ưu</a><ul><li><a href="#dùng-mảng">Dùng mảng</a></li><li><a href="#khử-đệ-quy">Khử đệ quy</a></li></ul></li><li><a href="#dùng-struct">Dùng struct</a></li></ul></li><li><a href="#sinh-test">Sinh test</a></li></ul></div>
+<p>Khác với các kì thi khác, bản chất thi offline của VOI khiến thí sinh phải rất cẩn trọng và tỉ mỉ khi code. Bài viết dưới đây sẽ chỉ ra các lỗi sai mà các bạn thường gặp, đồng thời chỉ ra cách khắc phục chúng.</p>
+<h1 class="editable"><a class="anchor" id="các-lỗi-sai-thường-gặp" href="#các-lỗi-sai-thường-gặp"></a>Các lỗi sai thường gặp</h1>
+<p>Hai lỗi đầu tiên rất dễ tránh nếu bạn làm như sau:</p>
+<p>5-7 phút trước khi hết giờ, các bạn nên chạy lại tất cả các bài <strong>bằng file</strong>. Kiểm tra xem tất cả ví dụ đúng chưa, rồi sau đó đóng code lại và <strong>không sửa</strong> gì nữa.</p>
+<h2 class="editable"><a class="anchor" id="dịch-lỗi" href="#dịch-lỗi"></a>Dịch lỗi</h2>
+<figure style="text-align:center;">
+<img width="70%" src="https://i.imgur.com/imtNf6p.png" />
+<img width="70%" src="https://i.imgur.com/KIPhy94.png" />
+<img width="70%" src="https://i.imgur.com/E997wjd.png" />
+<figcaption>Các nạn nhân xấu số :(</figcaption>
+</figure>
+<p>Một trong những lỗi "ngớ ngẩn" nhất có thể xảy ra trong kì thi, nhưng đã có không ít trường hợp như trên xảy ra ở PreVOI và thậm chí là VOI nữa.</p>
+<p>Để phòng tránh thì đơn giản thôi: Trước khi bạn hoàn thành một bài, hãy compile lại nó một lần nữa để kiểm tra, sau đó đóng nó lại và không sửa gì nữa.</p>
+<figure style="text-align:center;">
+<img width="70%" src="https://i.imgur.com/qFKDGvI.png" />
+<figcaption>Đừng thêm #define int long long lúc cuối giờ...</figcaption>
+</figure>
+<h2 class="editable"><a class="anchor" id="đọc-ghi-file-sai" href="#đọc-ghi-file-sai"></a>Đọc/ghi file sai</h2>
+<p>Do thể thức đọc/ghi qua file của VOI khác với các trang thi như Codeforces hay AtCoder, nên nhiều bạn còn cẩu thả ở phần này. Các bạn nên:</p>
+<ul>
+<li>
+<strong>Đọc kĩ (ít nhất hai lần) tên file dữ liệu</strong> ở trang đầu tiên của đề thi.</li>
+</ul>
+<figure style="text-align:center;">
+<img width="70%" src="https://i.imgur.com/JRWhTaC.png" />
+<img width="70%" src="https://i.imgur.com/mFoGwjK.png" />
+<figcaption>Bạn có thấy lỗi sai không?</figcaption>
+</figure>
+<ul>
+<li>
+<p>Khi chạy thử ví dụ, hãy chạy luôn trên các file dữ liệu thay vì nhập xuất trên terminal.</p>
+</li>
+<li>
+<p>Nếu bạn cảm thấy cách trên bất tiện, bạn có thể tham khảo đoạn code dưới đây để test bằng terminal trên máy nhưng vẫn đọc được file khi chấm bài.</p>
+<pre class="highlight"><code><span class="c1">// Kiểm tra xem file "SEI.inp" có tồn tại hay không</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">fopen</span><span class="p">(</span><span class="s">"SEI.inp"</span><span class="p">,</span> <span class="s">"r"</span><span class="p">)){</span>
+    <span class="c1">// Nếu có, mở file "SEI.inp" để đọc và file "SEI.out" để ghi</span>
+    <span class="n">freopen</span><span class="p">(</span><span class="s">"SEI.inp"</span><span class="p">,</span> <span class="s">"r"</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
+    <span class="n">freopen</span><span class="p">(</span><span class="s">"SEI.out"</span><span class="p">,</span> <span class="s">"w"</span><span class="p">,</span> <span class="n">stdout</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p><strong>Lưu ý:</strong> Chỉ nên dùng cách này nếu bạn chắc chắn bạn code đúng trong phòng thi.</p>
+</li>
+</ul>
+<figure style="text-align:center;">
+<img width="70%" src="https://i.imgur.com/GxDRlyX.png" />
+<figcaption style="text-align:center;">Nạn nhân xấu số khác</figcaption>
+</figure>
+<h2 class="editable"><a class="anchor" id="lỗi-khi-input-output" href="#lỗi-khi-input-output"></a>Lỗi khi input/output</h2>
+<h3 class="editable"><a class="anchor" id="in-thừa-debug" href="#in-thừa-debug"></a>In thừa debug</h3>
+<p>Trước khi nộp bài, hãy gõ <code>Ctrl+F</code> để tìm tất cả các lần xuất hiện của <code>cout</code>/<code>printf</code>, khi đó <em>gần như</em> chắc chắn bạn sẽ không bỏ sót dòng debug nào hết!
+Trừ khi bạn dùng <code>cerr</code>…</p>
+<p><strong>Lưu ý:</strong> Đừng xoá nhầm cả dòng output <a href="https://discord.com/channels/660930260405190688/660934748566454276/1000076316147724378">như mình</a></p>
+<h3 class="editable"><a class="anchor" id="đọc-chưa-hết-input" href="#đọc-chưa-hết-input"></a>Đọc chưa hết input</h3>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">tests</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">tests</span><span class="p">;</span> <span class="k">while</span> <span class="p">(</span><span class="n">tests</span><span class="o">--</span><span class="p">){</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"NO"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">continue</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="p">...</span>
+<span class="p">}</span></code></pre>
+<p>Ở code trên, trong trường hợp $n$ chẵn, ta đã <code>continue</code> sang test tiếp theo luôn mà không đọc nốt mảng $a$, dẫn đến việc input các test sau bị sai.</p>
+<p>Để tránh việc này xảy ra, bạn nên <strong>đọc tất cả dữ liệu của test</strong> trước khi đi vào phần xử lí trong code.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">tests</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">tests</span><span class="p">;</span> <span class="k">while</span> <span class="p">(</span><span class="n">tests</span><span class="o">--</span><span class="p">){</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Để phần xử lí trường hợp xuống dưới phần đọc dữ liệu</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"NO"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">continue</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="p">...</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="output-thừa" href="#output-thừa"></a>Output thừa</h3>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">];</span>
+<span class="p">...</span> <span class="c1">// Đọc input</span>
+<span class="kt">bool</span> <span class="n">has_answer</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">){</span>
+        <span class="c1">// Nếu a[i][j] = 0, thì in ra i j và dừng lại</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="n">j</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="n">has_answer</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// Nếu không có phần tử nào thoả mãn, thì in ra -1 -1</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">has_answer</span><span class="p">){</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Lỗi ở trên rất phổ biến: Nếu có hai hàng khác nhau chứa ô có giá trị bằng $0$, thì code trên sẽ in ra cả hai ô đó!</p>
+<p>Cách sửa dễ thấy nhất là thêm một lần if biến <code>has_answer</code> ở cuối vòng for trong, tuy nhiên code nhìn sẽ khá xấu. Mình thường viết một hàm riêng để kiểm tra như sau:</p>
+<pre class="highlight"><code><span class="kt">bool</span> <span class="nf">check</span><span class="p">(){</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="n">j</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+                <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">...</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">check</span><span class="p">()){</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="tràn-mảng" href="#tràn-mảng"></a>Tràn mảng</h2>
+<p>Vì VOI không cho phép bạn được sai sót, nên việc để thừa mảng không phải là việc đáng bận tâm lắm. Bình thường mình sẽ khai báo mảng như sau:</p>
+<pre class="highlight"><code><span class="c1">// Kích cỡ tối đa của mảng, nên lưu vào một biến constant</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+
+<span class="c1">// Mình thường để thừa hẳn 5 phần tử để vừa có thể</span>
+<span class="c1">// truy cập mảng bắt đầu từ 1 mà vẫn không lo tràn mảng.</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span></code></pre>
+<p><strong>Lưu ý: Đọc kĩ giới hạn mảng.</strong> Khi soát lại bài, hãy kiểm tra lại giới hạn của từng mảng một.</p>
+<p>Không nên truy cập mảng từ $0$ vì ai biết khi nào bạn truy cập nhầm vào <code>a[i - 1]</code> đâu, tốt nhất là bắt đầu từ $1$ để bạn tạo cho chính mình một vùng an toàn. Đây cũng chính là lí do bạn nên đặc biệt chú ý khi dùng std::vector hay bitmask, vốn hay được sử dụng để duyệt trâu các subtask nhỏ.</p>
+<p>Lưu ý một số giới hạn mảng đặc biệt: Segment Tree có giới hạn là $4\times n$, Euler Tour (trong cách cài đặt &lt;$\mathcal O(n\log n)$, $\mathcal O(1)$&gt; của LCA) có giới hạn là $2 \times n$.</p>
+<h2 class="editable"><a class="anchor" id="tràn-số" href="#tràn-số"></a>Tràn số</h2>
+<p>Cách dễ nhất để đề phòng tràn số là thêm một dòng <code>#define int long long</code> ngay sau khi include thư viện. Bạn sẽ không phải lo chuyện cast biến từ int sang long long, tuy nhiên thời gian chạy của code sẽ lâu hơn gấp đôi.</p>
+<h3 class="editable"><a class="anchor" id="tràn-số-khi-modulo" href="#tràn-số-khi-modulo"></a>Tràn số khi modulo</h3>
+<p>Với các bài yêu cầu tính đáp án theo một modulo nào đó (thường là $10^9 + 7$ hoặc $998244353$), thì bạn phải đặc biệt cẩn thận khi code. Chỉ cần quên một phép <code>%</code> thôi là bạn sẽ bay phần lớn điểm của bài.</p>
+<p>Vậy các lỗi nào các bạn hay gặp?</p>
+<ul>
+<li>
+<p>Quên mod sau từng phép tính
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">x1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// Sai vì a + b có thể vượt quá mod</span>
+<span class="kt">int</span> <span class="n">x2</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span> <span class="c1">// Đúng</span>
+
+<span class="kt">int</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// Sai vì a * b có thể vượt quá mod</span>
+<span class="kt">int</span> <span class="n">y2</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span> <span class="c1">// Sai vì a * b vẫn có thể tràn số</span>
+<span class="kt">int</span> <span class="n">y3</span> <span class="o">=</span> <span class="p">((</span><span class="kt">long</span> <span class="kt">long</span><span class="p">)</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span> <span class="c1">// Đúng</span>
+
+<span class="kt">int</span> <span class="n">z1</span> <span class="o">=</span> <span class="p">((</span><span class="kt">long</span> <span class="kt">long</span><span class="p">)</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span> <span class="c1">// Sai vì a * b * c có thể tràn số</span>
+<span class="kt">int</span> <span class="n">z2</span> <span class="o">=</span> <span class="p">(((</span><span class="kt">long</span> <span class="kt">long</span><span class="p">)</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span> <span class="c1">// Đúng</span></code></pre>
+<p>Các phép tính <code>*</code>, <code>/</code>, <code>%</code> <a href="https://en.cppreference.com/w/cpp/language/operator_precedence">có cùng thứ tự ưu tiên và được tính từ trái qua phải</a>, nên cách code này cũng đúng:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">z3</span> <span class="o">=</span> <span class="p">(</span><span class="kt">long</span> <span class="kt">long</span><span class="p">)</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">%</span> <span class="n">mod</span> <span class="o">*</span> <span class="n">c</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span> <span class="c1">// Đúng</span></code></pre>
+</li>
+<li>
+<p>Số âm sau khi trừ
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="n">x1</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span> <span class="c1">// Sai</span>
+<span class="kt">int</span> <span class="n">x2</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span> <span class="o">+</span> <span class="n">mod</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span> <span class="c1">// Đúng</span></code></pre>
+<p>Lí do là vì phép mod số âm sẽ ra số âm, nên bạn phải cộng thêm mod để đảm bảo giá trị không âm trước khi mod thêm lần nữa.</p>
+</li>
+</ul>
+<h4 class="editable"><a class="anchor" id="cách-giải-quyết" href="#cách-giải-quyết"></a>Cách giải quyết</h4>
+<p>Mình sẽ code riêng các phép tính cộng, trừ, nhân ra thành hàm để đảm bảo mình mod sau mỗi phép tính và không cần phải xử lí phép trừ mỗi bước nữa.</p>
+<pre class="highlight"><code><span class="c1">// Các hàm này giả sử 0 &lt;= x, y &lt; mod</span>
+<span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">sub</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span> <span class="o">+</span> <span class="n">mod</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">mul</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kt">long</span> <span class="kt">long</span><span class="p">)</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="các-dạng-tràn-số-khác" href="#các-dạng-tràn-số-khác"></a>Các dạng tràn số khác</h3>
+<ul>
+<li>Tràn số khi shift bit: <code>1 &lt;&lt; x</code> sẽ tràn int nếu $x \ge 31$.
+Để kết quả là long long, hãy dùng <code>1ll &lt;&lt; x</code>.</li>
+<li>Dùng <code>builtin_popcount</code>, <code>builtin_clz</code> cho long long.
+Đúng ra phải dùng <code>builtin_popcountll</code>, <code>builtin_clzll</code>.</li>
+<li>Tràn số khi chặt nhị phân.
+Cách tính thông thường <code>int mid = (l + r) / 2</code> sẽ tràn số nếu $l + r \ge 2^{31}$.
+Nếu chẳng may gặp tình huống này, sửa dòng trên thành <code>int mid = l + (r - l) / 2</code> — Giá trị của $mid$ vẫn không thay đổi.</li>
+<li>
+<code>accumulate(a + 1, a + n + 1, 0)</code> sẽ tràn số nếu tổng của mảng $a$ tràn số — Phải thay bằng <code>accumulate(a + 1, a + n + 1, 0ll)</code>.</li>
+</ul>
+<p>Mình có lời khuyên là đừng dùng <code>INT_MAX</code> hay <code>LLONG_MAX</code> vì bạn sẽ phải cẩn thận hơn với việc cộng / trừ các giá trị này — ví dụ như khi DP hay Dijkstra, có bạn để giá trị ban đầu như trên, khi đó việc transition sẽ bị lỗi.</p>
+<p>Thay vào đó, hãy dùng các biến <code>const int inf = 1e9 + 7</code>, <code>const long long infll = (long long)1e18 + 7</code>. Nếu dùng memset thì các bạn có thể dùng biến "cách tư duy của Trung Quốc" <code>memset(dist, 0x3f, sizeof(dist));</code><sup id="fnref:1"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup> — các giá trị của $dist$ sẽ được gán bằng 1061109567.</p>
+<h2 class="editable"><a class="anchor" id="sử-dụng-iterator-và-stl" href="#sử-dụng-iterator-và-stl"></a>Sử dụng iterator và STL</h2>
+<h3 class="editable"><a class="anchor" id="cộng-trừ-iterator-và-dereference" href="#cộng-trừ-iterator-và-dereference"></a>Cộng trừ iterator và dereference</h3>
+<pre class="highlight"><code><span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">...</span> <span class="c1">// Đọc vào b</span>
+<span class="n">sort</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">b</span><span class="p">.</span><span class="n">end</span><span class="p">());</span> <span class="c1">// Lưu ý: đừng quên sort trước khi chặt nhị phân!</span>
+<span class="kt">int</span> <span class="n">x</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">x</span><span class="p">;</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itr1</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">b</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">x</span><span class="p">);</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="o">*</span><span class="n">itr1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itr2</span> <span class="o">=</span> <span class="n">itr1</span><span class="p">;</span>
+<span class="n">itr2</span><span class="o">--</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="o">*</span><span class="n">itr2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span></code></pre>
+<p>Nếu mọi phần tử trong $b$ đều bé hơn $x$, thì $itr1$ sẽ chỉ về $b.end()$, là iterator chỉ về phần tử <em>ngay sau</em> phần tử cuối của $b$. Việc dereference (tạm hiểu là lấy giá trị được chỉ đến) $itr1$ lúc này là <a href="https://en.cppreference.com/w/cpp/language/ub">UB</a>, và nhiều khả năng là code bạn sẽ RTE :).</p>
+<p>Ngoài ra, nếu $itr1$ là $b.begin()$, thì dòng <code>itr2--;</code> cũng sẽ bị UB do bạn không giảm iterator xuống dưới begin được.</p>
+<p>Để phòng tránh thì tốt nhất là bạn đừng động đến iterator luôn :D. Trong trường hợp bất đắc dĩ, thì bạn phải cố gắng xét hết mọi trường hợp corner case thôi.</p>
+<h3 class="editable"><a class="anchor" id="các-hàm-stl-đặc-biệt-cần-lưu-ý" href="#các-hàm-stl-đặc-biệt-cần-lưu-ý"></a>Các hàm STL đặc biệt cần lưu ý</h3>
+<ul>
+<li>Để chặt nhị phân trên <code>set</code>, các bạn phải dùng hàm riêng <code>set::lower_bound(value)</code>.
+Dùng hàm <code>lower_bound(set::begin(), set::end(), value)</code> có độ phức tạp <strong>ít nhất</strong> là $\mathcal O(n)$. Tương tự cho các hàm khác như <code>upper_bound</code> và cấu trúc dữ liệu khác như <code>multiset</code>.</li>
+<li>
+<code>multiset::erase(value)</code> xoá <strong>toàn bộ</strong> các giá trị $value$ trong multiset đó.
+Để xoá một phần tử duy nhất, dùng <code>multiset::erase(multiset::find(value))</code>. Lưu ý $value$ phải tồn tại trong multiset đó.</li>
+<li>
+<code>multiset::count(value)</code> có độ phức tạp là số phần tử bằng $value$ trong multiset đó, tức là có thể lên đến $\mathcal O(n)$.
+Để đếm trong $\mathcal O(\log n)$, bạn nên dùng <code>map</code>.</li>
+<li>Bạn sẽ bị tràn số nếu bạn dùng <code>a.size() - 1</code> khi $a$ rỗng, do <code>a.size()</code> trả về một số unsigned.
+Để sửa thì bạn có thể dùng một dòng define chắp vá của mình: <code>#define isz(a) ((signed)(a).size()</code>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="các-lỗi-sai-khác" href="#các-lỗi-sai-khác"></a>Các lỗi sai khác</h2>
+<h3 class="editable"><a class="anchor" id="truyền-ctdl-vào-hàm" href="#truyền-ctdl-vào-hàm"></a>Truyền CTDL vào hàm</h3>
+<pre class="highlight"><code><span class="c1">// Pass by value</span>
+<span class="kt">int</span> <span class="nf">ssize</span><span class="p">(</span><span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">){</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">;</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ssize</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Code trên có độ phức tạp là $\mathcal O(n^2)$, vì hàm <code>ssize</code> mất độ phức tạp là $\mathcal O(n)$. Lí do là vì mỗi khi gọi hàm, <strong>toàn bộ</strong> vector $a$ được copy lại, sau đó hàm <code>size</code> mới được gọi cho vector mới để trả về kết quả.</p>
+<p>Để hàm <code>ssize</code> có độ phức tạp là $\mathcal O(1)$, ta sẽ sửa lại thành:</p>
+<pre class="highlight"><code><span class="c1">// Pass by const reference</span>
+<span class="kt">int</span> <span class="nf">ssize</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">a</span><span class="p">){</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
+<p>Còn nếu ta muốn sửa giá trị của $a$ trong hàm:</p>
+<pre class="highlight"><code><span class="c1">// Pass by reference</span>
+<span class="kt">int</span> <span class="nf">ssize</span><span class="p">(</span><span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">a</span><span class="p">){</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
+<p>Các bạn có thể đọc thêm tại <a href="https://stackoverflow.com/questions/5060137/passing-as-const-and-by-reference-worth-it">đây</a>.</p>
+<h3 class="editable"><a class="anchor" id="reset-mảng" href="#reset-mảng"></a>Reset mảng</h3>
+<pre class="highlight"><code><span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">ck</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="n">tests</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">tests</span><span class="p">;</span> <span class="k">while</span> <span class="p">(</span><span class="n">tests</span><span class="o">--</span><span class="p">){</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">ck</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ck</span><span class="p">));</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="kt">int</span> <span class="n">x</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">x</span><span class="p">;</span> <span class="c1">// 1 &lt;= x &lt;= n</span>
+        <span class="n">ck</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Nếu bài có $10^5$ test $n=1$, thì code trên chạy <code>memset</code> $10^5$ lần và do vậy độ phức tạp của code là $\mathcal O(10^{10})$!.</p>
+<p>Với các bài multitest, <strong>tuyệt đối không được memset</strong> (trừ khi bạn biết chính xác bạn đang làm gì). Bạn có thể dùng hàm <code>fill</code> hoặc for trâu để thay thế.</p>
+<p><strong>Lưu ý:</strong> Khi soát lại bài, hãy kiểm tra lại xem mình đã reset mọi biến trước mỗi test chưa.</p>
+<h2 class="editable"><a class="anchor" id="fast-i-o" href="#fast-i-o"></a>Fast I/O</h2>
+<h3 class="editable"><a class="anchor" id="không-dùng-endl" href="#không-dùng-endl"></a>Không dùng endl</h3>
+<p><code>cout &lt;&lt; endl</code> tương đương với <code>cout &lt;&lt; '\n' &lt;&lt; flush</code>. Flush được dùng để đưa output đang ở trong buffer ra ngay lập tức, nhằm đồng bộ dữ liệu được đưa ra từ chương trình ra bên ngoài như terminal chẳng hạn. Tuy nhiên vì ta đọc/ghi qua file nên flush không để làm gì cả và nó còn rất chậm nữa.</p>
+<p>Cách dùng thay thế là <code>cout &lt;&lt; '\n'</code>. Nếu bạn quen tay dùng <code>endl</code> rồi, thì có thể thêm dòng <code>#define endl '\n'</code> ở bên trên code.</p>
+<p>Các bạn có thể đọc thêm tại <a href="https://stackoverflow.com/questions/64253865/whats-the-difference-between-stdendl-and-n">đây</a>.</p>
+<h3 class="editable"><a class="anchor" id="dùng-sync_with_stdio-và-cin-tie" href="#dùng-sync_with_stdio-và-cin-tie"></a>Dùng sync_with_stdio và cin.tie</h3>
+<p>Để đẩy tốc độ nhập/xuất nhanh hơn nữa, thêm hai dòng này ở trên cùng hàm <code>main</code>:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p><code>sync_with_stdio</code> dùng để đồng bộ thứ tự nhập/xuất của cin – scanf, cout – printf. Vì bạn không dùng lẫn cả hai cái nên bạn có thể thoải mái đặt nó về $0$, khi đó tốc độ input/output sẽ được cải thiện nhiều.</p>
+<p><code>cin.tie</code> được dùng để đồng bộ thứ tự nhập/xuất của cin – cout. Nếu không đồng bộ, thứ tự input/output của code bạn nhiều khả năng sẽ bị xáo trộn, nhưng vì bạn đọc/ghi qua file nên có thể đặt nó về $0$, khi đó tốc độ cũng sẽ được cải thiện nhiều.</p>
+<p>Các bạn có thể đọc thêm tại <a href="https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-stdiofalse-cin-tienull">đây</a></p>
+<h1 class="editable"><a class="anchor" id="những-kinh-nghiệm-khác" href="#những-kinh-nghiệm-khác"></a>Những kinh nghiệm khác</h1>
+<h2 class="editable"><a class="anchor" id="tối-ưu" href="#tối-ưu"></a>Tối ưu</h2>
+<p>Nếu code bạn đã chính xác rồi, nhưng khi bạn chạy thử một test to thì bị TLE, thì phải làm thế nào để tối ưu?</p>
+<p><strong>Lưu ý: Không dùng pragma!!!</strong></p>
+<h3 class="editable"><a class="anchor" id="dùng-mảng" href="#dùng-mảng"></a>Dùng mảng</h3>
+<p>Dùng mảng so với dùng <code>vector</code> có thể làm code bạn nhanh hơn một chút, nhưng như thế là quá ít ;). Hiệu quả của việc này sẽ cao hơn nhiều nếu bạn dùng để tối ưu <code>stack</code>, <code>queue</code> hay <code>deque</code>, vì cả stack và queue đều được cài đặt "ngầm" bằng deque, và deque có constant rất cao cả về time và memory.</p>
+<h3 class="editable"><a class="anchor" id="khử-đệ-quy" href="#khử-đệ-quy"></a>Khử đệ quy</h3>
+<p>Các bạn có thể đọc bài viết <a href="https://vnoi.info/wiki/algo%2Fdata-structures%2FStack.md?redirected_from=translate%2Fdata-structures%2FStack.md#s%E1%BB%AD-d%E1%BB%A5ng-stack-%C4%91%E1%BB%83-kh%E1%BB%AD-%C4%91%E1%BB%87-quy">này</a> trên VNOI wiki. Nếu có thể thì bạn hãy cài stack trong này bằng mảng như đã nói ở trên.</p>
+<h2 class="editable"><a class="anchor" id="dùng-struct" href="#dùng-struct"></a>Dùng struct</h2>
+<p>Mình thấy nhiều bạn khi lưu cạnh của đồ thị thường hay dùng <code>pair &lt;pair &lt;int, int&gt;, int&gt;</code> hoặc <code>tuple &lt;int, int, int&gt;</code>. Code thế này sẽ làm giảm tốc độ code của bạn (phải gõ liên tục <code>edge[i].first.second</code>) và còn dễ bug nữa. Những lúc như thế này các bạn có thể dùng <code>struct</code> trong C++, là một công cụ khá hữu ích trong việc "đóng gói" dữ liệu.</p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">edge</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">;</span>
+    
+    <span class="c1">// Default constructor, khi bạn khởi tạo edge mà không có thông tin gì thêm</span>
+    <span class="n">edge</span><span class="p">()</span><span class="o">:</span> <span class="n">u</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">v</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">w</span><span class="p">(</span><span class="mi">0</span><span class="p">){</span>
+        
+    <span class="p">}</span>
+    
+    <span class="c1">// Constructor để bạn khởi tạo edge với hai đầu mút và trọng số của cạnh</span>
+    <span class="n">edge</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="n">w</span><span class="p">)</span><span class="o">:</span> <span class="n">u</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">v</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">w</span><span class="p">(</span><span class="n">w</span><span class="p">){</span>
+        
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Input cạnh</span>
+<span class="n">edge</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">;</span> 
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">v</span> <span class="o">&gt;&gt;</span> <span class="n">w</span><span class="p">;</span>
+    <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p>Giờ đây bạn có thể truy cập các biến trong cạnh rất dễ dàng: <code>a[i].u</code>, <code>a[i].v</code> và <code>a[i].w</code>. Nhưng không chỉ thế, bạn còn có thể code hàm nhập/xuất tuỳ ý cho struct nữa!</p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">edge</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">;</span>
+    <span class="p">...</span>
+    <span class="c1">// Hàm nhập edge vào từ in</span>
+    <span class="n">istream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">istream</span><span class="o">&amp;</span> <span class="n">in</span><span class="p">,</span> <span class="n">edge</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">){</span>
+        <span class="n">in</span> <span class="o">&gt;&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">v</span> <span class="o">&gt;&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">in</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// Hàm xuất edge ra out</span>
+    <span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">out</span><span class="p">,</span> <span class="k">const</span> <span class="n">edge</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">){</span>
+        <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">u</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">v</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Input/output cạnh</span>
+<span class="n">edge</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Các bạn có thể đọc thêm tại <a href="https://en.cppreference.com/w/cpp/language/operators">đây</a></p>
+<h1 class="editable"><a class="anchor" id="sinh-test" href="#sinh-test"></a>Sinh test</h1>
+<p>Trên VNOI đã có bài viết rất tốt tại <a href="https://vnoi.info/wiki/algo/skill/viet-trinh-cham.md">đây</a>. Mình muốn bổ sung thêm trường hợp khi các bạn cần viết checker:</p>
+<pre class="highlight"><code><span class="n">ifstream</span> <span class="nf">out1</span><span class="p">(</span><span class="n">NAME</span> <span class="o">+</span> <span class="s">".out"</span><span class="p">),</span> <span class="n">out2</span><span class="p">(</span><span class="n">NAME</span> <span class="o">+</span> <span class="s">".ans"</span><span class="p">);</span>
+
+<span class="c1">// Viết checker. Output của code chuẩn đọc ở out1, của code trâu đọc ở out2.</span>
+
+<span class="n">out1</span><span class="p">.</span><span class="n">close</span><span class="p">();</span> <span class="n">out2</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Test "</span> <span class="o">&lt;&lt;</span> <span class="n">iTest</span> <span class="o">&lt;&lt;</span> <span class="s">": CORRECT!</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span></code></pre>
+<div class="footnotes">
+<ol>
+<li id="fn:1">
+<p><a href="https://codeforces.com/blog/entry/18163?#comment-230614">link giải thích</a>. <a href="#fnref:1" class="reversefootnote">↩</a></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>

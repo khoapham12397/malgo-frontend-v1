@@ -1,0 +1,104 @@
+<div id="wiki-content">
+<h1 class="pt-4">Các đội Việt Nam tại ACM ICPC World Final</h1>
+<div class="breadcrumb"></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p><a href="https://en.wikipedia.org/wiki/ACM_International_Collegiate_Programming_Contest">ACM ICPC</a> là kỳ thi lập trình lớn nhất thế giới dành cho sinh viên. Năm 2017 có gần 50,000 thí sinh từ hơn 3000 trường ĐH, đến từ 111 quốc gia và vùng lãnh thổ tham dự.</p>
+<p>Mỗi team gồm 3 người, giải 10-12 bài trong vòng 5h.</p>
+<p>Để lọt vào vòng chung kết (gồm khoảng hơn 100 đội), đầu tiên các đội phải vượt qua <a href="https://icpc.baylor.edu/regionals/finder">vòng Regional</a>. Khu vực châu Á Thái Bình Dương thường có các regional tại <a href="https://www.facebook.com/acmicpc.vietnam/">Việt Nam</a>, Thái Lan, Indonesia, …</p>
+<p>Các đội Việt Nam muốn được thi Regional ở Việt Nam cần phải vượt qua vòng National.</p>
+<h1 class="editable"><a class="anchor" id="các-đội-việt-nam-tại-acm-icpc-world-final" href="#các-đội-việt-nam-tại-acm-icpc-world-final"></a>Các đội Việt Nam tại ACM ICPC World Final</h1>
+<p>Trong phần này mình chỉ liệt kê các đội gồm 3 người VN, và chỉ liệt kê các đội đã vào top 50.</p>
+<ol>
+<li>
+<a href="https://zibada.guru/finals/2021">2021</a> - ĐH Công Nghệ (UET - VNU), team EggCentroy2 - rank 12: <strong>Đội đầu tiên của Việt Nam dành huy chương ICPC World Final</strong>
+<ul>
+<li>Bùi Hồng Đức <a href="https://cphof.org/profile/codeforces:user202729_">HCV IOI 2019 và 2020</a>
+</li>
+<li>Vũ Hoàng Kiên <a href="https://cphof.org/profile/codeforces:Maripium">HCB IOI 2019 và 2020</a>
+</li>
+<li>Nguyễn Hải Bình: CF: <a href="https://cphof.org/profile/codeforces:Negativez2">Negativez2</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://zibada.ru/finals/2018">2018</a> - ĐH Công Nghệ (UET - VNU), team unsigned - rank 15:
+<ul>
+<li>Phạm Cao Nguyên: <a href="http://stats.ioinformatics.org/people/6056">HCV IOI 2016, HCĐ IOI 2017</a>, CF: <a href="http://codeforces.com/profile/natsukagami">natsukagami</a>
+</li>
+<li>Lê Quang Tuấn: <a href="http://stats.ioinformatics.org/people/6055">HCV IOI 2017, HCĐ IOI 2016</a>, CF: <a href="http://codeforces.com/profile/alexa0704">alexa0704</a>
+</li>
+<li>Nguyễn Đinh Quang Minh: CF: <a href="http://codeforces.com/profile/MofK">MofK</a>
+</li>
+<li>Cao Nguyên và Quang Tuấn đã từng có <a class="internal present" href="https://vnoi.info/wiki/vnoi-interview/Phong-van-team-IOI-VN-2017.md">bài phỏng vấn trên VNOI wiki</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://static.kattis.com/icpc/wf2016/">2016</a> - National University of Singapore (NUS), team RRwatameda - rank 15:
+<ul>
+<li>Nguyễn Tấn Sỹ Nguyên: <a href="http://stats.ioinformatics.org/people/2226">HCB IOI 2011</a>, CF: <a href="http://codeforces.com/profile/flashmt">flashmt</a>, #49 ACM ICPC World Final 2013</li>
+<li>Nguyễn Hùng Tâm: <a href="https://www.imo-official.org/participant_r.aspx?id=21580">HCB IMO 2012</a>
+</li>
+<li>Nguyễn Thành Trung (RR): CF: <a href="http://codeforces.com/profile/I_love_Hoang_Yen">I_love_Hoang_Yen</a>, #17 ACM ICPC World Final 2012</li>
+</ul>
+</li>
+<li>
+<a href="https://zibada.guru/finals/2011/">2011</a> - Nanyang Technological University (NTU), team NTU Ares - rank 17:
+<ul>
+<li>Khúc Anh Tuấn: <a href="http://stats.ioinformatics.org/people/2361">HCB IOI 2006</a>, CF: <a href="http://codeforces.com/profile/ktuan">ktuan</a>, TC: <a href="https://www.topcoder.com/members/ktuan/details/?track=DATA_SCIENCE&amp;subTrack=SRM">ktuan</a> - đỏ target duy nhất của VN, Rank 2 Facebook Hackercup 2011, 2 lần chung kết GCJ.</li>
+<li>Phạm Quang Vũ: CF: <a href="http://codeforces.com/profile/ConanKudo">ConanKudo</a>, #17 ACM WF 2012</li>
+<li>Đoàn Tuấn Anh.</li>
+</ul>
+</li>
+<li>
+<a href="http://static.kattis.com/icpc/wf2016/">2016</a> - ĐH Công Nghệ (UET - VNU) - rank 29:
+<ul>
+<li>Phạm Văn Hạnh: <a href="http://stats.ioinformatics.org/people/5815">HCV IOI 2015</a>, CF: <a href="http://codeforces.com/profile/skyvn97">skyvn97</a>
+</li>
+<li>Nguyễn Tiến Trung Kiên: <a href="http://stats.ioinformatics.org/people/5245">HCB IOI 2015, HCĐ IOI 2014</a>, CF: <a href="http://codeforces.com/profile/kien_coi_1997">kien_coi_1997</a>
+</li>
+<li>Đỗ Ngọc Khánh: CF: <a href="http://codeforces.com/profile/dnk">dnk</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://zibada.guru/finals/2021/">2021</a> - ĐH Bách Khoa Hà Nội - rank 37:
+<ul>
+<li>Lê Minh Quang: <a href="https://cphof.org/profile/topcoder:LeMinhQuang">Quang</a>
+</li>
+<li>Đỗ Đình Đắc: <a href="https://cphof.org/profile/icpc:Dinh%20Dac%20Do">6aren</a>
+</li>
+<li>Lê Anh Đức: <a href="https://cphof.org/profile/icpc:Anh%20Duc%20Le">ladpro98</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://static.kattis.com/icpc/wf2017/">2017</a> - ĐH Công Nghệ (UET - VNU) - rank 39:
+<ul>
+<li>Phạm Văn Hạnh: <a href="http://stats.ioinformatics.org/people/5815">HCV IOI 2015</a>, CF: <a href="http://codeforces.com/profile/skyvn97">skyvn97</a>
+</li>
+<li>Phan Đức Nhật Minh: <a href="http://stats.ioinformatics.org/people/5816">HCV IOI 2016, HCB IOI 2015</a>, CF: <a href="http://codeforces.com/profile/minh141198">minh141198</a>
+</li>
+<li>Nguyễn Đức Duy: CF: <a href="http://codeforces.com/profile/duyboy135">duyboy135</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://zibada.guru/finals/2021/">2021</a> - ĐH Khoa Học Tự nhiên - ĐHQG HCM - rank 46:
+<ul>
+<li>Nguyễn Diệp Xuân Quang: <a href="https://cphof.org/profile/codeforces:xuanquang1999">xuanquang1999</a>
+</li>
+<li>Lê Quý Khôi: <a href="https://cphof.org/profile/icpc:Quy-Khoi%20Le">GreymaneSilverfang</a>
+</li>
+<li>Nguyễn Quang Thức: <a href="https://cphof.org/profile/icpc:Quang-Thuc%20Nguyen">ZigonK</a>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>

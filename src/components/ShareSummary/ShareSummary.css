@@ -1,28 +1,25 @@
 .share-summary-container {
-    width: 400px;
-    max-height: 200px;
-    padding: 10px;
-    background-color: rgb(72, 71, 71);
-    margin-top: 10px;
-    border-radius: 8px;
-    
+  width: 400px;
+  max-height: 200px;
+  padding: 10px;
+  background-color: rgb(72, 71, 71);
+  margin-top: 10px;
+  border-radius: 8px;
 }
 
-.share-summary{
-    background-color: #2b2d31;
-    padding: 10px;
-    border-radius: 8px;
-    height: 100px;
-    margin-top: 10px;
-    font-size: 16px;
-    margin-bottom: 15px;
+.share-summary {
+  background-color: #2b2d31;
+  padding: 10px;
+  border-radius: 8px;
+  height: 100px;
+  margin-top: 10px;
+  font-size: 16px;
+  margin-bottom: 15px;
 }
-.share-summary-content{
-
-    height: 75px;
-    overflow: hidden;
-    
+.share-summary-content {
+  height: 75px;
+  overflow: hidden;
 }
-.header-summary{
-    font-size: 20px;
+.header-summary {
+  font-size: 20px;
 }

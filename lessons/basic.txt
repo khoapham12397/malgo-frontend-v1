@@ -1,0 +1,167 @@
+<div id="wiki-content">
+<h1 class="pt-4">Xử lý xâu</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/string/">string</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Xâu</strong> (<strong>string</strong>) xuất hiện rất nhiều trong các bài toán. Bài viết này giới thiệu sơ qua một số thuật ngữ cũng như thuật toán về xâu.</p>
+<h1 class="editable"><a class="anchor" id="thuật-ngữ" href="#thuật-ngữ"></a>Thuật ngữ</h1>
+<ul>
+<li>Một xâu $X$ là <strong>xâu con</strong> (<strong>substring</strong>) của một xâu $Y$ nếu $X$ là một chuỗi các ký tự liên tiếp của $Y$. Ví dụ: <code>ab</code> và <code>bc</code> là 2 xâu con của <code>abcd</code>. Nhưng <code>ac</code> thì không phải là xâu con của <code>abcd</code>.</li>
+<li>Một xâu $X$ là <strong>tiền tố</strong> (<strong>prefix</strong>) của một xâu $Y$ nếu $X$ là xâu con của $Y$ và $X$ xuất hiện ở đầu của xâu $Y$. Ví dụ: <code>ab</code> là tiền tố của <code>abcd</code>, nhưng <code>bc</code> <strong>không</strong> phải là tiền tố của <code>abcd</code>.
+Một xâu $X$ là một <strong>tiền tố không tầm thường</strong> (<strong>proper prefix</strong>) của xâu $Y$ nếu nó là tiền tố của xâu $Y$ và khác xâu $Y$.</li>
+<li>Một xâu $X$ là <strong>hậu tố</strong> (<strong>hậu tố</strong>) của một xâu $Y$ nếu $X$ là xâu con của $Y$ và $X$ xuất hiện ở cuối của xâu $Y$. Ví dụ: <code>cd</code> là hậu tố của <code>abcd</code>, nhưng <code>bc</code> <strong>không</strong> phải là hậu tố của <code>abcd</code>.
+Một xâu $X$ là một <strong>hậu tố không tầm thường</strong> (<strong>proper suffix</strong>) của xâu $Y$ nếu nó là hậu tố của xâu $Y$ và khác xâu $Y$.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="các-dạng-bài" href="#các-dạng-bài"></a>Các dạng bài</h1>
+<h2 class="editable"><a class="anchor" id="so-khớp-chuỗi-string-matching" href="#so-khớp-chuỗi-string-matching"></a>So khớp chuỗi (string matching)</h2>
+<p>Cho một xâu $T$ và xâu $S$. Tìm tất cả các lần xuất hiện của xâu $S$ trong xâu $T$.</p>
+<p>Ví dụ:</p>
+<pre class="highlight"><code>S = abc
+T = abcabcabc
+
+Các lần xuất hiện: 1, 4, 7.</code></pre>
+<p>Bài toán này còn được gọi là tìm kiếm <strong>cây kim</strong> (<strong>needle</strong>) trong <strong>đống rơm</strong> (<strong>haystack</strong>), vì nó xuất hiện trong thực tế khi ta cần tìm một xâu rất nhỏ trong một lượng dữ liệu rất lớn (ví dụ Google cần tìm từ khóa trong hàng tỉ tỉ trang web).</p>
+<p>Có 3 thuật toán chính để giải quyết bài này, đó là:</p>
+<ul>
+<li><a class="internal absent" href="https://vnoi.info/wiki/translate/wcipeg/kmp">Thuật toán KMP</a></li>
+<li><a class="internal absent" href="https://vnoi.info/wiki/algo/string/hash">Hash</a></li>
+<li><a class="internal absent" href="https://vnoi.info/wiki/translate/codeforces/z-algo">Z Algorithm</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="xâu-đối-xứng-palindrome" href="#xâu-đối-xứng-palindrome"></a>Xâu đối xứng (Palindrome)</h2>
+<p>Palindrome hay còn gọi là xâu đối xứng, xâu đối gương là tên gọi của những xâu kí tự mà khi viết từ phải qua trái hay từ trái qua phải thì xâu đó không thay đổi. VD: MADAM, IOI,…</p>
+<p>Có rất nhiều bài tập liên quan đến xâu đối xứng. Các bạn có thể tìm đọc ở trong các bài viết:</p>
+<ul>
+<li><a class="internal absent" href="https://vnoi.info/wiki/algo/dp/palindrome-problems">Một vài bài tập QHD về Palindrome</a></li>
+<li><a class="internal absent" href="https://vnoi.info/wiki/algo/string/hash">Hash</a></li>
+<li><a class="internal absent" href="https://vnoi.info/wiki/translate/codeforces/palindrome-tree">Palindrome Tree</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="cấu-trúc-dữ-liệu" href="#cấu-trúc-dữ-liệu"></a>Cấu trúc dữ liệu</h2>
+<ul>
+<li>
+<a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/trie">Trie</a> là CTDL cơ bản nhất trong xử lý xâu. Nó giúp giải quyết các bài toán về tìm kiếm xâu.</li>
+<li>Lớp CTDL được gọi chung là Suffix Structures gồm:
+<ul>
+<li><a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/suffix-array">Suffix Array</a></li>
+<li>Suffix Automaton</li>
+<li>Suffix Tree</li>
+<li>Aho Corasick</li>
+</ul>
+<p>Gọi chung như vậy vì các CTDL này có thể dùng thay thế nhau để giải quyết cùng một lớp bài toán liên quan đến các suffix của cây.</p>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="các-bài-ad-hoc" href="#các-bài-ad-hoc"></a>Các bài Ad-hoc</h2>
+<p>Trong xử lý xâu còn một vài thuật toán chỉ áp dụng được cho 1 bài toán (ad-hoc).</p>
+<h3 class="editable"><a class="anchor" id="thuật-toán-manacher" href="#thuật-toán-manacher"></a>Thuật toán Manacher</h3>
+<p><strong>Bài toán</strong></p>
+<p>Cho xâu $S$.</p>
+<ul>
+<li>Với mỗi vị trí $i$ của xâu $S$, tìm xâu đối xứng dài nhất nhận $i$ là tâm.</li>
+<li>Với mỗi cặp $i$, $i+1$ của xâu $S$, tìm xâu đối xứng dài nhất nhận $i$ và $i+1$ là tâm.</li>
+</ul>
+<p><strong>Mô tả thuật toán</strong></p>
+<p>Tham khảo thêm ở <a href="http://articles.leetcode.com/longest-palindromic-substring-part-ii">link</a></p>
+<p><strong>Code</strong></p>
+<pre class="highlight"><code><span class="k">const</span> <span class="kt">char</span> <span class="n">DUMMY</span> <span class="o">=</span> <span class="sc">'.'</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">manacher</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Để tránh phải xét riêng trường hợp độ dài xâu đối xứng chẵn / lẻ,</span>
+  <span class="c1">// ta thêm 1 ký tự DUMMY vào giữa các ký tự của s.</span>
+  <span class="c1">// CHÚ Ý: Phải đảm bảo DUMMY không có trong xâu s</span>
+
+	<span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+	<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">f</span> <span class="o">=</span> <span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+  <span class="c1">// Tạo xâu a bằng cách chèn ký tự DUMMY vào giữa các ký tự của s.</span>
+  <span class="c1">// Ví dụ:</span>
+  <span class="c1">// s = aabcb</span>
+  <span class="c1">// a = a.a.b.c.b</span>
+	<span class="n">string</span> <span class="n">a</span> <span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">DUMMY</span><span class="p">);</span>
+	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="mi">2</span><span class="p">];</span>
+
+	<span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">r</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="n">min</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span> <span class="o">-</span> <span class="n">i</span><span class="p">],</span> <span class="n">r</span> <span class="o">-</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+		<span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&amp;&amp;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">])</span> <span class="n">j</span><span class="o">++</span><span class="p">;</span>
+		<span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">--</span><span class="n">j</span><span class="p">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">r</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">;</span>
+			<span class="n">l</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="p">;</span>
+		<span class="p">}</span>
+
+		<span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">&gt;</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">res</span> <span class="o">=</span> <span class="n">len</span><span class="p">;</span>
+			<span class="n">center</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+  <span class="c1">// Với mỗi vị trí i, xâu đối xứng dài nhất nhận i là tâm là [i - f[i], i + f[i]].</span>
+  <span class="c1">// Ví dụ:</span>
+  <span class="c1">// s = aabcb</span>
+  <span class="c1">// a = a.a.b.c.b</span>
+  <span class="c1">// f = 011010200</span>
+	<span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="minimal-string-rotation" href="#minimal-string-rotation"></a>Minimal string rotation</h3>
+<p><strong>Bài toán</strong></p>
+<p>Cho một xâu $S$. Xét các xâu thu được từ xâu $S$ bằng phép xoay. Ví dụ: <code>S = abcd</code>, thì các xâu thu được từ $S$ bằng phép xoay là:</p>
+<ul>
+<li><code>abcd</code></li>
+<li><code>bcda</code></li>
+<li><code>cdab</code></li>
+<li><code>dabc</code></li>
+</ul>
+<p>Tìm xâu có thứ tự từ điển nhỏ nhất.</p>
+<p><strong>Mô tả thuật toán</strong></p>
+<p>Bạn có thể xem <a href="https://en.wikipedia.org/wiki/Lexicographically_minimal_string_rotation">ở đây</a></p>
+<p><strong>Code</strong></p>
+<pre class="highlight"><code><span class="c1">// Tính vị trí của xâu xoay vòng có thứ tự từ điển nhỏ nhất của xâu s[]</span>
+<span class="kt">int</span> <span class="nf">minmove</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+	<span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span> <span class="c1">// x is the smallest string before string y</span>
+	<span class="k">for</span> <span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="n">u</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+		<span class="n">j</span> <span class="o">=</span> <span class="n">v</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span>
+		<span class="k">while</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="p">{</span>
+			<span class="o">++</span> <span class="n">u</span><span class="p">;</span> <span class="o">++</span> <span class="n">v</span><span class="p">;</span>
+			<span class="k">if</span> <span class="p">(</span><span class="o">++</span> <span class="n">i</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="k">if</span> <span class="p">(</span><span class="o">++</span> <span class="n">j</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">x</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span> <span class="c1">// All strings are equal</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="n">y</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+		<span class="k">else</span> <span class="p">{</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">)</span> <span class="n">y</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="lyndon-decomposition" href="#lyndon-decomposition"></a>Lyndon Decomposition</h3>
+<p><strong>Bài toán</strong></p>
+<p><strong>Lyndon word</strong> là các xâu khác rỗng, mà có thứ tự từ điển nhỏ hơn tất cả các xâu thu được bằng phép xoay của nó.</p>
+<p>Cho một xâu $S$. Tìm cách tách $S$ thành ít nhất các xâu, sao cho mỗi xâu đều là Lyndon word.</p>
+<p><strong>Code</strong></p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">lyndon</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+	<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+		<span class="k">while</span> <span class="p">(</span><span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+			<span class="k">else</span> <span class="o">++</span><span class="n">k</span><span class="p">;</span>
+			<span class="o">++</span><span class="n">j</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="n">j</span> <span class="o">-</span> <span class="n">k</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+</div>
+</div>

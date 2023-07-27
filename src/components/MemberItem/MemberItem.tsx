@@ -1,22 +1,22 @@
-import { useState } from "react";
-import { getFixedUsername } from "../../utils/getUser";
-import { getAvatarLink } from "../../utils/utils";
-import { ProfileSummary } from "../ProfileSummary/ProfileSummary";
+import { useState } from 'react';
+import { getFixedUsername } from '../../utils/getUser';
+import { getAvatarLink } from '../../utils/utils';
+import { ProfileSummary } from '../ProfileSummary/ProfileSummary';
 import './MemberItem.css';
 
 type MemberItemProps = {
-    item : GroupUser;
-}
+  item: GroupUser;
+};
 
-const RelTwoUser= {
-    NONE: 'NONE',
-    FRIEND: 'FRIEND',
-    ONE_REQUEST_TWO: 'ORT',
-    TWO_REQUEST_ONE: 'TRO',
-}
+const RelTwoUser = {
+  NONE: 'NONE',
+  FRIEND: 'FRIEND',
+  ONE_REQUEST_TWO: 'ORT',
+  TWO_REQUEST_ONE: 'TRO'
+};
 
-export const MemberItem = ({item}: MemberItemProps)=>{
-  const [showProfileModal,setShowProfileModal] = useState<boolean>(false);
+export const MemberItem = ({ item }: MemberItemProps) => {
+  const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
 
   /*
   const dispatch = useDispatch<any>();
@@ -99,15 +99,20 @@ export const MemberItem = ({item}: MemberItemProps)=>{
   */
   return (
     <div>
-      <div key = {item.username} className='member-item' onClick={()=>setShowProfileModal(true)}>
-            <img src = {getAvatarLink(item.username)} className = 'avatar-msg'/> <span>{getFixedUsername(item.username)}</span> <span className="online-user"/>
+      <div
+        key={item.username}
+        className='member-item'
+        onClick={() => setShowProfileModal(true)}
+      >
+        <img src={getAvatarLink(item.username)} className='avatar-msg' />{' '}
+        <span>{getFixedUsername(item.username)}</span>{' '}
+        <span className='online-user' />
       </div>
-    <ProfileSummary 
-    userSummary={item}
-    show = {showProfileModal} 
-    handleSetShow={setShowProfileModal}
-    />
+      <ProfileSummary
+        userSummary={item}
+        show={showProfileModal}
+        handleSetShow={setShowProfileModal}
+      />
     </div>
-  )
-    
-}
+  );
+};

@@ -7,12 +7,13 @@ import {
 import store from '..';
 import { toast } from 'react-hot-toast';
 import api from '../../config/axios2';
+import { getAccessTokenFromStorage } from '../../utils/getUser';
 
 const baseUrl = (import.meta.env.VITE_API_URL as string) + 'mathproblem';
 
 export const fetchMathProblems = (params: GetProblemsParam) => {
   let url = baseUrl + '/search';
-  console.log(url);
+  //console.log(url);
   return function (dispatch: Dispatch) {
     fetch(url, {
       method: 'POST',
@@ -33,7 +34,6 @@ export const fetchMathProblems = (params: GetProblemsParam) => {
             total: result.data.total,
             itemPerPage: result.data.itemPerPage
           };
-          console.log(result);
           dispatch(
             setProblems({
               filter: filter,
@@ -58,24 +58,30 @@ export const fetchMathCategoriesAndTags = () => {
       });
   };
 };
+
 export const fetchInit = async (dispatch: Dispatch<any>, page: number) => {
-  const res = await fetch(baseUrl + '/categories_tags');
-  const result = await res.json();
-  if (result.successed) {
+  //const res = await fetch(baseUrl + '/categories_tags');
+  //const result = await res.json();
+
+  // if (result.successed) {
     const params: GetProblemsParam = {
       category: null,
       endDif: null,
       startDif: null,
       page: page,
       q: null,
-      tagList: []
+      tagList: [],
+      init:true,
     };
+    
     const rs = await fetch(baseUrl + '/search', {
       method: 'POST',
       body: JSON.stringify(params),
       headers: { 'Content-Type': 'application/json' }
     });
+
     const result1 = await rs.json();
+    
     if (result1.successed) {
       const filter: MathProblemFilter = {
         category: params.category,
@@ -90,16 +96,17 @@ export const fetchInit = async (dispatch: Dispatch<any>, page: number) => {
       };
       dispatch(
         setAll({
-          categories: result.data.categories,
-          tags: result.data.tags,
+          categories: result1.data.categoriesAndTags.categories,
+          tags: result1.data.categoriesAndTags.tags,
           filter: filter,
           problems: result1.data.problems
         })
       );
+      
     } else {
-      dispatch(setCategoriesAndTags(result.data));
+      toast.error('Some error occured');
     }
-  }
+  //}
 };
 
 export const postMathProblem = (params: CreateMathProblemParam) => {
@@ -111,7 +118,10 @@ export const postMathProblem = (params: CreateMathProblemParam) => {
   fetch(baseUrl + '/create', {
     method: 'POST',
     body: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' }
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getAccessTokenFromStorage()}`
+    }
   })
     .then(res => res.json())
     .then(result => {
@@ -124,54 +134,62 @@ export const postMathProblem = (params: CreateMathProblemParam) => {
     });
 };
 
-export const editMathProblem = (params: EditMathProbParam) => {
-  fetch(baseUrl + '/problem', {
-    method: 'PUT',
-    body: JSON.stringify(params),
-    headers: { 'Content-Type': 'application/json' }
-  })
-    .then(res => res.json())
-    .then(result => {
-      if (result.successed) {
-        toast.success('Edit Problem Successed');
-        console.log(result.data.mathProblem);
-      } else toast.error(result.message);
+export const editMathProblem = async (params: EditMathProbParam) => {
+  try {
+    const response = await fetch(baseUrl + '/problem', {
+      method: 'PUT',
+      body: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getAccessTokenFromStorage()}`
+      }
     });
+    const result = await response.json();
+    if (result.successed) {
+      toast.success('Edit Problem Successed');
+      return result.data.mathProblem;
+    } else toast.error(result.message);
+  } catch (error: any) {
+    toast.error(error.response.data.message);
+  }
 };
 
-export const createMathNote = async (params : any) =>{
-  const res = await api.post(baseUrl + '/note', params)
+export const createMathNote = async (params: any) => {
+  const res = await api.post(baseUrl + '/note', params);
   return res.data;
-}
+};
 
-export const editMathNote = async (params: any)=>{
+export const editMathNote = async (params: any) => {
   const res = await api.put(baseUrl + '/note', params);
   return res.data;
-}
+};
 
-export const getMathProblem = async (problemId: string, username: string |undefined) =>{
+export const getMathProblem = async (
+  problemId: string,
+  username: string | undefined
+) => {
   let url = baseUrl + `/problem/${problemId}`;
-  if(username !== undefined) url += `?username=${username}`;
+  if (username !== undefined) url += `?username=${username}`;
   const res = await api.get(url);
   return res.data;
-}
+};
 
-export const getMathSolutions = async (problemId: string)=>{
+export const getMathSolutions = async (problemId: string) => {
   const res = await api.get(baseUrl + `/solutions?problemId=${problemId}`);
   return res.data;
-}
+};
 
-export const getMathProblemSets = async ()=>{
+export const getMathProblemSets = async () => {
   const res = await api.get(baseUrl + `/set`);
   return res.data;
-}
+};
 
-export const getMathSet = async (setId: string)=>{
+export const getMathSet = async (setId: string) => {
   const res = await api.get(baseUrl + `/set/${setId}`);
   return res.data;
-} 
+};
 
-export const createMathSet = async (params: any) =>{
+export const createMathSet = async (params: any) => {
   const res = await api.post(baseUrl + '/set', params);
   return res.data;
-}
+};

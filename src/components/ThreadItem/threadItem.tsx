@@ -1,5 +1,5 @@
 import { BiCommentDetail, BiLike } from 'react-icons/bi';
-import React, {  useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import CommentRootList from '../Comments/commentsRootList';
 import { Button } from 'react-bootstrap';
 import { processText, formatMathExpr, getAvatarLink } from '../../utils/utils';
@@ -14,7 +14,7 @@ import {
   postComment,
   PostCommentParam
 } from '../../state/actions/threadAction';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import parse from 'html-react-parser';
 import { ThreadOptionMenu } from './threadOptionMenu';
 import { RootState } from '../../state';
@@ -71,7 +71,9 @@ export const ThreadItem = ({ threadData }: ThreadItemProps) => {
     setShowRvCmt(true);
   };
   const handleLoadRootCmts = () => {
-    dispatch(fetchRootComment(threadData.id, myUsername ? myUsername : undefined));
+    dispatch(
+      fetchRootComment(threadData.id, myUsername ? myUsername : undefined)
+    );
   };
   return (
     <div className='thread-item'>
@@ -82,31 +84,33 @@ export const ThreadItem = ({ threadData }: ThreadItemProps) => {
         handleSendCmt={handleSendCmt}
       />
       <div className='space-between'>
-        <div className='d-flex' style={{alignItems:'center',}}>
+        <div className='d-flex' style={{ alignItems: 'center' }}>
           <img
             src={getAvatarLink(threadData.author.username)}
             className='avatar-icon'
           />
           <div style={{ padding: '10px' }}>
-            <div style={{ fontWeight: 'bold' ,fontSize:'18px'}}>
+            <div style={{ fontWeight: 'bold', fontSize: '18px' }}>
               {getFixedUsername(threadData.author.username)}
             </div>
-            <div style={{color: 'gray'}}>Posted at {new Date(threadData.createdAt).toLocaleString()}</div>
+            <div style={{ color: 'gray' }}>
+              Posted at {new Date(threadData.createdAt).toLocaleString()}
+            </div>
           </div>
         </div>
         <ThreadOptionMenu threadData={threadData} />
       </div>
 
-      <div className='title' >
-        <Link to={'/thread/' + threadData.id} className='link'>{threadData.title}</Link>
+      <div className='title'>
+        <Link to={'/thread/' + threadData.id} className='link'>
+          {threadData.title}
+        </Link>
       </div>
-      <br/>
+      <br />
       <div id='summary-content'>
-        <MathJaxContext>
-          <MathJax>{parse(threadData.content)}</MathJax>
-        </MathJaxContext>
+        <MathJax>{parse(threadData.content)}</MathJax>
       </div>
-      <br/>
+      <br />
       <div className='space-between'>
         <div className='tag-thread-list'>
           {threadData.tags.map(item => (
@@ -117,14 +121,15 @@ export const ThreadItem = ({ threadData }: ThreadItemProps) => {
         </div>
         <div className='d-flex'>
           <div className='interact-item'>
-            <ShareButton resource={
-              {
-                id: threadData.id, 
-                link: `/thread/${threadData.id}`, 
-                type:'thread',
-                summary: threadData.content, 
+            <ShareButton
+              resource={{
+                id: threadData.id,
+                link: `/thread/${threadData.id}`,
+                type: 'thread',
+                summary: threadData.content,
                 title: threadData.title
-            }}/>
+              }}
+            />
           </div>
           <div className='interact-item'>
             <BiCommentDetail size={22} />
@@ -139,7 +144,10 @@ export const ThreadItem = ({ threadData }: ThreadItemProps) => {
                 color={threadData.isLike ? 'blue' : ''}
                 onClick={e =>
                   dispatch(
-                    likeThread(threadData.id, myUsername ? myUsername : undefined)
+                    likeThread(
+                      threadData.id,
+                      myUsername ? myUsername : undefined
+                    )
                   )
                 }
               />
@@ -149,7 +157,7 @@ export const ThreadItem = ({ threadData }: ThreadItemProps) => {
         </div>
       </div>
 
-      <br/>
+      <br />
       <div>
         <div className='form-group'>
           <textarea

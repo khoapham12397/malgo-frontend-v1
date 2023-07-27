@@ -6,7 +6,6 @@
   --primary-component-color: #3b5998;
   --secondary-component-color: #f8f9fa;
   --header-color: #3f4147;
-  
 }
 
 * {
@@ -24,7 +23,7 @@ body {
   margin: 0;
   font-family: serif, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    sans-serif, Arial, Helvetica;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -34,8 +33,8 @@ code {
     monospace;
 }
 pre {
-  background-color: #dddddd;
-  padding: 10px;
+  background-color: #eeeeee;
+  padding: 5px;
   border-radius: 5px;
 }
 .d-flex {
@@ -109,7 +108,7 @@ pre {
   display: flex;
   color: #3d7ec5;
 }
-.tag-thread:hover{
+.tag-thread:hover {
   cursor: pointer;
 }
 .avatar-icon {
@@ -201,23 +200,22 @@ pre {
   text-decoration: none;
   color: black;
 }
-.property-title{
+.property-title {
   padding-right: 10px;
 }
-.time-limit{
-  font-size: 19px;
-  display: flex;
-
-} 
-.memory-limit{
+.time-limit {
   font-size: 19px;
   display: flex;
 }
-.input-file{
+.memory-limit {
   font-size: 19px;
   display: flex;
 }
-.output-file{
+.input-file {
+  font-size: 19px;
+  display: flex;
+}
+.output-file {
   font-size: 19px;
   display: flex;
   margin-bottom: 10px;
@@ -226,6 +224,65 @@ pre {
 .property-title {
   color: gray;
 }
+h1,
+h2,
+h3 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+h1,
+h2 {
+  padding-bottom: 10px;
+}
+h3 {
+  padding-top: 20px;
+}
+a {
+  color: #3d7ec5;
+}
+p {
+  font-family: Arial, Helvetica, sans-serif;
+}
+div {
+  font-family: Arial, Helvetica, sans-serif;
+}
+ol {
+  list-style: none;
+  padding: 0px;
+}
+button {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.markdown-body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.2rem;
+  line-height: 35px;
+}
+.toc {
+  border: 1px solid #ddd;
+  margin-top: 10px;
+  padding: 10px;
+}
+.toc-title {
+  border-bottom: 1px solid #ddd;
+  color: gray;
+}
+
+code {
+  line-height: 26px;
+}
+li {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.app {
+  position: relative;
+  min-height: 100vh;
+}
+
+.content-wrap {
+  padding-bottom: 3rem;
+}
+
 @media (max-width: 600px) {
   #discuss-page .thread-list {
     width: 100%;

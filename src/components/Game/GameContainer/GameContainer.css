@@ -1,49 +1,49 @@
-.quiz-area{
-    display: none;
-    position: absolute;
-    width: 550px;
-    height:400px;
+.quiz-area {
+  display: none;
+  position: absolute;
+  width: 550px;
+  height: 400px;
 }
-.quiz-area:active{
-    display: block;
+.quiz-area:active {
+  display: block;
 }
 
 .score-table {
-    margin-left: 20px;
-    color: #c4c7ca;
-    background-color: #3f4147;
+  margin-left: 20px;
+  color: #c4c7ca;
+  background-color: #3f4147;
 }
-.waiting-bgr{
-    background-color: gray;
-    display: flex;
-    justify-content: center;
-    font-size: 23px;
-    align-items: center;
+.waiting-bgr {
+  background-color: gray;
+  display: flex;
+  justify-content: center;
+  font-size: 23px;
+  align-items: center;
 }
 .init-screen {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.img-init{
-    position: absolute;
-    top: 0px;
-    left: 0px;
+.img-init {
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 
-.btn-start{
-    z-index: 10;
-    
+.btn-start {
+  z-index: 10;
 }
 .game-container {
-    background-color: #22272e;
-    color: #c4c7ca;
+  background-color: #22272e;
+  color: #c4c7ca;
 }
-.game-container .main{
-    display: flex;
-    padding-top: 20px;
+.game-container .main {
+  display: flex;
+  padding-top: 20px;
+  height: 100vh;
 }
-.game-screen-area{
-    position: relative;
+.game-screen-area {
+  position: relative;
 }

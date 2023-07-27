@@ -1,0 +1,516 @@
+<div id="wiki-content">
+<h1 class="pt-4">Seam Carving Algorithm</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/cs/">cs</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/cs/imageprocessing/">imageprocessing</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Bài viết gốc: <a href="http://kirilllykov.github.io/blog/2013/06/06/seam-carving-algorithm/">Seam Carving Algorithm - K. Lykov Blog</a></p>
+<h2 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h2>
+<p><strong>Seam carving</strong> là một thuật toán dùng để thay đổi kích thước hình ảnh, nó được giới thiệu trong bài báo cáo khoa học của <a href="http://www.win.tue.nl/~wstahw/edu/2IV05/seamcarving.pdf">S. Avidan &amp; A. Shamir</a>. Trong bài báo, việc thay đổi kích thước ảnh được thực hiện bằng cách loại bỏ đi các điểm ảnh ít quan trọng và giữ lại các điểm ảnh quan trọng. Bức ảnh dưới đây là minh họa điều này (ảnh bên trên là ảnh gốc với kích thước 332x480 và ảnh bên dưới là ảnh sau khi áp dụng thuật toán seam carving đẻ thu nhỏ còn lại kích thước là 272x400).</p>
+<p><img src="http://kirilllykov.github.io/images/seamcarving/sea-thai.jpg" /></p>
+<p><img src="http://kirilllykov.github.io/images/seamcarving/sea-thai-reduced.jpg" /></p>
+<p>Thuật toán này khá phổ biến nên có thể dễ dàng tìm thấy rất nhiều bài viết nói về nó. Tuy nhiên hầu hết đa số các tác giả đã không đọc bài báo cáo ban đầu và chỉ cung cấp cách cài đặt thuật toán khá cơ bản. Trong bài viết này tôi sẽ mô tả thuật toán đầy đủ các chi tiết như trong bài viết của Avidan &amp; Shamir, dưới góc nhìn của một lập trình viên. Ở đây ta sẽ sử dụng matlab để cài đặt thuật toán. Phần chứng minh cụ thể các bạn xem ở phần tham khảo.</p>
+<h2 class="editable"><a class="anchor" id="năng-lượng-energy" href="#năng-lượng-energy"></a>Năng lượng (Energy)</h2>
+<p>Để đơn giản, bài viết này chỉ tập trung nói về việc làm giảm kích thước hình ảnh. Tuy nhiên việc làm tăng kích thước hình ảnh cũng có thể làm tương tự, và sẽ được mô tả sơ qua ở phần sau. Ý tưởng chính của thuật toán là việc loại bỏ các nội dung có ít ý nghĩa đối với người sử dụng (chứa ít thông tin). Ta gọi thông tin này là <strong>Năng lượng</strong> (Energy). Vì vậy ta cần định nghĩa hàm năng lượng để tính năng lượng điểm ảnh từ các điểm ảnh của ảnh gốc. Ví dụ, ở đây ta có thể tính năng lượng của ảnh thông qua đạo hàm của từng điểm ảnh theo các hướng:</p>
+<p>$e_{1}=\left | \frac{\delta I}{\delta x} \right | + \left | \frac{\delta I}{\delta y} \right |$.</p>
+<p>Nếu như ảnh có 3 kênh màu thì ta lấy tổng giá trị năng lượng của 3 kênh này lại với nhau. Đoạn code Matlab dưới đây sẽ mô tả quá trình tính. Hàm <code>imfilter</code> được áp dụng cho các điểm ảnh được đánh dấu, do đó kết quả là</p>
+<p>$dI(i, j)/dx = I(i+1)-I(i-1)/dx$ với $dx = 1$.</p>
+<p>Tương tự cho $dI(i, j)/dy$:</p>
+<p>$dI(i, j)/dy = I(j+1)-I(j-1)/dy$ với $dy = 1$.</p>
+<pre class="highlight"><code><span class="k">function</span> <span class="n">res</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+<span class="c1">% Input: Ảnh màu (3 kênh màu)</span>
+<span class="c1">% Output: Một mảng 2 chiều thể hiện năng lượng của các điểm trong ảnh.</span>
+<span class="c1">% e = |dI/dx| + |dI/dy|</span>
+<span class="c1">% Vì ảnh có 3 kênh màu nên ta trả ra tổng năng lượng theo 3 kênh màu</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">energyGrey</span><span class="p">(</span><span class="n">I</span><span class="p">(:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">energyGrey</span><span class="p">(</span><span class="n">I</span><span class="p">(:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">energyGrey</span><span class="p">(</span><span class="n">I</span><span class="p">(:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">));</span>
+
+<span class="k">function</span> <span class="n">res</span> <span class="o">=</span> <span class="n">energyGrey</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+<span class="c1">% Input: Ảnh đen trắng</span>
+<span class="c1">% Output: Một mảng 2 chiều thể hiện năng lượng của các điểm trong ảnh.</span>
+<span class="c1">% e = |dI/dx| + |dI/dy|</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">imfilter</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">'replicate'</span><span class="p">))</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">imfilter</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span><span class="p">],</span> <span class="s1">'replicate'</span><span class="p">));</span>
+<span class="k">end</span></code></pre>
+<p>Năng lượng thu được:</p>
+<p><img src="http://kirilllykov.github.io/images/seamcarving/sea-thai-energy.jpg" /></p>
+<h2 class="editable"><a class="anchor" id="seam" href="#seam"></a>Seam</h2>
+<p>Nếu chúng ta xóa đi các điểm ảnh có nặng lượng thấp nhất ở các vị trí ngẫu nhiên, ta sẽ ra một hình ảnh méo mó. Nếu chúng ta xóa theo cột hoặc hàng với năng lượng tối thiểu, ta sẽ nhận được một bức ảnh hoàn chỉnh được thu nhỏ kích thước lại. Ở đây cột j nghĩa là tập hợp <em>{(i, j) với j cố định}</em> và một hàng i nghĩa là tập hợp <em>{(i, j) với i cố định}</em>.</p>
+<p>Thuật toán Seam Carving xóa các hàng và cột tổng quát (được gọi là đường seam). Cụ thể hơn, gọi $I$ là một bức ảnh có kích thước $n * m$, một đường seam dọc là $(s^x)i = (i, x(i))s.t.\forall i, |x(i) - x(i - 1)| \leq 1$ trong đó $x[1..n] \to [1..m]$. Nói một cách dễ hiểu hơn, một đường seam dọc (<strong>vertical seam</strong>) là một đường đi từ biên trên của bức ảnh xuống biên dưới của bức ảnh với độ dài đường đi bằng chiều cao của bức ảnh, và với mỗi phần vị trí $(i, j)$ của đường seam, ta có thể đi tiếp đến các phần tử $(i + 1, j - 1)$, $(i + 1, j)$, $(i + 1, j + 1)$. Tương tự ta cũng có thể định nghĩa cho đường seam ngang (<strong>horizontal seam</strong>). Ví dụ về các đường màu đen là các đường seam trong hình dưới đây.</p>
+<p><img src="http://kirilllykov.github.io/images/seamcarving/sea-thai-seams.jpg" /></p>
+<p>Chúng ta sẽ tìm kiếm một đường seam sao cho có tổng giá trị năng lượng là nhỏ nhất (theo chiều chúng ta chọn): $s^*= [\min \limits_{s} \sum\limits_{i=1}^n e(I(s_{i}))]$. Cách để tìm được kết quả tối ưu cho bài toàn là sử dụng phương pháp quy hoạch động.</p>
+<ol>
+<li>Tìm đường seam tối ưu từ biên trên của ảnh đến mỗi điểm ảnh $(i, j)$.
+<ul>
+<li>Gọi $M[i, j]$ là giá trị năng lượng nhỏ nhất đi từ biên trên của ảnh đến điểm ảnh $(i, j)$.</li>
+<li>$M[1, j] = e(1, j)$ với $e(i, j)$ là năng lượng điểm ảnh tại $(i, j)$.</li>
+<li>$M[i, j] = min(M[i - 1, j - 1], M[i - 1, j], M[i - 1, j + 1]) + e(i, j)$.</li>
+</ul>
+</li>
+<li>Ở biên dưới của ảnh, ta tìm điểm đường seam tối ưu (tổng giá trị năng lượng thấp nhất thông qua bảng phương án $M$) và đi ngược về để tìm đường đi tối ưu.</li>
+</ol>
+<p><strong>Lưu ý</strong>: trong đoạn code dưới đây trả về một ma trận $n * m$ chỉ gồm 0 và 1 với các điểm ảnh trên đường đi seam sẽ có giá trị là 0 và ngược lại. Để tìm đường seam ngang, ta chỉ cần chuyển vị ma trận năng lượng lại.</p>
+<pre class="highlight"><code><span class="k">function</span> <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergy</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+<span class="c1">% Input: mảng 2 chiều là năng lượng của các điểm ảnh</span>
+<span class="c1">% Output: Đường seam dọc tối ưu &amp; năng lượng</span>
+<span class="c1">% Mảng optSeamMask gồm 0/1, với 0 thể hiện điểm đó thuộc đường seam</span>
+<span class="c1">% Để tìm đường seam ngang tối ưu, cho Input là ma trận chuyển vị</span>
+
+    <span class="c1">% Tính mảng quy hoạch động M cho các đường seam dọc</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">padarray</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">realmax</span><span class="p">(</span><span class="s1">'double'</span><span class="p">));</span> <span class="c1">% M = mảng energy thêm 2 cột có giá trị cực đại ở đầu và cuối để tránh xử lý biên</span>
+
+    <span class="n">sz</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">M</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="p">(</span><span class="n">sz</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="nb">neighbors</span> <span class="o">=</span> <span class="p">[</span><span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)];</span>
+            <span class="n">M</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="nb">neighbors</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c1">% Tìm phần tử nhỏ nhất hàng cuối</span>
+    <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">indJ</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">M</span><span class="p">(</span><span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">:));</span>
+    <span class="n">seamEnergy</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>
+
+    <span class="n">optSeamMask</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">energy</span><span class="p">),</span> <span class="s1">'uint8'</span><span class="p">);</span>
+
+    <span class="c1">% Đi ngược lại và truy vết</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="p">:</span> <span class="mi">2</span>
+        <span class="c1">% optSeam(i) = indJ - 1;</span>
+        <span class="n">optSeamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">indJ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">% -1 vì lúc đầu ta thêm một cột 0 vào bên trái</span>
+        <span class="nb">neighbors</span> <span class="o">=</span> <span class="p">[</span><span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">indJ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">indJ</span><span class="p">)</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">indJ</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)];</span>
+        <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">indIncr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">neighbors</span><span class="p">);</span>
+
+        <span class="n">seamEnergy</span> <span class="o">=</span> <span class="n">seamEnergy</span> <span class="o">+</span> <span class="n">val</span><span class="p">;</span>
+
+        <span class="n">indJ</span> <span class="o">=</span> <span class="n">indJ</span> <span class="o">+</span> <span class="p">(</span><span class="n">indIncr</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">% (x - 2): [1,2]-&gt;[-1,1]]</span>
+    <span class="k">end</span>
+
+    <span class="n">optSeamMask</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">indJ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">% -1 vì lúc đầu ta thêm một cột 0 vào bên trái</span>
+    <span class="n">optSeamMask</span> <span class="o">=</span> <span class="o">~</span><span class="n">optSeamMask</span><span class="p">;</span>
+<span class="k">end</span></code></pre>
+<h2 class="editable"><a class="anchor" id="tìm-phương-án-tối-ưu-để-xóa-đường-seam" href="#tìm-phương-án-tối-ưu-để-xóa-đường-seam"></a>Tìm phương án tối ưu để xóa đường seam</h2>
+<p>Bây giờ ta có thể tính toán ra được đường seam và sử dụng đoạn code dưới đây, ta có thể loại bỏ đường seam ra khỏi bức ảnh.</p>
+<pre class="highlight"><code><span class="k">function</span> <span class="n">imageReduced</span> <span class="o">=</span> <span class="n">reduceImageByMaskVertical</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">)</span>
+    <span class="c1">% Input: Ảnh &amp; mask của đường seam</span>
+    <span class="c1">% Output: Ảnh sau khi xóa đường seam dọc</span>
+    <span class="n">imageReduced</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">seamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">imageReduced</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:),</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">imageReduced</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:),</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="n">imageReduced</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:),</span> <span class="mi">3</span><span class="p">);</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">imageReduced</span> <span class="o">=</span> <span class="n">reduceImageByMaskHorizontal</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">)</span>
+    <span class="c1">% Input: Ảnh &amp; mask của đường seam</span>
+    <span class="c1">% Output: Ảnh sau khi xóa đường seam ngang</span>
+    <span class="n">imageReduced</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">seamMask</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">imageReduced</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(:,</span> <span class="n">j</span><span class="p">),</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">imageReduced</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(:,</span> <span class="n">j</span><span class="p">),</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="n">imageReduced</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(:,</span> <span class="n">j</span><span class="p">),</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+    <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<p>Đây là một thuật toán hiệu quả để làm giám kích thước ảnh theo một chiều - chỉ cần việc tìm và xóa các đường seam nhiều lần như bạn cần. Nhưng nếu làm giảm kích thước theo cả hai chiều, ta cần phải làm như thế nào? Làm sao để quyết định rằng ở mỗi lần lắp đưa ra quyết định là xóa theo dòng hay cột sẽ tốt hơn? Vấn đề này một lần nữa được giải quyết bằng quy hoạch động. Ta gọi $T(i, j)$ là giá trị năng lượng thấp nhất khi ta loại bỏ i đường seam theo chiều dọc và j đường seam theo chiều ngang. Cụ thể: $T(i, j) = min(T(i, j-1) + E(seamVertical), T(i-1,j) + E(seamHorizontal))$. Trong đó $E(seamVertical)$ là giá trị nhỏ nhất (tối ưu) đường seam dọc loại bỏ đi, $E(seamHorizontal)$ là giá trị nhỏ nhất (tối ưu) đường seam ngang loại bỏ đi.
+Ta sử dụng thêm một mảng $transBitMask(i, j)$ lưu truy vết đường đi cho bản phương án $T(i, j)$ . $transBitMask(i, j) = 1$ bỏ đi đường seam dọc, $transBitMask(i, j) = 0$ bỏ đi đường seam ngang. Nhìn một đoạn code giả dưới đây để có thể dễ hình dung.</p>
+<pre class="highlight"><code>1) T(0, 0) = 0;
+2) Khởi tạo T:
+   for all j {
+       T(0, j) = T(0, j - 1) + E(seamVertical); 
+   }
+   for all i {
+       T(i, 0) = T(j - 1, 0) + E(seamHorizontal);
+    }
+3) Initialize borders of TransBitMask (TBM):
+   for all j { TBM(0, j) = 1; }
+   for all i { TBM(0, i) = 0; }
+4) Tính T và TBM:
+   for i = 2 to r {
+       imageWithoutRow = image;
+       for j = 2 to c {
+            energy = computeEnergy(imageWithoutRow);
+
+            horizontalSeamEnergy = findHorizontalSeamEnergy(energy);
+            verticalSeamEnergy = findVerticalSeamEnergy(energy);
+            tVertical = T(i - 1, j) + verticalSeamEnergy;
+            tHorizontal = T(i, j - 1) _ horizontalSeamEnergy;
+            if (tVertical &lt; tHorizontal) {
+                T(i, j) = tVertical;
+                TBM(i, j) = 1
+            } else {
+                T(i, j) = tHorizontal;    
+                TBM(i, j) = 0
+            }
+            // Xóa đường seam dọc
+            imageWithoutRow = removeVerticalSeam(energy);
+        }
+
+        energy = computeEnergy(image);
+        image = removeHorizontalSeam(energy);
+    }
+
+5) Truy vết theo T và TBM.</code></pre>
+<p>Đoạn code bằng matlab. Chú ý ở pseduocode dùng zerobased index, do matlab sử dụng onebased index nên cần phải đẩy index lên 1 đơn vị.</p>
+<pre class="highlight"><code><span class="k">function</span> <span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">transBitMask</span><span class="p">]</span> <span class="o">=</span> <span class="n">findTransportMatrix</span><span class="p">(</span><span class="n">sizeReduction</span><span class="p">,</span> <span class="nb">image</span><span class="p">)</span>
+<span class="c1">% Input: Kích thước cần giảm &amp; ảnh gốc</span>
+<span class="c1">% Output: T, TBM định nghĩa ở trên</span>
+
+    <span class="n">T</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="n">sizeReduction</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sizeReduction</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'double'</span><span class="p">);</span>
+    <span class="n">transBitMask</span> <span class="o">=</span> <span class="nb">ones</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">% Khởi tạo T(i, 1), T(1, i), TBM(i, 1), TBM(1, i)</span>
+    <span class="n">imageNoRow</span> <span class="o">=</span> <span class="nb">image</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1">% Tính năng lượng</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="n">imageNoRow</span><span class="p">);</span>
+        <span class="c1">% Tìm đường seam ngang tối ưu</span>
+        <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyRow</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+        <span class="c1">% Xóa đường seam</span>
+        <span class="n">imageNoRow</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="n">imageNoRow</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+        <span class="c1">% Tính T và TBM</span>
+        <span class="n">T</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">T</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seamEnergyRow</span><span class="p">;</span>
+        <span class="n">transBitMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">end</span><span class="p">;</span>
+
+    <span class="n">imageNoColumn</span> <span class="o">=</span> <span class="nb">image</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1">% Tính năng lượng</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="n">imageNoColumn</span><span class="p">);</span>
+        <span class="c1">% Tìm đường seam dọc</span>
+        <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyColumn</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">);</span>
+        <span class="c1">% Xóa đường seam dọc</span>
+        <span class="n">imageNoColumn</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="n">imageNoColumn</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+        <span class="c1">% Tính TBM &amp; T</span>
+        <span class="n">transBitMask</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seamEnergyColumn</span><span class="p">;</span>
+    <span class="k">end</span><span class="p">;</span>
+
+    <span class="c1">% Xóa 1 hàng và 1 cột</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="nb">image</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyRow</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+    <span class="nb">image</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="nb">image</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyColumn</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">);</span>
+    <span class="nb">image</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="c1">% fill in internal part</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">imageWithoutRow</span> <span class="o">=</span> <span class="nb">image</span><span class="p">;</span> <span class="c1">% Ta sẽ xóa 1 hàng của imageWithoutRow</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="n">imageWithoutRow</span><span class="p">);</span>
+
+            <span class="p">[</span><span class="n">optSeamMaskRow</span><span class="p">,</span> <span class="n">seamEnergyRow</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+            <span class="n">imageNoRow</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="n">imageWithoutRow</span><span class="p">,</span> <span class="n">optSeamMaskRow</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+            <span class="p">[</span><span class="n">optSeamMaskColumn</span><span class="p">,</span> <span class="n">seamEnergyColumn</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">);</span>
+            <span class="n">imageNoColumn</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="n">imageWithoutRow</span><span class="p">,</span> <span class="n">optSeamMaskColumn</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="nb">neighbors</span> <span class="o">=</span> <span class="p">[(</span><span class="n">T</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="n">seamEnergyRow</span><span class="p">)</span> <span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seamEnergyColumn</span><span class="p">)];</span>
+            <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">neighbors</span><span class="p">);</span>
+
+            <span class="n">T</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>
+            <span class="n">transBitMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">ind</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+            <span class="c1">% Ta xóa lần lượt từng cột</span>
+            <span class="n">imageWithoutRow</span> <span class="o">=</span> <span class="n">imageNoColumn</span><span class="p">;</span>
+        <span class="k">end</span><span class="p">;</span>
+
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="nb">image</span><span class="p">);</span>
+        <span class="p">[</span><span class="n">optSeamMaskRow</span><span class="p">,</span> <span class="n">seamEnergyRow</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+         <span class="c1">% move from top to bottom</span>
+        <span class="nb">image</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">optSeamMaskRow</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">end</span><span class="p">;</span>
+
+<span class="k">end</span></code></pre>
+<h2 class="editable"><a class="anchor" id="phóng-to-hình-ảnh" href="#phóng-to-hình-ảnh"></a>Phóng to hình ảnh</h2>
+<p>Để phóng to hình ảnh, thay vì ta loại bỏ đường seam ra khỏi ảnh, thì ta thêm một đường seam mới vào với giá trị trung bình của các điểm ảnh lận cận.</p>
+<pre class="highlight"><code><span class="k">function</span> <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="n">enlargeImageByMaskVertical</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">)</span>
+<span class="c1">% Input: Ảnh và đường seam</span>
+<span class="c1">% Output: Ảnh đã được phóng to thêm 1 cột</span>
+
+    <span class="n">avg</span> <span class="o">=</span> <span class="o">@</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="p">(</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">))/</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">seamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="nb">find</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:)</span> <span class="o">~=</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">imageEnlarged</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="mi">1</span><span class="p">)];</span>
+        <span class="n">imageEnlarged</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="mi">2</span><span class="p">)];</span>
+        <span class="n">imageEnlarged</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="mi">3</span><span class="p">)];</span>
+    <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="n">enlargeImageByMaskHorizontal</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">)</span>
+<span class="c1">% Input: Ảnh và đường seam</span>
+<span class="c1">% Output: Ảnh đã được phóng to thêm 1 hàng</span>
+
+    <span class="n">avg</span> <span class="o">=</span> <span class="o">@</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="p">(</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">))/</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">seamMask</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">find</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(:,</span> <span class="n">j</span><span class="p">)</span> <span class="o">~=</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">imageEnlarged</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">)];</span>
+        <span class="n">imageEnlarged</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">)];</span>
+        <span class="n">imageEnlarged</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">)];</span>
+    <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span></code></pre>
+<h2 class="editable"><a class="anchor" id="source-code" href="#source-code"></a>Source code</h2>
+<p>Dưới đây là toàn bộ code của tác giả (giữ nguyên lại comment gốc bằng tiếng Anh)</p>
+<pre class="highlight"><code><span class="c1">% (C) Copyright Kirill Lykov 2013.</span>
+<span class="c1">%</span>
+<span class="c1">% Distributed under the FreeBSD Software License (See accompanying file license.txt)</span>
+
+<span class="k">function</span> <span class="nb">image</span> <span class="o">=</span> <span class="n">seamCarving</span><span class="p">(</span><span class="n">newSize</span><span class="p">,</span> <span class="nb">image</span><span class="p">)</span>
+<span class="c1">% apply seam carving to the image</span>
+<span class="c1">% following paper by Avidan and Shamir '07</span>
+    <span class="n">sizeReductionX</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">newSize</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">sizeReductionY</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">newSize</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    
+    <span class="n">mmax</span> <span class="o">=</span> <span class="o">@</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span> <span class="nb">max</span><span class="p">([</span><span class="n">left</span> <span class="n">right</span><span class="p">]);</span>
+    
+    <span class="nb">image</span> <span class="o">=</span> <span class="n">seamCarvingReduce</span><span class="p">([</span><span class="n">mmax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sizeReductionX</span><span class="p">),</span> <span class="n">mmax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sizeReductionY</span><span class="p">)],</span> <span class="nb">image</span><span class="p">);</span>
+    
+    <span class="nb">image</span> <span class="o">=</span> <span class="n">seamCarvingEnlarge</span><span class="p">([</span><span class="n">mmax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">sizeReductionX</span><span class="p">),</span> <span class="n">mmax</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">sizeReductionY</span><span class="p">)],</span> <span class="nb">image</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nb">image</span> <span class="o">=</span> <span class="n">seamCarvingReduce</span><span class="p">(</span><span class="n">sizeReduction</span><span class="p">,</span> <span class="nb">image</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sizeReduction</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">transBitMask</span><span class="p">]</span> <span class="o">=</span> <span class="n">findTransportMatrix</span><span class="p">(</span><span class="n">sizeReduction</span><span class="p">,</span> <span class="nb">image</span><span class="p">);</span>
+    <span class="nb">image</span> <span class="o">=</span> <span class="n">addOrDeleteSeams</span><span class="p">(</span><span class="n">transBitMask</span><span class="p">,</span> <span class="n">sizeReduction</span><span class="p">,</span> <span class="nb">image</span><span class="p">,</span> <span class="o">@</span><span class="n">reduceImageByMask</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="c1">% TODO Bug: enlarge gives artifacts althout I chouse different seams as described </span>
+<span class="c1">% in 4.3 in the paper</span>
+<span class="k">function</span> <span class="nb">image</span> <span class="o">=</span> <span class="n">seamCarvingEnlarge</span><span class="p">(</span><span class="n">sizeEnlarge</span><span class="p">,</span> <span class="nb">image</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sizeEnlarge</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">transBitMask</span><span class="p">]</span> <span class="o">=</span> <span class="n">findTransportMatrix</span><span class="p">(</span><span class="n">sizeEnlarge</span><span class="p">,</span> <span class="nb">image</span><span class="p">);</span>
+    <span class="nb">image</span> <span class="o">=</span> <span class="n">addOrDeleteSeams</span><span class="p">(</span><span class="n">transBitMask</span><span class="p">,</span> <span class="n">sizeEnlarge</span><span class="p">,</span> <span class="nb">image</span><span class="p">,</span> <span class="o">@</span><span class="n">enlargeImageByMask</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">transBitMask</span><span class="p">]</span> <span class="o">=</span> <span class="n">findTransportMatrix</span><span class="p">(</span><span class="n">sizeReduction</span><span class="p">,</span> <span class="nb">image</span><span class="p">)</span>
+<span class="c1">% find optimal order of removing raws and columns</span>
+
+    <span class="n">T</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="n">sizeReduction</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sizeReduction</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'double'</span><span class="p">);</span>
+    <span class="n">transBitMask</span> <span class="o">=</span> <span class="nb">ones</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">% fill in borders</span>
+    <span class="n">imageNoRow</span> <span class="o">=</span> <span class="nb">image</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="n">imageNoRow</span><span class="p">);</span>
+        <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyRow</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+        <span class="n">imageNoRow</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="n">imageNoRow</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">transBitMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="n">T</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">T</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seamEnergyRow</span><span class="p">;</span>
+    <span class="k">end</span><span class="p">;</span>
+
+    <span class="n">imageNoColumn</span> <span class="o">=</span> <span class="nb">image</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="n">imageNoColumn</span><span class="p">);</span>
+        <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyColumn</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">);</span>
+        <span class="n">imageNoColumn</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="n">imageNoColumn</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">transBitMask</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seamEnergyColumn</span><span class="p">;</span>
+    <span class="k">end</span><span class="p">;</span>
+
+    <span class="c1">% on the borders, just remove one column and one row before proceeding</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="nb">image</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyRow</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+    <span class="nb">image</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="nb">image</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyColumn</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">);</span>
+    <span class="nb">image</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="c1">% fill in internal part</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">imageWithoutRow</span> <span class="o">=</span> <span class="nb">image</span><span class="p">;</span> <span class="c1">% copy for deleting columns</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="n">imageWithoutRow</span><span class="p">);</span>
+
+            <span class="p">[</span><span class="n">optSeamMaskRow</span><span class="p">,</span> <span class="n">seamEnergyRow</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+            <span class="n">imageNoRow</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="n">imageWithoutRow</span><span class="p">,</span> <span class="n">optSeamMaskRow</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+            <span class="p">[</span><span class="n">optSeamMaskColumn</span><span class="p">,</span> <span class="n">seamEnergyColumn</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">);</span>
+            <span class="n">imageNoColumn</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="n">imageWithoutRow</span><span class="p">,</span> <span class="n">optSeamMaskColumn</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="nb">neighbors</span> <span class="o">=</span> <span class="p">[(</span><span class="n">T</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="n">seamEnergyRow</span><span class="p">)</span> <span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seamEnergyColumn</span><span class="p">)];</span>
+            <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">neighbors</span><span class="p">);</span>
+
+            <span class="n">T</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>
+            <span class="n">transBitMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">ind</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+            <span class="c1">% move from left to right</span>
+            <span class="n">imageWithoutRow</span> <span class="o">=</span> <span class="n">imageNoColumn</span><span class="p">;</span>
+        <span class="k">end</span><span class="p">;</span>
+
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="nb">image</span><span class="p">);</span>
+        <span class="p">[</span><span class="n">optSeamMaskRow</span><span class="p">,</span> <span class="n">seamEnergyRow</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+         <span class="c1">% move from top to bottom</span>
+        <span class="nb">image</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">optSeamMaskRow</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">end</span><span class="p">;</span>
+
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nb">image</span> <span class="o">=</span> <span class="n">addOrDeleteSeams</span><span class="p">(</span><span class="n">transBitMask</span><span class="p">,</span> <span class="n">sizeReduction</span><span class="p">,</span> <span class="nb">image</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
+<span class="c1">% delete seams following optimal way</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">transBitMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">transBitMask</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">it</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="p">(</span><span class="n">sizeReduction</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">sizeReduction</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="nb">image</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">transBitMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyRaw</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="o">'</span><span class="p">);</span>
+            <span class="nb">image</span> <span class="o">=</span> <span class="n">operation</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergyColumn</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">);</span>
+            <span class="nb">image</span> <span class="o">=</span> <span class="n">operation</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">optSeamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">end</span><span class="p">;</span>
+
+    <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="p">[</span><span class="n">optSeamMask</span><span class="p">,</span> <span class="n">seamEnergy</span><span class="p">]</span> <span class="o">=</span> <span class="n">findOptSeam</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+<span class="c1">% following paper by Avidan and Shamir `07</span>
+<span class="c1">% finds optimal seam</span>
+<span class="c1">% returns mask with 0 mean a pixel is in the seam</span>
+
+    <span class="c1">% find M for vertical seams</span>
+    <span class="c1">% for vertical - use I`</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">padarray</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">realmax</span><span class="p">(</span><span class="s1">'double'</span><span class="p">));</span> <span class="c1">% to avoid handling border elements</span>
+
+    <span class="n">sz</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">M</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="p">(</span><span class="n">sz</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="nb">neighbors</span> <span class="o">=</span> <span class="p">[</span><span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)];</span>
+            <span class="n">M</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="nb">neighbors</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c1">% find the min element in the last raw</span>
+    <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">indJ</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">M</span><span class="p">(</span><span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">:));</span>
+    <span class="n">seamEnergy</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>
+    
+    <span class="c1">%optSeam = zeros(sz(1), 1, 'int32');</span>
+    <span class="n">optSeamMask</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">energy</span><span class="p">),</span> <span class="s1">'uint8'</span><span class="p">);</span>
+    
+    <span class="c1">%indJ = indJ - 1; % because of padding on 1 element from left</span>
+ 
+    <span class="c1">%go backward and save (i, j)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="p">:</span> <span class="mi">2</span>
+        <span class="c1">%optSeam(i) = indJ - 1;</span>
+        <span class="n">optSeamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">indJ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">% -1 because of padding on 1 element from left</span>
+        <span class="nb">neighbors</span> <span class="o">=</span> <span class="p">[</span><span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">indJ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">indJ</span><span class="p">)</span> <span class="n">M</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">indJ</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)];</span>
+        <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">indIncr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">neighbors</span><span class="p">);</span>
+        
+        <span class="n">seamEnergy</span> <span class="o">=</span> <span class="n">seamEnergy</span> <span class="o">+</span> <span class="n">val</span><span class="p">;</span>
+        
+        <span class="n">indJ</span> <span class="o">=</span> <span class="n">indJ</span> <span class="o">+</span> <span class="p">(</span><span class="n">indIncr</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">% (x - 2): [1,2]-&gt;[-1,1]]</span>
+    <span class="k">end</span>
+    <span class="c1">%optSeam(1) = indJ; % to avoid if in loop becuase matlab is slow as hell</span>
+
+    <span class="n">optSeamMask</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">indJ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">% -1 because of padding on 1 element from left</span>
+    <span class="n">optSeamMask</span> <span class="o">=</span> <span class="o">~</span><span class="n">optSeamMask</span><span class="p">;</span>
+    
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">imageReduced</span> <span class="o">=</span> <span class="n">reduceImageByMask</span><span class="p">(</span> <span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">,</span> <span class="n">isVerical</span> <span class="p">)</span>
+<span class="c1">% removes pixels by input mask</span>
+<span class="c1">% removes vertical line if isVerical == 1, otherwise horizontal</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">isVerical</span><span class="p">)</span>
+        <span class="n">imageReduced</span> <span class="o">=</span> <span class="n">reduceImageByMaskVertical</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">imageReduced</span> <span class="o">=</span> <span class="n">reduceImageByMaskHorizontal</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="o">'</span><span class="p">);</span>
+    <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c1">% could not find a more elegant way to do it</span>
+<span class="k">function</span> <span class="n">imageReduced</span> <span class="o">=</span> <span class="n">reduceImageByMaskVertical</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">)</span>
+    <span class="n">imageReduced</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">seamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">imageReduced</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:),</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">imageReduced</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:),</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="n">imageReduced</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:),</span> <span class="mi">3</span><span class="p">);</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">imageReduced</span> <span class="o">=</span> <span class="n">reduceImageByMaskHorizontal</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">)</span>
+    <span class="n">imageReduced</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">seamMask</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">imageReduced</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(:,</span> <span class="n">j</span><span class="p">),</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">imageReduced</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(:,</span> <span class="n">j</span><span class="p">),</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="n">imageReduced</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="nb">image</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(:,</span> <span class="n">j</span><span class="p">),</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="n">enlargeImageByMask</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">,</span> <span class="n">isVerical</span><span class="p">)</span>
+<span class="c1">% removes pixels by input mask</span>
+<span class="c1">% removes vertical line if isVerical == 1, otherwise horizontal</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">isVerical</span><span class="p">)</span>
+        <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="n">enlargeImageByMaskVertical</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="n">enlargeImageByMaskHorizontal</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="o">'</span><span class="p">);</span>
+    <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="n">enlargeImageByMaskVertical</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">)</span>
+
+    <span class="n">avg</span> <span class="o">=</span> <span class="o">@</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="p">(</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">))/</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">seamMask</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="nb">find</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:)</span> <span class="o">~=</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">imageEnlarged</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="mi">1</span><span class="p">)];</span>
+        <span class="n">imageEnlarged</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="mi">2</span><span class="p">)];</span>
+        <span class="n">imageEnlarged</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="mi">3</span><span class="p">)];</span>
+    <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="n">enlargeImageByMaskHorizontal</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">seamMask</span><span class="p">)</span>
+
+    <span class="n">avg</span> <span class="o">=</span> <span class="o">@</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="p">(</span><span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">))/</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">imageEnlarged</span> <span class="o">=</span> <span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">size</span><span class="p">(</span><span class="n">seamMask</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">find</span><span class="p">(</span><span class="n">seamMask</span><span class="p">(:,</span> <span class="n">j</span><span class="p">)</span> <span class="o">~=</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">imageEnlarged</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">)];</span>
+        <span class="n">imageEnlarged</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">2</span><span class="p">)];</span>
+        <span class="n">imageEnlarged</span><span class="p">(:,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="nb">image</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="n">avg</span><span class="p">(</span><span class="nb">image</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="nb">image</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="p">)];</span>
+    <span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">res</span> <span class="o">=</span> <span class="n">energyRGB</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+<span class="c1">% returns energy of all pixelels</span>
+<span class="c1">% e = |dI/dx| + |dI/dy|</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">energyGrey</span><span class="p">(</span><span class="n">I</span><span class="p">(:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">energyGrey</span><span class="p">(</span><span class="n">I</span><span class="p">(:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">energyGrey</span><span class="p">(</span><span class="n">I</span><span class="p">(:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">));</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">res</span> <span class="o">=</span> <span class="n">energyGrey</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+<span class="c1">% returns energy of all pixelels</span>
+<span class="c1">% e = |dI/dx| + |dI/dy|</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">imfilter</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">'replicate'</span><span class="p">))</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">imfilter</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span><span class="p">],</span> <span class="s1">'replicate'</span><span class="p">));</span>
+<span class="k">end</span></code></pre>
+<p>##Tham khảo</p>
+<p><a href="https://en.wikipedia.org/wiki/Seam_carving">Wikipedia</a></p>
+<p><a href="http://graphics.cs.cmu.edu/courses/15-463/2010_fall/hw/proj2/imret.pdf">Seam Carving for Content-Aware Image Scaling</a></p>
+<p><a href="https://jeremykun.com/2013/03/04/seam-carving-for-content-aware-image-scaling/">https://jeremykun.com/2013/03/04/seam-carving-for-content-aware-image-scaling/</a></p>
+<p><a href="http://kirilllykov.github.io/blog/2013/06/06/seam-carving-algorithm/">http://kirilllykov.github.io/blog/2013/06/06/seam-carving-algorithm/</a></p>
+</div>
+</div>
+</div>
+</div>

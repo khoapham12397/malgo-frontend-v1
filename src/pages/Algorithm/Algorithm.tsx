@@ -28,15 +28,15 @@ const Algorithm = () => {
   const filter = useSelector(
     (state: RootState) => state.codingProblemList.filter
   );
-  
+
   const [searcParams] = useSearchParams();
-  const page = searcParams.get('page')
-  const {loginWithRedirect} = useAuth0();
+  const page = searcParams.get('page');
+  const { loginWithRedirect } = useAuth0();
 
   useEffect(() => {
     //dispatch(fetchCpCategoriesAndTags());
-    
-    if(!page) {
+
+    if (!page) {
       fetchInit(dispatch);
       return;
     }
@@ -44,16 +44,15 @@ const Algorithm = () => {
       category: filter.category,
       startDif: filter.startDif,
       endDif: filter.endDif,
-      page: page?Number(page):null,
+      page: page ? Number(page) : null,
       q: filter.q,
       tagList: filter.tags
     };
 
     dispatch(fetchCProblems(params));
-    
   }, [page]);
   if (isAuthenticated && userAuthQuery.isLoading) return <Spinner />;
-  
+
   if (userAuthQuery.isError)
     return <pre>{JSON.stringify(userAuthQuery.error)}</pre>;
 
@@ -61,10 +60,9 @@ const Algorithm = () => {
     toast.error('Your account has been disabled');
     logoutUser();
   }
-  
+
   const handleChangePage = (page: number) => {
-    
-    navigate('/algorithm?page='+page);
+    navigate('/algorithm?page=' + page);
   };
 
   return (
@@ -89,31 +87,42 @@ const Algorithm = () => {
                   <th>ID</th>
                   <th>Name</th>
                   <th>Difficulty</th>
-                  <th><FcOk/> AC</th>
-                  <th><FcAddressBook/>SUB</th>
+                  <th>
+                    <FcOk /> AC
+                  </th>
+                  <th>
+                    <FcAddressBook />
+                    SUB
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {problems.map(item => (
                   <tr key={item.id}>
                     <td>
-                      <Link
-                        to={'/algorithm/' + item.id}
-                        className='link'
-                      >
+                      <Link to={'/algorithm/' + item.id} className='link'>
                         {item.id}
                       </Link>
                     </td>
                     <td>
                       <div className='space-between'>
-                      <Link to={'/algorithm/' + item.id}
-                      className='link'
-                      >{item.title}</Link>
-                      <div className='d-flex' style={{justifyContent:'right'}}>
-                      {item.codeforcesTag.map((tag,index)=> <div className='tag' key={tag}>{tag}{(index!==item.codeforcesTag.length-1)?',':''}</div>)}
+                        <Link to={'/algorithm/' + item.id} className='link'>
+                          {item.title}
+                        </Link>
+                        <div
+                          className='d-flex'
+                          style={{ justifyContent: 'right' }}
+                        >
+                          {item.codeforcesTag.map((tag, index) => (
+                            <div className='tag' key={tag}>
+                              {tag}
+                              {index !== item.codeforcesTag.length - 1
+                                ? ','
+                                : ''}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      </div>
-                      
                     </td>
                     <td className='td-item'>{item.difficulty}</td>
                     <td className='td-item'>{item.acceptedNumber}</td>

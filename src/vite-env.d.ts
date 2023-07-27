@@ -3,7 +3,6 @@
 
 type Thread = {
   id: string;
-
   author: {
     username: string;
     avatar: string;
@@ -17,8 +16,10 @@ type Thread = {
   content: string;
   isLike: boolean;
   category: ThreadCategory | null;
+  categoryId: number | null;
   tags: Array<string>;
 };
+
 type CommentData = {
   id: string;
   threadId: string;
@@ -111,14 +112,14 @@ type ThreadTag = {
   title: string;
 };
 
-type ThreadDataSummary=  {
+type ThreadDataSummary = {
   id: string;
   title: string;
   authorId: string;
   content: string;
   likes: number | undefined;
   totalComments: number | undefined;
-}
+};
 type CodingProblemFilter = {
   page: number | null;
   category: string | null;
@@ -149,6 +150,7 @@ type GetProblemsParam = {
   tagList: Array<string>;
   page: number | null;
   q: string | null;
+  init: boolean | undefined;
 };
 
 type CreateThreadParam = {
@@ -173,7 +175,7 @@ type ContestSummary = {
   id: string;
   startTime: Date;
   duration: number;
-} 
+};
 type CodingProblem = {
   id: string;
   code: string;
@@ -191,8 +193,8 @@ type CodingProblem = {
   authors: Array<{ username: string }>;
   tags: Array<{ tagId: string }>;
   contestId: string | null;
-  contest : ContestSummary | null;
-  codeforcesTag : Array<any>
+  contest: ContestSummary | null;
+  codeforcesTag: Array<any>;
 };
 
 type CreateMathProblemParam = {
@@ -305,7 +307,7 @@ type Group = {
   createdAt: string;
   generalChatSessionId: string;
   mode: string;
-}
+};
 
 type PostData = {
   id: string;
@@ -313,16 +315,16 @@ type PostData = {
   authorId: string;
   createdAt: number;
   groupId: string;
-  title: string;   
-}
+  title: string;
+};
 
 type GroupManagePost = {
   groupId: string;
   oldestPostId: string;
   latestPostId: string;
-  posts : Array<PostData>;
+  posts: Array<PostData>;
   currentPost: null | PostData;
-}
+};
 
 type ChatMessages = {
   id: string;
@@ -332,14 +334,14 @@ type ChatMessages = {
   postId: string | undefined | null;
   sessionId: string | undefined | null;
   referenceMessage: ReferenceMessage | null;
-}
+};
 
 type PostManageMsg = {
   postId: string;
   latestMsgId: string;
   oldestMsgId: string;
-  messages : Array<ChatMessages>;
-}
+  messages: Array<ChatMessages>;
+};
 
 type GroupManageChatMsg = {
   groupId: string;
@@ -347,7 +349,7 @@ type GroupManageChatMsg = {
   messages: Array<ChatMessages>;
   latestMsgId: string;
   oldestMsgId: string;
-}
+};
 type PostData = {
   id: string;
   content: string;
@@ -355,59 +357,57 @@ type PostData = {
   createdAt: number;
   groupId: string;
   title: string;
-}
+};
 type Friend = {
   username: string;
-  isOnline: boolean | undefined |null;
-}
+  isOnline: boolean | undefined | null;
+};
 type ChatSessionInfo = {
   title: string;
   partnerId: string;
-}
+};
 type ChatSessionP2P = {
   sessionId: string;
   partner: string;
-  lastMessage: {authorId : string; message: string};
+  lastMessage: { authorId: string; message: string };
   lastUpdate: number;
   unseenCnt: number;
   joinedAt: number;
-  
-}
+};
 type SessionMessage = {
   sessionId: string;
   messages: Array<ChatMessages>;
   latestMsgId: string;
   oldestMsgId: string;
-}
+};
 
 type ChatState = {
-
   groups: Array<Group> | null;
   groupPosts: Array<GroupManagePost>;
-  groupUsers: Array<{groupId: string, users : Array<GroupUser>}>;
+  groupUsers: Array<{ groupId: string; users: Array<GroupUser> }>;
 
   currentPosts: Array<PostData>;
 
   postMessages: Array<PostManageMsg>;
 
   messageItems: Array<ChatMessages>;
-  friendList : Array<Friend> | null;
+  friendList: Array<Friend> | null;
 
   currentPost: PostData | null;
-  currentSessionId: string | null; 
-  
+  currentSessionId: string | null;
+
   currentGroupId: string | null;
   currentGroupMode: string | null;
 
   showFriendListModal: boolean;
-  shareResource: {id: string , type: string} | null;
+  shareResource: { id: string; type: string } | null;
   groupGeneralMessages: Array<GroupManageChatMsg>;
 
   sessionP2PList: Array<ChatSessionP2P> | null;
   currentSessionIdP2P: string | null;
 
   currentChatType: string | null;
-  currentSessionInfo: ChatSessionInfo | null;  
+  currentSessionInfo: ChatSessionInfo | null;
   sessionP2PMessages: Array<SessionMessage>;
 
   currentMessageGroupMode: Array<ChatMessages>;
@@ -416,13 +416,17 @@ type ChatState = {
 
   currentGeneralSessionId: string | null;
 
-}
-
+  contactList: null | Array<{
+    username: string;
+    isOnline: boolean;
+    sessionId: string;
+  }>;
+};
 
 type GroupUser = {
   username: string;
   isOnline: boolean | undefined | null;
-}
+};
 
 type ShareResourceParams = {
   senderId: string;
@@ -430,71 +434,69 @@ type ShareResourceParams = {
   id: string;
   type: string;
   resourceLink: string | null;
-}
-
+};
 
 type ShareP2P = {
   id: string;
   resourceId: string;
   resourceType: string;
-  senderId: string; 
+  senderId: string;
   receiverId: string;
   look: boolean;
   resourceLink: string;
   createdAt: number;
-}
+};
 
 type FriendRequest = {
   id: string;
   senderId: string;
   recieverId: string;
   disable: boolean;
-}
+};
 
 type FriendEvent = {
   id: string;
   type: string;
   senderId: string;
   recieverId: string;
-  content : string;
+  content: string;
   status: string;
-}
+};
 
-
-type AcceptFriendParam ={
+type AcceptFriendParam = {
   requestId: string;
   senderId: string;
   recieverId: string;
-}
+};
 
 type ReferenceMessage = {
   id: string;
   summary: string;
   author: string;
-}
+};
 
 type SubmitMessageParam = {
   username: string;
   message: string;
   postId: string | null;
-  sessionId: string | null ;
+  sessionId: string | null;
   groupId: string | null;
   type: string;
   recieverId: string | null;
   referenceMessage: null | ReferenceMessage;
-}
+};
 type CreatePostGroupParam = {
   authorId: string;
   content: string;
-  title:string;
+  title: string;
   groupId: string;
-}
+};
 
-type AddUserToGroupParam={
+type AddUserToGroupParam = {
   username1: string;
   username2: string;
   groupId: string;
-}
+};
 
 type SubmissionData = {
   username: string;
@@ -506,18 +508,17 @@ type SubmissionData = {
   result: string;
   status: Array<{
     id: number;
-    time: null| number;
+    time: null | number;
     memory: number | null;
   }>;
   createTime: string;
   statistic_info: any;
-}
+};
 type SubmissionFilter = {
   username: string | undefined;
   contestId: string | undefined;
   problemId: string | undefined;
-}
-
+};
 
 type AlgorithmContest = {
   id: string;

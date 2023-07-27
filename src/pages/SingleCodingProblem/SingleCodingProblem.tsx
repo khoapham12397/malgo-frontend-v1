@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import parse from 'html-react-parser';
 
 import { Button } from 'react-bootstrap';
@@ -46,14 +46,9 @@ export function SingleCodingProblem() {
 
       <div style={{ display: 'flex' }}>
         <div style={{ width: '75%', padding: '2%' }}>
-          <MathJaxContext>
-            <MathJax>
-              {problem == null
-                ? ''
-                : parse(formatMathExpr(problem.description))}
-            </MathJax>
-            <MathJax></MathJax>
-          </MathJaxContext>
+          <MathJax>
+            {problem == null ? '' : parse(formatMathExpr(problem.description))}
+          </MathJax>
         </div>
         <div className='sidebar'>
           <div className='sidebar-item'>

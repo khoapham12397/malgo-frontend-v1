@@ -1,0 +1,75 @@
+<div id="wiki-content">
+<h1 class="pt-4">Định lý Wilson</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/he/">he</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#định-lý">Định lý</a></li><li><a href="#ví-dụ">Ví dụ</a></li><li><a href="#chứng-minh">Chứng minh</a></li><li><a href="#luyện-tập">Luyện tập</a></li></ul></div>
+<p>Nguồn: <a href="https://www.hackerearth.com/notes/lucas-theorem-wilsons-theorem/">hackerearth</a></p>
+<h1 class="editable"><a class="anchor" id="định-lý" href="#định-lý"></a>Định lý</h1>
+<p>Số tự nhiên $n&gt;1$ là số nguyên tố khi và chỉ khi $(n-1)!\equiv n-1\ (mod \ n)$.</p>
+<h1 class="editable"><a class="anchor" id="ví-dụ" href="#ví-dụ"></a>Ví dụ</h1>
+<ul>
+<li>
+<p>Với $n=4$:</p>
+<p>$(n-1)!\ =6$</p>
+<p>$(n-1)!\ mod\ n\ =2$</p>
+</li>
+<li>
+<p>Với $n=5$:</p>
+<p>$(n-1)!\ =24$</p>
+<p>$(n-1)!\ mod\ n\ =4 = n-1$, do $n$ là số nguyên tố.</p>
+</li>
+<li>
+<p>Với $n=6$:</p>
+<p>$(n-1)!\ =120$</p>
+<p>$(n-1)!\ mod\ n\ =0$</p>
+</li>
+<li>
+<p>Với $n=11$:</p>
+<p>$(n-1)!\ =3628800$</p>
+<p>$(n-1)!\ mod\ n\ =10 = n-1$, do $n$ là số nguyên tố.</p>
+</li>
+<li>
+<p>Với $n=12$:</p>
+<p>$(n-1)!\ =39916800$</p>
+<p>$(n-1)!\ mod\ n\ =0$</p>
+</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="chứng-minh" href="#chứng-minh"></a>Chứng minh</h1>
+<p>Mệnh đề đúng với $n=2$ và $n=3$. Ta giả sử $n&gt;3$.</p>
+<ul>
+<li>
+<strong>Chiều thuận:</strong> nếu $n$ là số nguyên tố thì $(n-1)!\equiv n-1 \ (mod \ n)$</li>
+</ul>
+<p>Khi $n$ là số nguyên tố thì $gcd(a,n)=1$ với mọi $a &lt; n$. Theo định lý Euler ta có:
+<span class="kdmath">$a * a^{n-2} = a^{n-1} \equiv 1 \ mod\ n$</span>
+Đặt $b = a^{n-2} \bmod n$. Với mỗi $a$ thì $b$ là duy nhất và $b &lt; n$ để $a*b\ (mod \ n) \ =1$, mặt khác $a=b$ khi và chỉ khi $a=1$ hoặc $a=n-1$ nên ta có thể tạo ra $(n-2) \over 2$ cặp số $a, b$ phân biệt như vậy. Nhân tất cả các cặp với nhau ta được</p>
+<p>$2.3.4…(n-2) \ mod \ n = 1$</p>
+<p>$\Rightarrow \ 1.2.3..(n-1)\ mod \ n = n-1$</p>
+<p>$\Rightarrow (n-1)!\equiv n-1\ (mod \ n)$</p>
+<ul>
+<li>
+<strong>Chiều ngược:</strong> nếu $(n-1)!\equiv n-1 \ (mod \ n)$ thì $n$ là số nguyên tố</li>
+</ul>
+<p>Nếu $n$ là hợp số</p>
+<p>$\Rightarrow$ tồn tại ước của $n$ trong khoảng $(2;n)$</p>
+<p>$\Rightarrow \ gcd((n-1)!,n)&gt;1$ do $(n-1)!=1.2.3…(n-1)$</p>
+<p>$\Rightarrow \ gcd((n-1)! \bmod n,n) &gt; 1$</p>
+<p>$\Rightarrow \ gcd(n-1,n) &gt; 1$ (vô lý).</p>
+<p>Vậy $n$ phải là số nguyên tố.</p>
+<ul>
+<li><strong>Áp dụng</strong></li>
+</ul>
+<p>Định lý Wilson cho ta cách tính nhanh $(n-1)!\ mod \ n$ khi $n$ là số nguyên tố.</p>
+<h1 class="editable"><a class="anchor" id="luyện-tập" href="#luyện-tập"></a>Luyện tập</h1>
+<ul>
+<li><a href="https://www.hackerearth.com/problem/algorithm/factorial-again-1/">Factorial Again - HackerEarth</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

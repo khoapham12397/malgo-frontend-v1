@@ -15,48 +15,44 @@ const SingleThread = () => {
   const dispatch: Dispatch<any> = useDispatch();
   const location = useLocation();
   const contentRef = useRef<HTMLDivElement>(null);
-  const [currentHeight,setCurrentHeight]= useState(0);
+  const [currentHeight, setCurrentHeight] = useState(0);
   const username = getUsernameFromStorage();
 
   useEffect(() => {
-
     const threadId = location.pathname.substring(8);
-    console.log('fetch thread ve');
+    //console.log('fetch thread ve');
     if (threadData && threadData.id === threadId) {
       return;
     }
 
     const username = getUsernameFromStorage();
-    dispatch(fetchThread(threadId, username?username:undefined));
-
+    dispatch(fetchThread(threadId, username ? username : undefined));
   }, [location]);
 
   useEffect(() => {
     const threadId = location.pathname.substring(8);
-    dispatch(fetchThread(threadId, username?username:undefined));
+    dispatch(fetchThread(threadId, username ? username : undefined));
   }, [username]);
 
-  
+  if (threadData && threadData.id)
+    return (
+      <div id='discuss-page'>
+        <div className='container' ref={contentRef}>
+          <br />
+          <div className='d-flex'>
+            <div className='thread-list'>
+              <ThreadItem threadData={threadData} />
+            </div>
 
-  if(threadData && threadData.id)
-  return (
-    <div id='discuss-page'>
-      <div className='container' ref={contentRef}>
-        <br/>
-        <div className='d-flex'>
-          <div className='thread-list'>
-            <ThreadItem threadData={threadData} />
-           </div>
-
-          <div style={{ width: '25%' }}>
-            <ThreadSideBar/>
+            <div style={{ width: '25%' }}>
+              <ThreadSideBar />
+            </div>
           </div>
         </div>
+        <div style={{ height: currentHeight + 'px' }} />
       </div>
-      <div style={{height: currentHeight+'px'}}/>
-    </div>
-  );
-  else return <Spinner/>
+    );
+  else return <Spinner />;
 };
 
 export default SingleThread;

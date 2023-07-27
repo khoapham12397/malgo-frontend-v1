@@ -1,13 +1,16 @@
-import {  useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import parse from 'html-react-parser';
 import { formatMathExpr, processText } from '../../utils/utils';
 import FileUploadMultiple from '../FileUploadMultiple/FileUploadMultiple';
 import { BsFillImageFill } from 'react-icons/bs';
 import { Button } from 'react-bootstrap';
 import './MathEditor.css';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import { toast } from 'react-hot-toast';
-import { createMathNote, editMathNote } from '../../state/actions/mathProblemListAction';
+import {
+  createMathNote,
+  editMathNote
+} from '../../state/actions/mathProblemListAction';
 import { getUsernameFromStorage } from '../../utils/getUser';
 
 type Props = {
@@ -29,7 +32,6 @@ export const MathEditor = ({
   const [noteRaw, setNoteRaw] = useState('');
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-
   const myUsername = getUsernameFromStorage();
 
   const [files, setFiles] = useState<Array<any>>([]);
@@ -48,6 +50,7 @@ export const MathEditor = ({
     if (mathNote) {
       setOldFiles(mathNote.imageLink);
       setNoteRaw(mathNote.content);
+
       setFiles([]);
       if (mathNote.imageLink) {
         setShowFileUpload(true);
@@ -64,50 +67,50 @@ export const MathEditor = ({
       toast.error('You must login before');
       return;
     }
+
+    if (!noteArea.current || noteArea.current.value.length === 0) {
+      return;
+    }
+
     const data = new FormData();
 
     files.forEach((file, i) => {
       data.append('uploadedImages', file, file.name);
     });
-    console.log(oldFiles);
+    //console.log(oldFiles);
 
     const param = !mathNote
       ? ({
-          username: myUsername ? myUsername: undefined,
-          content: noteRaw,
+          username: myUsername ? myUsername : undefined,
+          content: noteArea.current.value,
           numImg: files.length,
           problemId: mathProblem.id,
           addToSolution: addToSolution
         } as CreateMathNoteParam)
       : ({
           addToSolution: addToSolution,
-          content: noteRaw,
+          content: noteArea.current.value,
           oldImages: oldFiles,
           problemId: mathProblem.id,
-          username: myUsername ? myUsername: undefined
+          username: myUsername ? myUsername : undefined
         } as EditMathNoteParam);
-    
+
     data.set('data', JSON.stringify(param));
-    
-    if(!mathNote) {
-      createMathNote(data)
-      .then(result=>{
-        if (result.successed){
+
+    if (!mathNote) {
+      createMathNote(data).then(result => {
+        if (result.successed) {
           toast.success('successed');
           setMathNoteAndSolution(result.data.note, result.data.solution);
         }
       });
-    }
-    else editMathNote(data)
-    .then(result=>{
-      if(result.successed){
-        toast.success('successed');
-        setMathNoteAndSolution(result.data.note, result.data.solution);
-      }
-      else toast.error(result.message);
-    });
-
-    
+    } else
+      editMathNote(data).then(result => {
+        if (result.successed) {
+          toast.success('successed');
+          setMathNoteAndSolution(result.data.note, result.data.solution);
+        } else toast.error(result.message);
+      });
   };
 
   return (
@@ -116,14 +119,11 @@ export const MathEditor = ({
         ref={noteArea}
         className='form-control'
         rows={8}
-        value={noteRaw}
         placeholder={'write note here'}
-        onChange={e => setNoteRaw(e.target.value)}
+        defaultValue={noteRaw}
       />
       <div className={showPreview ? 'note-preview:active' : 'note-preview'}>
-        <MathJaxContext>
-          <MathJax>{parse(formatMathExpr(processText(noteRaw)))}</MathJax>
-        </MathJaxContext>
+        <MathJax>{parse(formatMathExpr(processText(noteRaw)))}</MathJax>
       </div>
       {showFileUpload ? (
         <FileUploadMultiple

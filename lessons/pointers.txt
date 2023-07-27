@@ -1,0 +1,494 @@
+<div id="wiki-content">
+<h1 class="pt-4">Con trỏ trong C/C++</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/languages/">languages</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/languages/cpp/">cpp</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả</strong>: <a href="https://github.com/skyvn97/resume/blob/master/PhamVanHanh.pdf">Phạm Văn Hạnh</a> (<em>skyvn97, prof.PVH, I_love_tigersugar</em>)</p>
+<p>Con trỏ là một trong những tính năng quan trọng của mỗi ngôn ngữ lập trình. Thực tế, để được gọi là sử dụng thành thạo một ngôn ngữ lập trình như C/C++, lập trình viên cần biết cách sử dụng con trỏ. Tuy nhiên, do ít được sử dụng trong các bài toán lập trình ở các kỳ thi học sinh giỏi, nhiều bạn học sinh chuyên tin cấp ba không nắm chắc cách dùng con trỏ, hoặc thậm chỉ bỏ qua phần kiến thức này. Vì vậy, bài viết này giúp các bạn hiểu qua cách sử dụng con trỏ và các ý nghĩa của nó.</p>
+<p>Cần nói thêm rằng, để có cái nhìn toàn diện về con trỏ trong các ngôn ngữ lập trình, bạn cần có các kiến thức về kiến trúc máy tính, hệ điều hành, cách lưu trữ biến trong bộ nhớ máy tính. Bài viết dưới đây bỏ qua các khía cạnh này, chủ yếu nhắc đến cách sử dụng con trỏ, các lỗi hay mắc, lợi ích của con trỏ trong các bài toán lập trình thi đấu.</p>
+<p>Bởi thế, bạn có thể yên tâm rằng bài viết dưới đây không khiến các bạn hại não, chỉ cần uống chút <strong>sữa tươi chân trâu đường hổ</strong> rồi bắt đầu đọc thôi :)</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#1-con-trỏ-là-gì">1. Con trỏ là gì?</a><ul><li><a href="#a-biến-thông-thường">a. Biến "thông thường"</a></li><li><a href="#b-biến-tham-chiếu-reference">b. Biến tham chiếu (reference)</a></li><li><a href="#c-con-trỏ-pointer">c. Con trỏ (pointer)</a></li></ul></li><li><a href="#2-cách-sử-dụng-con-trỏ">2. Cách sử dụng con trỏ</a><ul><li><a href="#a-các-cú-pháp-cơ-bản">a. Các cú pháp cơ bản</a><ul><li><a href="#khai-báo-con-trỏ">Khai báo con trỏ</a></li><li><a href="#thay-đổi-gán-biến-được-con-trỏ-trỏ-vào">Thay đổi (gán) biến được con trỏ trỏ vào</a></li><li><a href="#truy-cập-vào-biến-được-con-trỏ-trỏ-tới">Truy cập vào biến được con trỏ trỏ tới</a></li><li><a href="#con-trỏ-null-con-trỏ-không-trỏ-vào-một-đối-tượng-nào">Con trỏ NULL - con trỏ không trỏ vào một đối tượng nào.</a></li><li><a href="#lệnh-new-tạo-biến-thông-thường">Lệnh new tạo biến "thông thường":</a></li><li><a href="#truy-cập-các-trường-của-một-con-trỏ-trỏ-vào-đối-tượng">Truy cập các trường của một con trỏ trỏ vào đối tượng.</a></li></ul></li><li><a href="#b-các-cú-pháp-nâng-cao">b. Các cú pháp nâng cao</a><ul><li><a href="#lấy-con-trỏ-làm-tham-số-của-hàm">Lấy con trỏ làm tham số của hàm</a></li><li><a href="#tạo-mảng-động">Tạo mảng động</a></li><li><a href="#lệnh-delete-để-giải-phóng-bộ-nhớ">Lệnh delete để giải phóng bộ nhớ</a></li></ul></li><li><a href="#c-các-lỗi-thường-gặp-về-con-trỏ">c. Các lỗi thường gặp về con trỏ</a><ul><li><a href="#sai-cú-pháp">Sai cú pháp</a></li><li><a href="#khai-báo-sai-cách">Khai báo sai cách</a></li><li><a href="#con-trỏ-trỏ-lung-tung">Con trỏ trỏ lung tung</a></li><li><a href="#sizeof-không-hoạt-động-với-con-trỏ-và-mảng-động">
+sizeof không hoạt động với con trỏ và mảng động.</a></li><li><a href="#các-con-trỏ-trỏ-không-đúng-thứ-cần-trỏ">Các con trỏ trỏ không đúng thứ cần trỏ.</a></li></ul></li></ul></li><li><a href="#3-một-số-ứng-dụng-của-con-trỏ-trong-lập-trình-thi-đấu">3. Một số ứng dụng của con trỏ trong lập trình thi đấu</a><ul><li><a href="#a-cây-tiền-tố-trie">a. Cây tiền tố (trie)</a></li><li><a href="#b-kỹ-thuật-gộp-set-trên-cây">b. Kỹ thuật gộp set trên cây</a></li><li><a href="#c-persistent-segment-tree">c. Persistent Segment Tree</a></li><li><a href="#d-balanced-binary-search-tree-red-black-tree-avl-splay-tree">d. Balanced Binary Search Tree (Red-black Tree, AVL, Splay Tree…)</a></li></ul></li></ul></div>
+<h1 class="editable"><a class="anchor" id="1-con-trỏ-là-gì" href="#1-con-trỏ-là-gì"></a>1. Con trỏ là gì?</h1>
+<h2 class="editable"><a class="anchor" id="a-biến-thông-thường" href="#a-biến-thông-thường"></a>a. Biến "thông thường"</h2>
+<p>Chúng ta đã quá quen thuộc với các biến (<em>variables</em>) trong C++. Một biến có thể mang một giá trị, ví dụ như biến dạng <code>bool</code>, <code>int</code> hay <code>double</code>. Mỗi biến thuộc các kiểu này dùng để lưu một <strong>giá trị</strong> nào đó. Các biến còn có thể là một đối tượng phức tạp hơn, ví dụ như các cấu trúc dữ liệu <code>vector&lt;int&gt;</code>, <code>queue&lt;string&gt;</code> hay <code>map&lt;int, string&gt;</code>. Các biến thuộc loại này có thể chứa một tập hợp nhiều giá trị nào đó. Dù đơn giản hay phức tạp, các biến thuộc một trong các dạng kể trên luôn giúp chúng ta lưu trữ dữ liệu. Tác giả tạm gọi những kiểu biến này là biến "thông thường".</p>
+<p>Như vậy, các biến "thông thường" là các biến <strong>có thể lưu trữ dữ liệu</strong>. Chúng có hai tính chất cơ bản sau:</p>
+<ul>
+<li>Dữ liệu của các biến này <strong>hoàn toàn độc lập</strong> với nhau: Giá trị của biến <code>a</code> không phụ thuộc vào giá trị của biến <code>b</code> và <strong>ngược lại</strong>.</li>
+<li>Mỗi khi ta khai báo một biến "thông thường" <code>int x; string s; vector&lt;double&gt; v;...</code> ta có thêm một biến mới, và biến đó cho ta <strong>thêm không gian lưu trữ dữ liệu</strong>.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="b-biến-tham-chiếu-reference" href="#b-biến-tham-chiếu-reference"></a>b. Biến tham chiếu (<em>reference</em>)</h2>
+<p>Giờ chúng ta sang tới một loại biến khác, có tên chính thức là <em>biếu tham chiến</em> (<em>reference</em>). Có thể các bạn đã biết, đã sử dụng nhưng không để ý, hoặc chưa từng sử dụng biến tham chiếu. Đầu tiên, ta hãy cùng chạy thử một đoạn code đơn giản sau:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">&amp;</span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// it prints 2, not 1 (!)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// it prints 3, not 2 (!)</span>
+</code></pre>
+<p>Trong đoạn code này, biến <code>b</code> được gọi là <em>biến tham chiếu</em> kiểu <code>int</code>. Nó được khai báo bằng việc thêm một dấu <code>&amp;</code> vào sau tên kiểu <code>int</code>. Chú ý rằng hai cách khai báo <code>int&amp; a = b</code> và <code>int &amp;a = b</code> đều hợp lệ và có ý nghĩa như nhau. Qua thí nghiệm này, ta thấy rằng lệnh gán biến <code>a</code> cũng làm thay đổi giá trị của <code>b</code> và lệnh gán biến <code>b</code> cũng lam thay đổi giá trị của <code>a</code>. Thực tế, hai biến <code>a</code> và <code>b</code> này chỉ là một biến, nghĩa là <code>a</code> và <code>b</code> <strong>luôn mang cùng một giá trị</strong>, và mọi lệnh làm thay đổi giá trị của <code>a</code> <strong>cũng làm thay đổi giá trị của</strong> <code>b</code> và <strong>ngược lại</strong>.</p>
+<p>Ta xét thêm một ví dụ nữa - một trường hợp điển hình cho việc sử dụng biến tham chiếu trong lập trình thi đấu: Quy hoạch động đệ quy có nhớ.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">cacheDPResults</span><span class="p">[</span><span class="mi">2207</span><span class="p">][</span><span class="mi">1997</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="kt">int</span> <span class="nf">dp</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="o">&amp;</span><span class="n">result</span> <span class="o">=</span> <span class="n">cacheDPResults</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">result</span> <span class="o">=</span> <span class="n">dp</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;=</span> <span class="n">weight</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">result</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">dp</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="n">weight</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+	<span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+<p>Chắc các bạn lờ mờ đoán ra đoạn code trên mô phỏng công thức quy hoạch động của bài toán cái túi (<em>knapsack</em>). Tất nhiên không ai cài bài toán cái túi bằng đệ quy có nhớ cả :)</p>
+<p>Giờ ta để ý dòng code thứ 3 trong đoạn ví dụ trên: <code>int &amp;result = cacheDPResults[i][j]</code>. Dù dòng code này dùng để khai báo biến <code>result</code>, nhưng do có ký tự <code>&amp;</code> ở trước, kết quả của biến <code>result</code> này được "đồng bộ" với biến <code>cacheDPResult[i][j]</code>. Biến <code>result</code> và <code>cacheDPResult[i][j]</code> <strong>luôn mang cùng giá trị</strong>, và khi giá trị một biến thay đổi, <strong>biến kia cũng thay đổi theo</strong>.</p>
+<p>Như vậy, biến <code>result</code> này (và biến <code>b</code> ở ví dụ trước) có hai điểm khác với các biến "thông thường" được đề cập ở phần 1a:</p>
+<ul>
+<li>Giá trị của biến <code>result</code> <strong>không độc lập</strong> với giá trị của biến <code>cacheDPResult[i][j]</code>: Hai giá trị này luôn bằng nhau.</li>
+<li>Khi khai báo biến <code>result</code>, ta <strong>không có thêm không gian lưu trữ dữ liệu</strong>.</li>
+</ul>
+<p>Do đó, nếu giữ định nghĩa về biến "thông thường" như ở phần 1a, ta không coi <code>result</code> là biến, mà nó chỉ như một tên gọi khác của biến <code>cacheDPResults[i][j]</code>. Thực tế, cách đặt biến <code>result</code> chỉ giúp cho đoạn code của bạn trong sáng hơn. Nếu bạn thay lệnh khai báo <code>int &amp;result = cacheDPResults[i][j]</code> bằng lệnh <code>#define result cacheDPResults[i][j]</code>, hiệu ứng của đoạn code không đổi. Thậm chí, bạn có thể không sử dụng biến result và tạo ra đoạn code tuy không được trong sáng, nhưng có kết quả hoàn toàn giống đoạn code phía trên:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">cacheDPResults</span><span class="p">[</span><span class="mi">2207</span><span class="p">][</span><span class="mi">1997</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="kt">int</span> <span class="nf">dp</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">cacheDPResults</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">cacheDPResults</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">cacheDPResults</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;=</span> <span class="n">weight</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">cacheDPResults</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">cacheDPResults</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">dp</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="n">weight</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+	<span class="k">return</span> <span class="n">cacheDPResults</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre>
+<p>Biếu tham chiến này cho ta ý tưởng về một dạng biến đặc biệt trong ngôn ngữ lập trình, ở đó dù biến được tạo ra nhưng bản chất chỉ là "đặt một tên khác" cho một biến đã có sẵn từ trước. Tuy nhiên, biến tham chiếu này có hai nhược điểm: Biến tham chiếu <strong>luôn tham chiếu vào một biến cố định</strong> và đối tượng được tham chiếu <strong>phải được xác định ngay lúc khai báo</strong>. Có nghĩa là, nếu bạn có hai biến "thông thường" <code>int a, b</code> và một biến tham chiếu <code>int &amp;c = a</code>, bạn không thể nào làm cho <code>b</code> và <code>c</code> đồng bộ nhau được. Đồng thời, nếu bạn chỉ khai bảo <code>int &amp;c</code> mà không có vế phải, trình biên dịch sẽ báo lỗi.</p>
+<p>Những thông tin trên cho chúng ta ý tưởng về <strong>con trỏ</strong>.</p>
+<h2 class="editable"><a class="anchor" id="c-con-trỏ-pointer" href="#c-con-trỏ-pointer"></a>c. Con trỏ (<em>pointer</em>)</h2>
+<p>Con trỏ sử dụng ý tưởng của biến tham chiếu: Biến con trỏ được tạo ra <em>thường</em> không để có thêm không gian lưu trữ dữ liệu, mà là để tạo ra "tên khác" hoặc "nhãn mác mới" cho một biến đã có từ trước. Điều này giải thích tên gọi "con trỏ": "trỏ" trong từ "chỉ trỏ" có nghĩa là chỉ vào, hướng vào một cái gì đó. Nhưng khác với biến tham chiếu, một con trỏ ở những thời điểm khác nhau có thể <em>trỏ vào</em> (hay "là tên biến khác" hoặc "đại diện cho") các biến khác nhau. Biến con trỏ có thể không trỏ vào cái gì (gọi là con trỏ rỗng - <em>NULL</em> mà ta sẽ nghiên cứu ở phần sau) và không cần thiết phải được khởi tạo lúc khai báo.</p>
+<p>Tóm lại, sau phần này, bạn cần nắm được sự khác biệt của con trỏ với những loại biến mà các bạn hay sử dụng: Các biến "thông thường" dùng để <strong>lưu trữ thông tin</strong> và <strong>có tính độc lập</strong>. Các biến tham chiếu và con trỏ dùng để "đặt lại tên" hoặc "tạo một tên mới" cho các biến đã có từ trước.</p>
+<p><em>Ghi chú: Ý tưởng phân tích ở phần này có thể KHÔNG phải là ý tưởng để người sáng lập ngôn ngữ lập trình C/C++ đưa con trỏ vào ngôn ngữ; nhưng theo quan điểm của tác giả, góc nhìn này giúp các bạn học lập trình ở phổ thông hiểu được khái niệm của con trỏ.</em></p>
+<h1 class="editable"><a class="anchor" id="2-cách-sử-dụng-con-trỏ" href="#2-cách-sử-dụng-con-trỏ"></a>2. Cách sử dụng con trỏ</h1>
+<h2 class="editable"><a class="anchor" id="a-các-cú-pháp-cơ-bản" href="#a-các-cú-pháp-cơ-bản"></a>a. Các cú pháp cơ bản</h2>
+<p>Phần này chủ yếu giới thiệu cho các bạn các cú pháp cơ bản để sử dụng con trỏ một cách chính xác. Bạn có thể coi những đoạn code dưới đây như là cú pháp, chỉ học thuộc lòng mà không cần quan tâm quá nhiều về ý nghĩa.</p>
+<h3 class="editable"><a class="anchor" id="khai-báo-con-trỏ" href="#khai-báo-con-trỏ"></a>Khai báo con trỏ</h3>
+<p>Dù con trỏ có thể <em>trỏ vào</em> (đại diện cho/là một tên khác của) <strong>nhiều biến khác nhau</strong> trong những thời điểm khác nhau, các đối tượng được trỏ vào phải có <strong>cùng một kiểu dữ liệu</strong>. Kiểu dữ liệu chung này cần được xác định khi khai báo.</p>
+<p>Để khai báo một con trỏ <em>trỏ vào</em> các biến có kiểu dữ liệu <code>int</code>, ta khai báo <code>int *p</code> hoặc <code>int* p</code> (hai cách này như nhau về mặt cú pháp). Tương tự, nếu bạn muốn con trỏ của bạn trỏ vào các biến có kiểu <code>string</code> hoặc <code>queue&lt;char&gt;</code>, ta khai báo <code>string *s</code> hoặc <code>queue&lt;char&gt; *q</code>.</p>
+<p>Tổng quát, nếu <code>T</code> là một kiểu dữ liệu nào đó (có thể là kiểu <em>nguyên thủy</em> như <code>int</code>, <code>char</code>, <code>double</code> hoặc các struct, class như <code>vector&lt;string&gt;</code>, <code>queue&lt;pair&lt;int, int&gt;&gt;</code>) thì <code>T*</code> là một <strong>con trỏ trỏ vào các biến thuộc kiểu T</strong>. Do con trỏ cũng là một kiểu dữ liệu, con trỏ cũng có thể trỏ vào một con trỏ khác. Ví dụ, <code>int **p</code> là một <em>con trỏ trỏ vào một con trỏ trỏ vào một biến kiểu <code>int</code></em> hay <code>char *******just_to_troll</code> là một con trỏ trỏ vào một con trỏ trỏ vào một con trỏ trỏ vào một con trỏ trỏ vào một con trỏ trỏ vào một con trỏ trỏ vào một con trỏ trỏ vào một biến kiểu <code>char</code>.</p>
+<p>Theo kinh nghiệm của mình, <em>con trỏ trỏ vào một con trỏ</em> là thứ rất ít khi sử dụng trong lập trình thi đấu. Vì vậy, để đơn giản, trong phần lớn thời lượng còn lại của bài viết, mình chỉ xét trường hợp con trỏ trỏ vào một biến "thông thường".</p>
+<h3 class="editable"><a class="anchor" id="thay-đổi-gán-biến-được-con-trỏ-trỏ-vào" href="#thay-đổi-gán-biến-được-con-trỏ-trỏ-vào"></a>Thay đổi (gán) biến được con trỏ trỏ vào</h3>
+<p>Bạn có thể cho một con trỏ trỏ vào một biến "thông thường" hoặc trỏ vào nơi mà <em>một con trỏ khác đang trỏ tới</em>. Ví dụ</p>
+<p></p><pre class="highlight"><code><span class="kt">int</span> <span class="n">normal</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">first</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">second</span><span class="p">;</span>
+<span class="n">first</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">normal</span><span class="p">;</span>
+<span class="n">second</span> <span class="o">=</span> <span class="n">first</span><span class="p">;</span>
+</code></pre>
+Trong ví dụ trên, ta có <code>normal</code> là một biến "thông thường" kiểu <code>int</code>. <code>first</code> và <code>second</code> là các con trỏ mà đối tượng (biến) được trỏ tới có kiểu <code>int</code>. Dòng số 4 <code>first = &amp;normal</code> giúp con trỏ first trỏ vào biến normal. Dòng số 5 <code>second = first</code> mang ý nghĩa rằng <em>con trỏ <code>second</code> trỏ vào nơi mà <code>first</code> đang trỏ vào, nghĩa là biến <code>normal</code></em>.
+<p>Chú ý rằng nếu bạn muốn trỏ vào một biến "thông thường", trước tên biến phải có dấu <code>&amp;</code>. Còn nếu muốn một con trỏ trỏ vào đối tượng của một con trỏ khác, vế phải không cần có dấu <code>&amp;</code>. Đồng thời, các con trỏ trỏ vào các đối tượng khác kiểu nhau không thể bị gán ghép với nhau. Do đó, các dòng code dưới đây đều gặp lỗi khi biên dịch:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">normal</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">pointer_1</span><span class="p">,</span> <span class="o">*</span><span class="n">pointer_2</span><span class="p">;</span>
+<span class="n">string</span> <span class="o">*</span><span class="n">pointer_string</span><span class="p">;</span>
+
+<span class="n">pointer_1</span> <span class="o">=</span> <span class="n">normal</span><span class="p">;</span> <span class="c1">// ERROR!!! should be pointer_1 = &amp;normal</span>
+<span class="n">pointer_2</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">pointer_1</span><span class="p">;</span> <span class="c1">// ERROR!!! should be pointer_2 = pointer_1;</span>
+<span class="n">pointer_2</span> <span class="o">=</span> <span class="n">pointer_string</span> <span class="c1">// ERROR!!! type mismatches: string* vs int*</span>
+</code></pre>
+<p>Tới đây các bạn sẽ thắc mắc: Dấu <code>&amp;</code> xuất hiện trong <code>&amp;normal</code> có mối quan hệ biện chứng nào với dấu <code>&amp;</code> ở phần biến tham chiếu hay không. Câu trả lời là có, nhưng nó hơi phức tạp với các bạn. Nhắc lại lần nữa, mình khuyên các bạn coi các đoạn code ở phần này là những <strong>cú pháp cố định</strong> và <strong>phải học thuộc lòng</strong> thay vì cố phân tích các quy tắc.</p>
+<h3 class="editable"><a class="anchor" id="truy-cập-vào-biến-được-con-trỏ-trỏ-tới" href="#truy-cập-vào-biến-được-con-trỏ-trỏ-tới"></a>Truy cập vào biến được con trỏ trỏ tới</h3>
+<p>Như đã nói ở trên, ngoại trừ trường hợp con trỏ trỏ vào một con trỏ, các con trỏ được dùng để "đặt tên khác" cho một biến "thông thường" nào đó. Để truy cập vào một biến được con trỏ <code>p</code> trỏ tới, bạn dùng <code>*p</code>. Các bạn hãy coi <code>*p</code> ở đây <strong>như một biến "thông thường"</strong>, nghĩa là nếu các biến "thông thường" cùng kiểu có thể xuất hiện thế nào, <code>*p</code> có thể sử dụng hoàn toàn tương tự như vậy:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="o">*</span><span class="n">p_int</span> <span class="o">=</span> <span class="p">...;</span> <span class="c1">// something which does not matter</span>
+<span class="n">string</span> <span class="o">*</span><span class="n">p_string</span> <span class="o">=</span> <span class="p">...;</span> <span class="c1">// something which does not matter</span>
+
+<span class="o">*</span><span class="n">p_int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="p">(</span><span class="o">*</span><span class="n">p_int</span><span class="p">)</span><span class="o">++</span><span class="p">;</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p_int</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="o">*</span><span class="n">p_string</span><span class="p">).</span><span class="n">empty</span><span class="p">())</span> <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="o">*</span><span class="n">p_string</span><span class="p">).</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="p">(</span><span class="o">*</span><span class="n">p_string</span><span class="p">)[</span><span class="n">i</span><span class="p">]);</span>
+</code></pre>
+<p>Việc một con trỏ <em>là một tên khác</em> của một biến "thông thường" được thể hiện dưới đây:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">normal_1</span><span class="p">,</span> <span class="n">normal_2</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">pointer</span><span class="p">;</span>
+
+<span class="n">normal_1</span> <span class="o">=</span> <span class="n">normal_2</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<span class="n">pointer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">normal_1</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">*</span><span class="n">pointer</span><span class="p">);</span> <span class="c1">// 100</span>
+<span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">normal_1</span><span class="p">);</span> <span class="c1">// 200;</span>
+
+<span class="n">pointer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">normal_2</span><span class="p">;</span>
+<span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">300</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%d %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">normal_1</span><span class="p">,</span> <span class="n">normal_2</span><span class="p">);</span> <span class="c1">// 200 300</span>
+
+<span class="kt">int</span> <span class="o">*</span><span class="n">another_pointer</span> <span class="o">=</span> <span class="n">pointer</span><span class="p">;</span>
+<span class="n">normal_2</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">*</span><span class="n">another_pointer</span><span class="p">);</span> <span class="c1">// 400</span>
+</code></pre>
+<p>Trong ví dụ trên:</p>
+<ul>
+<li>Đầu tiên con trỏ <code>pointer</code> trỏ vào biến "thông thường" <code>normal_1</code>. Do đó, <code>normal_1</code> và <code>*pointer</code> lúc này <strong>cùng là một biến</strong>: Khi một lệnh làm thay đổi giá trị <code>normal_1</code>, giá trị của <code>*pointer</code> cũng thay đổi theo và ngược lại.</li>
+<li>Sau lệnh gán <code>pointer = &amp;normal_2</code>, <code>pointer</code> lúc này trỏ vào <code>normal_2</code> và <strong>không còn trỏ vào</strong> <code>normal_1</code> nữa. Vì vậy, lện gán <code>*pointer_2 = 300</code> <strong>làm thay đổi</strong> <code>normal_2</code> nhưng <strong>không làm thay đổi</strong> <code>normal_1</code>.</li>
+<li>Cuối cùng, con trỏ <code>another_pointer</code> được cho trỏ vào <em>nơi <code>pointer</code> đang trỏ vào</em>, tức là biến "thông thường" <code>normal_2</code>. Do đó lệnh gán <code>normal_2</code> làm thay đổi <code>*another_pointer</code>.</li>
+</ul>
+<p><strong>Chú ý</strong>: Các lệnh gán các biến "thông thường" <code>normal_1</code> và <code>normal_2</code> ở trên kia làm thay đổi <code>*pointer</code>, <strong>nhưng không thay đổi</strong> <code>pointer</code>. Các bạn cần <strong>phân biệt rất cẩn thận</strong> hai lệnh <code>*another_pointer = *pointer</code> và <code>another_pointer = pointer</code>. Lệnh thứ nhất chỉ là phép gán giá trị giữa hai biến "thông thường", trong khi lệnh thứ hai làm thay đổi đối tượng mà <code>another_pointer</code> đại diện cho.</p>
+<h3 class="editable"><a class="anchor" id="con-trỏ-null-con-trỏ-không-trỏ-vào-một-đối-tượng-nào" href="#con-trỏ-null-con-trỏ-không-trỏ-vào-một-đối-tượng-nào"></a>Con trỏ <em>NULL</em> - con trỏ không trỏ vào một đối tượng nào.</h3>
+<p><strong>Chú thích: Nếu bạn dùng C++11 hoặc các phiên bản mới hơn, bạn được khuyến khích sử dụng từ khóa</strong> <strong><em>nullptr</em></strong> <strong>thay cho từ</strong> <strong><em>NULL</em></strong> <strong>được nêu ở đây. Tuy việc dùng từ</strong> <strong><em>NULL</em></strong> <strong>là tương đối an toàn,</strong> <strong><em>nullptr</em></strong> <strong>vẫn thích hợp hơn trong trường hợp này. Chi tiết các bạn có thể xem tại <a href="https://embeddedartistry.com/blog/2017/03/08/migrating-from-c-to-c-null-vs-nullptr">đây</a>. Phần còn lại vẫn sẽ sử dụng</strong> <strong><em>NULL</em></strong> <strong>bởi chỉ từ khóa này tương thích với C và các bản C++ trước 11.</strong></p>
+<p>Một con trỏ có thể không trỏ vào một đối tượng nào, khi đó con trỏ mang một giá trị mặc định <em>NULL</em>. Khi bạn cố gắng truy cập vào đối tượng của một con trỏ mang gía trị <em>NULL</em>, chương trình bạn <strong>bị crash ngay lập tức</strong> (bị <em>crash</em> chứ không bị <em>crush</em>) và bạn sẽ gặp phải lỗi <em>run-time error</em> (hoặc <em>non-zero exit code</em>, <em>segmentation fault</em>):</p>
+<pre class="highlight"><code><span class="kt">int</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// ERROR!!!</span>
+</code></pre>
+<p>Do đó, kinh nghiệm ở đây là luôn kiểm tra một con trỏ có phải <em>NULL</em> hay không trước khi truy cập vào. Khi biết chương trình của bạn chạy sinh lỗi (khi chạy thử test đề hoặc nộp lên hệ thống bị run-time error), bạn nên rà soát lại toàn bộ code, và xem các con trỏ đã được kiểm tra <em>NULL</em> trước khi truy cập hay chưa:</p>
+<pre class="highlight"><code><span class="kt">int</span><span class="o">*</span> <span class="n">p</span> <span class="p">...;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">);</span> <span class="c1">// DANGEROUS!!! p might be NULL</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">p</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="o">?</span> <span class="o">*</span><span class="n">p</span> <span class="o">:</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">// SAFE :)</span>
+</code></pre>
+<h3 class="editable"><a class="anchor" id="lệnh-new-tạo-biến-thông-thường" href="#lệnh-new-tạo-biến-thông-thường"></a>Lệnh <em>new</em> tạo biến "thông thường":</h3>
+<p>Dù một con trỏ thường được dùng để trỏ vào ("tạo tên biến khác") cho một biến đã có trước đó, có những trường hợp chúng ta muốn con trỏ trỏ vào một biến hoàn toàn mới. Khi đó lệnh <code>new</code> (từ khóa của C/C++) giúp chúng tạo ra một biến mới:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">normal_1</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">normal_2</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">normal_3</span> <span class="o">=</span> <span class="mi">300</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">;</span>
+<span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%d %d %d %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">normal_1</span><span class="p">,</span> <span class="n">normal_2</span><span class="p">,</span> <span class="n">normal_3</span><span class="p">,</span> <span class="o">*</span><span class="n">pointer</span><span class="p">);</span> <span class="c1">// 100 200 300</span>
+</code></pre>
+<p>Ở đây, rõ ràng biến <code>*pointer</code> là một biến "thông thường" kiểu <code>int</code>. Nhưng biến này không trùng với bất kỳ biến "thông thường" kiểu <code>int</code> nào đã khai báo trước đó. Do đó lệnh <code>*pointer = 400</code> không ảnh hưởng tới <code>normal_1</code>, <code>normal_2</code> hay <code>normal_3</code>.</p>
+<p>Nếu các bạn đã quen với <em>constructor</em> của struct/class hay các thư viện STL (một cách truyền tham só để khởi tạo các đối tượng), bạn có thể truyền các tham số một cách hoàn toàn tương tự để khởi tạo các đối tượng của lệnh <code>new</code>. Dưới đây, ta có một biến thông thường <code>vec</code> là một <code>vector&lt;int&gt;</code> có 10 số 1, và một con trỏ <code>vec_pointer</code> trỏ vào một <code>vector&lt;int&gt;</code> có 10 số 1. Tuy nhiên, hai vector này <strong>không liên quan đến nhau</strong>.</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">vec</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">vec_pointer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="o">*</span><span class="n">vec_pointer</span><span class="p">).</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="o">*</span><span class="n">vec_pointer</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 10 1</span>
+</code></pre>
+<h3 class="editable"><a class="anchor" id="truy-cập-các-trường-của-một-con-trỏ-trỏ-vào-đối-tượng" href="#truy-cập-các-trường-của-một-con-trỏ-trỏ-vào-đối-tượng"></a>Truy cập các trường của một con trỏ trỏ vào đối tượng.</h3>
+<p>Nếu một con trỏ trỏ vào một đối tượng (struct/class) hoặc các biến có kiểu là các kiểu dữ liệu trong STL, ta có thể dùng mũi tên <code>-&gt;</code> để truy cập vào các trường và hàm của chúng. Về mặt ý nghĩa, <code>(*p).x</code> và <code>p-&gt;x</code> <strong>hoàn toàn giống nhau</strong>, nhưng cách viết sau ngắn gọn và dễ nhìn hơn.</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span> <span class="c1">// an empty vector</span>
+<span class="n">p</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">front</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span> <span class="c1">// 1 2</span>
+</code></pre>
+<h2 class="editable"><a class="anchor" id="b-các-cú-pháp-nâng-cao" href="#b-các-cú-pháp-nâng-cao"></a>b. Các cú pháp nâng cao</h2>
+<p>Phần này nói về các kiến thức nâng cao hơn về con trỏ, dù khó hiểu hơn nhưng vẫn nói đến cú pháp là chính. Đây là các tình huống sử dụng con trỏ ít khi gặp trong lập trình thi đấu. Nếu các bạn cảm thấy phần trên khó hiểu với bạn, có thể cân nhắc bỏ qua phần này. Thành thật xin lỗi các bạn :(</p>
+<h3 class="editable"><a class="anchor" id="lấy-con-trỏ-làm-tham-số-của-hàm" href="#lấy-con-trỏ-làm-tham-số-của-hàm"></a>Lấy con trỏ làm tham số của hàm</h3>
+<p>Trước tiên, ta nhắc lại 3 loại tham số đối với các biến "thông thường": <em>tham trị</em>, <em>tham biến</em> và <em>hằng tham biến</em>:</p>
+<table>
+<tr>
+<th>Kiểm tham số</th>
+<th>Cú pháp</th>
+<th>Giá trị truyền vào</th>
+<th>Chi phí truyền tham số</th>
+<th>Thay đổi giá trị tham số</th>
+</tr>
+<tr>
+<td>Tham trị</td>
+<td>`int a`</td>
+<td>Biến, biểu thức hoặc hằng số</td>
+<td>Chi phí lớn nếu kiểu dữ liệu truyền vào là vector, set... do phải copy giá trị của biến</td>
+<td>Có thể gán lại trong hàm, nhưng giá trị ngoài hàm của biến không đổi</td>
+</tr>
+<tr>
+<td>Tham biến</td>
+<td>`int &amp;a`</td>
+<td>Chỉ có thể là biến</td>
+<td>Chi phí rất nhỏ do không phải copy giá trị của biến</td>
+<td>Lệnh gán trong hàm làm thay đổi giá trị của biến ở ngoài hàm</td>
+</tr>
+<tr>
+<td>Hằng tham biến</td>
+<td>`const int &amp;a`</td>
+<td>Biến, biểu thức hoặc hằng số</td>
+<td>Chi phí lớn nếu đối tượng truyền vào là biểu thức, chi phí nhỏ nếu đối tượng truyền vào là biến</td>
+<td>Không thể làm thay đổi giá trị của biến trong hàm</td>
+</tr>
+</table>
+<p>Ví dụ:
+</p><pre class="highlight"><code><span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span> <span class="o">&amp;</span><span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="c1">// OK but has no effect</span>
+   <span class="n">b</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span> <span class="c1">// OK and has effect</span>
+   <span class="n">c</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span> <span class="c1">// COMPILATION ERROR</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+   <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+   <span class="n">update</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">);</span>
+   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 1 20 3</span>
+   
+   <span class="n">update</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">);</span> <span class="c1">// OK</span>
+   <span class="n">update</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="p">);</span> <span class="c1">// COMPILATION ERROR</span>
+   <span class="n">update</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// OK</span>
+<span class="p">}</span></code></pre>
+<p>Trong đoạn code trên, lệnh <code>c = 30</code> gặp lỗi vì hằng tham biến không thể bị gán lại trong hàm. Nếu xóa dòng <code>c = 30</code> này đi, hàm update chỉ làm thay đổi giá trị biến <code>b</code> vì <code>a</code> là tham trị còn <code>b</code> là tham biến. Do đó khi in ra, biến <code>a</code> vẫn có giá trị là <code>1</code>, còn biến <code>b</code> bị gán lại thành <code>20</code>, biến <code>c</code> không thay đổi giá trị do được truyền vào là hằng tham biến và không thể gán lại.</p>
+<p>Nếu ta thử truyền một biểu thức (ví dụ, <code>1 + 1</code> như ở trên), tham số thứ nhất và thứ ba của hàm <code>update</code> (tham trị và hằng tham biến) cho phép làm điều này, còn tham số thứ hai (tham biến) chỉ chấp nhận truyền vào một biến.</p>
+<p><strong>Với con trỏ</strong>, bạn có thể truyền vào ba loại tham số tương tự. Tuy nhiên, do kích thước của một biến con trỏ là rất nhỏ (4 bytes (bằng một biến <code>int</code>) với các máy tính dùng HĐH 32-bit, hoặc 8 bytes (bằng một biến <code>long long</code>) với các máy tính dùng HĐH 64-bit); mình thấy việc dùng hằng tham biến với con trỏ là <strong>không cần thiết</strong> (Hằng tham biến chỉ được sử dụng khi bạn truyền các tham số có kích thước lớn như vector, map, set…). Với con trỏ được truyền theo kiểu tham trị hoặc tham biến, có các điểm cần chú ý sau đây:</p>
+<ul>
+<li>Chi phí truyền vào <strong>luôn rất nhỏ</strong>, bất kể là tham trị hay tham biến, bất kể đối tượng được trỏ vào là <code>int</code> hay <code>vector</code>.</li>
+<li>Giá trị của con trỏ (biến "thông thường" được con trỏ trỏ vào) <strong>không đổi</strong> với tham trị, và <strong>có thể thay đổi</strong> với tham biến.</li>
+<li>Giá trị của biến được đối tượng trỏ vào <strong>luôn bị thay đổi</strong> nếu có các lệnh gán hoặc gọi hàm làm thay đổi giá trị của chúng.</li>
+</ul>
+<p>Ví dụ:
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="n">normal_1</span><span class="p">,</span> <span class="n">normal_2</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">pointer</span><span class="p">)</span> <span class="p">{</span>
+   <span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+   <span class="n">pointer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">normal_2</span><span class="p">;</span>
+   <span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">normal_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">normal_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+   <span class="kt">int</span><span class="o">*</span> <span class="n">pointer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">normal_1</span><span class="p">;</span>
+   <span class="n">update</span><span class="p">(</span><span class="n">pointer</span><span class="p">);</span>
+   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">normal_1</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">normal_2</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">pointer</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 10 20 10;</span>
+<span class="p">}</span>
+</code></pre>
+Trong ví dụ trên:
+<ul>
+<li>Khi hàm <code>update</code> được gọi, tham số <code>pointer</code> đang trỏ vào biến <code>normal_1</code>. Do đó, lệnh <code>*pointer = 10</code> mang ý nghĩa <code>normal_1 = 10</code>;</li>
+<li>Sau hai lệnh <code>pointer = &amp;normal_2</code> và <code>*pointer = 20</code>, biến <code>pointer</code> này trỏ vào biến <code>normal_2</code> và gán biến này thành <code>20</code>.</li>
+<li>Kết quả in ra cho thấy <code>*pointer = 10</code>, tức là <code>pointer</code> trỏ vào <code>normal_1</code>. Tức là đối tượng bị <code>pointer</code> trỏ vào <strong>không đổi</strong> sau khi gọi hàm update.</li>
+</ul>
+<p></p><pre class="highlight"><code><span class="kt">int</span> <span class="n">normal_1</span><span class="p">,</span> <span class="n">normal_2</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="o">*&amp;</span><span class="n">pointer</span><span class="p">)</span> <span class="p">{</span>
+   <span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+   <span class="n">pointer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">normal_2</span><span class="p">;</span>
+   <span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">normal_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">normal_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+   <span class="kt">int</span><span class="o">*</span> <span class="n">pointer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">normal_1</span><span class="p">;</span>
+   <span class="n">update</span><span class="p">(</span><span class="n">pointer</span><span class="p">);</span>
+   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">normal_1</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">normal_2</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">pointer</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 10 20 20;</span>
+<span class="p">}</span>
+</code></pre>
+Đoạn code này chỉ khác ở đoạn code trên ở chỗ tham số <code>pointer</code> của hàm <code>update</code> là <strong>tham biến</strong> thay vì <strong>tham trị</strong>. Gía trị của hai biến <code>normal_1</code> và <code>normal_2</code> giống hệt đoạn code trên, nhưng <code>pointer</code> lúc này trỏ vào <code>normal_2</code>. Sở dĩ có điều này là vì trong hàm <code>update</code>, <code>pointer</code> bị gán lại thành <code>&amp;normal_2</code>, và vì <code>pointer</code> là tham biến, lệnh gán này giữ nguyên giá trị khi ra khỏi hàm.
+<h3 class="editable"><a class="anchor" id="tạo-mảng-động" href="#tạo-mảng-động"></a>Tạo mảng động</h3>
+<p>Các bạn đã biết, trong một số trường hợp bạn không thể khai báo mảng tĩnh vì như vậy kích thước mảng cần thiết sẽ quá lớn, vượt quá giới hạn bộ nhớ cho phép và thực tế không cần thiết tới vậy.</p>
+<p>Ví dụ, khi bạn cần nhập vào một bảng hai chiều kích thước $m \cdot n$ với $1 \leq m \cdot n \leq 10^5$, ta biết rằng cả $m$ và $n$ đều có thể lên tới $10^5$. Tuy nhiên, khai báo mảng tĩnh <code>int a[1e5][1e5]</code> là không khả thi vì kích thước mảng $10^{10}$ là quá to.</p>
+<p>Một trường hợp khác khá quen thuộc với các bạn: Các bạn cần lưu mảng danh sách kề của một đồ thị có $10^5$ đỉnh và $10^5$ cạnh. Ta biết rằng một đỉnh có thể kề với tối đa $10^5-1$ đỉnh khác, do đó nếu dùng mảng tĩnh ta phải khai báo <code>int adj[1e5][1e5]</code>, nhưng điều này một lần nữa không khả thi. Nhưng chúng ta biết rằng, thực tế chỉ có $10^5$ cạnh, tức là tổng kích thước của danh sách kề ứng với các đỉnh là không quá $2 \cdot 10^5$, đó là lý do chúng ta sử dụng <code>vector&lt;int&gt; adj[1e5]</code>.</p>
+<p>Theo quan điểm của mình, việc tạo mảng động bằng con trỏ không cần thiết, do <code>vector</code> của C++ cũng khá tiện lợi. Hơn nữa, việc khai báo vector <strong>có kích thước cố định</strong> không khiến vector chậm hơn hoặc dùng nhiều bộ nhớ hơn mảng (chỉ việc <code>push_back</code> quá nhiền lần với những vector có kích thước nhỏ mới khiến vector bị chậm). Vì vậy, nếu bạn không thạo con trỏ, lời khuyên là hãy dùng vector.</p>
+<p>Để hiểu cách tạo mảng bằng con trỏ, bạn cần hiểu về nguyên lý hoạt động của mảng, và vì sao truy cập phần tử thứ $k$ của mảng lại mất độ phức tạp $\mathcal{O}(1)$. Điều này nói chi tiết ra sẽ khá dài dòng và cũng hơi khó hiểu, vì vậy mình sẽ bỏ qua (các bạn khi lên đại học sẽ được học thêm về phần này, và mình cảnh báo trước, đây là phần rất rất khó. Bản thân mình ko đạt điểm tối đa bài kiểm tra môn lập trình cơ bản phần con trỏ).</p>
+<p>Nói vắn tắt, một mảng các số nguyên kiểu <code>int</code> có bản chất giống như một <strong>con trỏ</strong> trỏ vào <strong>phần tử đầu tiên</strong> của mảng. Tức là, nếu ta khai báo <code>int a[100]</code> thì biến <code>a</code> có kiểu <code>int*</code> (dù <code>a[0]</code>, <code>a[1]</code>,… có kiểu là <code>int</code>). Do <code>a</code> là con trỏ kiểu <code>int*</code>, <code>*a</code> là một biến "thông thường" kiểu <code>int</code>, và vì <code>a</code> trỏ vào phần tử đầu tiên <code>a[0]</code>, <code>*a</code> và <code>a[0]</code> <strong>là cùng một biến</strong> (gán <code>*a = 4</code> và <code>a[0] = 4</code> là như nhau).</p>
+<p>Tương tự, do mảng hai chiều là <strong>mảng các mảng một chiều</strong>, mảng hai chiều giống như **con trỏ trỏ vào một con trỏ. Nếu ta khai báo <code>int b[100][100]</code>, biến <code>b</code> có kiểu <code>int**</code>.</p>
+<p>Để tạo ra mảng một chiều có $100$ phần tử <code>int</code>, ta khai báo như sau:
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+</code></pre>
+<p>Để tạo ra các mảng nhiều chiều, ý tưởng là ta sẽ tạo ra từng chiều một. Ví dụ dưới đây đọc vào 3 số m, n, p và tạo ra một mảng hai chiều kích thước $m \cdot n$ cùng một mảng ba chiều kích thước $m \cdot n \cdot p$:
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="o">**</span><span class="n">array_2d</span><span class="p">,</span> <span class="o">***</span><span class="n">array_3d</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">m</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">p</span><span class="p">;</span>
+
+<span class="n">array_2d</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">*</span><span class="p">[</span><span class="n">m</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">array_2d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+
+<span class="n">array_3d</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">**</span><span class="p">[</span><span class="n">m</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">array_3d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">*</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+   <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="n">array_3d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">p</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre>
+<p>Việc dùng vector để tạo mảng động được khuyến khích do sự dễ dàng và thuận tiện. Tuy nhiên, có hai ưu điểm của việc dùng mảng động bằng con trỏ: <strong>Tốn ít bộ nhớ</strong> và <strong>code ngắn gọn hơn.</strong></p>
+<p>Ví dụ, nếu ta cần một mảng 4 chiều kích thước $10^5 \cdot 10^2 \cdot 2 \cdot 2$, có hai cách khai báo mà mình biết:
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="mf">1e5</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="mf">1e2</span><span class="p">;</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;&gt;</span> <span class="n">dynamic_vector</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">dynamic_vector</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+   <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">dynamic_vector</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">].</span><span class="n">resize</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+         <span class="n">dynamic_vector</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">].</span><span class="n">resize</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/**OR**/</span>
+<span class="kt">int</span><span class="o">****</span> <span class="n">dynamic_array</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">***</span><span class="p">[</span><span class="n">m</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">dynamic_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">**</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+   <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">dynamic_array</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">*</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+         <span class="n">dynamic_array</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+      <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<p>Một vector cần 24 bytes để lưu, còn một con trỏ chỉ cần 8 bytes. Ở mỗi cách, ta cần lưu $m + m \cdot n + m \cdot n \cdot 2 = 30.1 \cdot 10^6$ vector/con trỏ và $4 \cdot 10^7$ biến <code>int</code>. Do đó dùng vector sẽ tốn $882.4 \cdot 10^6$ bytes ~ $841.5$MB, nhưng dùng con trỏ chỉ tốn ~400MB.</p>
+<p>Sau đây là hai lời khuyên cuối cùng về việc tạo mảng động:</p>
+<ul>
+<li>Bất kể sử dụng vector hay con trỏ để khai báo mảng động, bạn cố gắng <strong>chỉ tạo một chiều động</strong>, còn các chiều còn lại tĩnh.</li>
+<li>Trường hợp bắt buộc phải dùng mảng động nhiều chiều, dùng con trỏ sẽ tốt hơn vector.</li>
+</ul>
+<p>Giả sử bạn có một bài quy hoạch động 4 chiều với hàm qhđ $f(i, j, k, l)$ với $0 \leq i \leq m$, $0 \leq j \leq n$ và $k$ và $l$ chỉ là các giá trị $0$ hoặc $1$. Nếu đề bài ràng buộc $1 \leq m \cdot n \leq 10^5$, ta biết rằng kích thước của ba chiều $i$, $k$, và $l$ không quá $4 \cdot 10^5$. Do đó mình khuyên các bạn nên biểu diễn trạng thái dưới dạng $f(k, l, i, j)$ thay vì $f(i, j, k, l)$ (đảo thứ tự các chiều):
+</p><pre class="highlight"><code><span class="cp">#define MAX   100100
+</span><span class="kt">int</span> <span class="o">*</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="n">MAX</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+   <span class="kt">int</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">m</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+   <span class="p">...</span>
+   <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="n">l</span><span class="o">++</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+      <span class="n">f</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">l</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span> <span class="c1">// note that 0 &lt;= j &lt;= n so the array size is n+1.</span>
+<span class="p">}</span>
+</code></pre>
+<h3 class="editable"><a class="anchor" id="lệnh-delete-để-giải-phóng-bộ-nhớ" href="#lệnh-delete-để-giải-phóng-bộ-nhớ"></a>Lệnh <em>delete</em> để giải phóng bộ nhớ</h3>
+<p><code>delete</code> là lệnh trái ngược với <code>new</code>. Nếu như <code>new</code> là lệnh dùng để "xin" bộ nhớ máy tính cho một biến mới, thì <code>delete</code> dùng để trả lại bộ nhớ biến này. Khi bạn gọi lệnh <code>new</code>: <code>int *p = new int</code> hay <code>int *arr = new int[100]</code>, bạn tiêu tốn một phần tài nguyên của máy tính để lưu các biến <code>int</code> được tạo thêm này. Đến lúc bạn không cần chúng nữa, bạn không muốn tiêu tốn tài nguyên, bạn gọi lệnh <code>delete p</code> hoặc <code>delete[] arr</code>. Khi đó, các biến bạn vừa "xin" thêm sẽ biến mất.</p>
+<p>Lệnh <code>delete</code> này rất thiết thực trong lập trình thực tế, do bạn không muốn sử dụng tài nguyên khi không cần thiết. Nhưng nhìn chung, bạn không cần <code>delete</code> trong lập trình thi đấu, do một khi đã <code>new</code> được thì nghĩa là bạn không bị quá giới hạn bộ nhớ cho phép.</p>
+<h2 class="editable"><a class="anchor" id="c-các-lỗi-thường-gặp-về-con-trỏ" href="#c-các-lỗi-thường-gặp-về-con-trỏ"></a>c. Các lỗi thường gặp về con trỏ</h2>
+<h3 class="editable"><a class="anchor" id="sai-cú-pháp" href="#sai-cú-pháp"></a>Sai cú pháp</h3>
+<p>Lỗi này bao gồm việc gõ thiếu hoặc thừa các dấu <code>*</code> hoặc các dấu <code>&amp;</code>. Trong một phép gán hoặc phép tính, nếu bạn chỉ gõ sai ở một trong hai vế, bạn sẽ có một phép gán <strong>không hợp lệ</strong> và trình biên dịch sẽ <strong>báo lỗi</strong>. Khi đó bạn biết mình mắc lỗi và phải sửa, nhưng việc sửa là không dễ dàng do các thông điệp báo lỗi của C++ trong trường hợp này thường khó hiểu. Lời khuyên khi gặp phải trường hợp này đó là bạn hãy nhìn kỹ lại hai vế xem kiểu dữ liệu ở hai vế có tương ứng nhau hay không:</p>
+<ul>
+<li>Nếu <code>a</code> là một biến "thông thường" kiểu <code>int</code>, <code>&amp;a</code> là một con trỏ kiểu <code>int*</code> và <code>*a</code> là một biểu thức vô nghĩa.</li>
+<li>Nếu <code>a</code> là một con trỏ kiểu <code>int*</code>, <code>*a</code> là một biến "thông thường" kiểu <code>int</code> và <code>&amp;a</code> là một con trỏ kiểu <code>int**</code>.</li>
+<li>Một phép gán chỉ hợp lệ khi kiểu dữ liệu của hai vế <strong>giống nhau</strong> (đều là <code>int</code> hay đều là <code>int*</code>).</li>
+</ul>
+<p>Tuy nhiên, có những trường hợp khó phát hiện hơn do lỗi sai <strong>không gây lỗi biên dịch</strong> (giống như các bệnh nhân nhiễm virus Corona nhưng không triệu chứng), vì vậy bạn phải thật cẩn thận. Giả sử ta có hai con trỏ <code>int *p</code> và <code>int *q</code>:</p>
+<ul>
+<li>Lệnh <code>printf("%d\n", p)</code> dù không gây lỗi biên dịch nhưng <strong>tạo ra cảnh báo</strong>. Để nhận được cảnh báo này, bạn cần <strong>bật chế độ -O2, -Wall và -Wextra</strong> trong Codeblocks/Dev-Cpp.</li>
+<li>
+<code>cout &lt;&lt; p</code> thay vì <code>cout &lt;&lt; *p</code>: Lệnh không gây ra lỗi biên dịch hay cảnh báo.</li>
+<li>
+<code>p &lt; q</code> thay vì <code>*p &lt; *q</code>: Lệnh không gây ra lỗi biên dịch hay cảnh báo.</li>
+<li>
+<code>p = q</code> thay vì <code>*p = *q</code> hoặc ngược lại: Lệnh không gây ra lỗi biên dịch hay cảnh báo.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="khai-báo-sai-cách" href="#khai-báo-sai-cách"></a>Khai báo sai cách</h3>
+<p>Để khai báo các biến "thông thường" cùng một kiểu, thay vì bạn khai báo <code>int a; int b; int c</code> bạn sẽ gộp lại thành <code>int a, b, c;</code>. Với con trỏ, để có 3 con trỏ trỏ vào các biến kiểu <code>int</code>, bạn cần khai báo là <code>int *a, *b, *c</code> (có dấu <code>*</code> trước <strong>mỗi</strong> biến), thay vì <code>int* a, b, c</code> hoặc <code>int *a, b, c</code>. Nếu bạn chỉ có một dấu <code>*</code>, chỉ biến <code>a</code> là con trỏ (kiểu <code>int*</code>), còn các biến <code>b</code> và <code>c</code> vẫn là biến "thông thường" kiểu <code>int</code>. Tất nhiên, bạn sẽ phát hiện lỗi này dễ dàng do trình biên dịch sẽ báo lỗi. Nhưng trình biên dịch chỉ báo lỗi ở dòng bạn gán/sử dụng con trỏ, còn dòng khai báo là chỗ bạn phải sửa thì trình biên dịch không bao giờ báo lỗi ở đây.</p>
+<p>Bởi thế, khi cần khai báo nhiều con trỏ cùng một lúc, bạn phải khai báo là <code>int *a, *b, *c</code>. Còn khi chỉ có một con trỏ (lúc khai báo biến hoặc khai báo tham số của hàm), bạn nên viết là <code>int *a</code> thay vì <code>int* a</code>. Thực lòng thì mình thích cách <code>int* a</code> hơn, và khi đi làm ở Google mình nhớ là mọi người cũng viết thế, bởi vì khi xét <code>int*</code> là một kiểu dữ liệu thì <code>int* a</code> là một cách viết rất trong sáng. Tuy nhiên mình không hiểu sao C++ lại không hiểu <code>int* a, b, c</code> là 3 con trỏ, mình thật sự thấy hơi vô lý ở đây.</p>
+<h3 class="editable"><a class="anchor" id="con-trỏ-trỏ-lung-tung" href="#con-trỏ-trỏ-lung-tung"></a>Con trỏ trỏ lung tung</h3>
+<p>Lỗi này có triệu chứng là việc bạn bị <em>run-time-error</em>, do bạn truy cập vào vùng nhớ (biến "thông thường" được trỏ tới) của một con trỏ trỏ vào nơi "lung tung", không xác định.</p>
+<p>Đây là lỗi hay gặp nhất, có ba lý do chính dẫn đến lỗi này:</p>
+<ul>
+<li>Chưa xét trường hợp con trỏ hiện tại là con trỏ NULL. Lỗi này đã được nói đến ở phần trên. Để khác phục, bạn cần xét cẩn thận từng trường hợp, khi gọi vào <code>*p</code> hay <code>p-&gt;</code>, bạn cần nghĩ xem liệu <code>p</code> có thể là <code>NULL</code> không. Nếu có, bạn cần thêm các lệnh <code>if</code> (ví dụ, <code>if (p != NULL) p-&gt;push_back(1)</code>) hay phép toán điều kiện (ví dụ, <code>cout &lt;&lt; (p == NULL ? 0 : *p)</code>).</li>
+<li>Chưa khởi tạo con trỏ trước khi truy cập. Chú ý, các con trỏ nếu được khai báo là <strong>biến cục bộ</strong> (khai báo trong hàm), nó <strong>không tự động khởi tạo là NULL</strong>. Do đó, nếu bạn kiểm tra điều kiện <code>p == NULL</code>, nó sai, nhưng khi truy cập vào <code>*p</code>, bạn vẫn bị chạy sinh lỗi như khi truy cập vào con trỏ NULL. Lời khuyên đưa ra: Giống như bất kỳ biến cục bộ nào khác, bạn phải khởi tạo trước khi sử dụng.</li>
+<li>Truy cập sau khi <code>delete</code>: Khi bạn xóa vùng nhớ của một con trỏ bằng <code>delete p</code> hoặc <code>delete[] arr</code>, các vùng nhớ tương ứng với các con trỏ bị xóa, nhưng con trỏ <strong>không được gán lại thành NULL</strong>. Khi đó, nếu bạn vô tình truy cập vào <code>*p</code> bạn vẫn bị chạy sinh lỗi, và kiểm tra <code>p == NULL</code> không giúp bạn tránh được lỗi này.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="sizeof-không-hoạt-động-với-con-trỏ-và-mảng-động" href="#sizeof-không-hoạt-động-với-con-trỏ-và-mảng-động"></a>
+<em>sizeof</em> không hoạt động với con trỏ và mảng động.</h3>
+<p>Các bạn đã biết, ta có thể dùng <code>memset</code> để khởi tạo một mảng với cú pháp thông thường: <code>memset(arr, ..., sizeof arr)</code>. Điều này đúng với mảng tĩnh các bạn hay dùng, nhưng với mảng động được tạo ra bởi thao tác <code>new</code>, bạn không thể dùng <code>sizeof</code> mà phải tự truyền kích cỡ thực của chúng.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">int_array</span><span class="p">;</span> <span class="n">int_array</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">m</span><span class="p">];</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">ll_array</span><span class="p">;</span> <span class="n">ll_array</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">long</span> <span class="kt">long</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+
+<span class="c1">// INCORRECT</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">int_array</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">int_array</span><span class="p">);</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">ll_array</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">ll_array</span><span class="p">);</span>
+
+
+<span class="c1">// CORRECT</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">int_array</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">m</span> <span class="o">*</span> <span class="nf">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">ll_array</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">*</span> <span class="nf">sizeof</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span><span class="p">));</span>
+</code></pre>
+<p>Tương tự, nếu một mảng được truyền vào một hàm, kể cả <strong>nếu mảng đó là mảng tĩnh</strong>, bạn không thể khởi tạo theo cách thông thường.</p>
+<p></p><pre class="highlight"><code><span class="cp">#define MAX   100100
+</span><span class="kt">int</span> <span class="n">arr</span><span class="p">[</span><span class="n">MAX</span><span class="p">];</span>
+
+<span class="c1">// INCORRECT</span>
+<span class="kt">void</span> <span class="nf">do_something_funny</span><span class="p">(</span><span class="kt">int</span> <span class="n">arr</span><span class="p">[</span><span class="n">MAX</span><span class="p">])</span> <span class="p">{</span> <span class="c1">// "int arr[MAX]", "int arr[]" or "int *arr" are the same here</span>
+   <span class="n">memset</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">arr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// CORRECT</span>
+<span class="kt">void</span> <span class="nf">do_something_funny</span><span class="p">(</span><span class="kt">int</span> <span class="n">arr</span><span class="p">[</span><span class="n">MAX</span><span class="p">])</span> <span class="p">{</span>
+   <span class="n">memset</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">MAX</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre>
+Dù cách thứ hai trong phần trên là chính xác, mình khuyên các bạn không nên dùng. Tốt nhất là nếu <code>memset</code> thì không nên truyền mảng vào hàm
+<h3 class="editable"><a class="anchor" id="các-con-trỏ-trỏ-không-đúng-thứ-cần-trỏ" href="#các-con-trỏ-trỏ-không-đúng-thứ-cần-trỏ"></a>Các con trỏ trỏ không đúng thứ cần trỏ.</h3>
+<p>Các bạn thử nghĩ xem hai đoạn code dưới đây khác nhau như thế nào. Sau khi nhận ra được sự khác biệt, bạn sẽ có cách khác phục cho riêng mình.
+</p><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">*&gt;</span> <span class="n">v</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">;</span>
+</code></pre>
+và
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">*&gt;</span> <span class="n">v</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="k">new</span> <span class="kt">int</span><span class="p">);</span>
+</code></pre>
+<h1 class="editable"><a class="anchor" id="3-một-số-ứng-dụng-của-con-trỏ-trong-lập-trình-thi-đấu" href="#3-một-số-ứng-dụng-của-con-trỏ-trong-lập-trình-thi-đấu"></a>3. Một số ứng dụng của con trỏ trong lập trình thi đấu</h1>
+<p>Phần này điểm qua một số cấu trúc dữ liệu và thuật toán mà việc dùng con trỏ cài đặt sẽ hữu ích. Tất nhiên, các bạn có thể "né tránh" con trỏ bằng nhiều cách cài đặt khác; nhưng bạn sẽ phải trả giá bằng một đoạn code rất xấu và lằng nhằng.</p>
+<h2 class="editable"><a class="anchor" id="a-cây-tiền-tố-trie" href="#a-cây-tiền-tố-trie"></a>a. Cây tiền tố (<em>trie</em>)</h2>
+<p>Ứng dụng phổ biến nhất của con trỏ là để biểu diễn các cấu trúc dữ liệu dạng cây. Ý tưởng chung là ta sẽ viết một <code>struct Node</code> để mô tả một nút trên cây. Khi ta vẽ một cây lên giấy, ta thường mô tả các quan hệ cha con bằng cách vẽ một đường có mũi tên nối từ cha xuống con. Nói cách khác, mũi tên này chỉ việc chả "trỏ" vào con. Việc biểu diễn các cấu trúc dữ liệu cây bằng con trỏ dựa trên ý tưởng này: Trong <code>struct Node</code>, ta có các trường để lưu các con trỏ <code>Node*</code> trỏ vào các con.</p>
+<p>Giả sử ta chỉ làm việc trên các xâu ký tự gồm các chữ cái latin in thường. Khi đó, trong <code>struct Node</code> cần có một mảng gồm $26$ phần tử có kiểu <code>Node *</code>, để lưu lại $26$ con trỏ trỏ đến $26$ con của một nút ứng với $26$ ký tự 'a' - 'z'.</p>
+<p>Ta xét bài toán ví dụ đơn giản: *Cho $n$ xâu ký tự $s_1, s_2, \ldots, s_n$, tính tổng độ dài các tiền tố phân biệt của $n$ xâu kí tự này.</p>
+<p>Để làm được bài này, đầu tiên ta sẽ dựng cây tiền tố. Sau đó, với mỗi nút ta sẽ tính hai giá trị:</p>
+<ul>
+<li>Độ cao của nút này</li>
+<li>Tổng độ cao của các nút nằm trong cây con có gốc là nút này.</li>
+</ul>
+<p>Đoạn code mẫu:
+</p><pre class="highlight"><code><span class="cp">#define REP(i, n) for (int i = 0, _n = (n); i &lt; _n; i++)
+</span>
+<span class="k">struct</span> <span class="nc">Node</span> <span class="p">{</span>
+   <span class="n">Node</span> <span class="o">*</span><span class="n">child</span><span class="p">[</span><span class="mi">26</span><span class="p">];</span>
+   <span class="kt">long</span> <span class="kt">long</span> <span class="n">high</span><span class="p">,</span> <span class="n">totHigh</span><span class="p">;</span>
+
+   <span class="n">Node</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">high</span> <span class="o">=</span> <span class="n">totHigh</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="n">REP</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">26</span><span class="p">)</span> <span class="n">child</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+   <span class="p">}</span>
+<span class="p">};</span>
+<span class="n">Node</span> <span class="o">*</span><span class="n">root</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">addString</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">Node</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">root</span><span class="p">;</span>
+   <span class="n">REP</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'a'</span><span class="p">]</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'a'</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">();</span>
+      <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'a'</span><span class="p">];</span>
+      <span class="n">p</span><span class="o">-&gt;</span><span class="n">high</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">p</span><span class="o">-&gt;</span><span class="n">totHigh</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">high</span><span class="p">;</span>
+   <span class="n">REP</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">26</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">dfs</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+      <span class="n">p</span><span class="o">-&gt;</span><span class="n">totHigh</span> <span class="o">+=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">totHigh</span><span class="p">;</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+   <span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+   <span class="n">root</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">();</span>
+
+   <span class="n">REP</span><span class="p">(</span><span class="n">love</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">string</span> <span class="n">s</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">;</span> <span class="n">addString</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+   <span class="p">}</span>
+
+   <span class="n">root</span><span class="o">-&gt;</span><span class="n">dfs</span><span class="p">();</span>
+   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">totHigh</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+<p>Đoạn code trên có ba phần chính:</p>
+<ul>
+<li>Phần mô tả <code>struct Node</code>: Ở đây, ta thấy trong Node lưu lại một mảng <code>Node *child[26]</code> là mảng con trỏ trỏ vào các con như đã nói ở trên. Ngoài ra, ta còn dùng thêm biến <code>high</code> để lưu lại độ cao của cây và <code>totHigh</code> để lưu lại tổng độ cao của tất cả các nút trong cây con. Đoạn code trong <code>Node() { ... }</code> được gọi là <em>constructor</em>, giúp ta khởi tạo mảng child bằng NULL.</li>
+<li>Hàm <code>addString(string s)</code>: Dùng để thêm một xâu ký tự vào cây trie. Trong hàm này ta có một con trỏ <code>Node *p</code>. Ban đầu con trỏ trỏ vào gốc cây. Ta lần lượt duyệt qua các kí tự của xâu $s$, mỗi kí tự duyệt qua ta "đi" xuống một bước trên cây, duy trì sao cho con trỏ <code>p</code> luôn trỏ vào nút ứng với tiền tố kết thúc bởi kí tự đang xét. Lệnh <code>if (p-&gt;child[...] == NULL) p-&gt;child[...] = new Node()</code> có nghĩa là <em>nếu nút cần đi tới chưa tồn tại trên cây, ta phải tạo ra nút đó</em>. Lệnh <code>p = p-&gt;child[...]</code> chính là ta đã "nhảy" một bước xuống lớp xâu hơn của cây.</li>
+<li>Hàm <code>dfs</code> làm quá trình DFS và tính các giá trị. Hàm này có logic giống hệt DFS trên cây bình thường. Chỉ khác rằng, mọi khi bạn đánh số các nút từ $1$ tới $n$, do đó ta có hàm <code>void dfs(int u)</code>. Còn ở đây ta không đánh số mà dùng con trỏ, do đó ta dùng <code>void dfs(Node *p)</code>.</li>
+</ul>
+<p>Các lỗi hay mắc khi cài đặt trie:</p>
+<ul>
+<li>Thiếu constructor trong <code>struct Node</code>: Nếu không có constructor khởi tạo mảng <code>Node *child[26]</code> bằng NULL, các con trỏ <strong>không mang giá trị NULL</strong> và do đó bạn <strong>sẽ bị run-time error</strong>.</li>
+<li>Quên khởi tạo gốc cây <code>root = new Node()</code> (dòng thứ 2 ở hàm <code>main</code>). Nếu thiếu dòng này, bạn <strong>chắc chắn bị run-time error</strong> do cây của bạn chưa có gốc thì chưa thể thêm các nút khác được.</li>
+<li>Viết sai hàm <code>addString</code>. Sẽ có nhiều bạn khi mới code sẽ bị sai nhu dưới đây. Các bạn thử đoán xem lỗi sai là gì:</li>
+</ul>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">addString</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+   <span class="n">Node</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">root</span><span class="p">;</span>
+   <span class="n">REP</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="p">{</span>      
+      <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'a'</span><span class="p">];</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">();</span>
+      <span class="n">p</span><span class="o">-&gt;</span><span class="n">high</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<p>Một số bài tập dùng trie cho các bạn luyện tập:</p>
+<ul>
+<li>
+<a href="https://code.google.com/codejam/contest/3014486/dashboard#s=p3">Trie Sharding, Google Code Jam 2014 round 2, problem D</a>. Xem code tại <a href="https://ideone.com/EwHSOF">đây</a>
+</li>
+<li>
+<a href="https://codeforces.com/contest/965/problem/E">Short Code, CF 476 div.2, problem E</a>. Xem code tại <a href="https://codeforces.com/contest/965/submission/37609430">đây</a>
+</li>
+<li>
+<a href="https://atcoder.jp/contests/code-festival-2016-qualb/tasks/codefestival_2016_qualB_e">Lexicographical Disorder, AtCoder - CODE FESTIVAL 2016 round B, problem E</a>. Xem code tại <a href="https://ideone.com/46ONEE">đây</a>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="b-kỹ-thuật-gộp-set-trên-cây" href="#b-kỹ-thuật-gộp-set-trên-cây"></a>b. Kỹ thuật gộp set trên cây</h2>
+<h2 class="editable"><a class="anchor" id="c-persistent-segment-tree" href="#c-persistent-segment-tree"></a>c. Persistent Segment Tree</h2>
+<p>Sử dụng con trỏ để cài đặt Persistent Segment Tree khá phổ biến, do đây là một loại cây nhị phân mà bạn cần cài đặt nhiều "phiên bản" khác nhau. Do việc cài đặt rất phức tạp, mình chỉ cho các bạn xem code chứ không thể phân tích chi tiết được. Khi đọc code của mình, bạn chỉ cần đọc phần <code>class PersistentSegmentTree</code>. Các phần còn lại không liên quan trực tiếp đến CTDL, chỉ là để giải bài toán.</p>
+<p>Bài tập liên quan:</p>
+<ul>
+<li>
+<a href="https://codeforces.com/contest/707/problem/D">Persistent Bookcase, CF 368 Div.2, problem D</a>. Xem code tại <a href="https://codeforces.com/contest/707/submission/19992150">đây</a>
+</li>
+<li>
+<a href="https://hanoi18.kattis.com/problems/lazylearner">Lazy Learner, The 2018 ICPC Hanoi Regional Contest, problem L</a>.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="d-balanced-binary-search-tree-red-black-tree-avl-splay-tree" href="#d-balanced-binary-search-tree-red-black-tree-avl-splay-tree"></a>d. Balanced Binary Search Tree (Red-black Tree, AVL, Splay Tree…)</h2>
+</div>
+</div>
+</div>
+</div>

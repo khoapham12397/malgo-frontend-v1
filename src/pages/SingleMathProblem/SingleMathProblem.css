@@ -77,12 +77,14 @@
 .edit-box-open {
   visibility: visible;
   border: 1px solid #ddd;
-  margin-bottom:  20px;
+  margin-bottom: 20px;
 }
 .edit-box {
   visibility: hidden;
 }
-
+.related-probs-box {
+  margin-top: 20px;
+}
 @media (max-width: 600px) {
   .container-all {
     width: 100%;

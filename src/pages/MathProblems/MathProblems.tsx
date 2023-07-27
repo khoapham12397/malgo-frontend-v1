@@ -1,9 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
-import { Button } from 'react-bootstrap';
 import { PaginationControl } from 'react-bootstrap-pagination-control';
-import { toast } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Link,
@@ -21,7 +19,7 @@ import {
 } from '../../state/actions/mathProblemListAction';
 import './MathProblems.css';
 import parse from 'html-react-parser';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import { formatMathExpr, processText } from '../../utils/utils';
 import { getFixedUsername, getUsernameFromStorage } from '../../utils/getUser';
 
@@ -46,14 +44,12 @@ const MathProblems = () => {
   );
   const myUsername = getUsernameFromStorage();
   useEffect(() => {
-    
-    if(!problemSetList) {
-      getMathProblemSets()
-      .then(result => {
+    if (!problemSetList) {
+      getMathProblemSets().then(result => {
         if (result.successed) {
           setProblemSetList(result.data.problemSetList);
         } else setProblemSetList([]);
-      }); 
+      });
     }
 
     if (categories.length > 0) {
@@ -71,8 +67,10 @@ const MathProblems = () => {
             : Number(params.get('startDiff')),
         q: params.get('q') == 'null' ? null : params.get('q'),
         tagList: params.getAll('tag'),
-        page: params.get('page') ? Number(params.get('page')) : 1
+        page: params.get('page') ? Number(params.get('page')) : 1,
+        init: undefined,
       };
+      
       dispatch(fetchMathProblems(param));
     } else {
       const page = params.get('page') ? Number(params.get('page')) : 1;
@@ -98,7 +96,6 @@ const MathProblems = () => {
 
     navigate('/math' + link);
   };
-  
 
   return (
     <>
@@ -114,8 +111,9 @@ const MathProblems = () => {
           <div>
             {myUsername ? (
               <div>Wellcome {getFixedUsername(myUsername)}</div>
-            ):'' 
-            }
+            ) : (
+              ''
+            )}
           </div>
         </div>
         {filter.total ? (
@@ -154,7 +152,7 @@ const MathProblems = () => {
               </thead>
               <tbody>
                 {problems.map((item: MathProbSummary) => (
-                  <tr key = {item.id}>
+                  <tr key={item.id}>
                     <td>
                       <Link
                         style={{ fontWeight: 'bold', color: 'black' }}
@@ -164,11 +162,9 @@ const MathProblems = () => {
                       </Link>
                     </td>
                     <td>
-                      <MathJaxContext>
-                        <MathJax dynamic>
-                          {parse(formatMathExpr(processText(item.description)))}
-                        </MathJax>
-                      </MathJaxContext>
+                      <MathJax dynamic>
+                        {parse(formatMathExpr(processText(item.description)))}
+                      </MathJax>
                     </td>
                     <td>{item.category.name}</td>
                     <td>{item.difficulty}</td>
@@ -204,7 +200,7 @@ const MathProblems = () => {
               <ul>
                 {problemSetList
                   ? problemSetList.map((item: any) => (
-                      <li>
+                      <li key={item.id}>
                         <Link to={'/mathset/' + item.id}>{item.title}</Link>
                       </li>
                     ))

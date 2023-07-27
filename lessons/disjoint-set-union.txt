@@ -1,0 +1,646 @@
+<div id="wiki-content">
+<h1 class="pt-4">Disjoint Set Union</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/data-structures/">data-structures</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Nguời viết:</strong></p>
+<ul>
+<li>Ngô Nhật Quang - HUS High School for Gifted Students</li>
+</ul>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Trần Quang Lộc - ITMO University</li>
+<li>Hoàng Xuân Nhật - VNUHCM-University of Science</li>
+<li>Hồ Ngọc Vĩnh Phát - VNUHCM-University of Science</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#bài-toán">Bài toán</a></li><li><a href="#cấu-trúc-dữ-liệu-disjoint-set-union">Cấu trúc dữ liệu Disjoint Set Union</a><ul><li><a href="#cài-đặt-ngây-thơ">Cài đặt "ngây thơ"</a></li><li><a href="#tối-ưu-1-gộp-theo-kích-cỡ-độ-cao">Tối ưu 1 - Gộp theo kích cỡ / độ cao</a></li><li><a href="#tối-ưu-2-nén-đường-đi">Tối ưu 2 - Nén đường đi</a></li><li><a href="#độ-phức-tạp-thời-gian">Độ phức tạp thời gian</a></li><li><a href="#chứng-minh-độ-phức-tạp-thời-gian">Chứng minh độ phức tạp thời gian</a></li><li><a href="#một-cách-cài-đặt-khác">Một cách cài đặt khác</a></li></ul></li><li><a href="#một-số-ứng-dụng-của-dsu">Một số ứng dụng của DSU</a><ul><li><a href="#lưu-thêm-thông-tin-khác-cho-mỗi-tập-hợp">Lưu thêm thông tin khác cho mỗi tập hợp</a></li><li><a href="#bài-toán-xếp-hàng">Bài toán xếp hàng</a><ul><li><a href="#bài-toán-1">Bài toán</a></li><li><a href="#lời-giải">Lời giải</a></li><li><a href="#code-mẫu">Code mẫu</a></li></ul></li><li><a href="#tối-ưu-thuật-toán-tìm-cây-khung-nhỏ-nhất-trong-đồ-thị">Tối ưu thuật toán tìm cây khung nhỏ nhất trong đồ thị</a></li><li><a href="#đảo-ngược-truy-vấn">Đảo ngược truy vấn</a><ul><li><a href="#bài-toán-2">Bài toán</a></li><li><a href="#lời-giải-1">Lời giải</a></li><li><a href="#code-mẫu-1">Code mẫu</a></li></ul></li><li><a href="#kiểm-tra-tính-chất-hai-phía-của-đồ-thị-online">Kiểm tra tính chất hai phía của đồ thị online</a><ul><li><a href="#bài-toán-3">Bài toán</a></li><li><a href="#lời-giải-2">Lời giải</a></li></ul></li></ul></li><li><a href="#một-số-kĩ-thuật-sử-dụng-tính-chất-của-dsu">Một số kĩ thuật sử dụng tính chất của DSU</a><ul><li><a href="#kĩ-thuật-gộp-set-small-to-large-merging">Kĩ thuật gộp set (Small-to-Large Merging)</a><ul><li><a href="#bài-toán-4">Bài toán</a></li><li><a href="#lời-giải-3">Lời giải</a></li><li><a href="#code-mẫu-2">Code mẫu</a></li></ul></li><li><a href="#kĩ-thuật-dsu-trên-cây-sack">Kĩ thuật DSU trên cây (Sack)</a><ul><li><a href="#bài-toán-5">Bài toán</a></li><li><a href="#lời-giải-4">Lời giải</a></li><li><a href="#code-mẫu-3">Code mẫu</a></li></ul></li></ul></li><li><a href="#tham-khảo">Tham khảo</a></li><li><a href="#bài-tập">Bài tập</a><ul><li><a href="#disjoint-set-union">Disjoint Set Union</a></li><li><a href="#kỹ-thuật-gộp-set">Kỹ thuật Gộp set</a></li><li><a href="#kỹ-thuật-dsu-trên-cây">Kỹ thuật DSU trên cây</a></li></ul></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p><strong>Disjoint Set Union</strong>, hay <strong>DSU</strong>, là một cấu trúc dữ liệu hữu dụng và thường xuyên được sử dụng trong các kì thi CP. DSU, đúng như tên gọi của nó, là một cấu trúc dữ liệu có thể quản lí một cách hiệu quả một tập hợp của các tập hợp.</p>
+<h1 class="editable"><a class="anchor" id="bài-toán" href="#bài-toán"></a>Bài toán</h1>
+<p>Cho một đồ thị có $n$ đỉnh, ban đầu không có cạnh nào. Chúng ta phải xử lí các truy vấn như sau:</p>
+<ul>
+<li>Thêm một cạnh giữa đỉnh $x$ và đỉnh $y$ trong đồ thị.</li>
+<li>In ra <code>YES</code> nếu như đỉnh $x$ và đỉnh $y$ nằm trong cùng một thành phần liên thông. In ra <code>NO</code> nếu ngược lại.</li>
+</ul>
+<p>Một thành phần liên thông trong đồ thị là một đồ thị con trong đó giữa bất kì hai đỉnh nào đều có đường đi đến nhau, và không thể nhận thêm bất kì một đỉnh nào mà vẫn duy trì tính chất trên.</p>
+<h1 class="editable"><a class="anchor" id="cấu-trúc-dữ-liệu-disjoint-set-union" href="#cấu-trúc-dữ-liệu-disjoint-set-union"></a>Cấu trúc dữ liệu Disjoint Set Union</h1>
+<p>Nếu ta coi mỗi đỉnh trong đồ thị là một phần tử và mỗi thành phần liên thông trong đồ thị là một tập hợp, truy vấn thứ nhất sẽ trở thành gộp hai tập hợp lần lượt chứa phần tử $x$ và $y$ thành một tập hợp mới và truy vấn thứ hai trở thành hỏi hai phần tử $x$ và $y$ có nằm trong cùng một tập hợp hay không.</p>
+<p>Để giải bài toán này, ta sẽ xây dựng một cấu trúc dữ liệu có ba thao tác như sau:</p>
+<ul>
+<li>
+<code>make_set(v)</code> - tạo ra một tập hợp mới chỉ chứa phần tử <code>v</code>.</li>
+<li>
+<code>union_sets(a, b)</code> - gộp tập hợp chứa phần tử <code>a</code> và tập hợp chứa phần tử <code>b</code> thành một.</li>
+<li>
+<code>find_set(v)</code> - cho biết <strong>đại diện</strong> của tập hợp có chứa phần tử <code>v</code>. Đại diện này sẽ là một phần tử của tập hợp đó và có thể thay đổi sau mỗi lần gọi thao tác <code>union_sets</code>. Ta có thể sử dụng đại diện đó để kiểm tra hai phần tử có nằm trong cùng một tập hợp hay không. <code>a</code> và <code>b</code> nằm trong cùng một tập hợp nếu như đại diện của hai tập chứa chúng là giống nhau và không nằm trong cùng một tập hợp nếu ngược lại.</li>
+</ul>
+<p>Ta có thể xử lí các thao tác một cách hiệu quả này với các tập hợp được biểu diễn dưới dạng các cây, mỗi phần tử là một đỉnh và mỗi cây tương ứng với một tập hợp. Gốc của mỗi cây sẽ là đại diện của tập hợp đó.</p>
+<p>Cấu trúc của cây được thể hiện qua ví dụ sau đây:</p>
+<p><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img1.png" /></p>
+<p>Ban đầu, mỗi phần tử thuộc một tập hợp riêng biệt, vậy mỗi đỉnh là một cây riêng biệt. Bước tiếp theo, ta gộp hai tập hợp chứa phần tử $1$ và $2$. Sau đó, ta gộp hai tập hợp chứa phần tử $3$ và $4$. Cuối cùng, ta gộp hai tập hợp chứa phần tử $1$ và $3$.</p>
+<p>Với cách cài đặt này, ta sẽ lưu một mảng <code>parent</code> với <code>parent[v]</code> là cha của phần tử <code>v</code>.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt-ngây-thơ" href="#cài-đặt-ngây-thơ"></a>Cài đặt "ngây thơ"</h2>
+<p>Để tạo một tập hợp mới gồm phần tử <code>v</code> (hay <code>make_set(v)</code>), ta chỉ cần tạo một cây có gốc là <code>v</code>, với <code>parent[v] = v</code>.</p>
+<p>Để gộp hai tập hợp lần lượt chứa phần tử <code>a</code> và phần tử <code>b</code> (hay <code>union_sets(a, b)</code>), ta sẽ tìm gốc của cây có chứa phần tử <code>a</code> và gốc của cây có có chứa phần tử <code>b</code>. Nếu hai giá trị này giống nhau, ta sẽ không làm gì do hai phần tử này đã nằm trong cùng một tập hợp. Còn nếu không, ta sẽ đặt gốc cây này là cha của gốc cây còn lại. Dễ thấy điều này sẽ gộp hai cây lại thành một.</p>
+<p>Để tìm kí hiệu của một tập hợp có chứa phần tử <code>v</code> (hay <code>find_set(v)</code>), ta đơn giản nhảy lên các tổ tiên của đỉnh <code>v</code> cho đến khi ta đến gốc của cây. Thao tác này có thể dễ dàng được cài đặt bằng đệ quy.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">make_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="c1">// Tạo ra cây mới có gốc là đỉnh v</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">==</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">return</span> <span class="n">v</span><span class="p">;</span> <span class="c1">// Trả về đỉnh v nếu như đỉnh v là gốc của cây</span>
+    <span class="k">return</span> <span class="n">find_set</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span> <span class="c1">// Đệ quy lên cha của đỉnh v</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">union_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="c1">// Tìm gốc của cây có chứa đỉnh a</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span> <span class="c1">// Tìm gốc của cây có chứa đỉnh b</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span> <span class="n">parent</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span> <span class="c1">// Gộp hai cây nếu như hai phần tử ở hai cây khác nhau</span>
+<span class="p">}</span></code></pre>
+<p>Như đã nói, đây là cách cài đặt ngây thơ, ta có thể dễ dàng tạo ra một ví dụ sao cho khi sử dụng cách cài đặt này, cây sẽ trở thành một đoạn thẳng gồm $n$ phần tử. Trong trường hợp này, độ phức tạp của thao tác <code>find_set</code> sẽ là $\mathcal{O}(n)$.</p>
+<p>Điều này đương nhiên là không thể chấp nhận được, vì vậy ta sẽ tìm hiểu hai phương pháp tối ưu thuật toán dưới đây.</p>
+<h2 class="editable"><a class="anchor" id="tối-ưu-1-gộp-theo-kích-cỡ-độ-cao" href="#tối-ưu-1-gộp-theo-kích-cỡ-độ-cao"></a>Tối ưu 1 - Gộp theo kích cỡ / độ cao</h2>
+<p>Phương pháp tối ưu này sẽ thay đổi thao tác <code>union_sets</code>. Chính xác hơn, ta sẽ thay đổi cách xét trong hai cây đang gộp, gốc của cây nào sẽ là cha của gốc của cây còn lại.</p>
+<p>Có khá nhiều cách để xét điều này, nhưng hai cách được sử dụng nhiều nhất chính là gộp theo kích cỡ và gộp theo độ cao của cây.</p>
+<p>Giả dụ mỗi cây có một giá trị. Ở cách thứ nhất, giá trị đó là kích cỡ của cây, và ở cách thứ hai, giá trị đó là độ cao của cây. Ở cả hai cách này, ta sẽ luôn đặt gốc của cây có giá trị cao hơn là cha của gốc của cây có giá trị thấp hơn.</p>
+<p>Thao tác <code>union_sets</code> được tối ưu gộp theo kích cỡ:
+</p><pre class="highlight"><code><span class="kt">void</span> <span class="nf">make_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+    <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// Ban đầu tập hợp chứa v có kích cỡ là 1</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">union_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span> <span class="c1">// Đặt biến a là gốc của cây có kích cỡ lớn hơn</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">];</span> <span class="c1">// Cập nhật kích cỡ của cây mới gộp lại</span>
+    <span class="p">}</span> 
+<span class="p">}</span></code></pre>
+<p>Thao tác <code>union_sets</code> được tối ưu gộp theo độ cao:
+</p><pre class="highlight"><code><span class="kt">void</span> <span class="nf">make_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+    <span class="n">rank</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// Gốc của cây có độ cao là 0</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">union_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">rank</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">rank</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span> <span class="c1">// Đặt biến a là gốc của cây có độ cao lớn hơn</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">rank</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">==</span> <span class="n">rank</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">rank</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">++</span><span class="p">;</span> <span class="c1">// Nếu như hai cây có cùng một độ cao, độ cao của cây mới sau khi gộp sẽ tăng 1</span>
+    <span class="p">}</span> 
+<span class="p">}</span></code></pre>
+<p>Chỉ cần sử dụng phương pháp tối ưu này, độ phức tạp của thao tác <code>find_set</code> sẽ trở thành $\mathcal{O}(\log{n})$. Tuy nhiên, ta vẫn còn có thể làm tốt hơn thế khi kết hợp với phương pháp tối ưu thứ hai.</p>
+<h2 class="editable"><a class="anchor" id="tối-ưu-2-nén-đường-đi" href="#tối-ưu-2-nén-đường-đi"></a>Tối ưu 2 - Nén đường đi</h2>
+<p>Phương pháp tối ưu này nhằm tăng tốc thao tác <code>find_set</code>.</p>
+<p>Giả dụ ta gọi <code>find_set(v)</code> với một đỉnh <code>v</code> bất kì, chúng ta tìm được <code>p</code> là gốc của cây, đồng thời cũng là giá trị của mọi hàm <code>find_set(u)</code> với <code>u</code> là một đỉnh nằm trên đường đi từ <code>u</code> đến <code>p</code>. Cách tối ưu ở đây chính là làm cho đường đi đến gốc của các đỉnh <code>u</code> ngắn đi bằng cách gán trực tiếp cha của các đỉnh <code>u</code> này thành <code>p</code>.</p>
+<p>Có thể thấy sau khi thực hiện một thao tác như vậy, cấu trúc cả cây có thể thay đổi. Ta có thể thấy điều này trong ví dụ sau đây:</p>
+<center>
+<img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img2.png" width="700px" />
+</center>
+<p>Bên trái là cây ban đầu và bên phải là cây bị nén sau khi ta sử dụng thao tác <code>find_set(7)</code>, nén đường đi tới gốc của các đỉnh $7, 5, 3, 2$.</p>
+<p>Thao tác <code>find_set</code> mới này được cài đặt như sau:
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="nf">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">==</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">return</span> <span class="n">v</span><span class="p">;</span> <span class="c1">// Trả về đỉnh v nếu như đỉnh v là gốc của cây</span>
+    <span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span> <span class="c1">// Đệ quy lên cha của đỉnh v</span>
+    <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">;</span> <span class="c1">// Nén đoạn từ v lên gốc của cây</span>
+    <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Một cách cài đặt khác của thao tác <code>find_set</code> mà thường được sử dụng nhiều trong CP do tính ngắn gọn của nó:
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="nf">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">v</span> <span class="o">==</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">?</span> <span class="n">v</span> <span class="o">:</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="độ-phức-tạp-thời-gian" href="#độ-phức-tạp-thời-gian"></a>Độ phức tạp thời gian</h2>
+<p>Khi kết hợp cả hai phương pháp tối ưu bên trên lại, ta sẽ đạt được độ phức tạp trung bình cho thao tác <code>find_set</code> là $\mathcal{O}(\alpha(n))$ với $\alpha(n)$ là hàm Ackermann nghịch đảo. Tuy nhiên hàm này <strong>tăng rất chậm</strong> (với $\alpha(n) \le 3$ với $n \le 61$ và $\alpha(n) \le 4$ với xấp xỉ $n &lt; 10^{600}$).</p>
+<p>Độ phức tạp trung bình, đúng như tên gọi của nó, là tổng độ phức tạp của các thao tác, chia cho số lượng thao tác. Điều này có nghĩa ở một số thao tác, độ phức tạp có thể lên tới $\mathcal{O}(\log{n})$ nhưng ta thực hiện $m$ thao tác như vậy, độ phức tạp sẽ trở thành $\mathcal{O}(m \cdot \alpha(n))$ ($\approx \mathcal{O}(m)$ với $m$ đủ lớn).</p>
+<p>Một điều đáng lưu ý là nếu như chúng ta chỉ sử dụng phương pháp tối ưu $2$, độ phức tạp trung bình của thao tác <code>find_set</code> cũng chỉ là $\mathcal{O}(\log{n})$.</p>
+<h2 class="editable"><a class="anchor" id="chứng-minh-độ-phức-tạp-thời-gian" href="#chứng-minh-độ-phức-tạp-thời-gian"></a>Chứng minh độ phức tạp thời gian</h2>
+<p><strong>Tối ưu gộp set theo kích cỡ</strong>: Gọi $a$ là độ lớn của cây con có gốc là đỉnh $v$, $b$ là độ lớn của cây con có gốc là $p$ (cha của đỉnh $v$). Dễ thấy rằng $b \ge 2 \times a$ do số lượng đỉnh trong cây con gốc $p$ mà không thuộc cây con gốc $v$ lớn hơn hoặc bằng $a$. Do vậy độ sâu tối đa của cây sẽ là $\log_2{n}$.</p>
+<p><strong>Tối ưu gộp set theo độ cao</strong>: Ta sẽ chứng minh một cây có độ cao là $k$ có ít nhất $2^k$ đỉnh. Có thể thấy rằng số cây có độ cao là $0$ có chính xác $1$ đỉnh. Một cây chỉ có thể có độ cao là $k$ nếu như trước đó độ cao của nó là $k - 1$ và nó được gộp với một cây khác có độ cao là $k - 1$. Vì vậy, số đỉnh trong cây có độ cao là $k$ sẽ lớn hơn hoặc bằng hai lần số đỉnh trong cây có độ cao là $k - 1$. Do đó độ cao lớn nhất có thể của cây sẽ là $\log_2{n}$.</p>
+<p><strong>Kết hợp hai phương pháp tối ưu</strong>: Phần chứng minh này khá dài dòng và khó hiểu, bạn đọc có thể tìm hiểu tại <a href="http://e-maxx.ru/bookz/files/dsu/Efficiency%20of%20a%20Good%20But%20Not%20Linear%20Set%20Union%20Algorithm.%20Tarjan.pdf">đây</a> hoặc <a href="https://codeforces.com/blog/entry/98275">đây</a>.</p>
+<h2 class="editable"><a class="anchor" id="một-cách-cài-đặt-khác" href="#một-cách-cài-đặt-khác"></a>Một cách cài đặt khác</h2>
+<p>Ở trong một số tài liệu như Giải thuật và lập trình (thầy Lê Minh Hoàng) hay thư viện Atcoder, thay vì cài đặt cấu trúc dữ liệu DSU bằng hai mảng <code>parent</code> và <code>sz</code>, chỉ một mảng <code>lab</code> được sử dụng.</p>
+<p>Nếu như <code>lab[v]</code> âm thì $u$ là gốc của một cây và <code>-lab[v]</code> là số lượng đỉnh của cây đó. Còn nếu <code>lab[v]</code> dương thì <code>lab[v]</code> là cha của đỉnh $u$.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">make_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">lab</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">lab</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">v</span> <span class="o">:</span> <span class="n">lab</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">lab</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">union_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">lab</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">lab</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+        <span class="n">lab</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lab</span><span class="p">[</span><span class="n">b</span><span class="p">];</span>
+        <span class="n">lab</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="một-số-ứng-dụng-của-dsu" href="#một-số-ứng-dụng-của-dsu"></a>Một số ứng dụng của DSU</h1>
+<h2 class="editable"><a class="anchor" id="lưu-thêm-thông-tin-khác-cho-mỗi-tập-hợp" href="#lưu-thêm-thông-tin-khác-cho-mỗi-tập-hợp"></a>Lưu thêm thông tin khác cho mỗi tập hợp</h2>
+<p>Ngoài việc lưu các thông tin về cấu trúc cây, ta có thể lưu các hàm có tính chất giao hoán và kết hợp của từng tập hợp. Ví dụ, ta có thể lưu tổng các phần tử/ giá trị phần tử bé nhất của từng tập hợp. Lúc này, các thao tác của dsu sẽ được cài đặt như sau:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">make_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+    <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">mn</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+    <span class="n">sum</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+    <span class="c1">// value[v] là giá trị của phần tử thứ v</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">v</span> <span class="o">==</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">?</span> <span class="n">v</span> <span class="o">:</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">union_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">];</span>
+        <span class="n">sum</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sum</span><span class="p">[</span><span class="n">b</span><span class="p">];</span>
+        <span class="n">mn</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">mn</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">mn</span><span class="p">[</span><span class="n">b</span><span class="p">]);</span>
+    <span class="p">}</span> 
+<span class="p">}</span></code></pre>
+<p>Có thể thấy rằng, tương tự như thông tin về độ lớn của cây (<code>sz</code>) hay độ cao của cây (<code>rank</code>), ta sẽ lưu các hàm này tại gốc của từng cây.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">find_sum</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Trả về tổng của các phần tử trong tập hợp chứa v</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">sum</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">find_min</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Trả về giá trị bé nhất của các phần tử trong tập hợp chứa v</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">mn</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="bài-toán-xếp-hàng" href="#bài-toán-xếp-hàng"></a>Bài toán xếp hàng</h2>
+<h3 class="editable"><a class="anchor" id="bài-toán-1" href="#bài-toán-1"></a>Bài toán</h3>
+<p>Cho $n$ người đang xếp hàng ở các vị trí từ $1$ đến $n$. Viết chương trình xử lí các truy vấn:</p>
+<ul>
+<li>Người đứng ở vị trí thứ $i$ rời khỏi hàng.</li>
+<li>Tìm người gần nhất về bên phải vị trí $p$ mà chưa rời khỏi hàng.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="lời-giải" href="#lời-giải"></a>Lời giải</h3>
+<p>Với mỗi vị trí, ta sẽ có một con trỏ. Nếu người đứng ở vị trị này vẫn đang đứng trong hàng, con trỏ trỏ vào vị trị đó, nếu không thì con trỏ này sẽ trỏ vào vị trí ngay bên phải.</p>
+<p>Xét ví dụ sau với $n = 5$, ban đầu ta có:</p>
+<center>
+<img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img3.png" width="600px" />
+</center>
+<p><br/></p>
+<p>Giả dụ người đứng ở vị trí $2$ và $3$ rời khỏi hàng:</p>
+<center>
+<img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img4.png" width="600px" />
+</center>
+<p><br/></p>
+<p>Dễ thấy để tìm người gần nhất bên phải mà chưa rời khỏi hàng, ta đi dần dần sang phải cho đến khi gặp một vị trí có con trỏ trỏ đến chính nó.</p>
+<p>Chúng ta có thể sử dụng cấu trúc dữ liệu DSU để lưu trữ các thông tin trên và sử dụng phương pháp tối ưu nén đoạn để đạt được độ phức tạp trung bình $\mathcal{O}(\log{n})$ với mỗi truy vấn.</p>
+<p>Để ý kĩ hơn, ta thấy vị trí ta cần tìm chính là vị trí có thứ tự lớn nhất trong tập hợp. Ta có thể lưu phần tử lớn nhất trong một tập hợp như đã nói ở phần trên, qua đó đạt được độ phức tạp trung bình $\mathcal{O}(\alpha{(n)})$ với mỗi truy vấn.</p>
+<h3 class="editable"><a class="anchor" id="code-mẫu" href="#code-mẫu"></a>Code mẫu</h3>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">make_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+    <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">mx</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">v</span> <span class="o">==</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">?</span> <span class="n">v</span> <span class="o">:</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">union_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">];</span>
+        <span class="n">mx</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">mx</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">mx</span><span class="p">[</span><span class="n">b</span><span class="p">]);</span>
+    <span class="p">}</span> 
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">leave</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Người thứ v rời khỏi hàng</span>
+    <span class="n">union_sets</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">find_next</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Trả vè thứ tự của người gần nhất về bên phải </span>
+                       <span class="c1">// vị trí p mà chưa rời khỏi hàng</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">mx</span><span class="p">[</span><span class="n">p</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="tối-ưu-thuật-toán-tìm-cây-khung-nhỏ-nhất-trong-đồ-thị" href="#tối-ưu-thuật-toán-tìm-cây-khung-nhỏ-nhất-trong-đồ-thị"></a>Tối ưu thuật toán tìm cây khung nhỏ nhất trong đồ thị</h2>
+<p>Sử dụng DSU, ta có thể tối ưu độ phức tạp của thuật toán tìm cây khung nhỏ nhất của đồ thị từ $\mathcal{O}(m \log{n} + n^2)$ xuống $\mathcal{O}(m \log{n})$.</p>
+<p>Bạn đọc có thể tìm hiểu kĩ hơn ở <a class="internal absent" href="https://vnoi.info/wiki/algo/graph-theory/minimum-spanning-tree.md">blog</a> tìm cây khung nhỏ nhất trong đồ thị.</p>
+<h2 class="editable"><a class="anchor" id="đảo-ngược-truy-vấn" href="#đảo-ngược-truy-vấn"></a>Đảo ngược truy vấn</h2>
+<p>Do tính chất một chiều của cấu trúc dữ liệu DSU (chỉ thêm chứ không xóa được), ở một số bài ta phải đảo ngược thứ tự của các truy vấn trong bài để giải.</p>
+<h3 class="editable"><a class="anchor" id="bài-toán-2" href="#bài-toán-2"></a>Bài toán</h3>
+<p><a href="https://codeforces.com/contest/722/problem/C">Codeforces 722C - Destroying Array</a></p>
+<p>Cho mảng gồm $n$ số nguyên không âm $a_1, a_2, \ldots, a_n$ và một hoán vị các số từ $1$ đến $n$.</p>
+<p>Các phần tử sẽ lần lượt bị phá hủy theo thứ tự hoán vị trên. Sau mỗi lần một phần tử bị phá hủy, hãy in ra dãy con liên tiếp có tổng lớn nhất mà không có phần tử nào đã bị phá hủy. Tổng của một đoạn con rỗng là $0$.</p>
+<p>Giới hạn: $1\le n \le 10^5, 0 \le a_i \le 10^9$.</p>
+<h3 class="editable"><a class="anchor" id="lời-giải-1" href="#lời-giải-1"></a>Lời giải</h3>
+<p>Do các phần tử là các số nguyên không âm, ta có thể thấy rằng nếu sau khi một số phần tử bị phá hủy, dãy bị chia thành $k$ đoạn con liên tiếp thì đáp án sẽ là một trong $k$ đoạn con này.</p>
+<p>Đảo ngược thứ tự của các truy vấn, ta có thể thấy bài toán trở nên dễ dàng rất nhiều: Hồi sinh một số bị phá hủy trở về ban đầu và in ra đoạn con có tổng lớn nhất. Đến đây ta nghĩ tới cấu trúc dữ liệu DSU để xử lí các đoạn con liên tiếp.</p>
+<p>Khi một số được hồi sinh, ta sẽ kiểm tra bên trái số đó, nếu có số nào đã được hồi sinh từ trước thì ta sẽ thêm cạnh giữa số đó và số bên trái số đó. Tương tự với số bên phải. Dễ thấy rằng mọi lúc các thành phần liên thông trong DSU sẽ thể hiện cho một đoạn con liên tiếp. Việc lưu trữ tổng của một thành phần liên thông đã được nhắc đến ở phần trước.</p>
+<h3 class="editable"><a class="anchor" id="code-mẫu-1" href="#code-mẫu-1"></a>Code mẫu</h3>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="cp">#define int long long
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">ans</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">bool</span> <span class="n">flag</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="k">struct</span> <span class="nc">DSU</span><span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">parent</span><span class="p">,</span> <span class="n">sz</span><span class="p">,</span> <span class="n">sum</span><span class="p">;</span>
+
+    <span class="n">DSU</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">:</span> <span class="n">parent</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">sz</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">sum</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{};</span>
+
+    <span class="kt">void</span> <span class="n">make_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">sum</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+    <span class="p">}</span>
+     
+    <span class="kt">int</span> <span class="n">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">v</span> <span class="o">==</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">?</span> <span class="n">v</span> <span class="o">:</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">join_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">);</span>
+            <span class="n">parent</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+            <span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">];</span>
+            <span class="n">sum</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sum</span><span class="p">[</span><span class="n">b</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">signed</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+        
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="n">DSU</span> <span class="n">g</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">5</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">g</span><span class="p">.</span><span class="n">make_set</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>    
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">flag</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">flag</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="n">g</span><span class="p">.</span><span class="n">join_sets</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&amp;&amp;</span> <span class="n">flag</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="n">g</span><span class="p">.</span><span class="n">join_sets</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+        <span class="n">ans</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">sum</span><span class="p">[</span><span class="n">g</span><span class="p">.</span><span class="n">find_set</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">])]);</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ans</span><span class="p">;</span>
+    <span class="p">}</span>
+        
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+        
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="kiểm-tra-tính-chất-hai-phía-của-đồ-thị-online" href="#kiểm-tra-tính-chất-hai-phía-của-đồ-thị-online"></a>Kiểm tra tính chất hai phía của đồ thị online</h2>
+<h3 class="editable"><a class="anchor" id="bài-toán-3" href="#bài-toán-3"></a>Bài toán</h3>
+<p>Cho một đồ thị có $n$ đỉnh, ban đầu không có cạnh nào. Xử lí các truy vấn thêm cạnh vào đồ thị. Hỏi sau truy vấn nào thì đồ thị không còn là đồ thị hai phía?</p>
+<h3 class="editable"><a class="anchor" id="lời-giải-2" href="#lời-giải-2"></a>Lời giải</h3>
+<p>Dựa vào tính chất của đồ thị hai phía, dễ thấy rằng với mọi cặp đỉnh thuộc cùng một phía sẽ có đường đi bắt kì giữa chúng có độ dài chẵn. Nói cách khác, nếu ta chọn một đỉnh $l$ trong một thành phần liên thông, hai đỉnh $a$ và $b$ sẽ nằm cùng một phía nếu như khoảng cách của hai đỉnh này tới đỉnh $l$ có cùng tính chẵn lẻ.</p>
+<p>Chúng ta hoàn toàn có thể sử dụng cấu trúc dữ liệu DSU để lưu trữ thông tin này bằng cách lưu tính chẵn lẻ của đường đi từ mọi đỉnh tới gốc của cây. Lúc này, hàm <code>find_set</code> của ta sẽ trả về một cặp <code>{gốc của cây, tính chẵn lẻ của độ dài đường đi đến gốc của cây}</code> và được cài đặt như sau:</p>
+<pre class="highlight"><code><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">==</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">return</span> <span class="p">{</span><span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
+    <span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">val</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span>
+    <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+    <span class="n">dist</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">+</span> <span class="n">val</span><span class="p">.</span><span class="n">second</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="c1">// độ dài từ đỉnh đến cha mới </span>
+        <span class="c1">// = độ dài đến đỉnh cha cũ </span>
+        <span class="c1">// + độ dài từ cha cũ tới cha mới (gốc của cây)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">p</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">dist</span><span class="p">[</span><span class="n">a</span><span class="p">]};</span>
+<span class="p">}</span></code></pre>
+<p>Hàm <code>union_sets</code>, tương tự, cũng cần phải được thay đổi và được cài đặt như sau:
+</p><pre class="highlight"><code><span class="kt">void</span> <span class="nf">union_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">valA</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">),</span>
+                   <span class="n">valB</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">valA</span><span class="p">.</span><span class="n">first</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">valB</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">valA</span><span class="p">.</span><span class="n">second</span> <span class="o">!=</span> <span class="n">valB</span><span class="p">.</span><span class="n">second</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Đồ thị không còn là đồ thị hai phía do có</span>
+            <span class="c1">// cạnh nối giữa hai đỉnh thuộc hai phía khác nhau.</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">];</span>
+        <span class="n">dist</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">valA</span><span class="p">.</span><span class="n">second</span> <span class="o">+</span> <span class="n">valB</span><span class="p">.</span><span class="n">second</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">;</span>
+            <span class="c1">// Độ dài từ đỉnh b tới gốc cây</span>
+            <span class="c1">// = Độ dài từ đỉnh a tới gốc cây ban đầu chứa a</span>
+            <span class="c1">// + Dộ dài từ đỉnh b tới gốc cây ban đầu chứa b</span>
+            <span class="c1">// + 1 (Khoảng cách giữa hai đỉnh a và b)</span>
+    <span class="p">}</span> 
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="một-số-kĩ-thuật-sử-dụng-tính-chất-của-dsu" href="#một-số-kĩ-thuật-sử-dụng-tính-chất-của-dsu"></a>Một số kĩ thuật sử dụng tính chất của DSU</h1>
+<p>Ngoài ra tính chất của DSU còn được sử dụng trong một số kĩ thuật khá phổ biến.</p>
+<h2 class="editable"><a class="anchor" id="kĩ-thuật-gộp-set-small-to-large-merging" href="#kĩ-thuật-gộp-set-small-to-large-merging"></a>Kĩ thuật gộp set (Small-to-Large Merging)</h2>
+<p>Giả sử ta cần lưu trực tiếp các phần tử của một tập hợp bằng một cấu trúc dữ liệu như set/map, thì liệu có cách nào đủ hiệu quả để thực hiện thao tác <code>union_sets</code> hay không? Câu trả lời là có và kĩ thuật này được gọi là gộp set (small-to-large merging).</p>
+<h3 class="editable"><a class="anchor" id="bài-toán-4" href="#bài-toán-4"></a>Bài toán</h3>
+<p><a href="https://oj.vnoi.info/problem/colquery">VNOJ - colquery</a></p>
+<p>Cho một đồ thị vô hướng có $n$ đỉnh, đỉnh thứ $i$ có màu $a_i$. Ban đầu đồ thị chưa có cạnh nào.</p>
+<p>Cho $q$ truy vấn, mỗi truy vấn thuộc một trong hai dạng sau:</p>
+<ul>
+<li>$1\,u\,v$: Thêm một cạnh nối giữa $u$ và $v$.</li>
+<li>$2\,u\,c$: Tính số đỉnh có màu $c$ trong thành phần liên thông chứa $u$.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="lời-giải-3" href="#lời-giải-3"></a>Lời giải</h3>
+<p>Chúng ta vẫn sẽ sử dụng cấu trúc dữ liệu DSU trong bài này, và lưu thêm một map chứa số lượng từng màu tại gốc của từng cây.</p>
+<p>Trong thao tác <code>union_sets</code>, ta sẽ chuyển lần lượt các phần tử trong map của tập hợp bé hơn vào map của tập hợp lớn hơn. Thoạt nhìn ban đầu, việc làm này có độ phức tạp tổng là $\mathcal{O}(n ^ 2)$, nhưng thực chất nó chỉ là $\mathcal{O}(n \log{n})$. Ta sẽ chứng minh tại sao.</p>
+<p>Gọi số phần tử nằm trong hai dãy số lớn hơn và bé hơn lần lượt là $a$ và $b$. Dễ thấy được rằng $a + b \ge 2 \cdot b$, nên mỗi lần một phần tử bị di chuyển, nó sẽ bị di chuyển tới một dãy số có kích thước lớn hơn ít nhất hai lần kích thước dãy số ban đầu nó nằm trong. Vì vậy mà ta thấy rằng một phần tử chỉ bị di chuyển tối đa $\log_2{n}$ lần, qua đó mà đạt được độ phức tạp $\mathcal{O}(n \log{n})$.</p>
+<h3 class="editable"><a class="anchor" id="code-mẫu-2" href="#code-mẫu-2"></a>Code mẫu</h3>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">q</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="k">struct</span> <span class="nc">DSU</span><span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">color</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">parent</span><span class="p">,</span> <span class="n">sz</span><span class="p">;</span>
+
+    <span class="n">DSU</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">:</span> <span class="n">color</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">parent</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">sz</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{};</span>
+
+    <span class="kt">void</span> <span class="n">make_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">color</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">a</span><span class="p">[</span><span class="n">v</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">==</span> <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">return</span> <span class="n">v</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]);</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">union_sets</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+            <span class="n">parent</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+            <span class="n">sz</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sz</span><span class="p">[</span><span class="n">b</span><span class="p">];</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">color</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="n">color</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">]</span> <span class="o">+=</span> <span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">;</span>
+            <span class="n">color</span><span class="p">[</span><span class="n">b</span><span class="p">].</span><span class="n">clear</span><span class="p">();</span>
+        <span class="p">}</span> 
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span><span class="p">,</span> <span class="kt">int</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">color</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">find</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="n">color</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">end</span><span class="p">()</span> <span class="o">?</span> <span class="n">color</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">signed</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+    
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="n">DSU</span> <span class="n">g</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">5</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">g</span><span class="p">.</span><span class="n">make_set</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">q</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">op</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">op</span> <span class="o">&gt;&gt;</span> <span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">y</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">op</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">g</span><span class="p">.</span><span class="n">union_sets</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+        <span class="k">else</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Độ phức tạp thuật toán: $\mathcal{O}(n \log^2{n})$, có thêm một $\log$ do ta phải lưu giữ thông tin bằng cấu trúc dữ liệu map.</p>
+<h2 class="editable"><a class="anchor" id="kĩ-thuật-dsu-trên-cây-sack" href="#kĩ-thuật-dsu-trên-cây-sack"></a>Kĩ thuật DSU trên cây (Sack)</h2>
+<p>Đây là một thuật toán sử dụng ý tưởng gộp set ở phần trước để giải quyết một số bài toán truy vấn trên cây một cách hiệu quả.</p>
+<h3 class="editable"><a class="anchor" id="bài-toán-5" href="#bài-toán-5"></a>Bài toán</h3>
+<p>Cho một cây có $n$ đỉnh với gốc là đỉnh $1$, đỉnh thứ $i$ được tô màu $c_i$. Cho $q$ truy vấn có dạng $v\,c$, với mỗi truy vấn in ra số lượng đỉnh có màu $c$ trong cây con gốc $v$.</p>
+<h3 class="editable"><a class="anchor" id="lời-giải-4" href="#lời-giải-4"></a>Lời giải</h3>
+<p>Sử dụng ý tưởng gộp set ở phần trước, ta có thể dễ dàng đạt được độ phức tạp $\mathcal{O}(n \log^2{n} + q\log{n})$. Tuy nhiên, ta còn có thể làm tốt hơn với kĩ thuật DSU trên cây</p>
+<p>Bằng cách thay đổi cách dfs, ta có thể loại bỏ một $\log$ của cấu trúc dữ liệu map trong độ phức tạp, qua đó mà đạt được độ phức tạp $\mathcal{O}(n \log{n} + q)$. Ta sẽ tham khảo đoạn code dưới đây để hiểu hơn kĩ thuật này:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">sz</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">cnt</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">pre_dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Một hàm dfs chạy trước </span>
+                             <span class="c1">// để tính được độ lớn của từng cây con</span>
+    <span class="n">sz</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">pre_dfs</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+        <span class="n">sz</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">delta</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cnt</span><span class="p">[</span><span class="n">color</span><span class="p">[</span><span class="n">u</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">delta</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span><span class="p">)</span> <span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">delta</span><span class="p">);</span>
+<span class="p">}</span> 
+
+<span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">bigChild</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">bigChild</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">sz</span><span class="p">[</span><span class="n">bigChild</span><span class="p">])</span> <span class="n">bigChild</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+    <span class="p">}</span> <span class="c1">// Tìm cây con lớn nhất trong </span>
+      <span class="c1">// các con trực tiếp của đỉnh u</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span> <span class="o">&amp;&amp;</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">bigChild</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">dfs</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">bigChild</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">dfs</span><span class="p">(</span><span class="n">bigChild</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span> <span class="o">&amp;&amp;</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">bigChild</span><span class="p">)</span> <span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">cnt</span><span class="p">[</span><span class="n">color</span><span class="p">[</span><span class="n">u</span><span class="p">]]</span><span class="o">++</span><span class="p">;</span>
+    
+    <span class="c1">// Trả lời các truy vấn tại đỉnh u, với cnt[c] </span>
+    <span class="c1">// là số lượng đỉnh có màu c trong cây con gốc u</span>
+<span class="p">}</span></code></pre>
+<p>Với cây con gốc $u$ đang xét, ta sẽ dfs xuống giải bài toán với đỉnh $v$ là con trực tiếp của đỉnh $u$. Nếu giải như bài toán colquery, ở mỗi đỉnh ta sẽ lưu một cấu trúc dữ liệu map để lưu số lượng từng màu trong cây con đó. Sau đó ta sẽ gộp chúng lại để có được map chứa số lượng từng màu trong cây con gốc $u$ (Gộp các map của cây con không phải cây con lớn nhất vào map của cây con lớn nhất).</p>
+<center>
+<img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img17.png" width="400px" />
+</center>
+<p><br/></p>
+<p>Tuy nhiên, sự tối ưu của kỹ thuật này chính là ta có thể đảo thứ tự dfs và trả lời các truy vấn offline.</p>
+<center>
+<img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img16.png" width="800px" />
+</center>
+<p><br/></p>
+<p>Ta sẽ sử dụng duy nhất một mảng để đếm số lượng từng màu trong một cây con. Bằng cách nào đó, đến cuối hàm dfs của cây con gốc $u$, ta có sẽ có mảng $cnt$ với $cnt[c]$ là số lượng đỉnh có màu $c$ trong cây con gốc $u$.</p>
+<p>Do dùng chung một mảng chứ không phải lưu riêng từng cây con trong map riêng biệt, nên trước khi ta dfs xuống để giải bài toán cho các con tiếp theo, ta phải cập nhật "xóa" đi các màu của các cây con đã dfs từ trước khỏi mảng để tránh ghi đè lên đáp án. Do đó ta thấy chỉ có màu trong cây con được dfs cuối cùng là không nhất thiết phải xóa đi ngay lập tức.</p>
+<p>Gọi đỉnh $v$ có cây con lớn nhất là <code>bigChild</code>. Với ý tưởng gộp màu trong các cây con khác vào cây con <code>bigChild</code>, hay nói cách khác ta không được phép di chuyển các màu trong cây con <code>bigChild</code>, ta sẽ đảo thứ tự dfs của <code>bigChild</code> xuống cuối cùng và giữ lại các màu trong mảng mà không xóa đi. Tiếp đó ta sẽ dfs xuống các cây không phải <code>bigChild</code> chỉ để thêm lại các màu vào mảng, qua đó mà tìm được số lượng từng màu trong cây con gốc $u$. Dễ thấy bằng cách này ta đã loại bỏ hoàn toàn việc sử dụng cấu trúc dữ liệu map, qua đó mà giảm được một $\log$ trong độ phức tạp thời gian.</p>
+<p>Ta có thể thấy rõ hơn thông tin mà mảng $cnt$ lưu trữ trong quá trình sau đây:</p>
+<table>
+<thead>
+<tr>
+<th>Chú thích</th>
+<th>Minh họa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dfs xuống cây con $v_1$, lúc này trong mảng $cnt$ chứa các màu trong cây con này</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img5.png" /></td>
+</tr>
+<tr>
+<td>$v_1$ không phải <code>bigChild</code>, do đó ta xóa các màu trong cây con này ra khỏi mảng $cnt$</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img6.png" /></td>
+</tr>
+<tr>
+<td>dfs xuống cây con $v_3$, lúc này trong mảng $cnt$ chứa các màu trong cây con này</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img7.png" /></td>
+</tr>
+<tr>
+<td>$v_3$ không phải <code>bigChild</code>, do đó ta xóa các màu trong cây con này ra khỏi mảng $cnt$</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img8.png" /></td>
+</tr>
+<tr>
+<td>dfs xuống cây con $v_2$, lúc này trong mảng $cnt$ chứa các màu trong cây con này</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img9.png" /></td>
+</tr>
+<tr>
+<td>$v_2$ là <code>bigChild</code>, do đó ta giữ nguyên các màu trong cây con này trong mảng $cnt$</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img10.png" /></td>
+</tr>
+<tr>
+<td>Thêm các màu trong cây con $v_1$ vào mảng $cnt$</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img11.png" /></td>
+</tr>
+<tr>
+<td>Thêm các màu trong cây con $v_3$ vào mảng $cnt$</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img12.png" /></td>
+</tr>
+<tr>
+<td>Thêm đỉnh $u$ vào mảng $cnt$</td>
+<td><img src="https://vnoi.info/wiki/uploads/disjoint-set-union_img13.png" /></td>
+</tr>
+</tbody>
+</table>
+<p>Lúc này mảng $cnt$ đã có đủ các màu trong cây con gốc $u$ và ta có thể trả lời các truy vấn của đỉnh $u$.</p>
+<h3 class="editable"><a class="anchor" id="code-mẫu-3" href="#code-mẫu-3"></a>Code mẫu</h3>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">5e5</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">sz</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">cnt</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">res</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">// res[i] là đáp án của truy vấn thứ i</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">queries</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> 
+        <span class="c1">// cặp (a, b) trong queries[v] có nghĩa là ở đỉnh v </span>
+        <span class="c1">// có truy vấn hỏi có bao nhiêu đỉnh trong cây con có màu a </span>
+        <span class="c1">// và số thứ tự của truy vấn là b</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">pre_dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sz</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">pre_dfs</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+        <span class="n">sz</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">delta</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cnt</span><span class="p">[</span><span class="n">color</span><span class="p">[</span><span class="n">u</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">delta</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span><span class="p">)</span> <span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">delta</span><span class="p">);</span>
+<span class="p">}</span> 
+
+<span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">bigChild</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">bigChild</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">sz</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">sz</span><span class="p">[</span><span class="n">bigChild</span><span class="p">])</span> <span class="n">bigChild</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span> <span class="o">&amp;&amp;</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">bigChild</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">dfs</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">bigChild</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">dfs</span><span class="p">(</span><span class="n">bigChild</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">p</span> <span class="o">&amp;&amp;</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">bigChild</span><span class="p">)</span> <span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">cnt</span><span class="p">[</span><span class="n">color</span><span class="p">[</span><span class="n">u</span><span class="p">]]</span><span class="o">++</span><span class="p">;</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">queries</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="n">res</span><span class="p">[</span><span class="n">p</span><span class="p">.</span><span class="n">second</span><span class="p">]</span> <span class="o">=</span> <span class="n">cnt</span><span class="p">[</span><span class="n">p</span><span class="p">.</span><span class="n">first</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">signed</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">q</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">color</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">;</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">b</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">q</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">v</span><span class="p">,</span> <span class="n">c</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">v</span> <span class="o">&gt;&gt;</span> <span class="n">c</span><span class="p">;</span>
+        <span class="n">queries</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="n">pre_dfs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">dfs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">q</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="tham-khảo" href="#tham-khảo"></a>Tham khảo</h1>
+<ul>
+<li><a href="https://cp-algorithms.com/data_structures/disjoint_set_union.html">CP-Algorithms</a></li>
+<li><a href="https://codeforces.com/edu/course/2/lesson/7">Codeforces ITMO Academy: pilot course</a></li>
+<li><a href="https://codeforces.com/blog/entry/44351">Codeforces blog: DSU trên cây (Sack)</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="bài-tập" href="#bài-tập"></a>Bài tập</h1>
+<h2 class="editable"><a class="anchor" id="disjoint-set-union" href="#disjoint-set-union"></a>Disjoint Set Union</h2>
+<ul>
+<li><a href="https://codeforces.com/edu/course/2/lesson/7">Codeforces ITMO Academy: pilot course</a></li>
+<li><a href="https://codeforces.com/problemset?tags=dsu">Codeforces Problemset</a></li>
+<li><a href="https://oj.vnoi.info/problem/ilsbin">VNOJ ILSBIN</a></li>
+<li><a href="https://oj.vnoi.info/problem/upgranet">VOI 2011 Bài 6</a></li>
+<li><a href="https://oj.vnoi.info/problem/voi20bus">VOI 2020 Bài 2</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="kỹ-thuật-gộp-set" href="#kỹ-thuật-gộp-set"></a>Kỹ thuật Gộp set</h2>
+<ul>
+<li><a href="https://codeforces.com/problemset/problem/1380/E">Codeforces 1380E</a></li>
+<li><a href="https://codeforces.com/problemsets/acmsguru/problem/99999/507">SGU 507</a></li>
+<li>Các bài trong <a href="#K%E1%BB%B9-thu%E1%BA%ADt-DSU-tr%C3%AAn-c%C3%A2y">phần DSU trên cây</a>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="kỹ-thuật-dsu-trên-cây" href="#kỹ-thuật-dsu-trên-cây"></a>Kỹ thuật DSU trên cây</h2>
+<ul>
+<li><a href="https://codeforces.com/contest/208/problem/E">Codeforces 208E</a></li>
+<li><a href="https://codeforces.com/contest/246/problem/E">Codeforecs 246E</a></li>
+<li><a href="https://codeforces.com/problemset/problem/600/E">Codeforces 600E</a></li>
+<li><a href="https://codeforces.com/contest/570/problem/D">Codeforces 570D</a></li>
+<li><a href="https://oj.vnoi.info/problem/lqdrace">IOI 2011 - Race</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

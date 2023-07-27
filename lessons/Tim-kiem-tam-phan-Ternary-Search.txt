@@ -1,0 +1,86 @@
+<div id="wiki-content">
+<h1 class="pt-4">Tìm kiếm tam phân - Ternary Search</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/emaxx/">emaxx</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#tìm-kiếm-tam-phân-ternary-search">Tìm kiếm tam phân - Ternary Search</a></li><li><a href="#mở-đầu">Mở đầu</a></li><li><a href="#bài-toán">Bài toán</a></li><li><a href="#thuật-toán">Thuật toán</a><ul><li><a href="#cài-đặt">Cài đặt</a></li></ul></li><li><a href="#mở-rộng">Mở rộng</a></li><li><a href="#bài-tập-tự-luyện">Bài tập tự luyện</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="tìm-kiếm-tam-phân-ternary-search" href="#tìm-kiếm-tam-phân-ternary-search"></a>Tìm kiếm tam phân - Ternary Search</h1>
+<p>Nguồn: <a href="https://e-maxx-eng.appspot.com/num_methods/ternary_search.html">e-maxx</a></p>
+<p>Người dịch: Đỗ Thanh Lam</p>
+<h1 class="editable"><a class="anchor" id="mở-đầu" href="#mở-đầu"></a>Mở đầu</h1>
+<p>Cho một hàm F(x) chỉ có một cực trị duy nhất (unimodal). Có hai dạng hàm F(x) cơ bản:</p>
+<ul>
+<li>Phần đầu tăng chặt, đạt đến giá trị lớn nhất, sau đó giảm chặt. (concave)</li>
+</ul>
+<p><img src="http://vnoi.info/wiki/uploads/ternary_search_concave_func.png" width="200px" height="200px" /></p>
+<p>Một hàm số thoả mãn tính chất này nếu tất cả các đoạn thẳng nối 2 điểm của đồ thị hàm số, nằm "bên dưới" của đồ thị.</p>
+<ul>
+<li>Phần đầu giảm chặt, đạt đến giá trị nhỏ nhất, sau đó tăng chặt. (convex)</li>
+</ul>
+<p><img src="http://vnoi.info/wiki/uploads/ternary_search_convex_func.png" width="200px" height="200px" /></p>
+<p>Một hàm số thoả mãn tính chất này nếu tất cả các đoạn thẳng nối 2 điểm của đồ thị hàm số, đều nằm "bên trên" của đồ thị.</p>
+<p>Trong bài viết này chúng tôi sẽ giải quyết trường hợp 1, trường hợp 2 sẽ làm tương tự nhưng ngược lại.</p>
+<h1 class="editable"><a class="anchor" id="bài-toán" href="#bài-toán"></a>Bài toán</h1>
+<p>Cho một hàm $F(x)$ trong đoạn $[l, r]$ thoả mãn: $F$ tăng chặt tới một cực đại (điểm H) rồi giảm chặt. Yêu cầu tìm điểm đạt giá trị lớn nhất (điểm H).</p>
+<h1 class="editable"><a class="anchor" id="thuật-toán" href="#thuật-toán"></a>Thuật toán</h1>
+<p>Xét hai vị trí $m_1$ và $m_2$ trong đoạn $[l, r]$ sao cho $l &lt; m_1 &lt; m_2 &lt; r$. Rõ ràng cực trị có thể nằm ở 1 trong 3 phần:</p>
+<ul>
+<li>$[l, m_1]$. Khi đó, ta biết chắc chắn $F(m_1) &gt; F(m_2)$.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/ternary_search_case_1.png" /></p>
+<ul>
+<li>$[m_1, m_2]$. Ta không thể rút ra kết luận gì về $F(m_1)$ và $F(m_2)$.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/ternary_search_case_2.png" /></p>
+<ul>
+<li>$[m_2, R]$. Tương tự trường hợp đầu, ta biết chắc chắn $F(m_1) &lt; F(m_2)$.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/ternary_search_case_3.png" /></p>
+<p>Ngược lại, bằng việc so sánh $F(m_1)$ và $F(m_2)$, ta có thể rút ra kết luận như sau:</p>
+<ul>
+<li>Nếu $F(m_1) &lt; F(m_2)$: Ta biết chắc chắn H nằm trong $[m_1, r]$.</li>
+<li>$F(m_1) &gt; F(m_2)$: Ta biết chắc chắn H nằm trong $[l, m_2]$.</li>
+<li>$F(m_1) = F(m_2)$: H nằm trong $[m_1, m_2]$. (Chú ý: khi cài đặt chặt tam phân với hàm số thực, ta thường bỏ qua trường hợp này, để tránh sai số, và do trên thực tế 2 số thực hầu như không bao giờ bằng nhau).</li>
+</ul>
+<p>Do đó, dựa vào việc so sánh $F$ ở hai điểm m1, m2 ta có thể thay đổi và giảm không gian tìm kiếm $[l, r]$ xuống một khoản không gian nhỏ hơn $[l', r']$. Nếu ta chọn:</p>
+<ul>
+<li>$m_1 = l + (r - l) / 3$</li>
+<li>$m_2 = r - (r - l) / 3$</li>
+</ul>
+<p>Thì sau mỗi lần, độ lớn của đoạn $[l, r]$ giảm xuống còn $2/3$ lần.</p>
+<p>Nếu ta lặp đi lặp lại K lần, thì độ lớn của [l, r] sẽ chỉ còn $(2 / 3) ^ K$. Ví dụ với $l = -10^9, r = 10^9$, ta lặp lại $K = 100$ lần, thì đoạn [l, r] thu về chỉ còn độ dài là $(2 / 3.0) ^ {100} * (2*10^9) &lt; 5 * 10^{-9}$, đủ chính xác với hầu hết mọi bài toán.</p>
+<p>Độ phức tạp thuật toán là $O(logT)$ với T là độ chính xác mà ta cần thực hiện.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h2>
+<pre class="highlight"><code>
+<span class="kt">double</span> <span class="nf">max_f</span><span class="p">(</span><span class="kt">double</span> <span class="n">left</span><span class="p">,</span> <span class="kt">double</span> <span class="n">right</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="kt">int</span> <span class="n">N_ITER</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+
+	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N_ITER</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+		<span class="kt">double</span> <span class="n">x1</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">;</span>
+		<span class="kt">double</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">right</span> <span class="o">-</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">;</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">x2</span><span class="p">))</span> <span class="n">right</span> <span class="o">=</span> <span class="n">x2</span><span class="p">;</span>
+		<span class="k">else</span> <span class="n">left</span> <span class="o">=</span> <span class="n">x1</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">left</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+<h1 class="editable"><a class="anchor" id="mở-rộng" href="#mở-rộng"></a>Mở rộng</h1>
+<p>Tìm kiếm tam phân cũng có thể dùng để giải các bài toán trên 2D với hàm dạng $f(x, y)$ nếu hàm f là hàm lồi. Ví dụ bài <a href="https://open.kattis.com/contests/vietnam-national17-open/problems/europeantrip">E trong đề ACM ICPC Vietnam National Round 2017</a>, lời giải chi tiết <a href="https://docs.google.com/document/d/1cDQEaf_YabpefiG7PiQZErHbr7AJIFjt7IIiDv9n4N4/edit">ở đây</a>.</p>
+<h1 class="editable"><a class="anchor" id="bài-tập-tự-luyện" href="#bài-tập-tự-luyện"></a>Bài tập tự luyện</h1>
+<ul>
+<li><a href="https://www.codechef.com/problems/AMCS03">Codechef - Race time</a></li>
+<li><a href="https://www.hackerearth.com/september-circuits/algorithm/rescuer-1/">Hackerearth - Rescuer</a></li>
+<li><a href="http://www.spoj.com/problems/KOPC12A/">Spoj - Building Construction</a></li>
+<li><a href="http://codeforces.com/problemset/problem/578/C">Codeforces - Weakness and Poorness</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

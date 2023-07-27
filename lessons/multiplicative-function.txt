@@ -1,0 +1,228 @@
+<div id="wiki-content">
+<h1 class="pt-4">Hàm nhân tính</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/math/">math</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả</strong>: RR</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#1-định-nghĩa">1. Định nghĩa</a></li><li><a href="#2-ứng-dụng-1">2. Ứng dụng 1</a><ul><li><a href="#2-1-bước-1">2.1. Bước 1</a></li><li><a href="#2-2-bước-2">2.2. Bước 2</a></li><li><a href="#2-2-bước-3">2.2. Bước 3</a></li></ul></li><li><a href="#3-ứng-dụng-2">3. Ứng dụng 2</a></li><li><a href="#4-dirichlet-convolution">4. Dirichlet Convolution</a><ul><li><a href="#4-1-ví-dụ-1">4.1. Ví dụ 1</a></li><li><a href="#4-2-ví-dụ-2">4.2. Ví dụ 2</a></li><li><a href="#4-3-các-hàm-nhân-tính-thường-gặp">4.3. Các hàm nhân tính thường gặp</a></li></ul></li><li><a href="#5-tổng-kết">5. Tổng kết</a><ul><li><a href="#bài-luyện-tập">Bài luyện tập</a></li></ul></li><li><a href="#reference">Reference</a></li></ul></div>
+<p>Trong bài viết này, mình sẽ giới thiệu về hàm nhân tính cũng như ứng dụng của nó trong Competitive Programming (lập trình thi đấu).</p>
+<h1 class="editable"><a class="anchor" id="1-định-nghĩa" href="#1-định-nghĩa"></a>1. Định nghĩa</h1>
+<p>Một hàm $f(n)$, $n \in N$ được coi là <strong>hàm nhân tính</strong> (<a href="https://crypto.stanford.edu/pbc/notes/numbertheory/mult.html">Multiplicative Function</a>) nếu:
+Với mọi cặp số nguyên tố cùng nhau $n$, $m \in N$ ta có $f(mn)=f(m)f(n)$.</p>
+<p><strong>Ví dụ</strong></p>
+<p>Xét hàm $f(n)$ là số ước của $n$. Ta có:</p>
+<pre class="highlight"><code>f(1) = 1
+f(2) = 2
+f(3) = 2
+f(4) = 3
+f(5) = 2
+f(6) = 4 = f(2) * f(3)
+f(7) = 2
+f(8) = 4
+f(9) = 3
+f(10) = 4 = f(2) * f(5)
+f(12) = 6 = f(3) * f(4)
+f(18) = 6 = f(2) * f(9)</code></pre>
+<p>Ta có thể chứng minh hàm $f$ là hàm nhân tính như sau:</p>
+<ul>
+<li>Xét $m$ và $n$ nguyên tố cùng nhau.</li>
+<li>Để chứng minh $f(m * n) = f(m) * f(n)$, ta cần chứng minh 2 chiều:
+<ol>
+<li>Mỗi ước của $m * n$ ứng với 1 cặp $(a, b)$ với $a$ là ước của $m$ và $b$ là ước của $n$.
+<ul>
+<li>Điều này đúng do mỗi ước của $m * n$ ta luôn tách được thành tích của 2 số $a * b$ với $a$ là ước của $m$ và $b$ là ước của $n$.</li>
+</ul>
+</li>
+<li>Mỗi cặp $(a, b)$ với $a$ là ước của $m$ và $b$ là ước của $n$ ứng với 1 ước của $m * n$.
+<ul>
+<li>Điều này đúng do với mỗi cặp $(a, b)$ thì $a * b$ là ước của $m * n$.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p>Như vậy, $f(m * n) = f(m) * f(n)$.</p>
+<h1 class="editable"><a class="anchor" id="2-ứng-dụng-1" href="#2-ứng-dụng-1"></a>2. Ứng dụng 1</h1>
+<p>Giờ ta xét bài toán sau:</p>
+<blockquote>
+<p>Cho số N không quá 10^5. Tính tất cả các f(i) với i &lt;= N.</p>
+</blockquote>
+<p>Để làm những bài dạng này, ta sẽ có 3 bước:</p>
+<ol>
+<li>Chứng minh $f$ là hàm nhân tính.</li>
+<li>Tìm công thức cho $f(p^k)$ với p là số nguyên tố.</li>
+<li>Dùng sàng để tính $f$ trong $O(N*logN)$.</li>
+</ol>
+<p>Nếu bạn chưa biết sàng có thể đọc <a class="internal absent" href="https://vnoi.info/wiki/translate/topcoder/Mathematics-for-Topcoders">ở đây</a>.</p>
+<h2 class="editable"><a class="anchor" id="2-1-bước-1" href="#2-1-bước-1"></a>2.1. Bước 1</h2>
+<p>Như đã chứng minh ở phần trước, $f$ là hàm nhân tính.</p>
+<h2 class="editable"><a class="anchor" id="2-2-bước-2" href="#2-2-bước-2"></a>2.2. Bước 2</h2>
+<p>Với một số nguyên tố $p$, ta có $f(p^k) = k + 1$, do các ước của $p^k$ là $1, p, p^2, …, p^k$.</p>
+<h2 class="editable"><a class="anchor" id="2-2-bước-3" href="#2-2-bước-3"></a>2.2. Bước 3</h2>
+<p>Đầu tiên, ta dùng sàng để:</p>
+<ol>
+<li>Biết được số nào là số nguyên tố.</li>
+<li>Với mỗi số không phải nguyên tố, tìm được 1 ước nguyên tố.</li>
+<li>Từ 2, ta nhanh chóng kiểm tra được 1 số có dạng $p^k$ hay không.</li>
+</ol>
+<p>Như vậy, ta có thể cài đặt như sau:</p>
+<pre class="highlight"><code><span class="k">const</span> <span class="kt">int</span> <span class="n">MN</span> <span class="o">=</span> <span class="mf">1e6</span> <span class="o">+</span> <span class="mi">11</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">sieve</span><span class="p">[</span><span class="n">MN</span><span class="p">];</span>         <span class="c1">// Sàng số nguyên tố. Sau khi sàng:</span>
+                       <span class="c1">// - sieve[i] = 0 nếu i là số nguyên tố</span>
+                       <span class="c1">// - ngược lại sieve[i] = một ước bất kỳ của i.</span>
+<span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pk</span><span class="p">[</span><span class="n">MN</span><span class="p">];</span>  <span class="c1">// Nếu i có dạng p^k, pk[i] = {p, k}.</span>
+                       <span class="c1">// Ngược lại, pk[i] = {-1, 0}</span>
+<span class="kt">int</span> <span class="n">ndiv</span><span class="p">[</span><span class="n">MN</span><span class="p">];</span>          <span class="c1">// ndiv[i] = Số ước của i.</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Sàng số nguyên tố</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">1000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>  <span class="c1">// số không nguyên tố có 1 ước &lt;= 10^3.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sieve</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="mi">1000000</span><span class="p">;</span> <span class="n">j</span> <span class="o">+=</span> <span class="n">i</span><span class="p">)</span>
+                <span class="n">sieve</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="n">ndiv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">1000000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sieve</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
+            <span class="c1">// i là số nguyên tố.</span>
+            <span class="n">pk</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_pair</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="n">ndiv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="n">sieve</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>  <span class="c1">// p là ước bất kỳ của i.</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">pk</span><span class="p">[</span><span class="n">i</span><span class="o">/</span><span class="n">p</span><span class="p">].</span><span class="n">first</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// i = p^k</span>
+                <span class="n">pk</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_pair</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pk</span><span class="p">[</span><span class="n">i</span><span class="o">/</span><span class="n">p</span><span class="p">].</span><span class="n">second</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                <span class="n">ndiv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pk</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">second</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// ndiv[p^k] = k+1.</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="n">pk</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_pair</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+                <span class="c1">// Phân tích i = u*v, với gcd(u, v) = 1.</span>
+                <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">while</span> <span class="p">(</span><span class="n">u</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">u</span> <span class="o">/=</span> <span class="n">p</span><span class="p">;</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">p</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="n">ndiv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndiv</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">*</span> <span class="n">ndiv</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<h1 class="editable"><a class="anchor" id="3-ứng-dụng-2" href="#3-ứng-dụng-2"></a>3. Ứng dụng 2</h1>
+<p>Ta xét bài toán sau:</p>
+<blockquote>
+<p>Cho số N không quá 10^12. Tính f(N)</p>
+</blockquote>
+<p>Chú ý ở bài toán trước ta cần tính nhiều giá trị của $f(N)$ với $N$ nhỏ, còn trong bài này ta chỉ cần tính duy nhất 1 giá trị của $f(N)$ với $N$ lớn.</p>
+<p>Cũng như trên, ta sẽ làm theo 3 bước chính:</p>
+<ol>
+<li>Chứng minh $f$ là hàm nhân tính.</li>
+<li>Tìm công thức cho $f(p^k)$ với p là số nguyên tố.</li>
+<li>Phân tích $N$ thành thừa số nguyê tố để tính $f(N)$ trong $O(sqrt(N))$.</li>
+</ol>
+<p>Vì 2 bước đầu giống hệt phần trước nên mình sẽ không nhắc lại.</p>
+<p>Ở bước 3, bạn chỉ cần xét tất cả các số từ 1 đến $sqrt(N)$, từ đó phân tích được thành thừa số nguyên tố. Code như sau:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// kết quả</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span><span class="o">*</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// i là ước nguyên tố của n</span>
+    <span class="c1">// (nếu i không nguyên tố, và có ước p, thì ở bước trước đó,</span>
+    <span class="c1">// ta đã chia n cho p đến khi n không chia hết cho p).</span>
+    <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="c1">// u = i^k là luỹ thừa lớn nhất của i mà là ước của n.</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">n</span> <span class="o">/=</span> <span class="n">i</span><span class="p">;</span>
+      <span class="n">u</span> <span class="o">=</span> <span class="n">u</span> <span class="o">*</span> <span class="n">i</span><span class="p">;</span>
+      <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// giá trị hiện tại của n là số nguyên tố</span>
+  <span class="n">res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="4-dirichlet-convolution" href="#4-dirichlet-convolution"></a>4. Dirichlet Convolution</h1>
+<p>Việc chứng minh trực tiếp một hàm là hàm nhân tính như ví dụ về hàm số ước ở trên không hề đơn giản. Chẳng hạn, bạn hãy thử chứng minh hàm $f(n)$ là hàm nhân tính với $f(n)$ là tổng các ước của số $n$. Dĩ nhiên bạn có thể chứng minh trâu bò bằng cách viết ra một đống công thức, tuy nhiên ở mục này mình sẽ hướng dẫn các bạn một phương pháp kỳ diệu hơn.</p>
+<p>Với 2 hàm $f$ và $g$ là hàm nhân tính, ta có một hàm nhân tính mới $f \times g$:</p>
+<div class="kdmath">$$
+(f \times g)(n) = \sum_{d_1 * d_2=n}{f(d_1) * g(d_2)}
+$$</div>
+<p>Một cách biểu diễn khác là:</p>
+<div class="kdmath">$$
+(f \times g)(n) = \sum_{d | n}{f(d) * g(n/d)}
+$$</div>
+<p>Các bạn chú ý kí hiệu $d | n$ nghĩa là $n$ chia hết cho $d$.</p>
+<p><strong>Chứng minh</strong></p>
+<p>Xét $a$ và $b$ nguyên tố cùng nhau. Mỗi ước $d$ của $ab$ có thể phân tích duy nhất dưới dạng $d = rs$ trong đó $r | a$ và $s | b$, do $gcd(a, b) = 1$.</p>
+<p>Do đó:</p>
+<p>$(f \times g)(ab)$</p>
+<p>$= \sum_{r|a, s|b}{f(rs) g(ab/rs)}$</p>
+<p>$ = \sum_{r|a, s|b}{f(r) f(s) g(a/r) g(b/s)}$</p>
+<p>$ = \sum_{r|a}{f(r) g(a/r)} \sum_{s|b}{f(s) g(b/s)}$</p>
+<p>$ = (f \times g)(a) (f \times g)(b)$</p>
+<p>Như vậy, $(f \times g)$ cũng là hàm nhân tính.</p>
+<p>Để hiểu thêm về Dirichlet Convolution, ta xét vài ví dụ:</p>
+<h2 class="editable"><a class="anchor" id="4-1-ví-dụ-1" href="#4-1-ví-dụ-1"></a>4.1. Ví dụ 1</h2>
+<p>Xét hàm $f(n) = 1$ và $g(n) = 1$. Rõ ràng $f$ và $g$ đều là hàm nhân tính.</p>
+<div class="kdmath">$$
+(f \times g)(n) = \sum_{d | n}{f(d) * g(n/d)} = \sum_{d | n}{1}
+$$</div>
+<p>Như vậy $(f * g)(n)$ là số ước của số $n$ và là hàm nhân tính.</p>
+<h2 class="editable"><a class="anchor" id="4-2-ví-dụ-2" href="#4-2-ví-dụ-2"></a>4.2. Ví dụ 2</h2>
+<p>Xét hàm $f(n) = n$ và $g(n) = 1$. Rõ ràng $f$ và $g$ đều là hàm nhân tính.</p>
+<div class="kdmath">$$
+(f \times g)(n) = \sum_{d | n}{f(d) * g(n/d)} = \sum_{d | n}{d}
+$$</div>
+<p>Như vậy $(f \times g)(n)$ là tổng các ước của $n$ và là hàm nhân tính.</p>
+<p>Tổng quát hơn, với hằng số $k$ bất kỳ, hàm $f(n) = \sum_{d | n}{d^k}$ là hàm nhân tính.</p>
+<h2 class="editable"><a class="anchor" id="4-3-các-hàm-nhân-tính-thường-gặp" href="#4-3-các-hàm-nhân-tính-thường-gặp"></a>4.3. Các hàm nhân tính thường gặp</h2>
+<p>Sau đây là các hàm nhân tính thường gặp. Bạn có thể thử chứng minh những hàm này là hàm nhân tính dựa theo định nghĩa hoặc Dirichlet Convolution. Việc nắm được những hàm này sẽ giúp thuận lợi hơn trong việc gỉai những bài liên quan đến hàm nhân tính.</p>
+<ul>
+<li>$I(n) = 1$, hàm $f$ luôn bằng 1 với tất cả các giá trị của $n$.</li>
+<li>$id(n) = n$</li>
+<li>$id_k(n) = n^k$</li>
+<li>$gcd(n, k)$ với k là hằng số</li>
+<li>$phi(n)$: số số nguyên tố cùng nhau với $n$ và nhỏ hơn hoặc bằng $n$ (Phi hàm Euler)</li>
+<li>$mobius(n)$: Hàm mobius thường được dùng trong các bài toán đếm sử dụng nguyên lý bù trừ:
+<ul>
+<li>Nếu $n$ có ước là số chính phương khác 1, $mobius(n) = 0$.</li>
+<li>Nếu $n$ có lẻ ước nguyên tố, $mobius(n) = -1$.</li>
+<li>Nếu $n$ có chẵn ước nguyên tố, $mobius(n) = 1$. Chú ý $mobius(1) = 1$.</li>
+</ul>
+</li>
+<li>$f(n) = \sum_{d |n}{d}$ là tổng các ước của $n$.</li>
+<li>$f_k(n) = \sum_{d | n}{d^k}$ với $k$ là hằng số.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="5-tổng-kết" href="#5-tổng-kết"></a>5. Tổng kết</h1>
+<p>Như vậy, nếu bạn chứng minh được một hàm $f$ là hàm nhân tính, và tìm được công thức $O(1)$ cho $f(p^k)$ thì sẽ dễ dàng tính được tất cả các giá trị $f(i), i \le N$ trong $O(N*logN)$.</p>
+<p>Bạn cũng nên nắm được những hàm nhân tính thường gặp, từ đó giúp nhận dạng bài toán dễ dàng hơn.</p>
+<h2 class="editable"><a class="anchor" id="bài-luyện-tập" href="#bài-luyện-tập"></a>Bài luyện tập</h2>
+<ul>
+<li><a href="https://oj.vnoi.info/problem/gcdsum/">VNOJ - GCDSUM</a></li>
+</ul>
+<p>Gợi ý: Xét $f(n) = \sum_{1 \le i \le n}{gcd(n, i)}$.</p>
+<ul>
+<li><a href="http://codeforces.com/contest/757/problem/E">CF #391 - E</a></li>
+</ul>
+<p>Gợi ý: Tìm cách bỏ phép cộng trong công thức của $f_r(n)$.</p>
+<ul>
+<li><a href="http://codeforces.com/contest/776/problem/E">CF #400 - E</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="reference" href="#reference"></a>Reference</h1>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Multiplicative_function">Wikipedia</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

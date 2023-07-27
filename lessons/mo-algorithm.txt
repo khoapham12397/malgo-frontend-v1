@@ -1,0 +1,161 @@
+<div id="wiki-content">
+<h1 class="pt-4">Chia căn (sqrt decomposition) và ứng dụng: Phần 2</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/data-structures/">data-structures</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả</strong>: Nguyễn <em>RR</em> Thành Trung</p>
+<p>Tiếp nối chuỗi bài viết về các thuật toán chia căn, trong bài viết này chúng ta sẽ bàn về kĩ thuật tăng tốc độ trả lời truy vấn bằng cách sắp xếp chúng theo một thứ tự nhất định, còn gọi là <strong>Mo's algorithm</strong>.</p>
+<h1 class="editable"><a class="anchor" id="bài-toán" href="#bài-toán"></a>Bài toán</h1>
+<p>Cho một dãy số $A$ gồm $N$ phần tử. Cần thực hiện $Q$ truy vấn, mỗi truy vấn $(i, j)$ yêu cầu tìm $mode(A_i, …, A_j)$. (Mode của một tập hợp là giá trị xuất hiện nhiều lần nhất trong tập hợp đó). Giới hạn: $N, Q, A_i \le 10^5$.</p>
+<p>Khi đọc đề một bài toán truy vấn kiểu này, có lẽ CTDL đầu tiên mà các bạn nghĩ đến là Interval Tree. Nhưng có điều gì đó không ổn trong bài này: Khi có thông tin của 2 nút con $[l, mid]$ và $[mid+1, r]$, rất khó để tìm được bất kỳ thông tin hữu ích nào của $[l, r]$.</p>
+<h1 class="editable"><a class="anchor" id="duyệt" href="#duyệt"></a>Duyệt</h1>
+<p>Chúng ta xuất phát từ thuật toán duyệt hồn nhiên như sau:</p>
+<ul>
+<li>Với mỗi truy vấn, ta for từ trái sang phải, đếm số lần xuất hiện.</li>
+<li>Trong khi đếm thì ta cập nhật kết quả.</li>
+</ul>
+<p>Code đơn giản như sau:</p>
+<pre class="highlight"><code><span class="n">function</span> <span class="n">mode</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span><span class="o">:</span>
+  <span class="c1">// Khởi tạo mảng count = toàn 0</span>
+  <span class="n">res</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="n">l</span> <span class="p">..</span> <span class="n">r</span><span class="o">:</span>
+    <span class="n">count</span><span class="p">[</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="n">or</span> <span class="n">count</span><span class="p">[</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="n">count</span><span class="p">[</span><span class="n">res</span><span class="p">]</span><span class="o">:</span>
+      <span class="n">res</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">;</span></code></pre>
+<p>Dễ thấy, thuật toán duyệt này có độ phức tạp $O(N * Q)$. Có 2 lý do chính khiến thuật toán này chạy chậm:</p>
+<ol>
+<li>Khởi tạo mảng count mỗi lần mất $O(N)$.</li>
+<li>Với mỗi truy vấn, phải tính lại mảng count từ đầu.</li>
+</ol>
+<p>Ta có thể cải tiến được như sau:</p>
+<p>Sau khi trả lời truy vấn $[l_1, r_1]$, để trả lời truy vấn $[l_2, r_2]$, bạn chỉ cần thay đổi mảng đếm một cách phù hợp. Cụ thể:</p>
+<ul>
+<li>Nếu $l_2 &gt; l_1$, giảm số lần xuất hiện của $A_{l_1}, …, A_{l_2-1}$</li>
+<li>Nếu $l_2 &lt; l_1$, tăng số lần xuất hiện của $A_{l_2}, …, A_{l_1-1}$</li>
+<li>Tương tự với $r_1$ và $r_2$.</li>
+</ul>
+<p>Để cập nhật số lần xuất hiện lớn nhất thì có thể dùng thêm set.</p>
+<p>Như vậy, độ phức tạp của ta là tổng $|l_i - l_{i-1}| + |r_i - r_{i-1}|$, nhân thêm $\mathcal{O}(logN)$ để đếm và tìm phần tử lớn nhất của mảng đếm.</p>
+<h1 class="editable"><a class="anchor" id="thuật-toán-mo" href="#thuật-toán-mo"></a>Thuật toán Mo</h1>
+<p>Thuật toán Mo là một cách sắp xếp lại các truy vấn, sao cho tổng $|l_i - l_{i-1}| + |r_i - r_{i-1}|$ không quá $O(N * \sqrt{N} + Q * \sqrt{N})$.</p>
+<p>Thứ tự các truy vấn được định nghĩa qua hàm so sánh dưới đây.</p>
+<pre class="highlight"><code><span class="n">S</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">);</span>
+<span class="kt">bool</span> <span class="nf">cmp</span><span class="p">(</span><span class="n">Query</span> <span class="n">A</span><span class="p">,</span> <span class="n">Query</span> <span class="n">B</span><span class="p">)</span> <span class="c1">// so sánh 2 truy vấn</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">l</span> <span class="o">/</span> <span class="n">S</span> <span class="o">!=</span> <span class="n">B</span><span class="p">.</span><span class="n">l</span> <span class="o">/</span> <span class="n">S</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">A</span><span class="p">.</span><span class="n">l</span> <span class="o">/</span> <span class="n">S</span> <span class="o">&lt;</span> <span class="n">B</span><span class="p">.</span><span class="n">l</span> <span class="o">/</span> <span class="n">S</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">A</span><span class="p">.</span><span class="n">r</span> <span class="o">&lt;</span> <span class="n">B</span><span class="p">.</span><span class="n">r</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Ta chia dãy thành các block (nhóm) độ dài $S = \sqrt{N}$.</li>
+<li>Nếu đầu trái của truy vấn nằm ở 2 block khác nhau, ta sắp xếp theo đầu trái.</li>
+<li>Ngược lại (đầu trái của truy vấn nằm ở cùng 1 block), ta sắp xếp theo đầu phải.</li>
+</ul>
+<p><strong>Chứng minh</strong>:</p>
+<p>Mo's algorithm có độ phức tạp là $O(N * \sqrt{N} + Q * \sqrt{N})$. Để hiểu tại sao độ phức tạp của thuật toán đạt được như vậy, chúng ta hãy cùng xem việc di chuyển các đoạn $[l_1,r_1]$ thành $[l_2,r_2]$:</p>
+<ul>
+<li>Di chuyển $l_1 \rightarrow l_2$:
+<ul>
+<li>Nếu $l_1$ và $l_2$ cùng block: Với mỗi thao tác, độ phức tạp không quá $\sqrt{N}$. Do đó, độ phức tạp trong trường hợp này của cả $Q$ thao tác là $O(Q * \sqrt{N})$.</li>
+<li>Nếu $l_1$ và $l_2$ khác block: Vì ta ưu tiên sort theo block chứa $l$, nên trường hợp này xảy ra không quá $\sqrt{N}$ lần. Ở trường hợp này, ta mất độ phức tạp tối đa là $O(N)$, nên với tất cả các thao tác, độ phức tạp là $O(N * \sqrt{N})$.</li>
+</ul>
+</li>
+<li>Di chuyển $r_1 \rightarrow r_2$:
+<ul>
+<li>Nếu $l_1$ và $l_2$ cùng block: Vì trong cùng một block $r$ được sắp xếp tăng dần, nên với mỗi block của $l$, ta chỉ mất độ phức tạp tổng là $O(N)$. Do có $\sqrt{N}$ block khác nhau của $l$, nên tổng độ phức tạp trong trường hợp này là $O(N * \sqrt{N})$.</li>
+<li>Nếu $l_1$ và $l_2$ khác block: Như trên đã phân tích, ta chỉ có $\sqrt{N}$ lần đổi block, mỗi lần đổi block ta mất độ phức tạp $O(N)$ để di chuyển $r$. Do đó tổng độ phức tạp của trường hợp này là $O(N * \sqrt{N})$.</li>
+</ul>
+</li>
+</ul>
+<p>Vậy, độ phức tạp là $O(N * \sqrt{N} + Q * \sqrt{N})$.</p>
+<h1 class="editable"><a class="anchor" id="áp-dụng" href="#áp-dụng"></a>Áp dụng</h1>
+<p>Sử dụng Mo's Algorithm, bạn đã có thể thu được một thuật toán hoàn chỉnh cho bài này với độ phức tạp $O(N * \sqrt{N} + Q * \sqrt{N})$:</p>
+<ul>
+<li>Sort tất cả các truy vấn theo Mo's Algorithm.</li>
+<li>Gọi $S(N)$ là một mảng gồm $N$ set (có thể cài bằng hash table (bảng băm)). $S(i)$ chứa tất cả các số xuất hiện đúng $i$ lần.</li>
+<li>Gọi $A(val)$ = số lần xuất hiện của val.</li>
+<li>Đặt $max$ là chỉ số lớn nhất của mảng $S$ mà $S(max)$ khác rỗng.</li>
+<li>Ta sẽ thêm và xóa một số trong O(1) như sau:
+<ul>
+<li>Thêm 1 số $v$:
+<ul>
+<li>Xóa $v$ khỏi $S(A(v))$.</li>
+<li>Tăng $A(v)$ thêm 1.</li>
+<li>Thêm $v$ vào $S(A(v))$.</li>
+<li>Nếu $A(v) &gt; max$, cập nhật $max$.</li>
+</ul>
+</li>
+<li>Xóa 1 số $v$:
+<ul>
+<li>Xóa $v$ khỏi $S(A(v))$.</li>
+<li>Giảm $A(v)$ đi 1.</li>
+<li>Thêm $v$ vào $S(A(v))$.</li>
+<li>Nếu $S(max)$ rỗng, giảm $max$ đi 1.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Vì tổng các thao tác thêm và xóa khi áp dụng Mo's Algorithm không quá $O(N * \sqrt{N} + Q * \sqrt{N})$, ta thu được một thuật toán với độ phức tạp này.</p>
+<h1 class="editable"><a class="anchor" id="mở-rộng" href="#mở-rộng"></a>Mở rộng</h1>
+<p>Với mục đích làm bài toán khó hơn, ta xét trường hợp mà CTDL của ta chỉ cho phép thực hiện đúng 2 thao tác:</p>
+<ul>
+<li>
+<strong>Insert</strong>: Thêm 1 phần tử vào CTDL, thao tác này có độ phức tạp là $O(logN)$ hoặc $O(1)$.</li>
+<li>
+<strong>Snapshot</strong>: Lưu lại trạng thái hiện tại của CTDL. Thao tác này có độ phức tạp $O(N)$.</li>
+<li>
+<strong>Rollback</strong>: Hồi phục lại trạng thái của CTDL ở lần Snapshot cuối. Thao tác này cũng có độ phức tạp là $O(N)$.</li>
+</ul>
+<p>Một ví dụ của CTDL loại này là Disjoint set, và việc xử lý truy vấn xuất hiện trong bài toán Codechef - GERALD07.</p>
+<p>Cách làm vẫn là áp dụng Mo's algorithm, tuy nhiên vì không thể xóa phần tử, nên ta không thể di chuyển từ $l_1$ sang $l_2$ một cách dễ dàng được.</p>
+<p>Để đơn giản, chúng ta chỉ xét những truy vấn $[l, r]$ mà $l$ và $r$ rơi vào 2 block khác nhau. Để giải quyết việc không di chuyển ngược được, sau khi trả lời truy vấn $[l, r]$, chúng ta cần dùng Rollback để đưa l về cuối block chứa l. Sau đó, khi trả lời truy vấn $[l_2, r_2]$, chúng ta chỉ cần thực hiện Insert từ $r+1$ đến $r_2$ và từ $l_2$ đến cuối block chứa $l_2$.</p>
+<p>Chi tiết cài đặt:</p>
+<pre class="highlight"><code> <span class="n">rt</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+ <span class="n">init</span><span class="p">();</span>  <span class="c1">// this initializes our data structure (clears it)</span>
+ <span class="n">snapshot</span><span class="p">();</span>
+ <span class="k">for</span> <span class="n">all</span> <span class="n">queries</span> <span class="n">q</span>
+     <span class="k">if</span> <span class="n">q</span><span class="p">.</span><span class="n">r</span> <span class="o">-</span> <span class="n">q</span><span class="p">.</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">rt</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1">// we process light queries</span>
+         <span class="k">for</span> <span class="n">j</span> <span class="o">:=</span> <span class="n">q</span><span class="p">.</span><span class="n">l</span> <span class="n">to</span> <span class="n">q</span><span class="p">.</span><span class="n">r</span>
+             <span class="nf">insert</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
+         <span class="n">store</span> <span class="n">answer</span> <span class="k">for</span> <span class="n">query</span> <span class="n">q</span><span class="p">;</span>
+         <span class="n">rollback</span><span class="p">();</span>
+ <span class="n">last_bucket</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+ <span class="k">for</span> <span class="n">all</span> <span class="n">queries</span> <span class="n">q</span> 
+     <span class="k">if</span> <span class="n">q</span><span class="p">.</span><span class="n">r</span> <span class="o">-</span> <span class="n">q</span><span class="p">.</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">rt</span> <span class="o">+</span> <span class="mi">1</span><span class="o">:</span> <span class="k">continue</span><span class="p">;</span>
+     <span class="n">bucket</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">l</span> <span class="o">/</span> <span class="n">rt</span><span class="p">;</span>
+
+     <span class="k">if</span> <span class="n">bucket</span> <span class="o">!=</span> <span class="n">last_bucket</span>
+         <span class="nf">init</span><span class="p">();</span>
+         <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="n">bucket</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">rt</span><span class="p">;</span> <span class="c1">// right border of the bucket</span>
+         <span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">r</span><span class="p">;</span>
+         <span class="k">for</span> <span class="n">j</span> <span class="o">:=</span> <span class="n">l</span> <span class="n">to</span> <span class="n">r</span>
+             <span class="nf">insert</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
+     <span class="n">last_bucket</span> <span class="o">=</span> <span class="n">bucket</span><span class="p">;</span>
+
+     <span class="k">while</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">q</span><span class="p">.</span><span class="n">r</span> 
+         <span class="nf">insert</span><span class="p">(</span><span class="o">++</span><span class="n">r</span><span class="p">);</span>
+     <span class="n">snapshot</span><span class="p">();</span>
+     <span class="k">for</span> <span class="n">j</span> <span class="o">:=</span> <span class="n">q</span><span class="p">.</span><span class="n">l</span> <span class="n">to</span> <span class="n">l</span> <span class="o">-</span> <span class="mi">1</span>
+         <span class="nf">insert</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
+     <span class="n">store</span> <span class="n">answer</span> <span class="k">for</span> <span class="n">query</span> <span class="n">q</span><span class="p">;</span>
+     <span class="n">rollback</span><span class="p">();</span></code></pre>
+<h1 class="editable"><a class="anchor" id="cải-tiến" href="#cải-tiến"></a>Cải tiến</h1>
+<p>Các bạn có thể đọc thêm về cách cải tiến tốc độ chạy của Mo sử dụng TSP và Hilbert curve <a href="https://codeforces.com/blog/entry/61203">tại đây</a>.</p>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng</h1>
+<ul>
+<li><a href="http://codeforces.com/contest/86/problem/D">Codeforces Yandex 2011 Round 2 - D</a></li>
+<li><a href="https://www.codechef.com/problems/GERALD07">Codechef - GERALD07</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

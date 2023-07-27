@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { useNavigate, useParams } from 'react-router-dom';
+import { MathJax } from 'better-react-mathjax';
 import parse from 'html-react-parser';
 
 import { Button, Form } from 'react-bootstrap';
 import '../SingleCodingProblem/style.css';
 import { Editor, loader } from '@monaco-editor/react';
-     
+
 import { languages } from './Constants/LanguageOptions';
 import './CodingProblem.css';
 import api from '../../config/axios2';
@@ -15,6 +15,7 @@ import { toast } from 'react-hot-toast';
 import { SubmissionList } from '../../components/SubmissonList/SubmissionList';
 import { CodingProblemSolTab } from '../../components/CodingProblemSolTab/CodingProblemSolTab';
 import { formatMathExpr } from '../../utils/utils';
+import { ShareButton } from '../../components/ShareButton/ShareButton';
 
 export const CodingProblemV3 = () => {
   const { id: problemId } = useParams();
@@ -24,8 +25,11 @@ export const CodingProblemV3 = () => {
   const [language, setLanguage] = useState<number>(8);
   const [mode, setMode] = useState('description');
   const [cntSubmision, setCntSubmission] = useState(0);
+  const [inContest, setInContest] = useState(false);
+  const navigate = useNavigate();
 
   loader.init().then(monaco => {
+
     import('monaco-themes/themes/Oceanic Next.json').then((data: any) => {
       monaco.editor.defineTheme('darkTheme', data);
       if (theme == '') setTheme('darkTheme');
@@ -37,81 +41,99 @@ export const CodingProblemV3 = () => {
   });
 
   const handleChangeMode = (mode: string) => {
-    console.log(`change to mode {mode}`);
+    //console.log(`change to mode {mode}`);
     setMode(mode);
-    
   };
 
   useEffect(() => {
-    const url = import.meta.env.VITE_API_URL+ 'codingproblem/problem/' + problemId;
+    const url =
+      import.meta.env.VITE_API_URL + 'codingproblem/problem/' + problemId;
     fetch(url)
       .then(res => res.json())
       .then(result => {
         const problem: CodingProblem = result.data;
         setProblem(problem);
+        if(problem.contest){
+          const startTime = (new Date(problem.contest.startTime)).toString();
+          if(startTime > Date.now().toString() && startTime + problem.contest.duration * 1000 > Date.now().toString()){
+            console
+            setInContest(true);
+          }
+        }
         //let lst: Array<string> = [];
       });
-      setMode('description');
-
+    setMode('description');
   }, [problemId]);
-  
+
   const handleChangeLanguage = (e: any) => {
-    console.log(languages[e.currentTarget.value]);
+    //console.log(languages[e.currentTarget.value]);
     setLanguage(parseInt(e.currentTarget.value));
   };
 
   const handleEditorDidMount = (editor: any, monaco: any) => {
     editorRef.current = editor;
   };
-  
+
   const handleChangeTheme = () => {
     if (theme == 'darkTheme') setTheme('lightTheme');
     else setTheme('darkTheme');
   };
 
-  const checkProlemInLiveContest = ()=>{
-    if(!problem ) return false;
-    if(!problem.contest) return false;
-    return Date.now() < ((new Date(problem.contest.startTime)).getTime() + problem.contest.duration*1000);
-  }
+  const checkProlemInLiveContest = () => {
+    if (!problem) return false;
+    if (!problem.contest) return false;
+    return (
+      Date.now() <
+      new Date(problem.contest.startTime).getTime() +
+        problem.contest.duration * 1000
+    );
+  };
 
   const handleSubmit = async () => {
-    if(!problem) return;
-    const sourceCode =  btoa(editorRef.current.getValue());
+    if (!problem) return;
+    const sourceCode = btoa(editorRef.current.getValue());
     const languageId = languages[language].id;
     const username = getUsernameFromStorage();
-    
-    if(!username) {
-        toast.error("You haven't logined");
-        return;
+
+    if (!username) {
+      toast.error("You haven't logined");
+      return;
     }
     const url = '/submission/submit';
-    
-    let data:any = { 
+
+    let data: any = {
       username: getUsernameFromStorage(),
       problemId: problemId,
       sourceCode: sourceCode,
       language: languageId
-    }
+    };
 
-    if(problem.contest && checkProlemInLiveContest()){
+    if (problem.contest && checkProlemInLiveContest()) {
       data.contestId = problem.contest.id;
       data.maxScore = problem.totalPoint;
-      data.penaltyTime = (Date.now() - (new Date(problem.contest.startTime)).getTime())/1000;
+      data.penaltyTime =
+        (Date.now() - new Date(problem.contest.startTime).getTime()) / 1000;
     }
-    
-    api.post(url, data)
-    .then(result=>{
-      setCntSubmission(cntSubmision+1);
-      setMode('submission');
-    })
-    .catch(error=>{
-      toast.error(error.response.data.message);
-    })
+
+    api
+      .post(url, data)
+      .then(result => {
+        setCntSubmission(cntSubmision + 1);
+        setMode('submission');
+      })
+      .catch(error => {
+        toast.error(error.response.data.message);
+      });
   };
-  
+  const handleNavigateContestPage = () =>{
+    if(problem?.contestId) 
+    navigate(`/singlecontest/${problem.contestId}`);
+
+  }
   return (
-    <div style={{ overflowY: 'hidden',height: '100%',width:'100%', position:'fixed',backgroundColor:'white' }}>
+    <div
+      style={{ width: '100%', backgroundColor: 'white', marginBottom: '20px' }}
+    >
       <div className='d-flex'>
         <div className='left-side'>
           <div style={{ display: 'flex', width: '100%' }}>
@@ -120,7 +142,7 @@ export const CodingProblemV3 = () => {
               className={mode == 'description' ? 'tab-ctl-active' : 'tab-ctl'}
             >
               Description
-            </div>
+            </div>         
             <div
               onClick={() => handleChangeMode('solution')}
               className={mode == 'solution' ? 'tab-ctl-active' : 'tab-ctl'}
@@ -131,30 +153,45 @@ export const CodingProblemV3 = () => {
               onClick={() => handleChangeMode('submission')}
               className={mode == 'submission' ? 'tab-ctl-active' : 'tab-ctl'}
             >
-                Submission
+              Submission
             </div>
           </div>
 
           {mode == 'description' ? (
-            <div id='description' style={{ padding: '10px' ,fontFamily:'arial'}}>
-              <h2>{problem != null ? problem.title : ''}</h2>
-              <MathJaxContext>
-                <MathJax dynamic>
-                  {problem == null
-                    ? ''
-                    : parse(formatMathExpr(problem.description))}
-                </MathJax>
-                <MathJax></MathJax>
-              </MathJaxContext>
+            <div
+              id='description'
+              style={{ padding: '10px', fontFamily: 'arial' }}
+            >
+              <div className='space-between'>
+                <h2>{problem != null ? problem.title : ''}</h2>
+                {problem ? (
+                  <ShareButton
+                    resource={{
+                      id: problem.id,
+                      link: '/algorithm/' + problem.id,
+                      title: problem.title,
+                      type: 'algorithm',
+                      summary: 'Click to see detail'
+                    }}
+                  />
+                ) : (
+                  ''
+                )}
+              </div>
+              <MathJax dynamic>
+                {problem == null
+                  ? ''
+                  : parse(formatMathExpr(problem.description))}
+              </MathJax>
             </div>
-          ) : (
-            mode=='submission'?
+          ) : mode == 'submission' ? (
             <SubmissionList
-                problemId= {problemId} 
-                problemTitle = {problem?problem.title:undefined}
-                cnt = {cntSubmision}
-                />
-            :<CodingProblemSolTab problem={problem}/>
+              problemId={problemId}
+              problemTitle={problem ? problem.title : undefined}
+              cnt={cntSubmision}
+            />
+          ) : (
+            <CodingProblemSolTab problem={problem} />
           )}
         </div>
 
@@ -189,7 +226,6 @@ export const CodingProblemV3 = () => {
 
           <div style={{ marginTop: '10px' }}>
             <Editor
-              
               height={'81vh'}
               defaultValue='#include&lt;bits/stdc++.h&gt;'
               language={languages[language].value}
@@ -202,6 +238,8 @@ export const CodingProblemV3 = () => {
             />
           </div>
           <div className='btn-area'>
+            {inContest?<Button className='btn btn-secondary btn-control'onClick={handleNavigateContestPage} >To Contest</Button>:<div/>}
+
             <Button className='btn btn-secondary btn-control'>Run</Button>
             <Button
               onClick={handleSubmit}
@@ -210,6 +248,7 @@ export const CodingProblemV3 = () => {
               Submit
             </Button>
           </div>
+          
         </div>
       </div>
     </div>

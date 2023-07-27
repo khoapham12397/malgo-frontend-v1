@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=utf-8">
+<meta name="MobileOptimized" content="width">
+<meta name="HandheldFriendly" content="true">
+<meta name="viewport" content="width=device-width">
+
+
+<div class="markdown-body">
+    <p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#1-ctdl-lưu-trữ">1. CTDL Lưu trữ</a><ul><li><a href="#1-1-mảng-array-danh-sách-liên-kết-linked-list">1.1. Mảng (array), danh sách liên kết (linked list)</a></li><li><a href="#1-2-stack-queue-deque">1.2. Stack, Queue, Deque</a><ul><li><a href="#1-2-1-stack">1.2.1. Stack</a></li><li><a href="#1-2-2-queue">1.2.2. Queue</a></li><li><a href="#1-2-3-deque">1.2.3. Deque</a></li></ul></li><li><a href="#1-3-priority-queue-heap">1.3. Priority Queue - Heap</a></li><li><a href="#1-4-cây-tìm-kiếm-nhị-phân">1.4. Cây Tìm Kiếm Nhị Phân</a></li><li><a href="#1-5-bảng-băm-hash-tables">1.5. Bảng băm (Hash Tables)</a></li></ul></li><li><a href="#2-ctdl-truy-vấn">2. CTDL Truy vấn</a><ul><li><a href="#2-1-mảng-cộng-dồn-prefix-sum">2.1. Mảng cộng dồn (Prefix Sum)</a><ul><li><a href="#2-1-1-mảng-cộng-dồn-tìm-tổng-một-đoạn-liên-tiếp">2.1.1. Mảng cộng dồn - Tìm tổng một đoạn liên tiếp</a></li><li><a href="#2-1-2-mảng-cộng-dồn-tăng-giá-trị-các-đoạn">2.1.2. Mảng cộng dồn - Tăng giá trị các đoạn</a></li><li><a href="#2-1-3-mảng-cộng-dồn-trên-bảng-2-chiều">2.1.3. Mảng cộng dồn trên bảng 2 chiều</a></li></ul></li><li><a href="#2-2-disjoint-sets">2.2. Disjoint Sets</a></li><li><a href="#2-3-sparse-table">2.3. Sparse Table</a></li><li><a href="#2-4-segment-tree">2.4. Segment Tree</a></li><li><a href="#2-5-fenwick">2.5. Fenwick</a></li><li><a href="#2-6-heavy-light-decomposition">2.6. Heavy-light decomposition</a></li><li><a href="#2-7-persistent-data-structures">2.7. Persistent Data Structures</a></li></ul></li><li><a href="#3-ctdl-xâu">3. CTDL xâu</a><ul><li><a href="#3-1-cây-tiền-tố-trie">3.1. Cây Tiền Tố (Trie)</a></li><li><a href="#3-2-aho-corasick">3.2. Aho Corasick</a></li><li><a href="#3-3-mảng-hậu-tố-suffix-array">3.3. Mảng Hậu Tố (Suffix Array)</a></li><li><a href="#3-4-suffix-automaton">3.4. Suffix Automaton</a></li><li><a href="#3-5-palindrome-tree">3.5. Palindrome Tree</a></li></ul></li><li><a href="#các-tài-liệu-tham-khảo">Các tài liệu tham khảo:</a></li></ul></div>
+    <p>Mặc dù máy tính đã có thể xử lý hàng triệu phép tính mỗi giây, nhưng khi một bài toán trở phức tạp, cách tổ chức dữ liệu vẫn vô cùng quan trọng.</p>
+    <p>Để minh họa điểm này, hãy tham khảo ví dụ sau: bạn đi đến thư viện, thử tìm kiếm một quyển sách với chủ đề nào đó. Các cuốn sách được xếp theo lĩnh vực. Trong mỗi chủ đề, sách lại được xếp theo tên tác giả, nhờ vậy mà việc lấy và cất sách từ giá trở nên khá dễ dàng và đơn giản.</p>
+    <p>Bây giờ, hãy thử tưởng tượng thay vì tổ chức thành từng giá sách cụ thể, sách được chất thành từng đống ở khắp thư viện. Để tìm được quyển sách của mình, bạn sẽ phải mất hàng giờ, thậm chí rất nhiều ngày.</p>
+    <p>Tương tự, một phần mềm không thể vận hành hiệu quả khi dữ liệu không được lưu trữ một cách phù hợp với ứng dụng.</p>
+    <p>Trong bài viết này, chúng ta sẽ cùng nhau điểm qua các loại cấu trúc dữ liệu từ cơ bản đến nâng cao. Để tìm hiểu chi tiết về một cấu trúc dữ liệu, các bạn có thể đọc ở link tương ứng. Trong bài viết này, mình tạm chia các CTDL được chia thành các loại sau:</p>
+    <ul>
+    <li>
+    <strong>CTDL lưu trữ</strong>: thường có các thao tác như thêm 1 phần tử, xóa 1 phần tử. Có thể có thêm các thao tác như tìm kiếm 1 phần tử.</li>
+    <li>
+    <strong>CTDL truy vấn</strong>: thường dùng cho các bài toán mà bạn phải duy trì một tập hợp các số và thực hiện 1 số truy vấn trên đó.</li>
+    <li>
+    <strong>CTDL xâu</strong>: dùng cho các bài tập <a class="internal absent" href="/wiki/algo/string/basic">Xử lý xâu</a>.</li>
+    </ul>
+    <h1 class="editable"><a class="anchor" id="1-ctdl-lưu-trữ" href="#1-ctdl-lưu-trữ"></a>1. CTDL Lưu trữ</h1>
+    <h2 class="editable"><a class="anchor" id="1-1-mảng-array-danh-sách-liên-kết-linked-list" href="#1-1-mảng-array-danh-sách-liên-kết-linked-list"></a>1.1. Mảng (array), danh sách liên kết (linked list)</h2>
+    <p>Mảng và danh sách liên kết là 2 cấu trúc dữ liệu nền tảng cho tất cả các loại cấu trúc dữ liệu khác. Mảng và danh sách liên kết đều được dùng khi bạn muốn lưu nhiều dữ liệu (thường có cùng kiểu dữ liệu). Bảng dưới đây so sánh các thao tác về mảng và danh sách liên kết:</p>
+    <table>
+    <tr>
+    <th></th>
+    <th>Mảng</th>
+    <th>Danh sách liên kết</th>
+    </tr>
+    <tr>
+    <th>Bộ nhớ</th>
+    <td>Cố định (cần biết trước số phần tử)</td>
+    <td>Có thể tăng giảm tùy ý</td>
+    </tr>
+    <tr>
+    <th>Thêm/Xóa 1 phần tử</th>
+    <td>$\mathcal{O}(N)$</td>
+    <td>$\mathcal{O}(1)$, giả sử biết con trỏ tới phần tử đó</td>
+    </tr>
+    <tr>
+    <th>Tìm kiếm 1 phần tử</th>
+    <td>$\mathcal{O}(N)$</td>
+    <td>$\mathcal{O}(N)$</td>
+    </tr>
+    <tr>
+    <th>Truy cập phần tử</th>
+    <td>$\mathcal{O}(1)$</td>
+    <td>$\mathcal{O}(N)$</td>
+    </tr>
+    <tr>
+    <th>Khác</th>
+    <td>- Ít bộ nhớ hơn<br/>- Cache locality: các phần tử ở vị trí gần nhau trên bộ nhớ máy tính, nên khi truy cập các phần tử liên tiếp sẽ nhanh hơn</td>
+    <td></td>
+    </tr>
+    </table>
+    <p>Bạn có thể đọc thêm về mảng và danh sách liên kết <a class="internal absent" href="/wiki/algo/data-structures/array-vs-linked-lists">ở đây</a></p>
+    <h2 class="editable"><a class="anchor" id="1-2-stack-queue-deque" href="#1-2-stack-queue-deque"></a>1.2. Stack, Queue, Deque</h2>
+    <h3 class="editable"><a class="anchor" id="1-2-1-stack" href="#1-2-1-stack"></a>1.2.1. Stack</h3>
+    <p>Stack là CTDL cho phép thực hiện các thao tác:</p>
+    <ul>
+    <li>Thêm 1 phần tử vào <strong>cuối</strong> CTDL</li>
+    <li>Xóa 1 phần tử khỏi <strong>cuối</strong> CTDL</li>
+    </ul>
+    <p>Cả 2 thao tác trên đều có độ phức tạp $\mathcal{O}(1)$. Chú ý ta chỉ có thể xóa phần tử ở cuối CTDL, nói cách khác là phần tử mà mới được thêm vào gần nhất. Vì vậy, Stack còn được gọi là <strong>FIFO</strong> (First In First Out).</p>
+    <p>Stack có cài đặt đơn giản và được sử dụng trong nhiều thuật toán như DFS, tìm chu trình Euler, tìm khớp của đồ thị.</p>
+    <p>Trong C++ STL, có sẵn kiểu dữ liệu <code>stack</code>.</p>
+    <h3 class="editable"><a class="anchor" id="1-2-2-queue" href="#1-2-2-queue"></a>1.2.2. Queue</h3>
+    <p>Queue là CTDL cho phép thực hiện các thao tác:</p>
+    <ul>
+    <li>Thêm 1 phần tử vào <strong>cuối</strong> CTDL</li>
+    <li>Xóa 1 phần tử khỏi <strong>đầu</strong> CTDL.</li>
+    </ul>
+    <p>Cả 2 thao tác đều có độ phức tạp $\mathcal{O}(1)$. Chú ý ta chỉ có thể xóa phần tử ở đầu CTDL, nói cách khác là phần tử mà đã được thêm vào lâu nhất. Vì vậy, Stack còn được gọi là <strong>LIFO</strong> (Last In First Out).</p>
+    <p>Queue có cài đặt đơn giản và được sử dụng trong BFS.</p>
+    <p>Trong C++ STL, có sẵn kiểu dữ liệu <code>queue</code>.</p>
+    <h3 class="editable"><a class="anchor" id="1-2-3-deque" href="#1-2-3-deque"></a>1.2.3. Deque</h3>
+    <p>Deque (Double Ended Queue), là CTDL tổng quát hơn của Stack và Queue. Nó cho phép:</p>
+    <ul>
+    <li>Thêm 1 phần tử vào <strong>đầu</strong> hoặc <strong>cuối</strong> CTDL.</li>
+    <li>Xóa 1 phần tử khỏi <strong>đầu</strong> hoặc <strong>cuối</strong> CTDL.</li>
+    </ul>
+    <p>Cả 2 thao tác đều có độ phức tạp $\mathcal{O}(1)$.</p>
+    <p>Deque được sử dụng trong một số thuật toán như:</p>
+    <ul>
+    <li>BFS 01</li>
+    <li>
+    <a class="internal absent" href="/wiki/algo/data-structures/deque-min-max">Tìm Min/Max trên đoạn tịnh tiến</a>.</li>
+    </ul>
+    <p>Trong C++ STL, có sẵn kiểu dữ liệu <code>deque</code>.</p>
+    <h2 class="editable"><a class="anchor" id="1-3-priority-queue-heap" href="#1-3-priority-queue-heap"></a>1.3. Priority Queue - Heap</h2>
+    <p>Heap là một cấu trúc dữ liệu cho phép thực hiện các thao tác:</p>
+    <ul>
+    <li>Thêm một phần tử, với độ phức tạp $\mathcal{O}(\log{N})$.</li>
+    <li>Xóa một phần tử, với độ phức tạp $\mathcal{O}(\log{N})$.</li>
+    <li>Tìm $max$ của các phần tử, với độ phức tạp $\mathcal{O}(1)$.</li>
+    </ul>
+    <p>Bạn có thể đọc thêm về Heap <a class="internal absent" href="/wiki/translate/wcipeg/Binary-Heap">ở đây</a></p>
+    <p><strong>Fibonacci Heap</strong> là một dạng heap có <strong>độ phức tạp</strong> bé hơn. Trong <strong>C++</strong>, CTDL <strong>priority_queue</strong> được cài đặt bằng Fibonacci Heap.</p>
+    <h2 class="editable"><a class="anchor" id="1-4-cây-tìm-kiếm-nhị-phân" href="#1-4-cây-tìm-kiếm-nhị-phân"></a>1.4. Cây Tìm Kiếm Nhị Phân</h2>
+    <p><strong>Cây Tìm Kiếm Nhị Phân</strong> (<strong>BST Binary Search Tree</strong>) là một <a class="internal absent" href="/wiki/translate/wcipeg/tree">cây nhị phân</a> có tính chất: Với mỗi giá trị trên đỉnh đang xét, giá trị của mọi đỉnh trên cây con trái luôn nhỏ hơn đỉnh đang xét và giá trị của mọi đỉnh trên cây con phải luôn lớn hơn đỉnh đang xét.</p>
+    <p><img src="https://vnoi.info/wiki/uploads/bst1.png" /></p>
+    <p>Cây tìm kiếm nhị phân cho phép thực hiện các thao tác:</p>
+    <ul>
+    <li>Thêm 1 phần tử.</li>
+    <li>Xóa 1 phần tử.</li>
+    <li>Kiểm tra 1 phần tử có tồn tại hay không.</li>
+    <li>Tìm phần tử đầu tiên lớn hơn hoặc bằng 1 giá trị $x$ cho trước.</li>
+    </ul>
+    <p>Trong trường hợp dữ liệu ngẫu nhiên, các thao tác trên có độ phức tạp trung bình là $\mathcal{O}(\log{N})$. Tuy nhiên trong trường hợp xấu nhất, cây tìm kiếm nhị phân bị suy biến (thành 1 <em>"đường thẳng"</em>), thì độ phức tạp mỗi thao tác là $\mathcal{O}(N)$.</p>
+    <p>Để khắc phục điều này, có rất nhiều CTDL cải tiến từ cây tìm kiếm nhị phân, thường được gọi là các cây nhị phân cân bằng. Khi đó, các thao tác trên có thể được thực hiện với độ phức tạp $\mathcal{O}(\log{N})$. Ví dụ:</p>
+    <ul>
+    <li>
+    <strong>Cây Đỏ Đen</strong> (Red-Black Tree) là một dạng <strong>cây tìm kiếm nhị phân</strong> (<strong>BST</strong>) mà sau mỗi truy vấn được thực hiện, cây tự cân bằng theo đúng tính chất của nó với độ phức tạp $O(log(N))$. CTDL <strong>set</strong> trong <strong>C++</strong> được cài đặt bằng cây đỏ đen.
+    <img src="https://vnoi.info/wiki/uploads/redblack1.png" />
+    </li>
+    <li>
+    <strong>Splay tree</strong>, <a class="internal absent" href="/wiki/algo/data-structures/Skip-Lists">Skip list</a>, <strong>Treap</strong> thường được dùng trong các kỳ thi bởi cài đặt đơn giản.</li>
+    </ul>
+    <h2 class="editable"><a class="anchor" id="1-5-bảng-băm-hash-tables" href="#1-5-bảng-băm-hash-tables"></a>1.5. Bảng băm (Hash Tables)</h2>
+    <p>Bảng băm là một CTDL thường được sử dụng như một từ điển: mỗi phần tử trong bảng băm là một cặp (khóa, giá trị). Nếu so sánh với mảng, khóa được xem như chỉ số của mảng, còn giá trị giống như giá trị mà ta lưu tại chỉ số tương ứng. Bảng băm không như các loại từ điển thông thường - ta có thể tìm được giá trị thông qua khóa của nó.</p>
+    <p>Bảng băm hoạt động dựa trên hàm Hash: Hash là quá trình khởi tạo một giá trị khóa (thường là 32 bit hoặc 64 bit) từ một phần dữ liệu. Nó có thể là $n$ bit đầu tiên của dữ liệu, $n$ bit cuối cùng, giá trị mod cho một số nguyên tố nào đó. Dựa theo giá trị hash, dữ liệu được chia vào các <strong>bucket</strong>:</p>
+    <p><img src="https://vnoi.info/wiki/uploads/data_structures_hash_table_hash_function.png" /></p>
+    <p>Trong trường hợp hàm Hash hoạt động tốt, mỗi bucket có rất ít phần tử, độ phức tạp của các thao tác trên Hash table như sau:</p>
+    <ul>
+    <li>Tìm 1 khóa: $\mathcal{O}(1)$.</li>
+    <li>Thêm / xóa 1 khóa: $\mathcal{O}(1)$.</li>
+    </ul>
+    <p>Bạn có thể đọc thêm về Hash table <a class="internal absent" href="/wiki/algo/data-structures/hash-table">ở đây</a></p>
+    <h1 class="editable"><a class="anchor" id="2-ctdl-truy-vấn" href="#2-ctdl-truy-vấn"></a>2. CTDL Truy vấn</h1>
+    <h2 class="editable"><a class="anchor" id="2-1-mảng-cộng-dồn-prefix-sum" href="#2-1-mảng-cộng-dồn-prefix-sum"></a>2.1. Mảng cộng dồn (Prefix Sum)</h2>
+    <p>Mảng cộng dồn là một cách áp dụng khéo léo mảng. Có 2 dạng bài cơ bản có thể giải được bằng cách áp dụng Prefix Sum.</p>
+    <h3 class="editable"><a class="anchor" id="2-1-1-mảng-cộng-dồn-tìm-tổng-một-đoạn-liên-tiếp" href="#2-1-1-mảng-cộng-dồn-tìm-tổng-một-đoạn-liên-tiếp"></a>2.1.1. Mảng cộng dồn - Tìm tổng một đoạn liên tiếp</h3>
+    <p><strong>Ví dụ</strong></p>
+    <ul>
+    <li>Cho một mảng $a_1,a_2,a_3,…,a_N$.</li>
+    <li>Cần trả lời nhiều truy vấn, mỗi truy vấn cho 2 số $L$ và $R$, yêu cầu in ra tổng $a_L + a_{L+1} + … + a_R$.</li>
+    </ul>
+    <p><strong>Cách làm</strong></p>
+    <ul>
+    <li>Tạo một mảng $S$, với $S_i = a_1 + a_2 + … + a_i$. Mảng $S$ được gọi là mảng cộng dồn</li>
+    <li>Với mỗi truy vấn, in ra: $S_R – S_{L-1}$.</li>
+    </ul>
+    <h3 class="editable"><a class="anchor" id="2-1-2-mảng-cộng-dồn-tăng-giá-trị-các-đoạn" href="#2-1-2-mảng-cộng-dồn-tăng-giá-trị-các-đoạn"></a>2.1.2. Mảng cộng dồn - Tăng giá trị các đoạn</h3>
+    <p><strong>Ví dụ</strong></p>
+    <ul>
+    <li>Cho mảng $a_1,a_2,…,a_N$.</li>
+    <li>Cần thực hiện nhiều truy vấn, mỗi truy vấn cho 3 số $L$, $R$, $V$. Yêu cầu: với mỗi $i (L \le i \le R)$, cộng $V$ vào $a_i$.</li>
+    <li>Tính mảng $a$ sau khi thực hiện tất cả các truy vấn.</li>
+    </ul>
+    <p><strong>Cách làm</strong></p>
+    <ul>
+    <li>Tạo một mảng $P$: $p_1,p_2,…,p_N$</li>
+    <li>Khởi tạo $p_i = 0$.</li>
+    <li>Với mỗi truy vấn, tăng $p_L$ lên $V$ và trừ $p_{R+1}$ đi $V$.</li>
+    <li>Cuối cùng, với mỗi $i$ (từ 1), $p_i += p_{i–1}$. Ta có $a_i = a_i + p_i$.</li>
+    </ul>
+    <h3 class="editable"><a class="anchor" id="2-1-3-mảng-cộng-dồn-trên-bảng-2-chiều" href="#2-1-3-mảng-cộng-dồn-trên-bảng-2-chiều"></a>2.1.3. Mảng cộng dồn trên bảng 2 chiều</h3>
+    <p>Trên bảng 2 chiều $A(i, j)$, ta đặt $f(i, j)$ là tổng các ô trong hình chữ nhật có 2 đỉnh đối diện là $(1, 1)$ và $(i, j)$.</p>
+    <p>Khi đó, ta có: $f(i, j) = f(i-1, j) + f(i, j-1) - f(i-1, j-1) + A(i, j)$.</p>
+    <p>Giải thích công thức trên:</p>
+    <p><img src="https://vnoi.info/wiki/uploads/2DPartialSum_small.png" /></p>
+    <p>đỏ = xanh da trời + vàng - tím + xanh lá</p>
+    <p>$f(i, j) = f(i-1, j) + f(i, j-1) - f(i-1, j-1) + A(i, j)$</p>
+    <h2 class="editable"><a class="anchor" id="2-2-disjoint-sets" href="#2-2-disjoint-sets"></a>2.2. Disjoint Sets</h2>
+    <p><strong>Disjoint Sets</strong> là cấu trúc dữ liệu được sử dụng trong thuật toán <strong>Kruskal</strong> và thuật toán <strong>Prim</strong> - 2 thuật toán tìm cây khung nhỏ nhất của đồ thị. Như tên gọi của nó, Disjoint Set được dùng để quản lý các tập hợp không giao nhau.</p>
+    <p><strong>Bài toán</strong></p>
+    <p>Cho đồ thị có $N$ đỉnh. Ta cần thực hiện 2 loại truy vấn:</p>
+    <ul>
+    <li>Nối 2 đỉnh $i$ và $j$</li>
+    <li>Kiểm tra 2 đỉnh $i$ và $j$ có thuộc cùng thành phần liên thông hay không.</li>
+    </ul>
+    <p>Disjoint set cho phép ta thực hiện 2 thao tác trên với độ phức tạp $\mathcal{O}(\log{N})$.</p>
+    <p>Bạn có thể đọc thêm về Disjoint Set ở <a class="internal absent" href="/wiki/algo/data-structures/disjoint-set">bài viết này</a>.</p>
+    <h2 class="editable"><a class="anchor" id="2-3-sparse-table" href="#2-3-sparse-table"></a>2.3. Sparse Table</h2>
+    <p>Sparse Table là cấu trúc dữ liệu được sử dụng trong <a class="internal absent" href="/wiki/translate/topcoder/Range-Minimum-Query-and-Lowest-Common-Ancestor">bài toán LCA &amp; RMQ</a>.</p>
+    <p>Với cả 2 bài toán, Sparse Table cho phép:</p>
+    <ul>
+    <li>Khởi tạo với độ phức tạp: $\mathcal{O}(N* \log{N})$.</li>
+    <li>Trả lời truy vấn với độ phức tạp $\mathcal{O}(1)$.</li>
+    </ul>
+    <h2 class="editable"><a class="anchor" id="2-4-segment-tree" href="#2-4-segment-tree"></a>2.4. Segment Tree</h2>
+    <p>Segment Tree, còn được gọi là Interval Tree trong nhiều tài liệu tiếng Việt, là cấu trúc dữ liệu cho phép thực hiện các truy vấn trên một dãy số. Segment Tree rất linh động và có thể áp dụng với nhiều loại truy vấn khác nhau, nên nó xuất hiện rất nhiều trong các kỳ thi.</p>
+    <p>Với dãy số độ dài $N$, Segment Tree cho phép thực hiện các thao tác với độ phức tạp $\mathcal{O}(\log{N})$.</p>
+    <p>Bạn có thể đọc thêm về Segment Tree <a class="internal absent" href="/wiki/algo/data-structures/segment-tree-extend">ở đây</a>.</p>
+    <p>Segment Tree cũng có một mở rộng với nhiều ứng dụng quan trọng là <a class="internal absent" href="/wiki/algo/data-structures/interval-tree-tap-doan-thang">Segment Tree trên tập đoạn thẳng</a>.</p>
+    <h2 class="editable"><a class="anchor" id="2-5-fenwick" href="#2-5-fenwick"></a>2.5. Fenwick</h2>
+    <p>Cũng giống như Segment Tree, Fenwick tree (còn được gọi là Binary Indexed Tree) là cấu trúc dữ liệu cho phép thực hiện các truy vấn trên một dãy số:</p>
+    <ul>
+    <li>Ưu điểm:
+    <ul>
+    <li>Độ phức tạp mỗi thao tác cũng là $\mathcal{O}(\log{N})$.</li>
+    <li>Hằng số tự nhiên thấp hơn Segment Tree, nên chạy nhanh hơn.</li>
+    <li>Dùng ít bộ nhớ hơn.</li>
+    <li>Dễ cài đặt hơn Segment Tree</li>
+    </ul>
+    </li>
+    <li>Nhược điểm:
+    <ul>
+    <li>Không tổng quát bằng Segment Tree. Tất cả những bài giải được bằng Fenwick tree đều có thể giải được bằng Segment Tree. Nhưng chiều ngược lại không đúng.</li>
+    </ul>
+    </li>
+    </ul>
+    <p>Bạn có thể đọc thêm về Fenwick Tree <a class="internal absent" href="/wiki/algo/data-structures/fenwick">ở đây</a>.</p>
+    <h2 class="editable"><a class="anchor" id="2-6-heavy-light-decomposition" href="#2-6-heavy-light-decomposition"></a>2.6. Heavy-light decomposition</h2>
+    <p><strong>Heavy Light Decomposition</strong> là một thuật toán được áp dụng nhiều trong những bài cần xử lý các truy vấn trên cây. Heavy-light decomposition là kĩ thuật phân tách một cây thành nhiều chuỗi đỉnh (chain) rời nhau. Sau đó, chúng ta có thể áp dụng các cấu trúc dữ liệu như Interval Tree hay Binary-Indexed Tree lên những chuỗi này để có thể cập nhật dữ liệu hoặc trả lời các truy vấn trên một đường đi giữa 2 đỉnh trong cây.</p>
+    <p>Bạn có thể đọc thêm ở: <a class="internal absent" href="/wiki/algo/data-structures/heavy-light-decomposition">Thuật toán phân tách cây</a></p>
+    <h2 class="editable"><a class="anchor" id="2-7-persistent-data-structures" href="#2-7-persistent-data-structures"></a>2.7. Persistent Data Structures</h2>
+    <p>Persistent Data Structures là những cấu trúc dữ liệu được dùng khi chúng ta cần có <strong>toàn bộ lịch sử</strong> của các thay đổi trên 1 cấu trúc dữ liệu.</p>
+    <p>Bạn có thể đọc thêm ở: <a class="internal absent" href="/wiki/algo/data-structures/persistent-data-structures">Persistent Data Structures</a></p>
+    <h1 class="editable"><a class="anchor" id="3-ctdl-xâu" href="#3-ctdl-xâu"></a>3. CTDL xâu</h1>
+    <h2 class="editable"><a class="anchor" id="3-1-cây-tiền-tố-trie" href="#3-1-cây-tiền-tố-trie"></a>3.1. Cây Tiền Tố (Trie)</h2>
+    <p><strong>Trie</strong> là một cấu trúc dữ liệu dùng để quản lý một tập hợp các xâu. Trie cho phép:</p>
+    <ul>
+    <li>Thêm một xâu vào tập hợp, với độ phức tạp $\mathcal{O}(L)$ với $L$ là độ dài xâu cần thêm.</li>
+    <li>Xóa một xâu khỏi tập hợp, với độ phức tạp $\mathcal{O}(L)$.</li>
+    <li>Kiểm tra một xâu có tồn tại trong tập hợp hay không, với độ phức tạp $\mathcal{O}(L)$.</li>
+    </ul>
+    <p>Ngoài ra trên thực tế, trie cũng rất tiết kiệm bộ nhớ khi áp dụng để lưu các từ có nghĩa, vì vậy nó là một CTDL có ứng dụng rất lớn.</p>
+    <p>Bạn có thể đọc thêm <a class="internal absent" href="/wiki/algo/data-structures/trie">bài viết về trie</a>.</p>
+    <h2 class="editable"><a class="anchor" id="3-2-aho-corasick" href="#3-2-aho-corasick"></a>3.2. Aho Corasick</h2>
+    <p>Bài viết sẽ được cập nhật sau</p>
+    <h2 class="editable"><a class="anchor" id="3-3-mảng-hậu-tố-suffix-array" href="#3-3-mảng-hậu-tố-suffix-array"></a>3.3. Mảng Hậu Tố (Suffix Array)</h2>
+    <p>Suffix Array là một CTDL giúp sắp xếp các hậu tố của một xâu theo thứ tự từ điển. CTDL này thường được sử dụng trong các bài toán xử lý xâu.</p>
+    <p>Bạn có thể đọc thêm về Suffix Array <a class="internal absent" href="/wiki/algo/data-structures/suffix-array">ở đây</a>.</p>
+    <h2 class="editable"><a class="anchor" id="3-4-suffix-automaton" href="#3-4-suffix-automaton"></a>3.4. Suffix Automaton</h2>
+    <p>Bài viết sẽ được cập nhật sau.</p>
+    <h2 class="editable"><a class="anchor" id="3-5-palindrome-tree" href="#3-5-palindrome-tree"></a>3.5. Palindrome Tree</h2>
+    <p>Palindrome tree (còn được gọi là Eertree), là một CTDL mới được phổ biến vào năm 2014 nhờ bài thuyết trình của <a href="http://codeforces.com/profile/MikhailRubinchik">Mikhail Rubinchik</a>.</p>
+    <p>Như tên gọi của nó, Palindrome tree là một CTDL giúp giải quyết các bài toán về Palindrome. Bạn có thể đọc thêm <a class="internal absent" href="/wiki/translate/codeforces/palindrome-tree">ở đây</a></p>
+    <h1 class="editable"><a class="anchor" id="các-tài-liệu-tham-khảo" href="#các-tài-liệu-tham-khảo"></a>Các tài liệu tham khảo:</h1>
+    <ul>
+    <li><a href="http://codeforces.com/blog/entry/15729">Codeforces</a></li>
+    <li><a href="https://www.topcoder.com/community/data-science/data-science-tutorials/data-structures/">Topcoder</a></li>
+    </ul>
+</div>
+</head>
+</html>

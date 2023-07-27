@@ -1,0 +1,179 @@
+<div id="wiki-content">
+<h1 class="pt-4">Chia căn (sqrt decomposition) và ứng dụng: Phần 1</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/data-structures/">data-structures</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả</strong>: Hoàng Xuân Nhật &amp; Vương Hoàng Long</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#bài-toán-1">Bài toán 1</a><ul><li><a href="#phân-tích">Phân tích</a></li><li><a href="#cài-đặt">Cài đặt</a></li></ul></li><li><a href="#bài-toán-2">Bài toán 2</a><ul><li><a href="#đề-bài">Đề bài</a></li><li><a href="#cách-giải">Cách giải</a><ul><li><a href="#giả-sử-các-truy-vấn-đều-có-l-1-r-n">Giả sử các truy vấn đều có $l = 1, r=N$</a></li><li><a href="#giải-bài-toán-gốc">Giải bài toán gốc</a><ul><li><a href="#đầu-tiên-chúng-ta-cập-nhật-phần-đầy-đủ-các-block">Đầu tiên, chúng ta cập nhật phần đầy đủ các block:</a></li><li><a href="#tiếp-theo-chúng-ta-cập-nhật-phần-dư-bên-trái">Tiếp theo, chúng ta cập nhật phần dư bên trái:</a></li></ul></li></ul></li><li><a href="#phân-tích-1">Phân tích</a></li></ul></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng</a></li><li><a href="#lưu-ý">Lưu ý</a></li><li><a href="#mở-rộng">Mở rộng</a></li></ul></div>
+<p>Chia căn là tên gọi chung của một nhóm các thuật toán thường liên quan đến việc chia các đối tượng thành $\sqrt{N}$ phần.</p>
+<p>Sau đây ta sẽ xét một dạng đơn giản nhất: chia mảng ra làm $\sqrt{N}$ đoạn, thường dùng để giải quyết các bài toán truy vấn.</p>
+<h1 class="editable"><a class="anchor" id="bài-toán-1" href="#bài-toán-1"></a>Bài toán 1</h1>
+<p>Cho một mảng $A$ gồm $N$ phần tử là các số nguyên không âm. Bạn cần trả lời $Q$ truy vấn, mỗi truy vấn có dạng $(l, r, k)$ yêu cầu tìm đếm số phần tử của A nằm trong đoạn $[l..r]$ có giá trị bằng $k$. Giới hạn: $N, Q, A_i \le 10^5$.</p>
+<p>Giả sử ta luôn có $l = 1$ và $r = N$, bài toán trên có thể giải đơn giản bằng cách tạo một mảng $cnt[x] = $ số phần tử của mảng có giá trị <strong>bằng</strong> $x$.</p>
+<p>Ta áp dụng ý tưởng này để giải bài toán tổng quát, bằng cách tạo ra $\sqrt{N}$ mảng <em>cnt</em>, mỗi mảng quản lý một đoạn $\sqrt{N}$ phần tử liên tiếp của $A$. Để hiểu rõ hơn, ta có thể xem ví dụ sau.</p>
+<p>Ta có mảng A gốm 13 phần tử, chỉ số được đánh bắt đầu từ 0. Ta sẽ chia mảng $A$ thành các đoạn có độ dài 4, đoạn cuối cùng sẽ chỉ chứa 1 phần tử. Nội dung mảng $A$ và các mảng $cnt$ đã được tính sẵn như trong hình sau:</p>
+<p><img src="https://vnoi.info/wiki/uploads/sqrt_problem1_1.PNG" /></p>
+<p>Với cấu trúc trên, ta có thể dễ dàng trả lời các truy vấn. Ví dụ, xét truy vấn $(1, 11, 0)$.</p>
+<p><img src="https://vnoi.info/wiki/uploads/sqrt_problem1_2.PNG" /></p>
+<p>Có thể thấy, đoạn truy vấn sẽ luôn được chia thành các đoạn chứa đủ $\sqrt{N}$ phần tử (trong trường hợp này là đoạn $[4..7]$ và $[8..11]$), và có thể thêm một số đoạn không đầy đủ ở hai đầu (ở đây là đoạn $[1..3]$).</p>
+<p>Với những đoạn đầy đủ, ta cộng $cnt[0]$ của chúng vào kết quả. Với những đoạn không đầy đủ, ta xét từng phần tử. Phần tử nào bằng 0, ta sẽ tăng biến đếm kết quả lên 1. Với truy vấn $(1, 11, 0)$, ta có kết quả là $2 + 3 + 1 + 1 = 7$.</p>
+<p><img src="https://vnoi.info/wiki/uploads/sqrt_problem1_3.PNG" /></p>
+<p>Cấu trúc trên vẫn có thể giải bài toán này khi có thêm truy vấn <strong>chỉnh sửa một phần tử</strong> của $A$, bạn chỉ cần thay đổi giá trị $cnt$ của một đoạn duy nhất chứa phần tử cần cập nhật.</p>
+<h2 class="editable"><a class="anchor" id="phân-tích" href="#phân-tích"></a>Phân tích</h2>
+<p>Đầu tiên, ta phải trả lời được câu hỏi: tại sao lại chia thành $\sqrt{N}$ đoạn, mà không phải $1, 2, 10, N/2, … $ ?</p>
+<p>Gọi số đoạn ta chia ra là $S$. Vậy mỗi đoạn sẽ có độ dài $N/S$ (ta tạm bỏ qua đoạn cuối).</p>
+<p>Khi truy vấn, ta phải xét 2 thứ: một là những đoạn đầy đủ, nằm trong đoạn truy vấn. Hai là đoạn dư ra ở hai đầu của truy vấn.</p>
+<p>Với những đoạn đầy đủ, trong trường hợp tệ nhất chúng ta phải xét cả $S$ đoạn. Mỗi đoạn ta cộng $cnt[k]$ vào kết quả trong $O(1)$, vậy tổng cộng mất $O(S)$.</p>
+<p>Với đoạn dư ra ở hai đầu, ta xét riêng từng phần tử mất $O(1)$. Các đoạn đều có độ dài $N/S$, nên ta mất $O(N/S)$ cho phần này.</p>
+<p>Mỗi truy vấn ta mất thời gian là $O(S + N/S)$. Ta cần tìm giá trị $S$ sao cho $S + N/S$ đạt giá trị nhỏ nhất. Áp dụng <a href="https://vi.wikipedia.org/wiki/B%E1%BA%A5t_%C4%91%E1%BA%B3ng_th%E1%BB%A9c_trung_b%C3%ACnh_c%E1%BB%99ng_v%C3%A0_trung_b%C3%ACnh_nh%C3%A2n">bất đẳng thức AM-GM</a>, giá trị này là nhỏ nhất khi $S = N/S \iff S = \sqrt{N}$. Thời gian để thực hiện $Q$ truy vấn sẽ là $O(Q\sqrt{N})$.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h2>
+<p>Ta cần phải lưu những cấu trúc sau:</p>
+<ul>
+<li>$\sqrt{N}$ mảng $cnt$, mỗi mảng có độ dài $max(A_i)$, tốn $O(\sqrt{N} * max(A_i)$) bộ nhớ.</li>
+<li>Mảng $A$, tốn $O(N)$ bộ nhớ.</li>
+</ul>
+<p>Khi giải bài toán, ta thường chia thành các hàm tiền xử lý để dựng ra cấu trúc dữ liệu, và các hàm trả lời các truy vấn.</p>
+<pre class="highlight"><code><span class="k">const</span> <span class="kt">int</span> <span class="n">BLOCK_SIZE</span> <span class="o">=</span> <span class="mi">320</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">cnt</span><span class="p">[</span><span class="n">N</span> <span class="o">/</span> <span class="n">BLOCK_SIZE</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">preprocess</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="o">++</span><span class="n">cnt</span><span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="n">BLOCK_SIZE</span><span class="p">][</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]];</span>
+<span class="p">}</span></code></pre>
+<p>Sau khi đã tiền xử lý, hàm trả lời truy vấn có thể cài đặt như sau. Lưu ý, ta phải xét riêng trường hợp cả hai đầu của truy vấn nằm trong cùng một đoạn. Trong code bên dưới, tác giả dùng <a href="https://www.cplusplus.com/reference/algorithm/count/">hàm count</a> của thư viện C++ STL.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">blockL</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">BLOCK_SIZE</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">BLOCK_SIZE</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">blockR</span> <span class="o">=</span> <span class="n">r</span> <span class="o">/</span> <span class="n">BLOCK_SIZE</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">blockL</span> <span class="o">&gt;=</span> <span class="n">blockR</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">count</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">l</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    
+    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">blockL</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">blockR</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">sum</span> <span class="o">+=</span> <span class="n">cnt</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">];</span>
+        
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">l</span><span class="p">,</span> <span class="n">lim</span> <span class="o">=</span> <span class="n">blockL</span> <span class="o">*</span> <span class="n">BLOCK_SIZE</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">lim</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">k</span><span class="p">)</span> <span class="o">++</span><span class="n">sum</span><span class="p">;</span>
+        
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">blockR</span> <span class="o">*</span> <span class="n">BLOCK_SIZE</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">k</span><span class="p">)</span> <span class="o">++</span><span class="n">sum</span><span class="p">;</span>
+        
+    <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Thao tác cập nhật một phần tử có thể thêm vào như sau (với $u$ là vị trí cần cập nhật, và $v$ là giá trị mới):</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">block</span> <span class="o">=</span> <span class="n">u</span> <span class="o">/</span> <span class="n">BLOCK_SIZE</span><span class="p">;</span>
+    <span class="o">--</span><span class="n">cnt</span><span class="p">[</span><span class="n">block</span><span class="p">][</span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]];</span>
+    <span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+    <span class="o">++</span><span class="n">cnt</span><span class="p">[</span><span class="n">block</span><span class="p">][</span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]];</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="bài-toán-2" href="#bài-toán-2"></a>Bài toán 2</h1>
+<p>Tiếp nối bài toán đầu tiên, chúng ta hãy cùng đi sâu hơn vào các bài toán chia mảng ra làm $\sqrt{N}$ đoạn nhưng có truy vấn cập nhật.</p>
+<p><strong>Lưu ý:</strong> Bài tập có cách giải tối ưu nhất sử dụng Segment Tree, tuy nhiên vì mục đích của bài viết này nên bài tập sẽ được giải bằng chia căn.</p>
+<h2 class="editable"><a class="anchor" id="đề-bài" href="#đề-bài"></a>Đề bài</h2>
+<p>Các bạn có thể nộp bài ở <a href="http://codeforces.com/group/FLVn1Sc504/contest/315912/problem/A">đây</a></p>
+<p>Cho một mảng $A$ gồm $N$ phần tử là các số nguyên. Bạn cần thực hiện $Q$ truy vấn có dạng $(l,r,oval,nval)$ là với các phần tử trong đoạn từ $l$ đến $r$, nếu $A[i] == oval$, gán $A[i] = nval$. Bạn cần in ra mảng sau khi thực hiện $Q$ truy vấn. Giới hạn $1 \le N,Q \le 2*10^5, 1 \le A_i \le 100$</p>
+<p>Ghi chú: $oval,nval$ là viết tắt cho <em>old value</em> và <em>new value</em>.</p>
+<h2 class="editable"><a class="anchor" id="cách-giải" href="#cách-giải"></a>Cách giải</h2>
+<h3 class="editable"><a class="anchor" id="giả-sử-các-truy-vấn-đều-có-l-1-r-n" href="#giả-sử-các-truy-vấn-đều-có-l-1-r-n"></a>Giả sử các truy vấn đều có $l = 1, r=N$</h3>
+<p>Với giả sử trên, ta sẽ giải bài toán với đpt $O(Q*100 + N)$. Ta sẽ tạo mảng $lazy[oval]$ với ý nghĩa là các số ban đầu là $oval$ thì hiện tại đã được đổi giá trị sang $lazy[oval]$. Ban đầu $lazy[oval] = oval$ với $1 \le oval \le 100$. Với mỗi truy vấn $(l,r,oval,nval)$, ta sẽ làm như sau:</p>
+<pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">lazy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">oval</span><span class="p">)</span> <span class="n">lazy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nval</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Với thao tác cập nhật mảng lazy này, về mặt ý nghĩa, tất cả các số hiện đang có giá trị là $oval$ sẽ được gán lại thành $nval$.
+Sau khi thực hiện tất cả các truy vấn, chúng ta có thể lấy giá trị của các số trong mảng như sau:
+</p><pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">lazy</span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]];</span>
+<span class="p">}</span></code></pre>
+Vậy là chúng ta đã giải xong bài toán với độ phức tạp $O(Q*100 + N)$.
+<h3 class="editable"><a class="anchor" id="giải-bài-toán-gốc" href="#giải-bài-toán-gốc"></a>Giải bài toán gốc</h3>
+<p>Ta sẽ áp dụng ý tưởng trên vào để giải bài toán gốc. Ta cũng chia mảng thành $\sqrt{N}$ đoạn. Xét một truy vấn $(l,r,oval,nval)$ ta có:</p>
+<ul>
+<li>$blockL$ là block đầu tiên ở bên phải $l$</li>
+<li>$blockR$ là block chứa $r$</li>
+<li>Với mỗi block, ta sẽ có mảng $lazy$ với định nghĩa như trên. Ví dụ block $3$, các số đang có giá trị là $oval$ sẽ được đổi thành giá trị $nval$ $\Leftrightarrow$ $lazy[3][oval]=nval$</li>
+</ul>
+<p>Vậy truy vấn của chúng ta sẽ được chia làm 3 phần (có thể rỗng) như sau:</p>
+<ul>
+<li>Phần dư bên trái: $[ l … blockL * BLOCK\_SIZE - 1 ]$</li>
+<li>Phần dư bên phải: $[ blockR * BLOCK\_SIZE … r ]$</li>
+<li>Phần đầy đủ các block: $[ blockL * BLOCK\_SIZE … blockR * BLOCK\_SIZE - 1 ]$</li>
+</ul>
+<h4 class="editable"><a class="anchor" id="đầu-tiên-chúng-ta-cập-nhật-phần-đầy-đủ-các-block" href="#đầu-tiên-chúng-ta-cập-nhật-phần-đầy-đủ-các-block"></a>Đầu tiên, chúng ta cập nhật <em>phần đầy đủ các block</em>:</h4>
+<p>Ta sẽ cập nhật lần lượt cho từng block đơn lẻ. Gọi block hiện tại là $id$, ta sẽ làm tương tự như khi giải bài toán $l = 1, r=N$:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">blockUpdate</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oval</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nval</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">LIM</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">lazy</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">oval</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">lazy</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nval</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Vậy là chúng ta đã cập nhật xong cho tất cả các block thuộc <em>phần đầy đủ các block</em>. <em>Chú ý</em>, việc cập nhật này chúng ta chỉ đánh dấu là các phần tử đang có giá trị là $oval$ <em>sẽ được thay đổi</em> thành $nval$. Giá trị của các phần tử trong đoạn này sau cập nhật <em>không có sự thay đổi nào</em> (ý tưởng giống như <a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/segment-tree-extend.md#2-lazy-propagation">Lazy Propagation</a>.</p>
+<h4 class="editable"><a class="anchor" id="tiếp-theo-chúng-ta-cập-nhật-phần-dư-bên-trái" href="#tiếp-theo-chúng-ta-cập-nhật-phần-dư-bên-trái"></a>Tiếp theo, chúng ta cập nhật <em>phần dư bên trái</em>:</h4>
+<p>Gọi block của <em>phần dư bên trái</em> là $id$.</p>
+<p>Vì <em>phần dư bên trái</em> không bao phủ trọn vẹn 1 block, nên chúng ta sẽ không thể dùng mảng $lazy$ để cập nhật được như ở trên. Thay vào đó chúng ta sẽ phải duyệt từng phần tử trong phần này và cập nhật (xét mỗi phần tử, nếu giá trị của nó là $oval$ thì gán giá trị mới là $nval$):</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">manualUpdate</span><span class="p">(</span><span class="kt">int</span> <span class="n">L</span><span class="p">,</span> <span class="kt">int</span> <span class="n">R</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oval</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nval</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// L R là đầu trái và đầu phải của phần dư bên trái</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">L</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">R</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">oval</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nval</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Tuy nhiên, các phần tử trong <em>phần dư bên trái</em> này có thể đang chịu ảnh hưởng từ mảng $lazy$ của các truy vấn trước đó, nên chúng ta cần <em>thực sự cập nhật</em> các phần tử này bằng mảng $lazy$, sau đó mới thực hiện $manualUpdate$ (giống như bước Propagate trong Lazy Propagation).</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">doLazy</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// L R là đầu trái và đầu phải của phần dư bên trái</span>
+    <span class="kt">int</span> <span class="n">L</span> <span class="o">=</span> <span class="n">id</span> <span class="o">*</span> <span class="n">BLOCK_SIZE</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">R</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">BLOCK_SIZE</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">L</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">R</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">lazy</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]];</span> <span class="c1">// thay đổi giá trị các phần tử bằng mảng lazy</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">lazy</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// đã cập nhật xong, reset lại mảng lazy về ban đầu </span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Vậy tổng kết lại, ta sẽ có hàm cập nhật cho <em>phần dư bên trái</em> (và cả *phần dư bên phải) như sau:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">manualUpdate</span><span class="p">(</span><span class="kt">int</span> <span class="n">L</span><span class="p">,</span> <span class="kt">int</span> <span class="n">R</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oval</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nval</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// L R là đầu trái và đầu phải của phần dư bên trái</span>
+    <span class="n">doLazy</span><span class="p">(</span><span class="n">R</span> <span class="o">/</span> <span class="n">BLOCK_SIZE</span><span class="p">);</span> <span class="c1">// R / BLOCK_SIZE chính là block của của phần này. L / BLOCK_SIZE = R / BLOCK_SIZE</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">L</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">R</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">oval</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nval</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/* Chúng ta sẽ gọi hàm như dưới đây để cập nhật cho phần dư bên trái */</span>
+<span class="n">manualUpdate</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">blockL</span> <span class="o">*</span> <span class="n">BLOCK_SIZE</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">oval</span><span class="p">,</span> <span class="n">nval</span><span class="p">);</span>
+
+<span class="cm">/* Chúng ta sẽ gọi hàm như dưới đây để cập nhật cho phần dư bên phải */</span>
+<span class="n">manualUpdate</span><span class="p">(</span><span class="n">blockR</span> <span class="o">*</span> <span class="n">BLOCK_SIZE</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">oval</span><span class="p">,</span> <span class="n">nval</span><span class="p">);</span></code></pre>
+<h2 class="editable"><a class="anchor" id="phân-tích-1" href="#phân-tích-1"></a>Phân tích</h2>
+<p><em>Ghi chú</em>: Vì hằng số của lời giải này tương đối lớn nên tác giả sẽ giữ hằng số trong độ phức tạp khi cần thiết</p>
+<p>Ta sẽ cùng xem xét độ phức tạp của lời giải này:</p>
+<p>Dễ thấy hàm $blockUpdate$ có độ phức tạp là $O(100)$. Hàm này mỗi truy vấn có thể được gọi không quá $\sqrt{N}$ lần, và có $Q$ truy vấn nên tổng độ phức tạp của các lần gọi hàm này là $O(Q*\sqrt{N}*100)$. <strong>(1)</strong></p>
+<p>Hàm $doLazy$ có độ phức tạp là $O(\sqrt{N} + 100)$ do các <em>phần dư</em> có độ lớn $\leq \sqrt{N}$. Cộng với phần <code>for (int i = L; i &lt;= R; ++i)</code> có độ phức tạp $O(\sqrt{N})$, hàm $manualUpdate$ có độ phức tạp là $O(\sqrt{N} + \sqrt{N} + 100) = O(\sqrt{N})$.</p>
+<p>Dễ thấy hàm $manualUpdate$ sẽ được gọi đúng $2$ lần trong mỗi truy vấn. Vậy tổng độ phức tạp của việc gọi hàm này là $O(Q*\sqrt{N})$. <strong>(2)</strong></p>
+<p>Vậy độ phức tạp của lời giải chia căn này sẽ là <strong>(1)</strong> + <strong>(2)</strong> = $O(Q*\sqrt{N}*100) + O(Q*\sqrt{N})$.</p>
+<p>Các bạn có thể xem code mẫu ở <a href="https://ideone.com/TA4XqI">đây</a></p>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng</h1>
+<p>Các bạn có thể thử sức <a href="https://vnoi.info/problems/list/?tag=156&amp;page=1">tại đây</a>.</p>
+<h1 class="editable"><a class="anchor" id="lưu-ý" href="#lưu-ý"></a>Lưu ý</h1>
+<ul>
+<li>Trong phần lớn trường hợp, ta nên đặt $BLOCK\_SIZE$ là hằng số, chứ không nên thực sự lấy căn của $N$ trong dữ liệu nhập vào. Lý do là việc chia cho hằng số, cũng như việc dùng mảng tĩnh sẽ giúp code của bạn chạy nhanh hơn nhiều so với việc chia cho biến và xài mảng động.</li>
+<li>Khi cài đặt, các bạn cần tránh việc thực hiện $O(Q \sqrt{N})$ phép chia (cả chia lấy nguyên lẫn chia lấy dư), vì phép chia là một thao tác chậm hơn nhiều so với các phép toán khác. Các bạn dễ làm điều này khi cần tính $id$ của các block lúc truy vấn/cập nhật. Phạm vào điều này nhiều khả năng sẽ khiến code bạn bị chạy quá thời gian (TLE).</li>
+<li>Vì thường yêu cầu bộ nhớ lớn, các bạn cần tính toán để không bị quá bộ nhớ (MLE). Cách tính như sau: 1MB = $10^6$ byte, 1 int = $4$ byte, 1 long long = $8$ byte. Ví dụ, mảng $cnt$ trong code mẫu ở trên sẽ tốn $320 * 10^5 * 4 = 128 000 000 = 128 MB$.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="mở-rộng" href="#mở-rộng"></a>Mở rộng</h1>
+<p>Chia căn còn rất nhiều dạng khác. Các bạn có thể đọc tiếp về kĩ thuật này tại <a href="https://vnoi.info/wiki/algo/data-structures/mo-algorithm.md">Phần 2</a>.</p>
+</div>
+</div>
+</div>
+</div>

@@ -15,7 +15,7 @@ type TypeTagProps = {
   removeTypeTag: (ind: number) => void;
 };
 
-function TypeTag({  name, ind, removeTypeTag }: TypeTagProps) {
+function TypeTag({ name, ind, removeTypeTag }: TypeTagProps) {
   return (
     <div className='tag-item'>
       <button style={{ border: 'none' }} onClick={e => removeTypeTag(ind)}>
@@ -47,7 +47,7 @@ export const CodingProblemFilter = () => {
 
   const handleAddTag = (e: any) => {
     const ind = e.currentTarget.value;
-    console.log('add tag: ind= ' + ind);
+    //console.log('add tag: ind= ' + ind);
     if (chosenTypes.includes(ind) || ind === 0) return;
     let lst = [...chosenTypes];
     lst.push(ind);
@@ -55,14 +55,12 @@ export const CodingProblemFilter = () => {
   };
 
   const handleChangeCategory = (e: any) => {
-    console.log('set category to :' + e.currentTarget.value);
+    //console.log('set category to :' + e.currentTarget.value);
     setCategory(e.currentTarget.value);
   };
 
   const handleFind = (e: any) => {
-    let tagList: Array<string> = chosenTypes.map(
-      item => problemCategories[item].id
-    );
+    let tagList: Array<string> = chosenTypes.map(item => problemTags[item].id);
 
     const params: GetProblemsParam = {
       category: category === '0' ? null : (category as string),
@@ -70,13 +68,14 @@ export const CodingProblemFilter = () => {
       endDif: endDif === 400 ? null : endDif,
       page: 1,
       q: q.length > 0 ? q : null,
-      tagList: tagList
+      tagList: tagList,
+      init: undefined,
     };
     dispatch(fetchCProblems(params));
   };
 
   const removeTypeTag = (ind: number) => {
-    console.log('remove ' + ind);
+    //console.log('remove ' + ind);
     if (chosenTypes.includes(ind as never)) {
       var lst = [...chosenTypes];
       let index = lst.indexOf(ind as never);

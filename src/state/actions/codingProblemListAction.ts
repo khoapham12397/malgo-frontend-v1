@@ -5,7 +5,8 @@ import {
   setProblems
 } from '../reducers/CProblemListReducer';
 import store from '..';
-const host = (import.meta.env.VITE_API_URL as string)+'codingproblem';
+import { toast } from 'react-hot-toast';
+const host = (import.meta.env.VITE_API_URL as string) + 'codingproblem';
 
 export const fetchCProblems = (params: GetProblemsParam) => {
   let url = host + '/search';
@@ -29,7 +30,7 @@ export const fetchCProblems = (params: GetProblemsParam) => {
             totalPage: result.data.totalPage,
             total: result.data.total
           };
-          console.log(result);
+          //console.log(result);
           dispatch(
             setProblems({
               filter: filter,
@@ -56,16 +57,17 @@ export const fetchCpCategoriesAndTags = () => {
 };
 export const fetchInit = async (dispatch: Dispatch<any>) => {
   // adding param vao dung: // dong ia n:
-  const res = await fetch(host + '/categories_tags');
-  const result = await res.json();
-  if (result.successed) {
+  //const res = await fetch(host + '/categories_tags');
+  // const result = await res.json();
+  //if (result.successed) {
     const params: GetProblemsParam = {
       category: null,
       endDif: null,
       startDif: null,
       page: 1,
       q: null,
-      tagList: []
+      tagList: [],
+      init: true,
     };
     const rs = await fetch(host + '/search', {
       method: 'POST',
@@ -86,14 +88,15 @@ export const fetchInit = async (dispatch: Dispatch<any>) => {
       };
       dispatch(
         setAll({
-          categories: result.data.categories,
-          tags: result.data.tags,
+          categories: result1.data.categoriesAndTags.categories,
+          tags: result1.data.categoriesAndTags.tags,
           filter: filter,
           problems: result1.data.problems
         })
       );
     } else {
-      dispatch(setCategoriesAndTags(result.data));
+      //dispatch(setCategoriesAndTags(result.data));
+      toast.error('Some error occured');
     }
-  }
+  //}
 };

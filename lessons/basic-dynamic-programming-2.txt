@@ -1,0 +1,815 @@
+<div id="wiki-content">
+<h1 class="pt-4">Quy hoạch động cơ bản (Phần 2)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/dp/">dp</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Bài viết được sưu tầm và bổ sung từ bài viết <em>"Một số bài toán quy hoạch động kinh điển"</em> của thầy Nguyễn Thanh Tùng, <em>Tạp chí Tin học và Nhà trường</em> số $1$, năm $2005$.</p>
+<p><strong>Người viết:</strong> Nguyễn Anh Bảo - Đại học Bách Khoa Hà Nội</p>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Hồ Ngọc Vĩnh Phát - Đại học Khoa học Tự nhiên, ĐHQG-HCM</li>
+<li>Ngô Nhật Quang - Trường THPT chuyên Khoa học Tự Nhiên, ĐHQGHN</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#1-biến-đổi-xâu">1. Biến đổi xâu</a><ul><li><a href="#1-1-mô-hình">1.1. Mô hình</a></li><li><a href="#1-2-lời-giải">1.2. Lời giải</a></li><li><a href="#1-3-code-tham-khảo">1.3. Code tham khảo</a></li><li><a href="#1-4-một-số-bài-toán-khác">1.4. Một số bài toán khác</a><ul><li><a href="#1-4-1-xâu-con-chung-dài-nhất">1.4.1. Xâu con chung dài nhất</a></li><li><a href="#1-4-2-bắc-cầu">1.4.2. Bắc cầu</a></li><li><a href="#1-4-3-palindrome-ioi-2000">1.4.3. Palindrome (IOI 2000)</a></li></ul></li></ul></li><li><a href="#2-xếp-vali-không-giới-hạn-unbounded-knapsack">2. Xếp vali không giới hạn (Unbounded Knapsack)</a><ul><li><a href="#2-1-mô-hình">2.1. Mô hình</a></li><li><a href="#2-2-lời-giải">2.2. Lời giải</a></li><li><a href="#2-3-code-tham-khảo">2.3. Code tham khảo</a></li><li><a href="#2-4-một-số-bài-toán-khác">2.4. Một số bài toán khác</a><ul><li><a href="#2-4-1-đổi-tiền">2.4.1. Đổi tiền</a></li></ul></li></ul></li><li><a href="#3-nhân-ma-trận">3. Nhân ma trận</a><ul><li><a href="#3-1-mô-hình">3.1. Mô hình</a></li><li><a href="#3-2-lời-giải">3.2. Lời giải</a></li><li><a href="#3-3-code-tham-khảo">3.3. Code tham khảo</a></li><li><a href="#3-4-một-số-bài-toán-khác">3.4. Một số bài toán khác</a><ul><li><a href="#3-4-1-chia-đa-giác">3.4.1. Chia đa giác</a></li><li><a href="#3-4-2-biểu-thức-số-học">3.4.2. Biểu thức số học</a></li></ul></li></ul></li><li><a href="#4-ghép-cặp">4. Ghép cặp</a><ul><li><a href="#4-1-mô-hình">4.1. Mô hình</a></li><li><a href="#4-2-lời-giải">4.2. Lời giải</a></li><li><a href="#4-3-code-tham-khảo">4.3. Code tham khảo</a></li><li><a href="#4-4-một-số-bài-toán-khác">4.4. Một số bài toán khác</a><ul><li><a href="#4-4-1-xếp-phòng-học">4.4.1. Xếp phòng học</a></li><li><a href="#4-4-2-mua-giày-đề-qg-bảng-b-năm-2003">4.4.2. Mua giày (Đề QG bảng B năm 2003)</a></li></ul></li></ul></li><li><a href="#kết">Kết</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Ở phần trước, chúng ta đã được làm quen với khái niệm <strong>Quy hoạch động</strong> đồng thời xem xét một số bài toán điển hình. Bài viết này nhằm giới thiệu thêm một số bài toán quy hoạch động thường gặp khác.</p>
+<h1 class="editable"><a class="anchor" id="1-biến-đổi-xâu" href="#1-biến-đổi-xâu"></a>1. Biến đổi xâu</h1>
+<p>Để thuận tiện cho việc trình bày và tính toán, trong mục $(1)$ ta sẽ quy ước các xâu đều bắt đầu từ chỉ số $1$.</p>
+<h2 class="editable"><a class="anchor" id="1-1-mô-hình" href="#1-1-mô-hình"></a>1.1. Mô hình</h2>
+<blockquote>
+<p><em>Cho hai xâu $A$, $B$ có độ dài lần lượt là $m$ và $n$, bắt đầu từ chỉ số $1$. Ta muốn biến đổi xâu $A$ về xâu $B$ qua một số phép biến đổi thuộc các loại sau:</em></p>
+<ul>
+<li><em>Chèn kí tự $C$ vào sau kí tự thứ $i$: <code>I i C</code>, <code>i</code> có thể bằng $0$</em></li>
+<li><em>Thay thế kí tự ở vị trí thứ $i$ bằng kí tự $C$: <code>R i C</code></em></li>
+<li><em>Xoá kí tự ở vị trí thứ $i$: <code>D i</code></em></li>
+</ul>
+<p><em>Hãy tìm số ít nhất các phép biến đổi để biến xâu $A$ thành xâu $B$.</em>
+<strong>Điều kiện:</strong> $1\le n \times m \le 10^6$.</p>
+</blockquote>
+<p><strong>Ví dụ 1:</strong> <code>ILoveVNOI</code>$\to$<code>ILoveVNOIMore</code></p>
+<table>
+<thead>
+<tr>
+<th>Lượt biến đổi</th>
+<th>Phép biến đổi</th>
+<th>A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$1$</td>
+<td><code>I 9 e</code></td>
+<td><code>ILoveVNOIe</code></td>
+</tr>
+<tr>
+<td>$2$</td>
+<td><code>I 9 r</code></td>
+<td><code>ILoveVNOIre</code></td>
+</tr>
+<tr>
+<td>$3$</td>
+<td><code>I 9 o</code></td>
+<td><code>ILoveVNOIore</code></td>
+</tr>
+<tr>
+<td>$4$</td>
+<td><code>I 9 M</code></td>
+<td><code>ILoveVNOIMore</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ví dụ 2:</strong> <code>asrefghuar</code>$\to$<code>regular</code></p>
+<table>
+<thead>
+<tr>
+<th>Lượt biến đổi</th>
+<th>Phép biến đổi</th>
+<th>A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$1$</td>
+<td><code>R 8 l</code></td>
+<td><code>asrefghlar</code></td>
+</tr>
+<tr>
+<td>$2$</td>
+<td><code>R 7 u</code></td>
+<td><code>asrefgular</code></td>
+</tr>
+<tr>
+<td>$3$</td>
+<td><code>D 5</code></td>
+<td><code>asregular</code></td>
+</tr>
+<tr>
+<td>$4$</td>
+<td><code>D 1</code></td>
+<td><code>sregular</code></td>
+</tr>
+<tr>
+<td>$5$</td>
+<td><code>D 1</code></td>
+<td><code>regular</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ví dụ 3:</strong> <code>D9M12Y2022</code>$\to$<code>D1M1Y2023</code></p>
+<table>
+<thead>
+<tr>
+<th>Lượt biến đổi</th>
+<th>Phép biến đổi</th>
+<th>A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$1$</td>
+<td><code>R 2 1</code></td>
+<td><code>D1M12Y2022</code></td>
+</tr>
+<tr>
+<td>$2$</td>
+<td><code>R 10 3</code></td>
+<td><code>D1M12Y2023</code></td>
+</tr>
+<tr>
+<td>$3$</td>
+<td><code>D 5</code></td>
+<td><code>D1M1Y2023</code></td>
+</tr>
+</tbody>
+</table>
+<h2 class="editable"><a class="anchor" id="1-2-lời-giải" href="#1-2-lời-giải"></a>1.2. Lời giải</h2>
+<p><strong>Chú ý: Chỉ số bắt đầu của $A$ và $B$ là $1$, không phải $0$.</strong></p>
+<p>Đặt $A_i$ là xâu gồm $i$ kí tự đầu tiên của $A$, $B_j$ là xâu gồm $j$ kí tự đầu của $B$. Quy ước $A_0$ và $B_0$ là 2 xâu rỗng (có $0$ kí tự).</p>
+<p>Ý tưởng bài toán này là quy hoạch động mảng $L[i][j]$ - số phép biến đổi ít nhất để biến xâu $A_i$ thành xâu $B_j$.</p>
+<p>Dễ thấy $L[0][j]=j$ và $L[i][0]=i$.</p>
+<p>Ta đi tìm công thức truy hồi:</p>
+<p>Có 2 trường hợp xảy ra:</p>
+<ul>
+<li>Nếu $A[i] = B[j] = C$: Cần biến xâu $A_{i-1}C$ thành xâu $B_{j-1}C$. Để biến đổi tối ưu, cần biến đổi xâu $A_{i-1}$ thành xâu $B_{j-1}$ sau ít phép biến đổi nhất, giữ nguyên kí tự $C$. Số phép biến đổi cần thiết là $L[i - 1][ j - 1]$.</li>
+<li>Nếu $A[i] = C \ne B[j] = D$: Để biến đổi $A_{i-1}C$ thành $B_{j-1}D$, ta có thể dùng một trong các cách sau:
+<ol>
+<li>Xoá kí tự $C$: Sau khi xóa, cần biến $A_{i-1}$ thành $B_{j}$. Số phép biến đổi ít nhất là $L[i-1][j]$. Do đó số phép biến đổi phải dùng là $L[i-1][j]+1$.</li>
+<li>Thay thế $C$ bởi $D$: Sau đó, cần biến $A_{i-1}D$ thành $B_{j-1}D$. Số phép biến đổi ít nhất là $L[i-1][j-1]+1$.</li>
+<li>Chèn $D$ vào sau $C$: Sau đó, cần biến đổi $A_{i}D$ thành $B_{j-1}D$. Số phép biến đổi ít nhất là $L[i][j -1] + 1$.</li>
+<li>Các cách biến đổi khác đều phải chứa phép biến đổi $1,2$ hoặc $3$. Do đó, ta có thể đảo thứ tự các phép biến đổi để đưa về lần biến đổi đầu tiên là $1,2$ hoặc $3$.</li>
+</ol>
+</li>
+</ul>
+<p>Tổng kết lại, ta có công thức QHĐ sau:</p>
+<ul>
+<li>$L[0][j]=j$, với mọi $j=0,1,\ldots,n$.</li>
+<li>$L[i][0]=i$, với mọi $i=0,1,\ldots,m$.</li>
+<li>$L[i][j] =L[i−1][j−1]$ nếu $A[i] = B[j]$.</li>
+<li>$L[i][j] = \min(L[i−1][j], L[i][j−1], L[i−1][j−1]) + 1$ nếu $A[i] \ne B[j]$.</li>
+</ul>
+<p>Bài này ta có thể tiết kiệm biến hơn bằng cách dùng 2 mảng 1 chiều tính lẫn nhau và một mảng đánh dấu 2 chiều để truy vết.</p>
+<h2 class="editable"><a class="anchor" id="1-3-code-tham-khảo" href="#1-3-code-tham-khảo"></a>1.3. Code tham khảo</h2>
+<p>Cần lưu ý thứ tự tính. Để tính $L[i][j]$ cần biết $L[i - 1][j -1],L[i-1][j]$ và $L[i][j-1]$. Hơn nữa, $L[i][0]$ và $L[0][j]$ có thể tính trực tiếp nên ta có thể tính theo trình tự sau:</p>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-2_img1.png" /></p>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">L</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">L</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">i</span> <span class="o">:</span> <span class="n">L</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="cm">/* Vì a và b bắt đầu từ chỉ số 1 nên 
+     * chèn thêm 1 kí tự vào đầu 2 xâu */</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="s">"_"</span> <span class="o">+</span> <span class="n">a</span><span class="p">;</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s">"_"</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+            <span class="k">else</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">min</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                              <span class="n">min</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]));</span>
+        <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">L</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">n</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="1-4-một-số-bài-toán-khác" href="#1-4-một-số-bài-toán-khác"></a>1.4. Một số bài toán khác</h2>
+<h3 class="editable"><a class="anchor" id="1-4-1-xâu-con-chung-dài-nhất" href="#1-4-1-xâu-con-chung-dài-nhất"></a>1.4.1. Xâu con chung dài nhất</h3>
+<p><strong>Link nộp bài:</strong> <a href="https://oj.vnoi.info/problem/atcoder_dp_f"><strong>VNOJ-LCS</strong></a></p>
+<blockquote>
+<p><em>Cho $2$ xâu A và B. Tìm xâu con chung dài nhất của $A$ và $B$.
+Xâu $X$ là xâu con của xâu $Y$ khi và chỉ khi có thể thu được $X$ bằng cách xóa một số kí tự của $Y$ (có thể tất cả hoặc không kí tự nào).</em>
+<strong>Điều kiện:</strong> $1\le |A|\times |B| \le 10^6$.
+<strong>Input:</strong> $2$ xâu $A$ và $B$.
+<strong>Output:</strong> Độ dài xâu con chung dài nhất.</p>
+</blockquote>
+<p><strong>Lời giải:</strong></p>
+<p>Gọi $L[i][j]$ là độ dài xâu con chung dài nhất của xâu $A_i$ gồm $i$ kí tự phần đầu của $A$ ($A_i = A[1..i]$) và xâu $B_j$ gồm $j$ kí tự phần đầu của $B$ ($B_j = B[1..j]$).</p>
+<ul>
+<li>Nếu $A[i]=B[j]$ thì ta chỉ cần chọn xâu con dài nhất của $A_{i-1}$ và $B_{j-1}$, do đó độ dài xâu con dài nhất của $A_i$ và $B_j$ là $L[i-1][j-1]+1$.</li>
+<li>Nếu $A[i]\ne B[j]$ thì xâu con chung dài nhất sẽ là xâu con của $A_{i-1}$ và $B_j$ hoặc $A_i$ và $B_{i-1}$.</li>
+</ul>
+<p>Từ đó có công thức quy hoạch động như sau:</p>
+<ul>
+<li>$L[0][j] = L[i][0] = 0$</li>
+<li>$L[i][j] = L[i−1][j−1] + 1$ nếu $A[i] = B[j]$</li>
+<li>$L[i][j] = \max(L[i−1][j], L[i][j−1])$ nếu $A[i] \ne B[j]$.</li>
+</ul>
+<p><strong>Cài đặt:</strong>
+Lưu ý do $m$ và $n$ có thể lớn đến $10^6$ nên mảng $L$ phải là mảng động (ví dụ <code>std::vector</code> trong <code>c++</code>).</p>
+<p>Nếu đề bài yêu cầu phải in ra xâu con dài nhất thì phải thực hiện truy vết. Dưới đây là một cách cài đặt tham khảo:</p>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="c1">// Struct dùng để truy vết </span>
+<span class="k">struct</span> <span class="nc">Trace</span>
+<span class="p">{</span>
+    <span class="c1">// Vị trí của kí tự trước đó trong A và B</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">j</span><span class="p">;</span>   
+    <span class="c1">// Kí tự cần thêm vào xâu kết quả </span>
+    <span class="c1">// (có thể là kí tự NULL)</span>
+    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
+    <span class="n">Trace</span><span class="p">(</span><span class="kt">int</span> <span class="n">ii</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">int</span> <span class="n">jj</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">char</span> <span class="n">cc</span> <span class="o">=</span> <span class="sc">'\0'</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">i</span><span class="p">(</span><span class="n">ii</span><span class="p">),</span> <span class="n">j</span><span class="p">(</span><span class="n">jj</span><span class="p">),</span> <span class="n">c</span><span class="p">(</span><span class="n">cc</span><span class="p">)</span>
+    <span class="p">{</span> <span class="p">};</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">L</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Trace</span><span class="o">&gt;&gt;</span> <span class="n">Tr</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">L</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">Tr</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">i</span> <span class="o">:</span> <span class="n">L</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">i</span> <span class="o">:</span> <span class="n">Tr</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="c1">// Vì a và b bắt đầu từ chỉ số 1 nên </span>
+    <span class="c1">// chèn thêm 1 kí tự vào đầu 2 xâu</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="s">"_"</span> <span class="o">+</span> <span class="n">a</span><span class="p">;</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s">"_"</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="p">{</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">Tr</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="p">{</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+                <span class="n">Tr</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+                <span class="n">Tr</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="c1">// Truy vết xâu con chung dài nhất từ Tr[m][n]</span>
+    <span class="n">Trace</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Tr</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">n</span><span class="p">];</span>
+    <span class="n">string</span> <span class="n">ans</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+    <span class="p">{</span>                 
+        <span class="k">if</span> <span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">c</span> <span class="o">!=</span> <span class="sc">'\0'</span><span class="p">)</span>
+            <span class="n">ans</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">c</span> <span class="o">+</span> <span class="n">ans</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">t</span><span class="p">.</span><span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">Tr</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">i</span><span class="p">][</span><span class="n">t</span><span class="p">.</span><span class="n">j</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Như vậy độ phức tạp bộ nhớ của bài toán là $\mathcal{O}(mn)$, độ phức tạp thời gian là $\mathcal{O}(mn)$.</p>
+<p>Có một phương pháp cài đặt tốt hơn, chỉ với độ phức tạp bộ nhớ $\mathcal{O}(\min(m, n))$ dựa trên nhận xét ở ví dụ đầu:</p>
+<blockquote>
+<p>Để tính $L[i][j]$, ta chỉ cần 3 ô $L[i-1][j-1]$, $L[i-1][j]$ và $L[i][j-1]$.</p>
+<p>Tức là để tính hàng $L[i]$ thì chỉ cần hàng $L[i-1]$ và $L[i][0] = 0$. Do đó ta chỉ cần 2 mảng 1 chiều để lưu hàng vừa tính $P$ và hàng đang tính $L$. Cách cài đặt mới như sau:</p>
+</blockquote>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">L</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">L</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="1-4-2-bắc-cầu" href="#1-4-2-bắc-cầu"></a>1.4.2. Bắc cầu</h3>
+<blockquote>
+<p><em>Hai nước Alpha và Beta nằm ở hai bên bờ sông Omega, Alpha nằm ở bờ bắc và có $m$ thành phố được đánh số từ $1$ đến $m$, Beta nằm ở bờ nam và có $n$ thành phố được đánh số từ $1$ đến $n$ (theo vị trí từ tây sang đông).
+Mỗi thành phố của nước này thường có quan hệ kết nghĩa với một số thành phố của nước kia. Để tăng cường tình hữu nghị, hai nước muốn xây các cây cầu bắc qua sông, mỗi cây cầu sẽ là nhịp cầu nối 2 thành phố kết nghĩa. Với yêu cầu là các cây cầu không được cắt nhau và mỗi thành phố chỉ là đầu cầu cho nhiều nhất là một cây cầu, hãy đếm số cây cầu nhiều nhất có thể xây dựng.</em>
+<strong>Điều kiện:</strong> $1\le n \times m \le 10^6$.</p>
+</blockquote>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-2_img2.png" /></p>
+<p><strong>Lời giải:</strong></p>
+<p>Bài toán có thể được phát biểu lại như sau: Cho đồ thị hai phía $G(A,B,E)$. Các đỉnh của $A$ là $a_1,a_2,\ldots,a_m$. Tương tự, các đỉnh của $B$ là $b_1,b_2,\ldots,b_n$. Cần tìm $k$ lớn nhất để có hai dãy đỉnh $a'_1 &lt; a'_2 &lt; \ldots &lt; a'_k\in A$ và $b'_1 &lt; b'_2 &lt; \ldots &lt; b'_k\in B$ sao cho: $(a'_i,b'_i)\in E$ với mọi $i=1;2;\ldots;k$.</p>
+<p>Ý tưởng tương tự như các bài trên, ta xét mảng $L[i][j]$ là số lượng cầu nhiều nhất có thể bắc từ các thành phố $a_1,a_2,\ldots,a_i$ đến $b_1,b_2,\ldots,b_j$.</p>
+<p>Khi đó công thức QHĐ sẽ là:</p>
+<ul>
+<li>$L[i][0] =0,L[0][j] = 0$</li>
+<li>$L[i][j] = 1 + L[i-1][j-1]$ nếu $a_i$ và $b_j$ là hai thành phố kết nghĩa</li>
+<li>$L[i][j] = \max(L[i][j-1], L[i-1][j])$ nếu $a_i$ và $b_j$ không là hai thành phố kết nghĩa</li>
+</ul>
+<p><strong>Nhận xét:</strong> Không mất tổng quát, giả sử thứ tự xây các cây cầu là tăng dần theo mút ở thành phố $A$. Khi đó, nếu ta đã chọn xây cầu giữa hai thành phố $a_i$ và $b_j$ thì cây cầu tiếp theo, giả sử là cây cầu nối $a_u$ và $b_v$ sẽ phải thỏa mãn $u&gt;i,v&gt;j$. Do đó, bài toán có thể giải như bài toán tìm xâu con dài nhất, với $a_i$ và $b_j$ được xem là "bằng nhau" khi và chỉ khi chúng là hai thành phố kết nghĩa.</p>
+<h3 class="editable"><a class="anchor" id="1-4-3-palindrome-ioi-2000" href="#1-4-3-palindrome-ioi-2000"></a>1.4.3. Palindrome (IOI 2000)</h3>
+<p><strong>Link nộp bài:</strong> <a href="https://www.spoj.com/problems/IOIPALIN/"><strong>SPOJ - IOIPALIN</strong></a></p>
+<blockquote>
+<p><em>Cho một xâu $S$. Ở mỗi bước, bạn An có thể chèn $1$ kí tự tùy ý vào bất kì vị trí nào trong xâu $S$. Hãy tính số bước ít nhất cần thực hiện để biến $S$ thành xâu đối xứng.
+Xâu $S[1..n]$ được gọi là xâu đối xứng nếu $S[i] = S[n + 1 - i]$, với mọi $i=1;2;\ldots;n$.</em>
+<strong>Điều kiện:</strong> $1\le|S|\le5000$.</p>
+</blockquote>
+<p><strong>Lời giải:</strong></p>
+<p><strong>Cách 1:</strong>
+Công thức QHĐ của bài này như sau:</p>
+<p>Gọi $L[i][j]$ là số kí tự ít nhất cần thêm vào xâu con $S[i..j]$ của $S$ để xâu đó trở thành đối xứng. Nhận xét đầu tiên là xâu thu được sau khi thêm một số kí tự vào $S[i..j]$ phải có kí tự đầu tiên và cuối cùng là $S[i]$ hoặc $S[j]$.</p>
+<ul>
+<li>Nếu $S[i] = S[j]$ thì xâu đối xứng thu được từ $S[i][j]$ cũng có kí tự đầu tiên là $S[i]$ và kí tự cuối cùng là $S[j]$. Do đó, chỉ cần tìm số kí tự ít nhất để thêm vào $S[i+1][j-1]$ để tạo thành xâu đối xứng.</li>
+<li>Nếu $S[i]\ne S[j]$ thì trước tiên ta cần thêm kí tự $S[j]$ vào đầu hoặc $S[i]$ vào cuối xâu $S[i..j]$. Do đó, chỉ cần tìm số kí tự ít nhất cần thêm vào để $S[i][j-1]$ hoặc $S[i+1][j]$ trở thành xâu đối xứng.</li>
+</ul>
+<p>Tóm lại, công thức QHĐ là:</p>
+<ul>
+<li>$L[i][j]=0$ nếu $i\ge j$</li>
+<li>$L[i][j]=L[i+1][j-1]$ nếu $i &lt; j$ và $S_i=S_j$</li>
+<li>$L[i][j]=1 + \min(L[i+1][j], L[i][j-1])$ nếu $i &lt; j$ và $S_i \ne S_j$</li>
+</ul>
+<p>Đáp số của bài toán sẽ là $L[1][n]$ với $n$ là số kí tự của $S$.</p>
+<p><strong>Cài đặt:</strong> Ta có thể cài đặt trực tiếp thuật toán trên mà không cần quan tâm đến thứ tự tính như sau:</p>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">5010</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">];</span>
+<span class="n">string</span> <span class="n">s</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">calc</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Nếu L[i, j] chưa được tính thì lưu giá trị vào d[i][j]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="k">else</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">min</span><span class="p">(</span><span class="n">calc</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">calc</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s">"_"</span> <span class="o">+</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">calc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p><strong>Nhận xét:</strong> Đây là phương pháp đệ quy có nhớ (<em>memoization</em>). Độ phức tạp bộ nhớ của thuật toán là $\mathcal{O}(n^2)$. Có một phương pháp cài đặt tiết kiệm hơn như sau:</p>
+<p>Để ý để tính được mảng $L[1..n][j]$ thì ta chỉ cần mảng $L[1..n][j - 1]$. Do đó ta sẽ dùng hai mảng một chiều $P$ và $L$ để lưu giá trị mảng đã tính và cần tính. Ở mỗi vòng lặp ta có $P=L[1..n][j-1],L=L[1..n][j]$. Đáp án bài toán là $L[1]$.</p>
+<p><strong>Cách 2:</strong>
+Từ ý tưởng của bài xâu con chung dài nhất, ta có thuật toán sau:</p>
+<ul>
+<li>Gọi $P$ là xâu đảo của $S$ và $T$ là xâu con chung dài nhất của $S$ và $P$. Khi đó các kí tự của $S$ không thuộc $T$ cũng là các kí tự cần thêm vào để $S$ trở thành đối xứng. Đáp số của bài toán sẽ là $n-k$, với $k$ là độ dài của $T$.</li>
+</ul>
+<p>Ví dụ: $S=edbabcd$, xâu đảo của $S$ là $P=dcbabde$. Xâu con chung dài nhất của $S$ và $P$ là $T=dbabd$. Như vậy cần thêm $|S|-|T|=7-5=2$ kí tự vào $S$ để $S$ trở thành xâu đối xứng. Ví dụ, ta có thể thêm kí tự <code>e</code> và <code>c</code> vào $S$ và thu được xâu $S=edcbabcde$.</p>
+<h1 class="editable"><a class="anchor" id="2-xếp-vali-không-giới-hạn-unbounded-knapsack" href="#2-xếp-vali-không-giới-hạn-unbounded-knapsack"></a>2. Xếp vali không giới hạn (Unbounded Knapsack)</h1>
+<h2 class="editable"><a class="anchor" id="2-1-mô-hình" href="#2-1-mô-hình"></a>2.1. Mô hình</h2>
+<blockquote>
+<p><em>Có $n$ đồ vật, vật thứ $i$ có trọng lượng $A_i$ và giá trị $B_i$. Hãy chọn ra một số các đồ vật để xếp vào vali có trọng lượng tối đa $W$ sao cho tổng giá trị của vali là lớn nhất (Chú ý mỗi vật có thể chọn nhiều lần).</em>
+<strong>Điều kiện:</strong> $1\le n\times W\le 10^6,1\le A_i,B_i\le 10^9$.</p>
+</blockquote>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-2_img3.png" /></p>
+<p><strong>Chú ý:</strong> Bài toán này khác với bài toán <strong>Xếp Vali</strong> ở phần trước ở chỗ mỗi vật không phải là duy nhất và có thể được chọn vào vali nhiều lần.</p>
+<h2 class="editable"><a class="anchor" id="2-2-lời-giải" href="#2-2-lời-giải"></a>2.2. Lời giải</h2>
+<p>Trạng thái của bài toán phụ thuộc vào hai yếu tố: số vật đang được chọn và tổng khối lượng của chúng. Ta có thể gọi $L[i][ j]$ là giá trị lớn nhất có thể có khi ta chọn các vật từ $1$ đến $i$ sao cho khối lượng của chúng không vượt quá $j$. Khi đó, đáp số bài toán sẽ là $L[n][W]$.</p>
+<p>Ta đi tìm công thức truy hồi của $L[i][j]$:</p>
+<ul>
+<li>$L[i][ 0] = 0$</li>
+<li>$L[0][ j] = 0$</li>
+<li>$L[i][j] = L[i -1, j]$ nếu $A_i &gt; j$</li>
+<li>$L[i][j] = \max(L[i-1][j],L[i][ j-A_i] + B_i)$ nếu $A_i\le j$</li>
+</ul>
+<p>Trong đó, $L[i-1][j]$ là giá trị có được nếu không được đưa vật $i$ vào balô, $L[i][j-A_i] + B_i$ là giá trị có được nếu được phép đưa vật $i$ vào balô.</p>
+<h2 class="editable"><a class="anchor" id="2-3-code-tham-khảo" href="#2-3-code-tham-khảo"></a>2.3. Code tham khảo</h2>
+<p>Tương tự như các ví dụ trước, ta có thể dùng mảng hai chiều $L[i][j]$ để lưu kết quả bài toán. Khi tính, ta có thể tính theo từng hàng hoặc đệ quy có nhớ. Cả hai cách đểu có độ phức tạp thời gian và bộ nhớ $\mathcal{O}(nW)$.</p>
+<p>Để giảm độ phức tạp bộ nhớ xuống $\mathcal{O}(n)$, ở mỗi bước ta chỉ cần lưu kết quả của hai hàng vừa tính ($L[i-1]$ và $L[i]$). Ta có thể cài đặt như sau:</p>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">,</span> <span class="n">w</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">P</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">w</span><span class="p">;</span>
+    <span class="n">a</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    	<span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">L</span> <span class="o">=</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span><span class="p">(</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+    	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">w</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    	<span class="p">{</span>
+    	    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">j</span><span class="p">)</span>
+    	    	<span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+    	    <span class="k">else</span>
+    	        <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">L</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    	<span class="n">P</span> <span class="o">=</span> <span class="n">L</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">L</span><span class="p">[</span><span class="n">w</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<p>Lưu ý rằng đoạn chương trình trên mới chỉ cài đặt y nguyên công thức QHĐ chứ chưa tối ưu. Ví dụ với các $j&lt;A_i$, ta gán $L[j]=P[j]$ nhưng sau đó lại gán $P=L$. Bạn đọc có thể rút gọn đoạn code lại để chương trình tối ưu hơn.</p>
+<h2 class="editable"><a class="anchor" id="2-4-một-số-bài-toán-khác" href="#2-4-một-số-bài-toán-khác"></a>2.4. Một số bài toán khác</h2>
+<h3 class="editable"><a class="anchor" id="2-4-1-đổi-tiền" href="#2-4-1-đổi-tiền"></a>2.4.1. Đổi tiền</h3>
+<blockquote>
+<p><em>Ở đất nước Omega người ta chỉ tiêu tiền xu. Có $n$ loại tiền xu, loại thứ $i$ có mệnh giá là $A_i$ đồng. Một người khách du lịch đến Omega du lịch với số tiền $m$ đồng. Ông ta muốn đổi số tiền đó ra tiền xu Omega để tiện tiêu dùng. Ông ta cũng muốn số đồng tiền sau khi đổi là ít nhất (cho túi tiền đỡ nặng khi đi đây đi đó). Bạn hãy giúp ông ta tìm cách đổi tiền.</em>
+<strong>Điều kiện:</strong> $1\le n \times m\le 10^6,1\le A_i\le 10^9$.
+<strong>Input:</strong> Hai số $m,n$ và $A_1,A_2,\ldots,A_n$.
+<strong>Output:</strong> Nếu không thể đổi được, in ra $-1$. Ngược lại, in ra hai dòng:</p>
+<ul>
+<li>Dòng đầu tiên in ra số đồng tiền ít nhất có thể.</li>
+<li>Dòng thứ hai in ra $n$ số, số thứ $i$ là số đồng xu của mệnh giá thứ $i$.</li>
+</ul>
+</blockquote>
+<p><strong>Lời giải:</strong></p>
+<p>Nếu xem "khối lượng" là mệnh giá và "giá trị" bằng $1$, bài toán này sẽ được phát biểu lại thành: xếp các vật có tổng khối lượng <strong>đúng bằng</strong> $m$ vào vali sao cho tổng giá trị của chúng là <strong>nhỏ nhất</strong>. Lưu ý trong mô hình bài toán gốc thì tổng giá trị phải là lớn nhất, và tổng khối lượng có thể bé hơn $m$.</p>
+<p>Ta xây dựng mảng $L[i][j]$ là số đồng xu (giá trị) nhỏ nhất có thể khi đổi $j$ đồng (khối lượng) ra tiền xu bằng $i$ loại tiền $A_1,A_2,\ldots,A_i$. Công thức truy hồi của mảng $L$ như sau:</p>
+<ul>
+<li>$L[0][j] = \inf$</li>
+<li>$L[i][0] = 0$</li>
+<li>$L[i][j] = L[i - 1][j]$ nếu $A_i &gt; j$</li>
+<li>$L[i][j] = \min(L[i - 1][j], L[i][j - A_i] + 1)$ nếu $A_i\le j$</li>
+</ul>
+<p>Kết quả của bài toán là $L[n][m]$ hoặc $-1$ nếu $L[n][m ]=\inf$. Để truy vết các đồng tiền được đổi, ta có thể dùng mảng $d[i][j]\in {1;2;\ldots;n}$ là chỉ số của đồng tiền được thêm vào khi tính $L[i][j]$.</p>
+<p><strong>Cài đặt:</strong></p>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="c1">// Struct để truy vết</span>
+<span class="k">struct</span> <span class="nc">Trace</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">coin</span><span class="p">;</span> <span class="c1">// Chỉ số đồng tiền được thêm vào</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// i và j dùng để truy vết trong bảng QHĐ</span>
+    <span class="kt">int</span> <span class="n">j</span><span class="p">;</span>
+
+    <span class="n">Trace</span><span class="p">(</span><span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">int</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">int</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="o">:</span> <span class="n">coin</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">i</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">j</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="p">{};</span>
+<span class="p">};</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e6</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">A</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">L</span><span class="p">,</span> <span class="n">P</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Trace</span><span class="o">&gt;&gt;</span> <span class="n">d</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="c1">// Quy ước inf = -1</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">L</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Trace</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Trace</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span>
+
+    <span class="c1">// Bước QHĐ</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">j</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="c1">// L[j] = min(P[j], L[j - A[i]]);</span>
+                <span class="c1">// Nếu P[j] và L[j - A[i]] khác inf</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">L</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">L</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                        <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span>
+                    <span class="p">{</span>
+                        <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                        <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="c1">// Chỉ L[j - A[i]] là inf</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                    <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="c1">// Chỉ P[j] là inf</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+                <span class="c1">// Cả hai số là inf</span>
+                <span class="k">else</span>
+                    <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">L</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">L</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+
+    <span class="c1">// Truy vết</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cnt</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">Trace</span> <span class="n">t</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">m</span><span class="p">];</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">coin</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">t</span><span class="p">.</span><span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">cnt</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">coin</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">i</span><span class="p">][</span><span class="n">t</span><span class="p">.</span><span class="n">j</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">cnt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="3-nhân-ma-trận" href="#3-nhân-ma-trận"></a>3. Nhân ma trận</h1>
+<h2 class="editable"><a class="anchor" id="3-1-mô-hình" href="#3-1-mô-hình"></a>3.1. Mô hình</h2>
+<blockquote>
+<p><em>Khi nhân một ma trận kích thước $m \times n$ với một ma trận $n \times p$, số phép nhân phải thực hiện là $m \times n \times p$. Mặt khác phép nhân các ma trận có tính kết hợp, tức là: $(A \times B) \times C = A \times (B \times C).$
+Do đó khi tính tích nhiều ma trận, ta có thể thực hiện theo các trình tự khác nhau, mỗi trình tự tính sẽ quyết định số phép nhân cần thực hiện.
+Cho $n+1$ số $d_0,d_1,\ldots,d_n$ và $n$ ma trận $A_1, A_2, …, A_n$, ma trận thứ $i$ có kích thước là $d_{i-1} \times d_i$. Hãy xác định trình tự nhân ma trận $A_1 \times A_2 \times \ldots \times A_n$ sao cho số phép nhân cần thực hiện là ít nhất.</em>
+<strong>Điều kiện:</strong> $1\le n\le 300,1\le d_i\le 100$.
+<strong>Input:</strong> Số $n$ và $n+1$ số $d_0,d_1,\ldots,d_n$.
+<strong>Output:</strong> Số nguyên duy nhất là số phép nhân ít nhất.</p>
+</blockquote>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-2_img4.png" /></p>
+<h2 class="editable"><a class="anchor" id="3-2-lời-giải" href="#3-2-lời-giải"></a>3.2. Lời giải</h2>
+<p>Gọi $L[i][j]$ là số phép nhân nhỏ nhất cần dùng để tính tích các ma trận từ $A_i$ đến $A_j$ $(A_i \times A_{i+1} \times \ldots \times A_j)$.</p>
+<p>Xét tích $(A_i \times A_{i+1} \times \ldots \times A_j)$ với $i&lt;j.$ Khi tính tích trên, phép nhân ma trận cuối cùng sẽ có dạng $B\times C$, sao cho tồn tại một số nguyên $i\le k\le j$ thỏa mãn:</p>
+<ul>
+<li>$B=A_i\times A_{i+1}\times\ldots\times A_k$</li>
+<li>$C=A_{k+1}\times A_{k+1}\times\ldots\times A_j$</li>
+</ul>
+<p>Nói cách khác, tích $A_{k+1}\times A_{k+1}\times\ldots\times A_j$ được tính theo trình tự sau: $(A_i \times \ldots \times A_k)\times(A_{k+1}\times\ldots\times A_j)$.
+Để số phép nhân là nhỏ nhất thì số phép nhân cần dùng khi tính $B$ và $C$ cũng là nhỏ nhất. Giá trị của $L[i][j]$ sẽ là kết quả nhỏ nhất nếu $k$ chạy từ $i$ đến $j-1$. Từ đó, ta có công thức truy hồi như sau:</p>
+<ul>
+<li>$L[i][i]=0$</li>
+<li>$L[i][j] = \min(L[i][k] + L[k+1][j] + d_{i-1}\times d_{k}\times d_j)$, trong đó $i\le k &lt; j,$ nếu $i&lt;j$</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="3-3-code-tham-khảo" href="#3-3-code-tham-khảo"></a>3.3. Code tham khảo</h2>
+<p>Để tính các giá trị $L[i][j]$, ta có thể dùng hai cách: đệ quy có nhớ và tính theo thứ tự.</p>
+<p>Nếu tính theo thứ tự, để tính được $L[i][j]$ ta cần các giá trị $L[i][k]$ và $L[k+1][j]$ sao cho $i\le k&lt;j$. Do đó, không thể tính $L[i][j]$ theo thứ tự tăng dần của $i$ hoặc $j$. Thay vào đó, ta sẽ tính theo thứ tự tăng dần của $j-i$ như sau: đầu tiên tính các số $L[i][j]$ thỏa mãn $j-i=0$, sau đó tính giá trị các số tiếp theo với $j-i=1;2;\ldots;n-1$. Như vậy, khi tính $L[i][j]$ thì các giá trị $L[i][k],L[k+1][j]$ đã được tính, với $i\le k &lt; j$.</p>
+<p><strong>Đệ quy có nhớ:</strong>
+</p><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">310</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">L</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">],</span> <span class="n">n</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">calc</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">calc</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="n">calc</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">calc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<strong>Tính theo thứ tự:</strong>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">310</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">L</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">],</span> <span class="n">n</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">dis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">dis</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">dis</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">+</span> <span class="n">dis</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">dis</span><span class="p">;</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">L</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">L</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+Với hai cách cài đặt trên, độ phức tạp bộ nhớ là $\mathcal{O}(n^2)$, độ phức tạp thời gian là $\mathcal{O}(n^3)$.
+<h2 class="editable"><a class="anchor" id="3-4-một-số-bài-toán-khác" href="#3-4-một-số-bài-toán-khác"></a>3.4. Một số bài toán khác</h2>
+<h3 class="editable"><a class="anchor" id="3-4-1-chia-đa-giác" href="#3-4-1-chia-đa-giác"></a>3.4.1. Chia đa giác</h3>
+<blockquote>
+<p><em>Cho một đa giác lồi $n$ đỉnh được đánh số từ $1$ đến $n$ theo chiều kim đồng hồ. Bằng các đường chéo không cắt nhau, ta có thể chia đa giác thành $n-2$ tam giác. Hãy xác định cách chia có tổng các đường chéo ngắn nhất.</em>
+<strong>Điều kiện:</strong> $4\le n\le 300,-10^6\le x_i,y_i\le 10^6$ (với $(x_i,y_i)$ là tọa độ của đỉnh thứ $i$).
+<strong>Input:</strong> Một số tự nhiên $n$ và $n$ bộ $(x_i,y_i)$.
+<strong>Output:</strong> In ra tổng các đường chéo của cách chia ngắn nhất.</p>
+</blockquote>
+<p><strong>Lời giải:</strong></p>
+<p>Để đơn giản ta coi mọi đoạn thẳng nối hai đỉnh bất kì đều là “đường chéo” (nếu nối hai đỉnh trùng nhau hoặc hai đỉnh liên tiếp thì có độ dài bằng $0$).</p>
+<p>Gọi $L[i][j], (i\le j)$ là tổng độ dài bé nhất có thể của các đường chéo dùng để chia đa giác gồm các đỉnh từ $i$ đến $j$ thành các tam giác.</p>
+<ul>
+<li>Nếu $j&lt;i+3$ thì đa giác đó có ít hơn 4 đỉnh, không cần phải chia nên $L[i][j]=0$.</li>
+<li>Ngược lại ta xét cách chia đa giác đó bằng cách chọn một đỉnh $k$ nằm giữa $i$, $j$ và nối $i$, $j$ với $k$. Khi đó $L[i][j]=L[i][k]+L[k][j]+d(i,k)+d(k,j)$ với $d(x,y)$ là độ dài đường chéo nối đỉnh $x$ với đỉnh $y$.</li>
+</ul>
+<p>Từ đó, ta rút ra công thức truy hồi sau:</p>
+<ul>
+<li>$L[i][j]=0$ nếu $i\le j&lt;i+3$</li>
+<li>$L[i][j]=\min(L[i][k]+L[k][j]+d(i,k)+d(k,j))$ với $k=i+1,…j-1$, nếu $j\ge i+3$</li>
+</ul>
+<p>$L[1][n]$ là tổng đường chéo của cách chia tối ưu.</p>
+<p><strong>Cài đặt:</strong>
+</p><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;cmath&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">Point</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">x</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">y</span><span class="p">;</span>
+    <span class="n">Point</span><span class="p">(</span><span class="kt">double</span> <span class="n">xx</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kt">double</span> <span class="n">yy</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="o">:</span> <span class="n">x</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="n">y</span><span class="p">(</span><span class="n">yy</span><span class="p">)</span> <span class="p">{};</span>
+<span class="p">};</span>
+
+<span class="kt">double</span> <span class="nf">distance</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">sqrtl</span><span class="p">((</span><span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">310</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="kt">double</span> <span class="n">L</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">];</span>
+<span class="n">Point</span> <span class="n">p</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">dis</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">dis</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">dis</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">+</span> <span class="n">dis</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">dis</span><span class="p">;</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">distance</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">distance</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">+</span> <span class="n">distance</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">j</span><span class="p">]));</span>
+        <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">L</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="3-4-2-biểu-thức-số-học" href="#3-4-2-biểu-thức-số-học"></a>3.4.2. Biểu thức số học</h3>
+<blockquote>
+<p><em>Cho $n$ số thực không âm $A_1,A_2,\ldots,A_n$ được viết thành một hàng ngang theo thứ tự đó. Giữa hai số liên tiếp có một dấu <code>+</code> hoặc <code>*</code> cho trước. Hãy đặt các dấu ngoặc vào biểu thức để giá trị thu được là lớn nhất.</em>
+<strong>Điều kiện:</strong> $1\le n \le 300$.</p>
+</blockquote>
+<p><strong>Lời giải:</strong>
+Giả sử biểu thức ban đầu là $A_1\cdot A_2\cdot\ldots\cdot A_n$, trong đó $\cdot$ là <code>+</code> hoặc <code>*</code> theo đề bài.
+Gọi $L[i,j]$ là giá trị lớn nhất có thể có của biểu thức $A_i \cdot A_{i+1} \cdot … \cdot A_j$.</p>
+<ul>
+<li>Nếu $i=j$ thì $L[i][j]=A_i$</li>
+<li>Nếu $j&gt;i$ thì có thể tính biểu thức $A_i \cdot A_{i+1} \cdot … \cdot A_j$ bằng cách chia thành 2 nhóm: $(A_i \cdot A_{i+1} \cdot … \cdot A_k) \cdot (A_{k+1} \cdot … \cdot A_j)(i\le k &lt;j)$ (lập luận tương tự như bài toán nhân ma trận). Do $A_i\ge 0$ nên để $L[i,j]$ lớn nhất thì cách đặt ngoặc của hai biểu thức con cũng tối ưu. Khi đó $L[i][j]=L[i][k] \cdot L[k+1][j]$, trong đó $i\le k &lt;j$ và $\cdot$ là phép toán giữa $A_k$ và $A_{k+1}$.</li>
+</ul>
+<p>Vậy ta có công thức truy hồi như sau:</p>
+<ul>
+<li>$L[i][i]=A_i$</li>
+<li>$L[i][j]=\max(L[i][k] \cdot L[k+1][j])$ với $i\le k &lt;j$</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="4-ghép-cặp" href="#4-ghép-cặp"></a>4. Ghép cặp</h1>
+<h2 class="editable"><a class="anchor" id="4-1-mô-hình" href="#4-1-mô-hình"></a>4.1. Mô hình</h2>
+<blockquote>
+<p><em>Có $n$ lọ hoa sắp thành một hàng ngang và $k$ bó hoa được đánh số thứ tự từ $1$ đến $k$. Cần cắm $k$ bó hoa trên vào $n$ lọ sao cho hoa có số thứ tự nhỏ phải đứng trước hoa có số thứ tự lớn. Giá trị thẩm mỹ tương ứng khi cắm hoa $i$ vào lọ thứ $j$ là $v_{i,j}\ge0$. Hãy tìm một cách cắm sao cho tổng giá trị thẫm mỹ là lớn nhất. Chú ý rằng mỗi bó hoa phải được cắm vào một lọ và mỗi lọ cũng chỉ cắm tối đa một bó hoa.</em>
+<strong>Điều kiện:</strong> $1\le n \times k\le10^6,1\le v_{i,j}\le10^9$.</p>
+</blockquote>
+<h2 class="editable"><a class="anchor" id="4-2-lời-giải" href="#4-2-lời-giải"></a>4.2. Lời giải</h2>
+<p>Nhận xét rằng bài toán nêu trên là một bài toán ghép cặp có yêu cầu về thứ tự nên ta có thể giải quyết bằng phương pháp QHĐ.</p>
+<p>Trạng thái của bài toán phụ thuộc vào hai yếu tố: số bông hoa đang được xét và số lọ hoa đang dùng. Ta có thể gọi $L[i][j]$ là tổng giá trị thẩm mỹ lớn nhất khi cắm hoa $1$ đến hoa $j$ dùng $i$ lọ đầu tiên. Khi đó:</p>
+<ul>
+<li>Nếu $i = j$: chỉ có một cách cắm, nên $L[i][i] = \sum_{k=1}^iv_{k,k}$</li>
+<li>Nếu $i &lt; j$: không thể cắm $j$ hoa vào $i$ lọ</li>
+<li>Nếu $i &gt; j$: ta có thể cắm hoa thứ $j$ vào lọ $i$ hoặc các lọ trước đó. Do đó có hai trường hợp:
+<ul>
+<li>Nếu hoa $j$ được cắm vào lọ $i$: khi đó cách cắm $j-1$ hoa vào $i-1$ lọ trước đó cũng phải có tổng giá trị thẩm mỹ lớn nhất. Do đó $L[i][j] = L[i-1][j-1]+v_{i,j}$</li>
+<li>Không cắm hoa $j$ vào lọ $i$ (cắm vào lọ trước $i$), giá trị thẫm mỹ của cách cắm là $L[i][j] = L[i - 1][j]$</li>
+</ul>
+</li>
+</ul>
+<p>Tóm lại, công thức truy hồi của bài toán là:</p>
+<ul>
+<li>$L[0][j]=L[i][0]=0$</li>
+<li>$L[i][i] = \sum_{k=1}^iv_{k,k}$</li>
+<li>$L[i][j] = \max(L[i - 1][j - 1] + v_{i,j},L[i - 1][j])$ nếu $i&gt;j$</li>
+</ul>
+<p>Đáp án của bài toán là $L[n][k]$.</p>
+<p><strong>Nhận xét:</strong></p>
+<ul>
+<li>Ta chỉ cần điều kiện $1$ và $3$ vì điều kiện $2$ có thể được suy ra trực tiếp từ hai điều kiện trên.</li>
+<li>Công thức QHĐ của bài này không có gì đặc biệt một khi ta tìm ra trạng thái của bài toán.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="4-3-code-tham-khảo" href="#4-3-code-tham-khảo"></a>4.3. Code tham khảo</h2>
+<p>Tương tự các bài toán trước, có hai phương pháp cài đặt QHĐ, với phương pháp tính từng hàng cài đặt nhanh và tiết kiệm hơn:</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">L</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">L</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">];</span></code></pre>
+<h2 class="editable"><a class="anchor" id="4-4-một-số-bài-toán-khác" href="#4-4-một-số-bài-toán-khác"></a>4.4. Một số bài toán khác</h2>
+<h3 class="editable"><a class="anchor" id="4-4-1-xếp-phòng-học" href="#4-4-1-xếp-phòng-học"></a>4.4.1. Xếp phòng học</h3>
+<blockquote>
+<p><em>Một trường học có $n$ phòng học đánh số từ $1$ đến $n$ và $k$ nhóm học sinh đánh số từ $1$ đến $k$. Cần xếp $k$ nhóm học sinh vào các phòng học khác nhau sao cho với hai nhóm $i&lt;j$ có $a, b$ lần lượt là phòng học của hai nhóm thì $a&lt;b$. Nói cách khác, nhóm có số hiệu lớn hơn sẽ được ưu tiên phòng có số hiệu lớn hơn.
+Nếu phòng học nào đó có chứa học sinh thì số ghế thừa phải được chuyển ra ngoài, nếu thiếu ghế thì phải lấy thêm. Biết số ghế có sẵn trong phòng thứ $i$ là $A_i$ và số học sinh nhóm thứ $j$ là $B_j(1\le i \le n,1\le j \le k).$ Tính số lần chuyển ghế ra vào ít nhất có thể.</em>
+<strong>Điều kiện:</strong> $1\le n\times k\le10^6, 1\le A_i,B_j\le10^9$.</p>
+</blockquote>
+<p><strong>Lời giải:</strong></p>
+<p>Khi xếp nhóm $i$ vào phòng $j$ thì số lần chuyển ghế chính là độ chênh lệch giữa số ghế trong phòng $i$ và số học sinh trong nhóm. Khi đó, "giá trị thẩm mỹ" nếu lớp $j$ học ở phòng $i$ là $v_{i,j}=\lvert A_i - B_j \rvert$. Ta cần tìm cách ghép $k$ nhóm học sinh với $n$ lớp học sao cho nhóm có số hiệu nhỏ hơn thì học lớp có số hiệu nhỏ hơn. Để ý trong bài toán này, tổng giá trị thẩm mỹ của cách ghép phải là <strong>nhỏ nhất</strong>.</p>
+<h3 class="editable"><a class="anchor" id="4-4-2-mua-giày-đề-qg-bảng-b-năm-2003" href="#4-4-2-mua-giày-đề-qg-bảng-b-năm-2003"></a>4.4.2. Mua giày (Đề QG bảng B năm 2003)</h3>
+<blockquote>
+<p><em>Có $n$ đôi giày, đôi giày thứ $i$ có kích thước $H_i$. Có $k$ người cần mua giày, người thứ $j$ cần mua đôi giày kích thước $S_j$. Khi người $i$ chọn mua đôi giày $j$ thì độ lệch sẽ là $|H_i-S_j|$. Hãy tìm cách chọn mua giày cho $k$ người trên sao cho tổng độ lệch là ít nhất. Biết rằng mỗi người chỉ mua 1 đôi giày và 1 đôi giày cũng chỉ có tối đa một người mua.</em>
+<strong>Điều kiện:</strong> $1\le n\times k\le10^6, 1\le H_i,S_j\le10^9$.</p>
+</blockquote>
+<p><strong>Lời giải:</strong></p>
+<p>Bài này khác với bài <strong>Xếp phòng học</strong> ở trên ở chỗ: người có thứ tự nhỏ hơn không nhất thiết phải mua đôi giày thứ tự nhỏ hơn.</p>
+<p>Tuy nhiên, để đưa bài toán về dạng ghép cặp, ta có nhận xét sau:</p>
+<blockquote>
+<p><em>Cho $2$ dãy số nguyên dương sắp thứ tự $A_1\le A_2\le\ldots\le A_n$ và $B_1\le B_2\le\ldots\le B_n$. Gọi $C_1,C_2,\ldots,C_n$ là một hoán vị của $B_1,B_2,\ldots,B_n$. Khi đó:</em>
+$|A_1-B_1|+|A_2-B_2|+\ldots+|A_n-B_n|\le|A_1-C_1|+|A_2-C_2|+\ldots+|A_n-C_n|$</p>
+</blockquote>
+<p><strong>Chứng minh:</strong></p>
+<p>Gọi $P=(P_1,P_2,\ldots,P_n)$ là một hoán vị của $B_1,B_2,\ldots,B_n$.
+Ta đặt: $f(P)=|A_1-P_1|+|A_2-P_2|+\ldots+|A_n-P_n|$.
+Giả sử trong hoán vị P tồn tại một nghịch thế $u,v$, tức là $u&lt;v$ và $P_u\ge P_v.$ Đặt $P'=P_1,P_2,\ldots,P_{u-1},P_v,P_{u+1},\ldots,P_{v-1},P_u,P_{v+1},\ldots,P_n$.</p>
+<p>Xét hiệu:
+\begin{align}
+f(P)-f(P') &amp; = |A_u-P_u|+|A_v-P_v|-|A_u-P_v|-|A_v-P_u|
+\end{align}
+<strong>Trường hợp 1:</strong> $P_u\ge A_v\ge A_u$, ta có:
+\begin{align}
+f(P)-f(P') &amp; = P_u-A_u+|A_v-P_v|-|A_u-P_v|-P_u+A_v<br/>
+&amp;= |A_v-A_u|+|A_v-P_v|-|A_u-P_v|<br/>
+&amp;\ge0
+\end{align}
+<strong>Trường hợp 2:</strong> $A_v&gt; P_u\ge P_v$, ta có:
+\begin{align}
+f(P)-f(P') &amp; = |A_u-P_u|+A_v-P_v-|A_u-P_v|-A_v+P_u<br/>
+&amp;= |A_v-P_u|+|P_u-P_v|-|A_u-P_v|<br/>
+&amp;\ge0
+\end{align}</p>
+<p>Do đó ta luôn có $f(P')\le f(P)$. Từ đó suy ra với một hoán vị $P$ khác $B_1,B_2,\ldots,B_n$, ta luôn có thể đổi chỗ hai số hạng trong một cặp nghịch thế của $P$ để được một hoán vị $P'$ có giá trị $f(P')\le f(P)$. Suy ra $f(P)$ đạt $\min$ khi $P$ là $B_1,B_2,\ldots,B_n.$ Đến đây ta chứng minh được mệnh đề trên.</p>
+<p>Trở lại bài toán gốc, nếu ta sắp xếp các đôi giày và các người mua giày theo trình tự cỡ giày tăng dần, từ nhận xét đã chứng minh ta suy ra tổng độ lệch là nhỏ nhất khi người cần cỡ giày nhỏ hơn mua chiếc giày nhỏ hơn. Đến đây, bài toán giống với bài toán gốc và có thể giải bằng phương pháp QHĐ.</p>
+<h1 class="editable"><a class="anchor" id="kết" href="#kết"></a>Kết</h1>
+<p>Điều khó nhất để giải một bài toán quy hoạch động là biết rằng đó là một bài toán QHĐ và tìm được công thức/trạng thái của nó. Việc mò mẫm từ đầu không hề dễ dàng, nhưng nếu ta đưa được bài toán cần giải về một bài toán QHĐ kinh điển đã biết thì việc xử lý sẽ đơn giản hơn nhiều. Do đó, tìm hiểu mô hình, công thức và cách cài đặt những bài toán QHĐ kinh điển là một việc rất cần thiết. Hi vọng trong bài viết này, các bạn đã tìm hiểu thêm được một số bài tập kinh điển cũng như các biến thể của chúng.</p>
+</div>
+</div>
+</div>
+</div>

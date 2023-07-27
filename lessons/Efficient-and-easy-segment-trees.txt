@@ -1,0 +1,354 @@
+<div id="wiki-content">
+<h1 class="pt-4">Cài đặt cây phân đoạn hiệu quả (Efficient and easy segment trees)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/codeforces/">codeforces</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Nguồn</strong>: <a href="http://codeforces.com/blog/entry/18051">Codeforces - Efficient and Easy Segment Tree</a></p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#cập-nhật-từng-phần-tử-riêng-lẻ-single-element-modifications">Cập nhật từng phần tử riêng lẻ (single element modifications)</a><ul><li><a href="#cây-nhị-phân-hoàn-chỉnh-perfect-binary-tree">Cây nhị phân hoàn chỉnh (Perfect binary tree)</a></li><li><a href="#mảng-kích-thước-bất-kì-arbitrary-sized-array">Mảng kích thước bất kì (Arbitrary sized array)</a></li><li><a href="#chỉnh-sửa-trên-đoạn-truy-cập-từng-các-phần-tử-lẻ-modification-on-interval-single-element-access">Chỉnh sửa trên đoạn, truy cập từng các phần tử lẻ (Modification on interval, single element access)</a></li><li><a href="#hàm-kết-hợp-không-có-tính-giao-hoán-non-commutative-combiner-functions">Hàm kết hợp không có tính giao hoán (Non-commutative combiner functions)</a></li></ul></li><li><a href="#cập-nhật-đoạn-lazy-propagation">Cập nhật đoạn (Lazy propagation)</a><ul><li><a href="#tăng-giá-trị-phần-tử-truy-vấn-tìm-giá-trị-max-increment-modifications-queries-for-maximum">Tăng giá trị phần tử, truy vấn tìm giá trị max (Increment modifications, queries for maximum)</a></li><li><a href="#gán-giá-trị-mới-cho-phần-tử-truy-vấn-tổng-assignment-modifications-sum-queries">Gán giá trị mới cho phần tử, truy vấn tổng (Assignment modifications, sum queries)</a></li></ul></li></ul></div>
+<p>Hầu hết các bạn tham gia vào các cuộc thi lập trình đều khá quen thuộc với cây phân đoạn, chẳng hạn qua <a href="algo/data-structures/segment-tree-extend">bài viết này</a>. Nếu chưa, bạn nên xem bài viết này trước, để so sánh cách thực hiện và chọn được cách tốt nhất cho mình.</p>
+<h1 class="editable"><a class="anchor" id="cập-nhật-từng-phần-tử-riêng-lẻ-single-element-modifications" href="#cập-nhật-từng-phần-tử-riêng-lẻ-single-element-modifications"></a>Cập nhật từng phần tử riêng lẻ (single element modifications)</h1>
+<p>Cây phân đoạn được sử dụng khi chúng ta có một mảng $A$, thực hiện các chỉnh sửa và truy vấn trên các đoạn liên tiếp. Ví dụ: ta có một mảng $A$ với $10^5$ phần tử và cần thực hiện $Q$ thao tác, mỗi thao tác thuộc 1 trong 2 loại:</p>
+<ol>
+<li>Thay đổi giá trị của một phần tử: Gán $A_i = v$.</li>
+<li>Tính tổng các phần tử trên đoạn bất kì: Tính $A_l + A_{l+1} + … + A_r$.</li>
+</ol>
+<h2 class="editable"><a class="anchor" id="cây-nhị-phân-hoàn-chỉnh-perfect-binary-tree" href="#cây-nhị-phân-hoàn-chỉnh-perfect-binary-tree"></a>Cây nhị phân hoàn chỉnh (Perfect binary tree)</h2>
+<p>Ta cài đặt Segment Tree bằng một cây nhị phân hoàn chỉnh có dạng như sau:</p>
+<p><img src="http://i.imgur.com/GGBmcEP.png" /></p>
+<p>Trong hình vẽ trên:</p>
+<ul>
+<li>Ta dùng ký hiệu <em>Chỉ số nút</em>: đoạn $[l, r)$ (ký hiệu đoạn chứa biên $l$ và không chứa biên $r$).</li>
+<li>Tại hàng cuối lưu các phần tử của mảng (đánh số từ 0) là các lá của cây.</li>
+</ul>
+<p>Giả sử độ dài của mảng là lũy thừa của 2 (như 16 trong ví dụ) thì ta được cây nhị phân hoàn chỉnh. Khi đi từ dưới lên ta ghép cặp nút có chỉ số $(2*i,2*i+1)$ và tổng hợp giá trị của chúng thành giá trị của nút cha có chỉ số $i$. Bằng cách này, khi tính tổng đoạn $[3,11)$, ta chỉ cần cộng giá trị tại các nút 19,5,12 và 26 (các nút được in đậm) mà không cần phải cộng cả 8 giá trị trong đoạn. Cùng xem qua cách cài đặt (C++) dưới đây:</p>
+<pre class="highlight"><code><span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e5</span><span class="p">;</span>  <span class="c1">// giới hạn của mảng</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>  <span class="c1">// kích thước mảng</span>
+<span class="kt">int</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">N</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">build</span><span class="p">()</span> <span class="p">{</span>  <span class="c1">// khởi tạo cây</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">modify</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// gán giá trị tại vị trí p</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">p</span> <span class="o">+=</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">;</span> <span class="n">p</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="o">&gt;&gt;</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="o">^</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// tính tổng đoạn [l, r)</span>
+  <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">res</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="n">l</span><span class="o">++</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">res</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="o">--</span><span class="n">r</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="n">t</span> <span class="o">+</span> <span class="n">n</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
+  <span class="n">build</span><span class="p">();</span>
+  <span class="n">modify</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">query</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">));</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Ở trên là một ví dụ đầy đủ các thao tác. Các hàm phức tạp được tóm tắt lại trong 5 mục dưới đây.</p>
+<p>Cùng tìm hiểu cách chương trình hoạt động một cách rất hiệu quả</p>
+<ol>
+<li>Ta có thể thấy được trong hình, các lá được lưu tại những nút liên tiếp với chỉ số bắt đầu từ $n$, phần tử thứ $i$ tương ứng nút có chỉ số là $i+n$. Do đó chúng ta có thể lưu mảng ban đầu trực tiếp vào cây đúng vị trí của từng phần tử.</li>
+<li>Trước khi thực hiện các truy vấn ta cần khởi tạo cây với độ phức tạp là $O(n)$. Vì nút cha luôn có chỉ số nhỏ hơn các con của nó nên ta chỉ cần duyệt qua các nút theo thứ tự giảm dần. Phép biến đổi bit trong <em>build()</em> tương ứng với phép tính <code>t[i] = t[2*i] + t[2*i+1]</code>. (Trong code trên dùng xử lý bit: <code>t[i] = t[i&lt;&lt;1] + t[i&lt;&lt;1|1]</code>).</li>
+<li>Thay đổi giá trị của một phần tử cũng khá đơn giản tốn thời gian tỉ lệ với độ cao của cây, độ phức tạp là $O(\log(n))$. Ta chỉ cần cập nhật giá trị tại các nút cha của nút đó. Do đó chỉ cần đi lên cây biết rằng cha của nút $p$ là nút $p/2$ (hay <code>p&gt;&gt;1</code>). Phép <code>p^1</code> biến đổi $2*i$ thành $2*i+1$ hay ngược lại, đó là nút con còn lại của nút $p$.</li>
+<li>Tính tổng tốn độ phức tạp là $O(log(n))$. Để hiểu rõ hơn tính logic của thuật toán bạn có thể thử với ví dụ đoạn $[3,11)$ và thấy rằng kết quả là tổng của các nút 19, 26, 12 và 5 (theo thứ tự). Ý tưởng chung là như sau:
+<ul>
+<li>Nếu $l$ (biên trái của đoạn) là lẻ (<code>if l&amp;1</code>) thì $l$ là nút con phải của cha nó, cũng có nghĩa là đoạn cần truy vấn chứa nút $l$ nhưng không chứa cha nó. Do đó ta cộng <code>t[l]</code> vào kết quả và nhảy đến nút bên phải của cha nút $l$: $l=(l+1)/2$.</li>
+<li>Nếu $l$ chẵn, nó là con bên trái của cha nó và đoạn cần truy vẫn cũng chứa cha nó (trừ khi đoạn bị giới hạn bởi biên phải), nên ta nhảy đến cha của nút $l$: $l=l/2$.</li>
+<li>Tương tự cho biên phải.</li>
+<li>Ta dừng khi 2 biên chạm nhau.</li>
+</ul>
+</li>
+</ol>
+<p>Đoạn code hoạt động hiệu quả mà không cần đệ quy hay các phép tính khác như tìm điểm chính giữa của đoạn. Ta chỉ cần duyệt qua và tính tổng các nút trong đoạn truy vấn.</p>
+<h2 class="editable"><a class="anchor" id="mảng-kích-thước-bất-kì-arbitrary-sized-array" href="#mảng-kích-thước-bất-kì-arbitrary-sized-array"></a>Mảng kích thước bất kì (Arbitrary sized array)</h2>
+<p>Chúng ta đã đề cập đến các mảng có kích thước là luỹ thừa của 2, nên cây là cây nhị phân hoàn chỉnh. Phần tiếp theo có thể sẽ làm bạn hoang mang, chuẩn bị sẵn sàng nhé!</p>
+<p><strong>Đoạn code dưới đây áp dụng cho mảng có độ dài bất kì.</strong></p>
+<p>Phần giải thích sẽ phức tạp hơn, trước hết hãy xem qua những ưu điểm của của nó:</p>
+<ol>
+<li>Cây phân đoạn sử dụng bộ nhớ đúng $2*n$, không phải $4*n$ như một số cách cài đặt khác.</li>
+<li>Các phần tử của mảng được lưu trên đoạn liên tiếp bắt đầu từ chỉ số $n$.</li>
+<li>Tất cả thao tác đều rất đơn giản và hiệu quả.</li>
+</ol>
+<p>Bạn có thể bỏ qua đoạn giải thích này và xem code để thấy tính đúng đắn của nó. Nếu hứng thú với phần giải thích, đây là hình ảnh cây của mảng có kích thước $n=13$:</p>
+<p><img src="http://imgur.com/cwKpYH1.png" /></p>
+<p>Nó không phải là một cây đơn lẻ nữa, nhưng là tập các cây nhị phân bao gồm:</p>
+<ul>
+<li>Cây có gốc ở vị trí 2 với độ cao 4</li>
+<li>Cây có gốc ở vị trí 7 với độ cao 2</li>
+<li>Cây có gốc ở vị trí 12 với độ cao 2</li>
+<li>Cây có gốc ở vị trí 13 với độ cao 1.</li>
+</ul>
+<p>Các vị trí có dấu gạch không bao giờ được sử dụng để truy vấn nên giá trị được lưu tại các nút đó không quan trọng.</p>
+<p>Các lá có độ cao khác nhau nhưng ta có thể sửa lại bằng cách cắt cây ngay trước vị trí $13$ và chuyển phần phía bên phải sang bên trái. Khi đó, ta thu được cấu trúc mới có dạng giống như cây nhị phân đầy đủ (nếu chỉ quan tâm đến những thao tác ta cần thực hiện). Vì vậy độ phức tạp tương đương với độ phức tạp trên một cây nhị phân đầy đủ.</p>
+<p>Chúng ta thử xét với đoạn $[0,7)$: Ta có $l=13$, $r=20$</p>
+<ul>
+<li>Ở lần lặp đầu:
+<ul>
+<li>
+<code>l&amp;1</code>, nên ta cộng <code>t[13]</code> vào kết quả</li>
+<li>Gán $l=7$</li>
+<li>Gán $r=10$.</li>
+</ul>
+</li>
+<li>Ở lần lặp thứ 2:
+<ul>
+<li>
+<code>l&amp;1</code>, nên ta cộng <code>t[7]</code> vào kết quả</li>
+<li>Gán $l=4$</li>
+<li>Gán $r=5$</li>
+<li>Lúc này các nút đã ở cùng một độ cao.</li>
+</ul>
+</li>
+<li>Ở lần lặp thứ 3:
+<ul>
+<li>
+<code>r&amp;1</code> =&gt; cộng <code>t[4]</code> (<code>--r = 4</code>)</li>
+<li>Gán $l=2$, $r=2$ và dừng lại.</li>
+</ul>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="chỉnh-sửa-trên-đoạn-truy-cập-từng-các-phần-tử-lẻ-modification-on-interval-single-element-access" href="#chỉnh-sửa-trên-đoạn-truy-cập-từng-các-phần-tử-lẻ-modification-on-interval-single-element-access"></a>Chỉnh sửa trên đoạn, truy cập từng các phần tử lẻ (Modification on interval, single element access)</h2>
+<p>Một số người gặp khó khăn và nghĩ một cách phức tạp khi đảo các thao tác, ví dụ như:</p>
+<ol>
+<li>cộng một giá trị vào tất cả phần tử trong đoạn</li>
+<li>tính giá trị của một phần tử bất kì</li>
+</ol>
+<p>Tất cả những gì chúng ta phải làm trong trường hợp này là đổi đoạn code <em>modify</em> và <em>query</em> như sau:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">modify</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">t</span><span class="p">[</span><span class="n">l</span><span class="o">++</span><span class="p">]</span> <span class="o">+=</span> <span class="n">value</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">t</span><span class="p">[</span><span class="o">--</span><span class="n">r</span><span class="p">]</span> <span class="o">+=</span> <span class="n">value</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">p</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="n">p</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="p">];</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Nếu sau khi thực hiện tất cả các thao tác chỉnh sửa, ta muốn tính giá trị từng phần tử của dãy, ta có thể đẩy các thao tác chỉnh sửa xuống các nút lá bằng đoạn code dưới đây. Sau khi thực hiện ta chỉ cần duyệt qua các phần tử được đánh số bắt đầu từ $n$. Bằng cách này chúng ta đã giảm độ phức tạp từ $\mathcal{O}(n\log{n})$ còn $\mathcal{O}(n)$ khi sử dụng <em>build</em> thay vì $n$ thao tác chỉnh sửa.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">push</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p><strong>Chú ý</strong>: Đoạn code trên không thể dùng được trong trường hợp thứ tự các thao tác chỉnh sửa trên 1 phần tử ảnh hưởng đến kết quả. Ví dụ: phép gán giá trị cho 1 đoạn phần tử. Phần này sẽ được trình bày ở phần lazy propagation.</p>
+<h2 class="editable"><a class="anchor" id="hàm-kết-hợp-không-có-tính-giao-hoán-non-commutative-combiner-functions" href="#hàm-kết-hợp-không-có-tính-giao-hoán-non-commutative-combiner-functions"></a>Hàm kết hợp không có tính giao hoán (Non-commutative combiner functions)</h2>
+<p>Chúng ta thử xét phép kết hợp đơn giản nhất là phép cộng. Phép cộng có tính giao hoán nghĩa là thứ tự thực hiện các phép tính không quan trọng, ta có $a+b=b+a$. Hàm lấy <em>max</em> và <em>min</em> cũng có tính chất tương tự, chỉ thay thế các phép <code>+</code> bằng một trong hai hàm trên và ta sẽ có kết quả. Nhưng chú ý phải khởi tạo các giá trị ban đầu thành vô cực thay vì 0.</p>
+<p>Tuy nhiên, có một số trường hợp mà phép kết hợp không có tính giao hoán, ví dụ như trong bài <a href="http://codeforces.com/contest/380/problem/C">380C - Codeforces</a>, xem phân tích ở <a href="http://vnoi.info/wiki/algo/data-structures/segment-tree-extend#1-segment-tree-c%E1%BB%95-%C4%91i%E1%BB%83n_v%C3%AD-d%E1%BB%A5-1">Bài viết về Segment Tree</a>. May mắn là cách làm của ta vẫn có thể hỗ trợ phép kết hợp trong bài trên. Ta định nghĩa cấu trúc <code>Node</code> và toán tử <code>+</code> như trong bài viết trên. Trong thủ tục <em>build</em> ta dùng toán tử <code>+</code> mới định nghĩa này. Trong <em>modify</em>, ta cần đảm bảo thứ tự đúng của các nút con, biết rằng các nút con trái có chỉ số chẵn. Khi truy vấn kết quả, ta lưu ý là các nút tương ứng với nút biên trái sẽ dịch từ trái sang phải, trong khi biên phải dịch từ phải sang trái. Đoạn code như sau:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">modify</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="k">const</span> <span class="n">Node</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">p</span> <span class="o">+=</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span> <span class="n">p</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;)</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="n">Node</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">Node</span> <span class="n">resl</span><span class="p">,</span> <span class="n">resr</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">resl</span> <span class="o">=</span> <span class="n">resl</span> <span class="o">+</span> <span class="n">t</span><span class="p">[</span><span class="n">l</span><span class="o">++</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">resr</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="o">--</span><span class="n">r</span><span class="p">]</span> <span class="o">+</span> <span class="n">resr</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">resl</span> <span class="o">+</span> <span class="n">resr</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="cập-nhật-đoạn-lazy-propagation" href="#cập-nhật-đoạn-lazy-propagation"></a>Cập nhật đoạn (Lazy propagation)</h1>
+<p>Tiếp theo, chúng ta tìm hiểu về một kĩ thuật dùng để thực hiện cả truy vấn trên đoạn và chỉnh sửa trên đoạn. Đầu tiên ta cần định nghĩa thêm biến:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">h</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">-</span> <span class="n">__builtin_clz</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">N</span><span class="p">];</span></code></pre>
+<p>$h$ là độ cao của cây và là bit cao nhất trong $n$. <code>d[i]</code> là thao tác được lưu lại để truyền cho các nút con của nút $i$ khi cần thiết (xem ví dụ để hiểu rõ hơn, hoặc đọc thêm <a href="http://vnoi.info/wiki/algo/data-structures/segment-tree-extend#2-lazy-propagation">Lazy Propagation trong bài viết về Segment Tree</a>). Kích thước của mảng là $N$ vì ta không cần lưu thông tin này tại các nút lá (do các nút lá không có con). Do đó ta cần tất cả là $3*N$ bộ nhớ sử dụng.</p>
+<p>Ở trên ta nói <code>t[i]</code> là giá trị tương ứng với đoạn của nó. Nhưng bây giờ điều này không hoàn toàn đúng:</p>
+<ul>
+<li>Ta phải thực hiện các thao tác được lưu lại vào <code>d[i]</code> trên đường đi từ nút $i$ đến gốc của cây (tổ tiên của nút $i$).</li>
+<li>Khi cài đặt, ta giả sử là giá trị tại <code>t[i]</code> đã bao gồm <code>d[i]</code>, nên đường đi bắt đầu từ cha của $i$.</li>
+</ul>
+<p>Quay trở lại ví dụ đầu tiên với đoạn $[3,11)$, nhưng bây giờ ta sẽ chỉnh sửa tất giá trị của tất cả phần tử trong đoạn. Để làm điều này, ta sẽ chỉnh sửa <code>t[i]</code> và <code>d[i]</code> tại các nút: 19, 5, 12 và 26.</p>
+<p>Sau đó, khi cần tìm giá trị ở một nút, ví dụ như nút 22, ta cần phải truyền các chỉnh sửa từ nút 5 xuống. Chú ý rằng những thay đổi có thể ảnh hưởng đến các giá trị <code>t[i]</code> trên cây như sau: nút 19 ảnh hưởng đến nút 9, 4, 2 và 1; nút 5 ảnh hưởng đến nút 2 và 1. Lập luận tiếp theo rất quan trọng đến độ phức tạp của các thao tác chỉnh sửa:</p>
+<p><strong>Chỉnh sửa trên đoạn $[l,r)$ chỉ ảnh hưởng giá trị <code>t[i]</code> của các nút cha của nút lá ở biên: <code>l+n</code> và <code>r+n-1</code> (ngoại trừ các giá trị lưu chính đoạn của nó - những giá trị duyệt đến trong vòng lặp <em>for</em>).</strong></p>
+<p><strong>Chứng minh</strong></p>
+<ul>
+<li>Khi duyệt biên trái, các nút ta chỉnh sửa trong vòng lặp luôn là con phải của cha nó. Do đó tất cả các chỉnh sửa trước đó đều là trên cây con của nút trái của nút cha. Nói cách khác ta có thể duyệt nút cha thay vì cả hai con của nó. Điều này có nghĩa là cha trực tiếp hiện tại cũng là cha của lá <code>l+n</code>.</li>
+<li>Chứng minh tương tự cho biên phải.</li>
+</ul>
+<p>Mời các bạn cùng xem qua những ví dụ cụ thể.</p>
+<h2 class="editable"><a class="anchor" id="tăng-giá-trị-phần-tử-truy-vấn-tìm-giá-trị-max-increment-modifications-queries-for-maximum" href="#tăng-giá-trị-phần-tử-truy-vấn-tìm-giá-trị-max-increment-modifications-queries-for-maximum"></a>Tăng giá trị phần tử, truy vấn tìm giá trị max (Increment modifications, queries for maximum)</h2>
+<p>Đây có lẽ là trường hợp đơn giản nhất. Code dưới đây không phổ biến và không phải là cách tối ưu nhất, nhưng là một cách tốt để bắt đầu.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">apply</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">+=</span> <span class="n">value</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">+=</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">build</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">p</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="n">p</span><span class="p">];</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">push</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">s</span> <span class="o">=</span> <span class="n">h</span><span class="p">;</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">p</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">apply</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+      <span class="n">apply</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+      <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">inc</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">l0</span> <span class="o">=</span> <span class="n">l</span><span class="p">,</span> <span class="n">r0</span> <span class="o">=</span> <span class="n">r</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">apply</span><span class="p">(</span><span class="n">l</span><span class="o">++</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">apply</span><span class="p">(</span><span class="o">--</span><span class="n">r</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">build</span><span class="p">(</span><span class="n">l0</span><span class="p">);</span>
+  <span class="n">build</span><span class="p">(</span><span class="n">r0</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">l</span><span class="p">);</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2e9</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">res</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="n">l</span><span class="o">++</span><span class="p">]);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">res</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">--</span><span class="n">r</span><span class="p">],</span> <span class="n">res</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Tìm hiểu lần lượt từng thủ tục một. Ba thủ tục đầu tiên không thực sự cần phải biết:</p>
+<ol>
+<li>Mỗi nút chứa 2 biến, rất hữu ích khi viết một thủ tục <em>apply</em> những thay đổi cho cả hai. $p&lt;n$ để kiểm tra $p$ không phải là lá. Một tính chất quan trọng là các thao tác khi chúng ta cùng tăng giá trị của các phần tử trong một đoạn thì giá trị max cũng tăng tương ứng.</li>
+<li>
+<em>build</em> cập nhật tất cả các cha của nút cho trước.</li>
+<li>
+<em>push</em> truyền tất cả các thay đổi từ tất cả nút cha của nút hiện tại xuống bắt đầu từ gốc. Những nút cha là tiền tố trong biểu diễn nhị phân của của $p$, do đó ta dùng phép dịch bit để tính toán.</li>
+</ol>
+<p>Tiếp theo là những thủ tục chính:</p>
+<ol>
+<li>Như đã giải thích ở trên, ta thực hiện các thay đổi vòng lặp quen thuộc để cập nhật tất cả và thêm một việc là gọi hàm <em>build</em>.</li>
+<li>Để trả lời truy vấn, ta cũng sử dụng vòng lặp như cũ, tuy nhiên trước đó cần phải đẩy các thay đổi đến những nút sẽ được sử dụng. Tương tự như <em>build</em>, như vậy là đủ để đẩy các thay đổi từ các nút cha của những nút lá ở biên.</li>
+</ol>
+<p>Dễ dàng nhận thấy tất cả các thao tác trên tốn độ phức tạp $O(log(n))$.</p>
+<p>Đây là trường hợp đơn giản nhất vì 2 lý do:</p>
+<ol>
+<li>thứ tự các thay đổi không làm ảnh hưởng kết quả.</li>
+<li>khi cập nhật một nút, ta không cần biết độ dài của đoạn nó đại diện.</li>
+</ol>
+<p>Tiếp theo ta sẽ ứng dụng các phương pháp trong một ví dụ tiếp theo.</p>
+<h2 class="editable"><a class="anchor" id="gán-giá-trị-mới-cho-phần-tử-truy-vấn-tổng-assignment-modifications-sum-queries" href="#gán-giá-trị-mới-cho-phần-tử-truy-vấn-tổng-assignment-modifications-sum-queries"></a>Gán giá trị mới cho phần tử, truy vấn tổng (Assignment modifications, sum queries)</h2>
+<p>Ví dụ này dựa trên <a href="http://acm.timus.ru/problem.aspx?space=1&amp;num=2042">Timus 2042</a></p>
+<p>Chúng ta lại bắt đầu từ các hàm trợ giúp. Ở đây ta có nhiều hàm hơn:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">calc</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="p">];</span>
+  <span class="k">else</span> <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">apply</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span> <span class="n">d</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Đây là những hàm đơn giản có độ phức tạp $O(1)$ dùng để tính giá trị tại nút $p$ và thực hiện một thay đổi cho nút. Có 2 điều cần giải thích:</p>
+<ol>
+<li>Ta kiểm tra <code>d[p] == 0</code> vì 0 là một giá trị mà không bao giờ được dùng trong các thay đổi. Trong trường hợp không có giá trị nào như vậy, ta buộc phải dùng thêm mảng đánh dấu.</li>
+<li>Ta có thêm một tham số $k$, chứa độ dài của đoạn thuộc nút $p$. Tham số $k$ sẽ được giữ nguyên ý nghĩa trong cả đoạn code. Có thể nhận thấy ta không thể tính tổng nếu không có tham số này. Ta có thể tính trước giá trị $k$ cho tất cả các nút hay suy ra từ chỉ số của nút trên đường đi, nhưng ta sẽ tìm hiểu một cách khác không cần phải sử dụng thêm bộ nhớ hay tính toán.</li>
+</ol>
+<p>Tiếp theo ta cần chỉnh sử lại <em>build</em> và <em>push</em>. Lưu ý rằng ta đang có 2 phiên bản: một được giới thiệu trước duyệt qua toàn bộ cây trong $O(n)$, một được sử dụng trong ví dụ trước mà chỉ duyệt các nút cha của một nút là trong $O(log(n))$. Ta có thể dễ dàng tích hợp thêm các chức năng mới vào cùng một thủ tục.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">build</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">r</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">l</span><span class="p">;</span> <span class="o">--</span><span class="n">i</span><span class="p">)</span> <span class="n">calc</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">push</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">s</span> <span class="o">=</span> <span class="n">h</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">h</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">s</span><span class="p">,</span> <span class="n">k</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">l</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">apply</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="p">);</span>
+      <span class="n">apply</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="p">);</span>
+      <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Cả hai thủ tục này thực hiện trên đoạn bất kỳ với đô phức tạp $O(log(n)+|r-l|)$. Nếu muốn biến đổi một đoạn trên cây, ta có thể viết như sau:</p>
+<pre class="highlight"><code><span class="n">push</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+<span class="p">...</span>  <span class="c1">// thức hiện bất kì thứ gì lên các phần tử trong đoạn [l, r)</span>
+<span class="n">build</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span></code></pre>
+<p>Cùng tìm hiểu cách hoạt động. Trước tiên, chú ý là ta đã thay đổi thành đoạn $[l,r)$ thành $[l,r]$ khi thực hiện <code>r+=n-1</code> để tính chính xác các nút cha. Do ta duyệt cây theo từng tầng, nên có thể dễ dàng duy trì độ dài của đoạn hiện tại, luôn luôn là lũy thừa của $2$. <em>build</em> đi từ dưới lên trên, do đó ban đầu khởi tạo $k=2$ (không phải 1 vì ta không tính tại nút lá nhưng bắt đầu từ cha trực tiếp của nó) và nhân đôi $k$ tại mỗi tầng. <em>push</em> đi từ trên xuống dưới, do đó giá trị ban đầu của $k$ phụ thuộc vào độ cao của cây và bị chia $2$ sau mỗi tầng.</p>
+<p>Các thủ tục chính không thay đổi nhiều so với ví dụ trước, nhưng <em>modify</em> có 2 điều đáng chú ý:</p>
+<ol>
+<li>Do thứ tự của các phép biến đổi là quan trọng, ta cần phải đảm bảo không có những thay biến đổi cũ trên đường đi từ gốc đến tất cả các nút mà ta sẽ cập nhật. Điều này được thực hiện khi gọi <em>push</em> đầu tiên trong <em>query</em>.</li>
+<li>Ta cần phải duy trì giá trị của $k$.</li>
+</ol>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">modify</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">l0</span> <span class="o">=</span> <span class="n">l</span><span class="p">,</span> <span class="n">r0</span> <span class="o">=</span> <span class="n">r</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">apply</span><span class="p">(</span><span class="n">l</span><span class="o">++</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">apply</span><span class="p">(</span><span class="o">--</span><span class="n">r</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">build</span><span class="p">(</span><span class="n">l0</span><span class="p">,</span> <span class="n">l0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="n">build</span><span class="p">(</span><span class="n">r0</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">res</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="n">l</span><span class="o">++</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">res</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="o">--</span><span class="n">r</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Để ý ta thấy ta thực hiện 3 lần đi trong <em>modify</em> gần như trên cùng các nút: 1 đi xuống dưới cây trong <em>push</em>, rồi 2 đi lên cây. Ta có thể bỏ lần cuối cùng chỉ và tính các giá trị mới khi cần thiết, nhưng code sẽ trở nên phức tạp hơn:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">modify</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="n">push</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+  <span class="kt">bool</span> <span class="n">cl</span> <span class="o">=</span> <span class="nb">false</span><span class="p">,</span> <span class="n">cr</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">l</span> <span class="o">+=</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="o">+=</span> <span class="n">n</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cl</span><span class="p">)</span> <span class="n">calc</span><span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cr</span><span class="p">)</span> <span class="n">calc</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">apply</span><span class="p">(</span><span class="n">l</span><span class="o">++</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">cl</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="n">apply</span><span class="p">(</span><span class="o">--</span><span class="n">r</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">cr</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">for</span> <span class="p">(</span><span class="o">--</span><span class="n">l</span><span class="p">;</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cl</span><span class="p">)</span> <span class="n">calc</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cr</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="n">cl</span> <span class="o">||</span> <span class="n">l</span> <span class="o">!=</span> <span class="n">r</span><span class="p">))</span> <span class="n">calc</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Biến boolean dùng để đánh dấu xem ta đã thực hiện biến đổi nào ở bên trái và ở bên phải. Xem một ví dụ:</p>
+<p><img src="http://i.imgur.com/CG6aftV.png" /></p>
+<p>Gọi <em>modify</em> trên $[4,13)$:</p>
+<ol>
+<li>$l=20, r=29$, gọi <em>apply(28)</em>;</li>
+<li>$l=10, r=14$, gọi <em>calc(14)</em> - nút đầu tiên về bên phải của đoạn hiện tại chính là cha của nút được biến đổi cuối cùng;</li>
+<li>$l=5, r=7$, gọi <em>calc(7)</em> và tiếp đó là <em>apply(5)</em> và <em>apply(6)</em>;</li>
+<li>$l=3, r=3$, vòng lặp đầu tiên kết thúc.</li>
+</ol>
+<p>Bây giờ bạn có thể hiểu lý do thực hiện <code>--l</code>, vì ta vẫn cần phải tính giá trị mới tại các nút 2, 3 và 1. Điều kiện kết thúc là <code>r&gt;0</code> bởi vì có thể $l=1, r=1$ sau vòng lặp đầu tiên, do đó ta cần phải cập nhật cho gốc, nhưng <code>--l</code> dẫn đến $l=0$.</p>
+<p>So sánh với cách thực hiện cũ, ta đã giảm được những lần gọi không cần thiết <em>calc(10)</em>, <em>calc(5)</em> và lặp <em>calc(1)</em>.</p>
+</div>
+</div>
+</div>
+</div>

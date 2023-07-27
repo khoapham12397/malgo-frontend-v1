@@ -62,10 +62,7 @@ export const ReplyBox = ({ parentId, username, rootId }: Props) => {
   return (
     <div className='d-flex' ref={box}>
       <div>
-        <img
-          src={getAvatarLink(username)}
-          className='avatar-icon'
-        />
+        <img src={getAvatarLink(username)} className='avatar-icon' />
       </div>
       <div style={{ paddingLeft: '10px', width: '100%' }}>
         <div>

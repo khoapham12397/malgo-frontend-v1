@@ -1,0 +1,276 @@
+<div id="wiki-content">
+<h1 class="pt-4">Thuật toán sắp xếp</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/basic/">basic</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Ứng dụng về sắp xếp có ở khắp mọi nơi:</p>
+<ul>
+<li>Một danh sách lớp với các học sinh được sắp xếp theo thứ tự bảng chữ cái.</li>
+<li>Một danh bạ điện thoại.</li>
+<li>Danh sách các truy vấn được tìm kiếm nhiều nhất trên Google.</li>
+</ul>
+<p>Thuật toán sắp xếp cũng được dùng kết hợp với những thuật toán khác, như tìm kiếm nhị phân, thuật toán Kruskal để tìm cây khung nhỏ nhất của đồ thị.</p>
+<p>Vì sao chúng ta phải học nhiều thuật toán sắp xếp? Khi code, bạn chỉ cần biết cài một thuật toán sắp xếp là đủ. Hoặc nếu bạn code C++ hay Java, bạn chỉ cần biết cách gọi thư viện. Tuy nhiên, các thuật toán sắp xếp khác nhau cho ta nhiều ý tưởng hay và độc đáo - điều này vô cùng hữu ích khi các bạn học các thuật toán khác.</p>
+<h1 class="editable"><a class="anchor" id="những-điểm-cần-chú-ý" href="#những-điểm-cần-chú-ý"></a>Những điểm cần chú ý</h1>
+<p>Hãy thử tưởng tượng bạn có một bộ bài đã được xáo, và bạn muốn sắp xếp lại các lá bài theo thứ tự tăng dần. Bạn sẽ làm như nào? Có rất nhiều cách tiếp cận khác nhau:</p>
+<ul>
+<li>Chia bộ bài theo giá trị: 2, 3, 4… Rồi gộp lại.</li>
+<li>Trải tất cả các lá bài ra, rồi lần lượt lấy lá bài nhỏ nhất.</li>
+<li>Chia bộ bài ra thành nhiều nhóm nhỏ. Với mỗi nhóm, sắp xếp lại, sau đó gộp các nhóm lại với nhau theo thứ tự tăng dần.</li>
+</ul>
+<p>Bạn sẽ thấy những cách tiếp cận khác nhau sẽ có thời gian nhanh chậm khác nhau. Các thuật toán sắp xếp cũng vậy. Có rất nhiều cách tiếp cận, với ưu, nhược điểm khác nhau.</p>
+<p>Khi so sánh giữa các thuật toán này với nhau, có nhiều vấn đề phải quan tâm.</p>
+<ol>
+<li>
+<strong>Thời gian</strong> chạy. Đối với các dữ liệu rất lớn, các thuật toán không hiệu quả sẽ chạy rất chậm và không thể ứng dụng trong thực tế.</li>
+<li>
+<strong>Bộ nhớ</strong>. Các thuật toán nhanh đòi hỏi đệ quy sẽ có thể phải tạo ra các bản copy của dữ liệu đang xử lí. Với những hệ thống mà bộ nhớ có giới hạn (ví dụ embedded system), một vài thuật toán sẽ không thể chạy được.</li>
+<li>
+<strong>Độ ổn định</strong> (<strong>stability</strong>). Độ ổn định được định nghĩa dựa trên điều gì sẽ xảy ra với các phần tử có giá trị giống nhau.
+<ul>
+<li>Đối với thuật toán sắp xếp ổn định, các phần tử bằng với giá trị bằng nhau sẽ giữ nguyên thứ tự trong mảng trước khi sắp xếp.</li>
+<li>Đối với thuật toán sắp xếp không ổn định, các phần tử có giá trị bằng nhau sẽ có thể có thứ tự bất kỳ.</li>
+</ul>
+</li>
+</ol>
+<p>Trong bài viết này, ta giả sử cần sắp xếp tăng dần các phần tử. Để sắp xếp giảm dần, ta có nhiều cách:</p>
+<ul>
+<li>Sửa đổi thuật toán một cách phù hợp.</li>
+<li>Sắp xếp, sau đó đảo ngược thứ tự các phần tử.</li>
+<li>Định nghĩa lại việc so sánh nhỏ hơn.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="sắp-xếp-nổi-bọt-bubble-sort" href="#sắp-xếp-nổi-bọt-bubble-sort"></a>Sắp xếp nổi bọt (Bubble sort)</h1>
+<p>Đây là thuật toán cơ bản nhất cho việc sắp xếp.</p>
+<h2 class="editable"><a class="anchor" id="ý-tưởng" href="#ý-tưởng"></a>Ý tưởng</h2>
+<ul>
+<li>Xét lần lượt các cặp 2 phần tử liên tiếp. Nếu phần tử đứng sau nhỏ hơn phần tử đứng trước, ta đổi chỗ 2 phần tử. Nói cách khác, phần tử nhỏ nhất sẽ <strong>nổi</strong> lên trên.</li>
+<li>Lặp lại đến khi không còn 2 phần tử nào thỏa mãn. Có thể chứng minh được số lần lặp không quá $N - 1$, do một phần tử chỉ có thể <strong>nổi</strong> lên trên không quá $N-1$ lần.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="ưu-điểm" href="#ưu-điểm"></a>Ưu điểm</h2>
+<ul>
+<li>Code đơn giản, dễ hiểu</li>
+<li>Không tốn thêm bộ nhớ</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="nhược-điểm" href="#nhược-điểm"></a>Nhược điểm</h2>
+<ul>
+<li>Độ phức tạp $\mathcal{O}(N^2)$, không đủ nhanh với dữ liệu lớn.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="code" href="#code"></a>Code</h2>
+<pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+			<span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]);</span>
+		<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="minh-họa" href="#minh-họa"></a>Minh họa</h2>
+<p>Bạn có thể vào <a href="http://visualgo.net/sorting">VisuAlgo</a>.</p>
+<ul>
+<li>Chọn <strong>Bubble</strong> ở thanh menu bên trên.</li>
+<li>Ấn vào nút <code>Create</code> ở phía dưới trang để tạo một dãy mới</li>
+<li>Ấn vào <code>Sort</code>, rồi <code>Go</code> để chạy thuật toán.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="sắp-xếp-chèn-insertion-sort" href="#sắp-xếp-chèn-insertion-sort"></a>Sắp xếp chèn (Insertion Sort)</h1>
+<h2 class="editable"><a class="anchor" id="ý-tưởng-1" href="#ý-tưởng-1"></a>Ý tưởng</h2>
+<p>Ý tưởng chính của thuật toán là ta sẽ sắp xếp lần lượt từng đoạn gồm 1 phần tử đầu tiên, 2 phần tử đầu tiên, …, $N$ phần tử.</p>
+<p>Giả sử ta đã sắp xếp xong $i$ phần tử của mảng. Để sắp xếp $i+1$ phần tử đầu tiên, ta tìm vị trí phù hợp của phần tử thứ $i+1$ và "chèn" nó vào đó.</p>
+<h2 class="editable"><a class="anchor" id="ưu-điểm-1" href="#ưu-điểm-1"></a>Ưu điểm</h2>
+<ul>
+<li>Nếu danh sách đã gần đúng thứ tự, Insertion Sort sẽ chạy rất nhanh. Ví dụ bạn cần sắp xếp Highscore trong game.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="nhược-điểm-1" href="#nhược-điểm-1"></a>Nhược điểm</h2>
+<ul>
+<li>Độ phức tạp $\mathcal{O}(N^2)$, không đủ nhanh với dữ liệu lớn.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="code-1" href="#code-1"></a>Code</h2>
+<pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// Tìm vị trí phù hợp cho i</span>
+	<span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+	<span class="k">while</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">--</span><span class="n">j</span><span class="p">;</span>
+
+	<span class="c1">// Đưa i về đúng vị trí</span>
+	<span class="kt">int</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="n">j</span><span class="p">;</span> <span class="n">k</span><span class="o">--</span><span class="p">)</span>
+		<span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+	<span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="minh-họa-1" href="#minh-họa-1"></a>Minh họa</h2>
+<p>Bạn có thể vào <a href="http://visualgo.net/sorting">VisuAlgo</a>.</p>
+<ul>
+<li>Chọn <strong>Insert</strong> ở thanh menu bên trên.</li>
+<li>Ấn vào nút <code>Create</code> ở phía dưới trang để tạo một dãy mới</li>
+<li>Ấn vào <code>Sort</code>, rồi <code>Go</code> để chạy thuật toán.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="sắp-xếp-trộn-merge-sort" href="#sắp-xếp-trộn-merge-sort"></a>Sắp xếp trộn (Merge sort)</h1>
+<h2 class="editable"><a class="anchor" id="ý-tưởng-2" href="#ý-tưởng-2"></a>Ý tưởng</h2>
+<p>Sắp xếp trộn hoạt động kiểu đệ quy:</p>
+<ul>
+<li>Đầu tiên chia dữ liệu thành 2 phần, và sắp xếp từng phần.</li>
+<li>Sau đó gộp 2 phần lại với nhau. Để gộp 2 phần, ta làm như sau:
+<ul>
+<li>Tạo một dãy $A$ mới để chứa các phần tử đã sắp xếp.</li>
+<li>So sánh 2 phần tử đầu tiên của 2 phần. Phần tử nhỏ hơn ta cho vào $A$ và xóa khỏi phần tương ứng.</li>
+<li>Tiếp tục như vậy đến khi ta cho hết các phần tử vào dãy $A$.</li>
+</ul>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="ưu-điểm-2" href="#ưu-điểm-2"></a>Ưu điểm</h2>
+<ul>
+<li>Chạy nhanh, độ phức tạp $\mathcal{O}(N*logN)$.</li>
+<li>Ổn định</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="nhược-điểm-2" href="#nhược-điểm-2"></a>Nhược điểm</h2>
+<ul>
+<li>Cần dùng thêm bộ nhớ để lưu mảng A.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="code-2" href="#code-2"></a>Code</h2>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span> <span class="c1">// mảng trung gian cho việc sắp xếp</span>
+
+<span class="c1">// Sắp xếp các phần tử có chỉ số từ left đến right của mảng data.</span>
+<span class="kt">void</span> <span class="nf">mergeSort</span><span class="p">(</span><span class="kt">int</span> <span class="n">data</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">left</span><span class="p">,</span> <span class="kt">int</span> <span class="n">right</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">// Dãy chỉ gồm 1 phần tử, ta không cần sắp xếp.</span>
+		<span class="k">return</span> <span class="p">;</span>
+	<span class="p">}</span>
+	<span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+	<span class="c1">// Sắp xếp 2 phần</span>
+	<span class="n">mergeSort</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">mid</span><span class="p">);</span>
+	<span class="n">mergeSort</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">right</span><span class="p">);</span>
+
+	<span class="c1">// Trộn 2 phần đã sắp xếp lại</span>
+	<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// phần tử đang xét của mỗi nửa</span>
+	<span class="kt">int</span> <span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// chỉ số trên mảng a</span>
+
+	<span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">mid</span> <span class="o">||</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// chừng nào còn 1 phần chưa hết phần tử.</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">mid</span><span class="p">)</span> <span class="p">{</span>
+			<span class="c1">// bên trái không còn phần tử nào</span>
+			<span class="n">a</span><span class="p">[</span><span class="n">cur</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="o">++</span><span class="p">];</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="n">right</span><span class="p">)</span> <span class="p">{</span>
+			<span class="c1">// bên phải không còn phần tử nào</span>
+			<span class="n">a</span><span class="p">[</span><span class="n">cur</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">];</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="p">{</span>
+			<span class="c1">// phần tử bên trái nhỏ hơn</span>
+			<span class="n">a</span><span class="p">[</span><span class="n">cur</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">];</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="n">a</span><span class="p">[</span><span class="n">cur</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="o">++</span><span class="p">];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1">// copy mảng a về mảng data</span>
+	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">cur</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+		<span class="n">data</span><span class="p">[</span><span class="n">left</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="minh-họa-2" href="#minh-họa-2"></a>Minh họa</h2>
+<p>Bạn có thể vào <a href="http://visualgo.net/sorting">VisuAlgo</a>.</p>
+<ul>
+<li>Chọn <strong>Merge</strong> ở thanh menu bên trên.</li>
+<li>Ấn vào nút <code>Create</code> ở phía dưới trang để tạo một dãy mới</li>
+<li>Ấn vào <code>Sort</code>, rồi <code>Go</code> để chạy thuật toán.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="sắp-xếp-vun-đống-heapsort" href="#sắp-xếp-vun-đống-heapsort"></a>Sắp xếp vun đống (HeapSort)</h1>
+<h2 class="editable"><a class="anchor" id="ý-tưởng-3" href="#ý-tưởng-3"></a>Ý tưởng</h2>
+<p>Ta lưu mảng vào CTDL <a class="internal absent" href="https://vnoi.info/wiki/translate/wcipeg/Binary-Heap">Heap</a>.</p>
+<p>Ở mỗi bước, ta lấy ra phần tử nhỏ nhất trong heap, cho vào mảng đã sắp xếp.</p>
+<h2 class="editable"><a class="anchor" id="ưu-điểm-3" href="#ưu-điểm-3"></a>Ưu điểm</h2>
+<ul>
+<li>Cài đặt đơn giản nếu đã có sẵn thư viện Heap.</li>
+<li>Chạy nhanh, độ phức tạp $\mathcal{O}(N*logN)$.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="nhược-điểm-3" href="#nhược-điểm-3"></a>Nhược điểm</h2>
+<ul>
+<li>Không ổn định</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="code-3" href="#code-3"></a>Code</h2>
+<pre class="highlight"><code><span class="n">Heap</span> <span class="n">h</span> <span class="o">=</span> <span class="n">Heap</span><span class="p">();</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// thêm phần tử vào heap</span>
+	<span class="n">h</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// lấy phần tử nhỏ nhất và cho vào mảng đã sắp xếp</span>
+	<span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="sắp-xếp-nhanh-quicksort" href="#sắp-xếp-nhanh-quicksort"></a>Sắp xếp nhanh (QuickSort)</h1>
+<h2 class="editable"><a class="anchor" id="ý-tưởng-4" href="#ý-tưởng-4"></a>Ý tưởng</h2>
+<ul>
+<li>Chia dãy thành 2 phần, một phần "lớn" và một phần "nhỏ".
+<ul>
+<li>Chọn một khóa <strong>pivot</strong>
+</li>
+<li>Những phần tử lớn hơn <strong>pivot</strong> chia vào phần lớn</li>
+<li>Những phần tử nhỏ hơn hoặc bằng <strong>pivot</strong> chia vào phần nhỏ.</li>
+</ul>
+</li>
+<li>Gọi đệ quy để sắp xếp 2 phần.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="ưu-điểm-4" href="#ưu-điểm-4"></a>Ưu điểm</h2>
+<ul>
+<li>Chạy nhanh (nhanh nhất trong các thuật toán sắp xếp dựa trên việc só sánh các phần tử). Do đó quicksort được sử dụng trong nhiều thư viện của các ngôn ngữ như Java, C++ (hàm <code>sort</code> của C++ dùng Intro sort, là kết hợp của Quicksort và Insertion Sort).</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="nhược-điểm-4" href="#nhược-điểm-4"></a>Nhược điểm</h2>
+<ul>
+<li>Tùy thuộc vào cách chia thành 2 phần, nếu chia không tốt, độ phức tạp trong trường hợp xấu nhất có thể là $\mathcal{O}(N^2)$. Nếu ta chọn pivot ngẫu nhiên, thuật toán chạy với độ phức tạp trung bình là $\mathcal{O}(N*logN)$ (trong trường hợp xấu nhất vẫn là $\mathcal{O}(N^2)$, nhưng ta sẽ không bao giờ gặp phải trường hợp đó).</li>
+<li>Không ổn định.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="code-4" href="#code-4"></a>Code</h2>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">quickSort</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">left</span><span class="p">,</span> <span class="kt">int</span> <span class="n">right</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">right</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">pivot</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">left</span> <span class="o">+</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)];</span>
+	<span class="c1">// chia dãy thành 2 phần</span>
+	<span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">while</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">)</span> <span class="o">++</span><span class="n">i</span><span class="p">;</span>
+		<span class="k">while</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">pivot</span><span class="p">)</span> <span class="o">--</span><span class="n">j</span><span class="p">;</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+			<span class="o">++</span><span class="n">i</span><span class="p">;</span>
+			<span class="o">--</span><span class="n">j</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="c1">// Gọi đệ quy để sắp xếp các nửa</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">)</span> <span class="n">quickSort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">)</span> <span class="n">quickSort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">right</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="minh-họa-3" href="#minh-họa-3"></a>Minh họa</h2>
+<p>Bạn có thể vào <a href="http://visualgo.net/sorting">VisuAlgo</a>.</p>
+<ul>
+<li>Chọn <strong>Quick</strong> ở thanh menu bên trên.</li>
+<li>Ấn vào nút <code>Create</code> ở phía dưới trang để tạo một dãy mới</li>
+<li>Ấn vào <code>Sort</code>, rồi <code>Go</code> để chạy thuật toán.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="sắp-xếp-cơ-số-radixsort" href="#sắp-xếp-cơ-số-radixsort"></a>Sắp xếp cơ số (RadixSort)</h1>
+<h2 class="editable"><a class="anchor" id="ý-tưởng-5" href="#ý-tưởng-5"></a>Ý tưởng</h2>
+<p>Khác với tất cả các thuật toán nêu trên, RadixSort không sử dụng việc so sánh 2 phần tử.</p>
+<ul>
+<li>Đầu tiên, thuật toán sẽ chia các phần tử thành các nhóm, dựa trên chữ số cuối cùng (hoặc dựa theo bit cuối cùng, hoặc vài bit cuối cùng).</li>
+<li>Sau đó ta đưa các nhóm lại với nhau, và được danh sách sắp xếp theo chữ số cuối của các phần tử. Quá trình này lặp đi lặp lại với chữ số át cuối cho tới khi tất cả vị trí chữ số đã sắp xếp.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="ưu-điểm-5" href="#ưu-điểm-5"></a>Ưu điểm</h2>
+<ul>
+<li>Có thể chạy nhanh hơn các thuật toán sắp xếp sử dụng so sánh. Ví dụ nếu ta sắp xếp các số nguyên 32 bit, và chia nhóm theo 1 bit, thì độ phức tạp là $\mathcal{O}(N)$. Trong trường hợp tổng quát, độ phức tạp là $\mathcal{O}(N*log(max(a_i)))$</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="nhược-điểm-5" href="#nhược-điểm-5"></a>Nhược điểm</h2>
+<ul>
+<li>Không thể sắp xếp số thực.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="minh-họa-4" href="#minh-họa-4"></a>Minh họa</h2>
+<p>Bạn có thể vào <a href="http://visualgo.net/sorting">VisuAlgo</a>.</p>
+<ul>
+<li>Chọn <strong>Radix</strong> ở thanh menu bên trên.</li>
+<li>Ấn vào nút <code>Create</code> ở phía dưới trang để tạo một dãy mới</li>
+<li>Ấn vào <code>Sort</code>, rồi <code>Go</code> để chạy thuật toán.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="nguồn-tham-khảo" href="#nguồn-tham-khảo"></a>Nguồn tham khảo</h1>
+<ul>
+<li><a href="https://www.topcoder.com/community/data-science/data-science-tutorials/sorting/">Topcoder</a></li>
+<li><a href="http://visualgo.net/sorting">VisuAlgo</a></li>
+<li><a href="http://en.wikipedia.org/wiki">Wikipedia</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

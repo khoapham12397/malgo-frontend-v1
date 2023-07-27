@@ -1,0 +1,963 @@
+<div id="wiki-content">
+<h1 class="pt-4">BFS (Breadth-first search)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/graph-theory/">graph-theory</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Nguồn:</strong> <a href="https://cp-algorithms.com/graph/breadth-first-search.html">CP-Algorithms</a>, <a class="internal absent" href="https://vnoi.info/wiki/algo/basic/Tai-Lieu-Thuat-Toan">Giải thuật và lập trình - Lê Minh Hoàng</a></p>
+<p><strong>Biên soạn:</strong></p>
+<ul>
+<li>Nguyễn Châu Khanh - VNU University of Engineering and Technology (VNU-UET)</li>
+</ul>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Trần Quang Lộc - ITMO University</li>
+<li>Hoàng Xuân Nhật - VNUHCM-University of Science</li>
+<li>Trần Xuân Bách - HUS High School for Gifted Students</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#thuật-toán-duyệt-đồ-thị-ưu-tiên-chiều-rộng">Thuật toán duyệt đồ thị ưu tiên chiều rộng</a><ul><li><a href="#ý-tưởng">Ý tưởng</a></li><li><a href="#thuật-toán">Thuật toán</a></li><li><a href="#mô-tả">Mô tả</a></li><li><a href="#cài-đặt">Cài đặt</a><ul><li><a href="#truy-vết">Truy vết</a></li></ul></li><li><a href="#các-đặc-tính-của-thuật-toán">Các đặc tính của thuật toán</a></li><li><a href="#định-lý-bắt-tay-handshaking-lemma">Định lý Bắt tay (Handshaking lemma)</a></li><li><a href="#độ-phức-tạp-thuật-toán">Độ phức tạp thuật toán</a><ul><li><a href="#độ-phức-tạp-thời-gian">Độ phức tạp thời gian</a></li><li><a href="#độ-phức-tạp-không-gian">Độ phức tạp không gian</a></li></ul></li></ul></li><li><a href="#ứng-dụng-bfs-để-xác-định-thành-phần-liên-thông">Ứng dụng BFS để xác định thành phần liên thông</a><ul><li><a href="#bài-toán-1">Bài toán 1</a><ul><li><a href="#đề-bài">Đề bài</a></li><li><a href="#ý-tưởng-1">Ý tưởng</a></li><li><a href="#thuật-toán-1">Thuật toán</a></li><li><a href="#mô-tả-1">Mô tả</a></li><li><a href="#cài-đặt-1">Cài đặt</a></li><li><a href="#đánh-giá">Đánh giá</a></li></ul></li><li><a href="#thuật-toán-loang-flood-fill">Thuật toán loang (Flood Fill)</a></li><li><a href="#bài-toán-2">Bài toán 2</a><ul><li><a href="#đề-bài-1">Đề bài</a></li><li><a href="#ý-tưởng-2">Ý tưởng</a></li><li><a href="#thuật-toán-2">Thuật toán</a></li><li><a href="#mô-tả-2">Mô tả</a></li><li><a href="#cài-đặt-2">Cài đặt</a></li><li><a href="#đánh-giá-1">Đánh giá</a></li></ul></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng</a></li></ul></li><li><a href="#ứng-dụng-bfs-để-tìm-đường-đi-ngắn-nhất-trong-đồ-thị-không-trọng-số">Ứng dụng BFS để tìm đường đi ngắn nhất trong đồ thị không trọng số</a><ul><li><a href="#bài-toán-3">Bài toán 3</a><ul><li><a href="#đề-bài-2">Đề bài</a></li><li><a href="#phân-tích">Phân tích</a></li><li><a href="#cài-đặt-3">Cài đặt</a></li><li><a href="#đánh-giá-2">Đánh giá</a></li></ul></li><li><a href="#bài-toán-4">Bài toán 4</a><ul><li><a href="#đề-bài-3">Đề bài</a></li><li><a href="#phân-tích-1">Phân tích</a></li><li><a href="#cài-đặt-4">Cài đặt</a></li><li><a href="#đánh-giá-3">Đánh giá</a></li></ul></li><li><a href="#bài-toán-5">Bài toán 5</a><ul><li><a href="#đề-bài-4">Đề bài</a></li><li><a href="#phân-tích-2">Phân tích</a></li><li><a href="#cài-đặt-5">Cài đặt</a></li><li><a href="#đánh-giá-4">Đánh giá</a></li></ul></li><li><a href="#bài-tập-áp-dụng-1">Bài tập áp dụng</a></li></ul></li><li><a href="#ứng-dụng-bfs-để-tìm-chu-trình-ngắn-nhất-trong-đồ-thị-có-hướng-không-trọng-số">Ứng dụng BFS để tìm chu trình ngắn nhất trong đồ thị có hướng không trọng số</a><ul><li><a href="#bài-toán-6">Bài toán 6</a><ul><li><a href="#đề-bài-5">Đề bài</a></li><li><a href="#phân-tích-3">Phân tích</a></li><li><a href="#mô-tả-3">Mô tả</a></li><li><a href="#thuật-toán-3">Thuật toán</a></li><li><a href="#cài-đặt-6">Cài đặt</a></li><li><a href="#đánh-giá-5">Đánh giá</a></li></ul></li></ul></li><li><a href="#ứng-dụng-bfs-để-tìm-đường-đi-ngắn-nhất-trong-đồ-thị-có-trọng-số-0-hoặc-1">Ứng dụng BFS để tìm đường đi ngắn nhất trong đồ thị có trọng số 0 hoặc 1</a><ul><li><a href="#bài-toán-7">Bài toán 7</a><ul><li><a href="#đề-bài-6">Đề bài</a></li><li><a href="#phân-tích-4">Phân tích</a></li><li><a href="#cài-đặt-7">Cài đặt</a></li><li><a href="#đánh-giá-6">Đánh giá</a></li></ul></li><li><a href="#bài-tập-áp-dụng-2">Bài tập áp dụng</a></li></ul></li><li><a href="#ứng-dụng-bfs-để-kiểm-tra-đồ-thị-hai-phía-bipartite-graph">Ứng dụng BFS để kiểm tra đồ thị hai phía (Bipartite graph)</a><ul><li><a href="#định-nghĩa">Định nghĩa</a></li><li><a href="#bài-toán-8">Bài toán 8</a><ul><li><a href="#đề-bài-7">Đề bài</a></li><li><a href="#phân-tích-5">Phân tích</a></li><li><a href="#mô-tả-4">Mô tả</a></li><li><a href="#thuật-toán-4">Thuật toán</a></li><li><a href="#cài-đặt-8">Cài đặt</a></li><li><a href="#đánh-giá-7">Đánh giá</a></li></ul></li></ul></li></ul></div>
+<h1 class="editable"><a class="anchor" id="thuật-toán-duyệt-đồ-thị-ưu-tiên-chiều-rộng" href="#thuật-toán-duyệt-đồ-thị-ưu-tiên-chiều-rộng"></a>Thuật toán duyệt đồ thị ưu tiên chiều rộng</h1>
+<p>Thuật toán <strong>duyệt đồ thị ưu tiên chiều rộng</strong> <em>(Breadth-first search - BFS)</em> là một trong những thuật toán tìm kiếm cơ bản và thiết yếu trên đồ thị. Mà trong đó, những đỉnh nào gần đỉnh xuất phát hơn sẽ được duyệt trước.</p>
+<p>Ứng dụng của $BFS$ có thể giúp ta giải quyết tốt một số bài toán trong thời gian và không gian <strong>tối thiểu</strong>. Đặc biệt là bài toán tìm kiếm đường đi ngắn nhất từ một đỉnh gốc tới tất cả các đỉnh khác. Trong đồ thị không có trọng số hoặc tất cả trọng số bằng nhau, thuật toán sẽ luôn trả ra đường đi ngắn nhất có thể. Ngoài ra, thuật toán này còn được dùng để tìm các thành phần liên thông của đồ thị, hoặc kiểm tra đồ thị hai phía, …</p>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_img1.png" /></p>
+<h2 class="editable"><a class="anchor" id="ý-tưởng" href="#ý-tưởng"></a>Ý tưởng</h2>
+<p>Với đồ thị không trọng số và đỉnh nguồn $s$. Đồ thị này có thể là đồ thị có hướng hoặc vô hướng, điều đó <strong>không quan trọng</strong> đối với thuật toán.</p>
+<p>Có thể hiểu thuật toán như một ngọn lửa lan rộng trên đồ thị:</p>
+<ul>
+<li>Ở bước thứ $0$, chỉ có đỉnh nguồn $s$ đang cháy.</li>
+<li>Ở mỗi bước tiếp theo, ngọn lửa đang cháy ở mỗi đỉnh lại lan sang tất cả các đỉnh kề với nó.</li>
+</ul>
+<p>Trong mỗi lần lặp của thuật toán, "vòng lửa" lại lan rộng ra theo chiều rộng. Những đỉnh nào gần $s$ hơn sẽ bùng cháy trước.</p>
+<p>Chính xác hơn, thuật toán có thể được mô tả như sau:</p>
+<ul>
+<li>Đầu tiên ta thăm đỉnh nguồn $s$.</li>
+<li>Việc thăm đỉnh $s$ sẽ phát sinh thứ tự thăm các đỉnh $(u_1, u_2, … u_p)$ kề với $s$ (những đỉnh gần $s$ nhất). Tiếp theo, ta thăm đỉnh $u_1$, khi thăm đỉnh $u_1$ sẽ lại phát sinh yêu cầu thăm những đỉnh $(v_1, v_2, …, v_q)$ kề với $u_1$. Nhưng rõ ràng những đỉnh $v$ này “xa” $s$ hơn những đỉnh $u$ nên chúng chỉ được thăm khi tất cả những đỉnh $u$ đều đã được thăm. Tức là thứ tự thăm các đỉnh sẽ là: $s, u_1, u_2, …, u_p, v_1, v_2, …, v_q, …$</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_img2.png" /></p>
+<p>Thuật toán tìm kiếm theo chiều rộng sử dụng một danh sách để chứa những đỉnh đang “chờ” thăm. Tại mỗi bước, ta thăm một đỉnh đầu danh sách, loại nó ra khỏi danh sách và cho những đỉnh kề với nó chưa được thăm xếp hàng vào cuối danh sách. Thuật toán sẽ kết thúc khi danh sách rỗng.</p>
+<h2 class="editable"><a class="anchor" id="thuật-toán" href="#thuật-toán"></a>Thuật toán</h2>
+<p>Thuật toán sử dụng một cấu trúc dữ liệu hàng đợi <em>(queue)</em> để chứa các đỉnh sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</p>
+<p><strong>Bước 1:</strong> Khởi tạo</p>
+<ul>
+<li>Các đỉnh đều ở trạng thái chưa được đánh dấu. Ngoại trừ đỉnh nguồn $s$ đã được đánh dấu.</li>
+<li>Một hàng đợi ban đầu chỉ chứa $1$ phần tử là $s$.</li>
+</ul>
+<p><strong>Bước 2:</strong> Lặp lại các bước sau cho đến khi hàng đợi rỗng:</p>
+<ul>
+<li>Lấy đỉnh $u$ ra khỏi hàng đợi.</li>
+<li>Xét tất cả những đỉnh $v$ kề với $u$ mà chưa được đánh dấu, với mỗi đỉnh $v$ đó:
+<ul>
+<li>Đánh dấu $v$ đã thăm.</li>
+<li>Lưu lại vết đường đi từ $u$ đến $v$.</li>
+<li>Đẩy $v$ vào trong hàng đợi (đỉnh $v$ sẽ chờ được duyệt tại những bước sau).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Bước 3:</strong> Truy vết tìm đường đi.</p>
+<h2 class="editable"><a class="anchor" id="mô-tả" href="#mô-tả"></a>Mô tả</h2>
+<ul>
+<li>Xét đồ thị sau đây, với đỉnh nguồn $s=1$ :</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_img3.png" />
+<img src="https://vnoi.info/wiki/uploads/breadth-first-search_img4.png" /></p>
+<ul>
+<li><strong>Quá trình:</strong></li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_gif1.gif" /></p>
+<h2 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h2>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Biến <code>maxN</code> - Kích thước mảng.</li>
+<li>Mảng <code>d[]</code> - Mảng lưu lại khoảng cách từ đỉnh nguồn đến mọi đỉnh.</li>
+<li>Mảng <code>par[]</code> - Mảng lưu lại vết đường đi.</li>
+<li>Mảng <code>visit[]</code> - Mảng đánh dấu các đỉnh đã thăm.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Hàng đợi <code>q</code> - Chứa các đỉnh sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</li>
+</ul>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="c1">// Số lượng đỉnh của đồ thị</span>
+<span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">maxN</span><span class="p">],</span> <span class="n">par</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="kt">bool</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Với s là đỉnh xuất phát (đỉnh nguồn)</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">visit</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+
+    <span class="n">queue</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>     <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">par</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>   <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="truy-vết" href="#truy-vết"></a><strong>Truy vết</strong></h3>
+<ul>
+<li>Cài đặt truy vết đường đi từ đỉnh nguồn $s$ đến đỉnh $u$ :</li>
+</ul>
+<pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"No path!"</span><span class="p">;</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">path</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span> <span class="n">v</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">v</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">v</span><span class="p">])</span>
+        <span class="n">path</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">reverse</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">path</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+    
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Path: "</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">path</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">v</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="các-đặc-tính-của-thuật-toán" href="#các-đặc-tính-của-thuật-toán"></a>Các đặc tính của thuật toán</h2>
+<p>Nếu sử dụng một ngăn xếp <em>(stack)</em> thay vì hàng đợi <em>(queue)</em> thì ta sẽ thu được <strong>thứ tự duyệt đỉnh</strong> của thuật toán <strong>tìm kiếm theo chiều sâu</strong> <em>(Depth First Search – DFS)</em>. Đây chính là <strong>phương pháp khử đệ quy</strong> của $DFS$ để cài đặt thuật toán trên các ngôn ngữ không cho phép đệ quy.</p>
+<p><strong>Định lí:</strong> Thuật toán $BFS$ cho ta độ dài đường đi ngắn nhất từ đỉnh nguồn tới mọi đỉnh (với khoảng cách tới đỉnh $u$ bằng $d[u]$).
+Trong thuật toán $BFS$, nếu đỉnh $u$ xa đỉnh nguồn hơn đỉnh $v$, thì $u$ sẽ được thăm trước.</p>
+<ul>
+<li>
+<strong>Chứng minh:</strong> Trong $BFS$, từ một đỉnh hiện tại, ta luôn đi thăm tất cả các đỉnh kề với nó trước, sau đó thăm tất cả các đỉnh cách nó một đỉnh, rồi các đỉnh cách nó hai đỉnh, v.v… Như vậy, nếu từ một đỉnh $u$ khi ta chạy $BFS$, quãng đường đến đỉnh $v$ luôn là quãng đường đi qua ít cạnh nhất.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="định-lý-bắt-tay-handshaking-lemma" href="#định-lý-bắt-tay-handshaking-lemma"></a>Định lý Bắt tay (Handshaking lemma)</h2>
+<p><strong>Định lý:</strong> Trong một đồ thị bất kỳ, tổng số <a href="https://vi.wikipedia.org/wiki/B%E1%BA%ADc_(l%C3%BD_thuy%E1%BA%BFt_%C4%91%E1%BB%93_th%E1%BB%8B)">bậc</a> của tất cả các đỉnh bằng <strong>gấp đôi</strong> số cạnh của đồ thị.</p>
+<ul>
+<li>
+<strong>Mô tả:</strong> Cho đồ thị $G=(V,E)$ gồm $|V|$ đỉnh và $|E|$ cạnh. Khi đó, tổng tất cả các bậc của đỉnh trong $G$ bằng $2 \times |E|$ .
+Với $deg(v)$ là số bậc của đỉnh $v$, ta có: $\displaystyle\sum_{v \in V}deg(v) = 2 \times |E|$
+<ul>
+<li>
+<p><strong>Ví dụ:</strong> Cho đồ thị sau với $|V| = 8$ và $|E| = 7$</p>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_img5.png" /></p>
+<ul>
+<li>$\displaystyle\sum_{v \in V}deg(v) = 2 \times |E| = 2 \times 7 = 14$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Chứng minh:</strong> Vì mỗi một cạnh nối với đúng hai đỉnh của đồ thị, nên một cạnh sẽ đóng góp $2$ đơn vị vào tổng số bậc của tất cả các đỉnh.</li>
+</ul>
+<p><strong>Hệ quả:</strong> Trong đồ thị, số lượng <strong>đỉnh bậc lẻ</strong> luôn là một số chẵn.</p>
+<ul>
+<li>
+<p><strong>Chứng minh:</strong> Gọi $L$ và $C$ lần lượt là tập các đỉnh bậc lẻ và bậc chẵn của đồ thị $G=(V, E)$. Ta có:
+$2 \times |E| = \displaystyle\sum_{v \in V}deg(v) = \displaystyle\sum_{v \in L}deg(v) + \displaystyle\sum_{v \in C}deg(v)$</p>
+<ul>
+<li>$2 \times |E|$ chẵn</li>
+<li>$\displaystyle\sum_{v \in C}deg(v)$ chẵn</li>
+</ul>
+<p>$\Rightarrow$ $\displaystyle\sum_{v \in L}deg(v)$ chẵn</p>
+</li>
+</ul>
+<p><strong>Nhận xét:</strong></p>
+<ul>
+<li>Trong quá trình duyệt đồ thị được biểu diễn bằng <strong>danh sách kề</strong>, mỗi cạnh sẽ được duyệt chính xác hai lần đối với <strong>đồ thị vô hướng</strong> (vì mỗi cạnh sẽ được lưu trong $2$ danh sách kề của $2$ đỉnh). Còn đối với <strong>đồ thị có hướng</strong>, mọi cạnh của đồ thị chỉ được duyệt chính xác một lần.</li>
+</ul>
+<p><strong>Tham khảo:</strong> <a href="https://en.wikipedia.org/wiki/Handshaking_lemma">Handshaking_lemma</a></p>
+<h2 class="editable"><a class="anchor" id="độ-phức-tạp-thuật-toán" href="#độ-phức-tạp-thuật-toán"></a>Độ phức tạp thuật toán</h2>
+<h3 class="editable"><a class="anchor" id="độ-phức-tạp-thời-gian" href="#độ-phức-tạp-thời-gian"></a><strong>Độ phức tạp thời gian</strong></h3>
+<p>Gọi $|V|$ là số lượng đỉnh và $|E|$ là số lượng cạnh của đồ thị.</p>
+<p>Trong quá trình $BFS$, cách biểu diễn đồ thị có ảnh hưởng lớn tới chi phí về thời gian thực hiện giải thuật :</p>
+<ul>
+<li>Nếu đồ thị biểu diễn bằng <strong>danh sách kề</strong> (vector <code>g[]</code>) :
+<ul>
+<li>Ta có thể thực hiện thuật toán này một cách <strong>tối ưu nhất</strong> về mặt thời gian nhờ khả năng duyệt qua các đỉnh kề của mỗi đỉnh một cách <strong>hiệu quả</strong>.</li>
+<li>Vì ta sử dụng mảng <code>visit[]</code> để ngăn việc đẩy một đỉnh vào hàng đợi nhiều lần nên mỗi đỉnh sẽ được thăm <strong>chính xác một lần</strong> duy nhất. Do đó, ta mất độ phức tạp thời gian $O(|V|)$ dành cho việc thăm các đỉnh.</li>
+<li>Bất cứ khi nào một đỉnh được thăm, mọi cạnh kề với đỉnh đó đều được duyệt, với thời gian dành cho mỗi cạnh là $O(1)$. Từ phần nhận xét của <strong>định lý Bắt tay <em>(Handshaking lemma)</em></strong>, ta sẽ mất độ phức tạp thời gian $O(|E|)$ dành cho việc duyệt các cạnh.</li>
+<li>Nhìn chung, độ phức tạp thời gian của thuật toán này là $O(|V|+|E|)$. Đây là cách cài đặt tốt nhất.</li>
+</ul>
+</li>
+<li>Nếu đồ thị được biểu diễn bằng <strong>ma trận kề</strong> :
+<ul>
+<li>Ta cũng sẽ mất độ phức tạp thời gian $O(|V|)$ dành cho việc thăm các đỉnh <em>(giải thích tương tự như trên)</em>.</li>
+<li>Với mỗi đỉnh được thăm, ta sẽ phải duyệt qua toàn bộ các đỉnh của đồ thị để kiểm tra đỉnh kề với nó. Do đó, thuật toán sẽ mất độ phức tạp $O(|V|^2)$.</li>
+</ul>
+</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="độ-phức-tạp-không-gian" href="#độ-phức-tạp-không-gian"></a><strong>Độ phức tạp không gian</strong></h3>
+<p>Tại mọi thời điểm, trong hàng đợi (queue <code>q</code>) có không quá $|V|$ phần tử. Do đó, độ phức tạp bộ nhớ là $O(|V|)$.</p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng-bfs-để-xác-định-thành-phần-liên-thông" href="#ứng-dụng-bfs-để-xác-định-thành-phần-liên-thông"></a>Ứng dụng BFS để xác định thành phần liên thông</h1>
+<h2 class="editable"><a class="anchor" id="bài-toán-1" href="#bài-toán-1"></a><strong>Bài toán 1</strong></h2>
+<p><a href="http://lequydon.ntucoder.net/Problem/Details/4601">BDFS - Đếm số thành phần liên thông</a></p>
+<h3 class="editable"><a class="anchor" id="đề-bài" href="#đề-bài"></a><strong>Đề bài</strong></h3>
+<p>Cho đơn đồ thị vô hướng gồm $n$ đỉnh và $m$ cạnh $(1 \le n, m \le 10^5)$, các đỉnh được đánh số từ $1$ tới $n$. Tìm số <a href="https://vi.wikipedia.org/wiki/Th%C3%A0nh_ph%E1%BA%A7n_li%C3%AAn_th%C3%B4ng">thành phần liên thông</a> của đồ thị.</p>
+<h3 class="editable"><a class="anchor" id="ý-tưởng-1" href="#ý-tưởng-1"></a><strong>Ý tưởng</strong></h3>
+<p>Một đồ thị có thể liên thông hoặc không liên thông. Nếu đồ thị liên thông thì số thành phần liên thông của nó là $1$. Điều này tương đương với phép duyệt theo thủ tục $BFS$ được gọi đến <strong>đúng một lần</strong>. Nếu đồ thị không liên thông (số thành phần liên thông lớn hơn $1$) ta có thể tách chúng thành những <strong>đồ thị con liên thông</strong>. Điều này cũng có nghĩa là trong phép duyệt đồ thị, số thành phần liên thông của nó bằng số lần gọi tới thủ tục $BFS$.</p>
+<h3 class="editable"><a class="anchor" id="thuật-toán-1" href="#thuật-toán-1"></a><strong>Thuật toán</strong></h3>
+<p>Thuật toán ứng dụng $BFS$ để xác định thành phần liên thông:</p>
+<ul>
+<li>
+<strong>Bước 0:</strong> Khởi tạo số lượng thành phần liên thông bằng $0$.</li>
+<li>
+<strong>Bước 1:</strong> Xuất phát từ một đỉnh chưa được đánh dấu của đồ thị. Ta đánh dấu đỉnh xuất phát, tăng số thành phần liên thông thêm $1$.</li>
+<li>
+<strong>Bước 2:</strong> Từ một đỉnh $i$ đã đánh dấu, ta đánh dấu tất cả các đỉnh $j$ kề với $i$ mà $j$ chưa được đánh dấu.</li>
+<li>
+<strong>Bước 3:</strong> Thực hiện bước $2$ cho đến khi không còn thực hiện được nữa.</li>
+<li>
+<strong>Bước 4:</strong> Nếu số số đỉnh đánh dấu bằng $n$ (mọi đỉnh đều được đánh dấu) kết thúc thuật toán và trả về số thành phần liên thông, ngược lại quay về bước $1$.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="mô-tả-1" href="#mô-tả-1"></a><strong>Mô tả</strong></h3>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_gif2.gif" /></p>
+<h3 class="editable"><a class="anchor" id="cài-đặt-1" href="#cài-đặt-1"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 100007</code>.</li>
+<li>Biến <code>components</code> - Số lượng thành phần liên thông.</li>
+<li>Mảng <code>visit[]</code> - Mảng đánh dấu các đỉnh đã thăm.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Hàng đợi <code>q</code> - Chứa các đỉnh sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span>  <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">components</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">bool</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">++</span><span class="n">components</span><span class="p">;</span>
+    <span class="n">queue</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">m</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">visit</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">bfs</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">components</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá" href="#đánh-giá"></a><strong>Đánh giá</strong></h3>
+<p>Ta cũng có thể sử dụng thuật toán tìm kiếm theo chiều sâu <em>(Depth First Search – DFS)</em> để xác định thành phần liên thông.</p>
+<p><strong>Độ phức tạp</strong></p>
+<p>Độ phức tạp của thuật toán là $O(n + m)$.</p>
+<h2 class="editable"><a class="anchor" id="thuật-toán-loang-flood-fill" href="#thuật-toán-loang-flood-fill"></a>Thuật toán loang (Flood Fill)</h2>
+<p><strong>Thuật toán loang <em>(thuật toán vết dầu loang)</em></strong> là một kĩ thuật sử dụng $BFS$ để tìm tất cả các điểm có thể đi tới. Điểm khác biệt giữa <strong>Loang</strong> so với đa số những bài $BFS$ là ta không phải tìm chi phí nhỏ nhất.</p>
+<p>Thuật toán loang được dùng khá nhiều trong tin học, điển hình là <strong>thuật toán loang trên ma trận</strong> được ứng dụng để đếm số <strong>thành phần liên thông</strong> trên ma trận. Ngoài ra, nó còn ứng dụng trong các <strong>bài toán thực tế</strong> như các bài toán tìm đường đi, game dò mìn, game line98,…</p>
+<p>Gọi là thuật toán loang vì nguyên lí của thuật toán này rất giống với hiện tượng loang của chất lỏng. Khi ta nhỏ dầu xuống một mặt phẳng, vết dầu có thể loang ra những khu vực xung quanh. Tương tự, thuật toán loang trên ma trận cũng vậy, ta sẽ duyệt một ô trên ma trận và sau đó duyệt các điểm xung quanh nó và loang dần ra để giải quyết bài toán.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-2" href="#bài-toán-2"></a><strong>Bài toán 2</strong></h2>
+<p><a href="https://www.spoj.com/problems/UCV2013H/">UCV2013H - Slick</a></p>
+<h3 class="editable"><a class="anchor" id="đề-bài-1" href="#đề-bài-1"></a><strong>Đề bài</strong></h3>
+<p>Một tai nạn hàng hải đã khiến dầu tràn ra biển. Để có được thông tin về mức độ nghiêm trọng của thảm họa này, người ta phải phân tích các hình ảnh chụp từ vệ tinh, từ đó tính toán chi phí khắc phục cho phù hợp. Đối với điều này, số lượng vết dầu loang trên biển và kích thước của mỗi vết loang phải được xác định. Vết loang là một mảng dầu nổi trên mặt nước.</p>
+<p>Để tiện cho việc xử lí, hình ảnh được chuyển đổi thành một ma trận nhị phân kích thước $N \times M$ $(1 \le N, M \le 250)$. Với $1$ là ô bị nhiễm dầu, và $0$ là ô không bị nhiễm dầu. Vết dầu loang là tập hợp của một số ô bị nhiễm dầu có chung cạnh.</p>
+<p>Họ đã thuê bạn để giúp họ xử lí hình ảnh. Công việc của bạn là đếm số lượng vết loang trên biển và kích thước tương ứng của từng vết.</p>
+<h3 class="editable"><a class="anchor" id="ý-tưởng-2" href="#ý-tưởng-2"></a><strong>Ý tưởng</strong></h3>
+<p>Ta xây dựng một <strong>mô hình đồ thị</strong> của bài toán như sau:</p>
+<ul>
+<li>Gọi mỗi đỉnh của đồ thị tương ứng với mỗi ô $1$ <em>(ô bị nhiễm dầu)</em> của ma trận.</li>
+<li>Tồn tại một cạnh nối giữa cặp đỉnh $(u, v)$ khi và chỉ khi ô tương ứng với đỉnh $u$ kề cạnh với ô tương ứng với đỉnh $v$ và cả hai ô đều là ô $1$.</li>
+</ul>
+<p>Khi đó, bài toán quy về thành bài toán <strong>xác định thành phần liên thông của đồ thị</strong>. Trong đó, mỗi thành phần liên thông tương ứng với mỗi một vết dầu loang.</p>
+<p>Nghĩa là, số lượng thành phần liên thông của đồ thị chính là số lượng vết dầu loang. Và số lượng đỉnh nằm trong cùng một thành phần liên thông là kích thước của vết loang tương ứng.</p>
+<h3 class="editable"><a class="anchor" id="thuật-toán-2" href="#thuật-toán-2"></a><strong>Thuật toán</strong></h3>
+<p>Áp dụng <strong>thuật toán loang trên ma trận</strong> để xác định thành phần liên thông:</p>
+<ul>
+<li>Khởi tạo số lượng vết dầu bằng $0$.</li>
+<li>Duyệt dần từng ô của ma trận, nếu ô đang xét là một ô bị nhiễm dầu (ô $1$) và chưa được đánh dấu:
+<ul>
+<li>Đánh dấu lại ô đó.</li>
+<li>Tăng số lượng vết dầu thêm $1$.</li>
+<li>Thực hiện thủ tục $BFS$ xuất phát từ ô đó để loang ra các ô xung quanh như sau:
+<ul>
+<li>Khởi tạo kích thước của vết dầu đang xét là $1$.</li>
+<li>Tiếp tục thực hiện công việc sau cho đến khi không còn thực hiện được nữa: Từ một ô đã đánh dấu, ta đánh dấu tất cả các ô bị nhiễm dầu kề cạnh với ô đó mà chưa được đánh dấu. Mỗi lần đánh dấu lại một ô thì ta tăng kích thước của vết dầu thêm $1$.</li>
+<li>Sử dụng $1$ mảng để lưu lại kích thước của từng vết loang.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Nếu tất cả các ô bị nhiễm dầu đều đã được đánh dấu, trả ra kết quả và kết thúc thuật toán.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="mô-tả-2" href="#mô-tả-2"></a><strong>Mô tả</strong></h3>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_gif3.gif" /></p>
+<h3 class="editable"><a class="anchor" id="cài-đặt-2" href="#cài-đặt-2"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 300</code>.</li>
+<li>Mảng <code>visit[][]</code> - Mảng đánh dấu các ô đã duyệt.</li>
+<li>Vector <code>slicks</code> - Lưu kích thước của mỗi vết dầu loang.</li>
+<li>Hàng đợi <code>q</code> - Chứa các ô sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span>  <span class="o">=</span> <span class="mi">300</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">;</span>
+<span class="kt">bool</span> <span class="n">a</span><span class="p">[</span><span class="n">maxN</span><span class="p">][</span><span class="n">maxN</span><span class="p">],</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">][</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">slicks</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">moveX</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="kt">int</span> <span class="n">moveY</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
+
+<span class="c1">// Thủ tục cài đặt lại cấu trúc dữ liệu sau mỗi bộ test</span>
+<span class="kt">void</span> <span class="nf">reset</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">slicks</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">fill_n</span><span class="p">(</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">sx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sy</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">sizeSlicks</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// Biến đếm số lượng đỉnh thuộc thành phần liên thông</span>
+    <span class="n">queue</span> <span class="o">&lt;</span> <span class="n">pair</span> <span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">});</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">sx</span><span class="p">][</span><span class="n">sy</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">().</span><span class="n">first</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">().</span><span class="n">second</span><span class="p">;</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">moveX</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+            <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">moveY</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&gt;</span> <span class="n">n</span> <span class="o">||</span> <span class="n">u</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">&gt;</span> <span class="n">m</span> <span class="o">||</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">])</span> <span class="p">{</span>
+                <span class="o">++</span><span class="n">sizeSlicks</span><span class="p">;</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">sizeSlicks</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">n</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">m</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> 
+                    <span class="n">slicks</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">bfs</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">));</span>
+
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">slicks</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+
+        <span class="n">sort</span><span class="p">(</span><span class="n">slicks</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">slicks</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+        <span class="n">slicks</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="mf">1e9</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pre</span> <span class="o">=</span> <span class="n">slicks</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">slicks</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">pre</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">pre</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="n">number</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+                <span class="n">pre</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+                <span class="n">number</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="o">++</span><span class="n">number</span><span class="p">;</span>
+
+        <span class="n">reset</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-1" href="#đánh-giá-1"></a><strong>Đánh giá</strong></h3>
+<p>Ta sử dụng $2$ mảng <code>moveX[]</code> và <code>moveY[]</code> để có thể dễ dàng duyệt qua tất cả các ô kề cạnh với ô đang xét.</p>
+<p><strong>Độ phức tạp</strong></p>
+<p>Với mỗi bộ test:</p>
+<ul>
+<li>Vì mỗi ô của ma trận được duyệt đúng duy nhất $1$ lần nên ta sẽ mất độ phức tạp $O(N \times M)$.</li>
+<li>Ta sẽ mất thêm $O(4 \times N \times M)$ vì ta phải duyệt qua $4$ ô kề cạnh với mỗi ô của ma trận.</li>
+</ul>
+<p>Nhìn chung, độ phức tạp của thuật toán là $O(t \times (N \times M + 4 \times N \times M))$. Với $t$ là số lượng bộ test.</p>
+<h2 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a><strong>Bài tập áp dụng</strong></h2>
+<p><a href="https://www.spoj.com/PTIT/problems/BCDAISY/">BCDAISY - Chú bò hư hỏng</a></p>
+<p><a href="https://www.spoj.com/PTIT/problems/BCLKCOUN/">BCLKCOUN - Đếm số ao</a></p>
+<p><a href="https://www.spoj.com/PTIT/problems/BCISLAND/">BCISLAND - Nước biển</a></p>
+<p><a href="https://www.spoj.com/THPTCBT/problems/MTNTRAI/">MTNTRAI - Nông Trại</a></p>
+<p><a href="https://oj.vnoi.info/problem/nkguard">NKGUARD - Bảo vệ nông trang</a></p>
+<p><a href="https://oj.vnoi.info/problem/damage">Damage - Động đất</a></p>
+<p><a href="https://www.spoj.com/problems/KOZE/">KOZE - Sheep</a></p>
+<p><a href="https://cses.fi/problemset/task/1192">CSES - Counting Rooms</a></p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng-bfs-để-tìm-đường-đi-ngắn-nhất-trong-đồ-thị-không-trọng-số" href="#ứng-dụng-bfs-để-tìm-đường-đi-ngắn-nhất-trong-đồ-thị-không-trọng-số"></a>Ứng dụng BFS để tìm đường đi ngắn nhất trong đồ thị không trọng số</h1>
+<p>Những bài sử dụng $BFS$ thường yêu cầu tìm số bước ít nhất (hoặc đường đi ngắn nhất) từ điểm đầu đến điểm cuối. Bên cạnh đó, đường đi giữa $2$ điểm bất kì thường có chung trọng số (và thường là $1$). Phổ biến nhất là dạng bài cho bảng $N \times M$, có những ô đi qua được và những ô không đi qua được. Bảng này có thể là mê cung, sơ đồ, các thành phố hoặc các thứ các thứ tương đương. Có thể nói đây là những bài toán $BFS$ kinh điển.</p>
+<p>Hãy xem xét bài toán sau đây:</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-3" href="#bài-toán-3"></a><strong>Bài toán 3</strong></h2>
+<p><a href="https://oj.vnoi.info/problem/vmunch">Vmunch - Gặm cỏ</a></p>
+<h3 class="editable"><a class="anchor" id="đề-bài-2" href="#đề-bài-2"></a><strong>Đề bài</strong></h3>
+<p>Cho một bảng hình chữ nhật chia thành lưới ô vuông kích thước $R \times C$ ($1 \le R, C \le 100$). Mỗi ô mang $1$ trong $4$ giá trị sau : <code>.</code> , <code>*</code> , <code>B</code> , <code>C</code>. Cô bò Bessie đang đứng ở ô <code>C</code> và cần đi đến ô <code>B</code>. Mỗi bước đi Bessie có thể đi từ $1$ ô vuông sang $4$ ô vuông khác kề cạnh nhưng không được đi vào ô <code>*</code> hay đi ra khỏi bảng. Hãy tìm số bước đi ít nhất để Bessie đến được ô <code>B</code>.</p>
+<p>Đảm bảo chỉ có duy nhất $1$ ô <code>B</code> và $1$ ô <code>C</code> trong bảng, và luôn tồn tại đường đi từ <code>C</code> đến <code>B</code>.</p>
+<h3 class="editable"><a class="anchor" id="phân-tích" href="#phân-tích"></a><strong>Phân tích</strong></h3>
+<p>Theo mối quan hệ được xây dựng trong đề bài, Bessie có thể di chuyển từ $1$ ô vuông sang $4$ ô vuông khác kề cạnh. Từ đó, ta có thể xây dựng một <strong>mô hình đồ thị</strong> của bài toán:</p>
+<ul>
+<li>Gọi mỗi đỉnh của đồ thị tương ứng với mỗi ô trong lưới ô vuông.</li>
+<li>Tồn tại một cạnh nối giữa cặp đỉnh $(u, v)$ khi và chỉ khi từ ô tương ứng với đỉnh $u$ có thể di chuyển đến ô tương ứng với đỉnh $v$ (đồng nghĩa, ô tương ứng với đỉnh $u$ kề cạnh với ô tương ứng với đỉnh $v$ và cả $2$ ô đều <strong>không phải</strong> là ô <code>*</code> ).</li>
+</ul>
+<p>Sau khi xây dựng được đồ thị, bài toán quy về như sau: Tìm đường đi ngắn nhất từ đỉnh tương ứng với ô <code>C</code> đến đỉnh tương ứng với ô <code>B</code>. Độ dài đường đi ngắn nhất đó chính là số bước ít nhất mà Bessie cần thực hiện.</p>
+<p>Vậy để tìm được kết quả bài toán, ta sẽ áp dụng thuật toán $BFS$.</p>
+<h3 class="editable"><a class="anchor" id="cài-đặt-3" href="#cài-đặt-3"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 110</code>.</li>
+<li>Mảng <code>d[][]</code> - Mảng lưu số bước ít nhất để đi từ ô xuất phát đến mỗi ô khác.</li>
+<li>Mảng <code>visit[][]</code> - Mảng đánh dấu các ô đã đi qua.</li>
+<li>Hàng đợi <code>q</code> - Chứa các ô sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span>  <span class="o">=</span> <span class="mi">110</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">;</span>
+<span class="kt">char</span> <span class="n">a</span><span class="p">[</span><span class="n">maxN</span><span class="p">][</span><span class="n">maxN</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">maxN</span><span class="p">][</span><span class="n">maxN</span><span class="p">];</span>
+<span class="kt">bool</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">][</span><span class="n">maxN</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">moveX</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="kt">int</span> <span class="n">moveY</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">sx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sy</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">fill_n</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">fill_n</span><span class="p">(</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">queue</span> <span class="o">&lt;</span> <span class="n">pair</span> <span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">});</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">sx</span><span class="p">][</span><span class="n">sy</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">().</span><span class="n">first</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">().</span><span class="n">second</span><span class="p">;</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+
+        <span class="c1">// Nếu gặp được ô B thì kết thúc thủ tục BFS</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span><span class="p">]</span> <span class="o">==</span> <span class="sc">'B'</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">moveX</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+            <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">moveY</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">&gt;</span> <span class="n">r</span> <span class="o">||</span> <span class="n">u</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">&gt;</span> <span class="n">c</span> <span class="o">||</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">==</span> <span class="sc">'*'</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">r</span> <span class="o">&gt;&gt;</span> <span class="n">c</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="sc">'C'</span><span class="p">)</span> <span class="p">{</span> <span class="n">sx</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">sy</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span> <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="sc">'B'</span><span class="p">)</span> <span class="p">{</span> <span class="n">tx</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">ty</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span> <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="n">bfs</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">d</span><span class="p">[</span><span class="n">tx</span><span class="p">][</span><span class="n">ty</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-2" href="#đánh-giá-2"></a><strong>Đánh giá</strong></h3>
+<p>Ta sử dụng $2$ mảng <code>moveX[]</code> và <code>moveY[]</code> để có thể dễ dàng duyệt qua tất cả các ô kề cạnh với ô đang xét.</p>
+<p><strong>Độ phức tạp</strong></p>
+<p>Giống như $BFS$ thông thường, độ phức tạp của bài toán là $O(|V| + |E|)$ (với $|V|$ là số đỉnh và $|E|$ là số cạnh của đồ thị). Trong đó, số đỉnh của đồ thị bằng số lượng ô vuông của bảng (nghĩa là $|V| = R \times C$ ). Trong <strong>trường hợp tệ nhất</strong>, tại mỗi ô đều có thể đi sang $4$ ô kề cạnh, nên đồ thị sẽ có khoảng $4 \times |V|$ cạnh.</p>
+<p>Mặc dù trong quá trình $BFS$, khi gặp được ô <code>B</code> thì thủ tục $BFS$ kết thúc luôn nên độ phức tạp thực tế có thể ít hơn so với tính toán. Nhưng trong <strong>trường hợp tệ nhất</strong> là ta phải đi hết tất cả các ô khác xong mới đến được ô <code>B</code>. Nên nhìn chung, độ phức tạp của thuật toán là $O(R \times C + 4 \times R \times C)$.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-4" href="#bài-toán-4"></a><strong>Bài toán 4</strong></h2>
+<p><a href="https://www.spoj.com/problems/ELEVTRBL/">ELEVTRBL - Elevator Trouble</a></p>
+<h3 class="editable"><a class="anchor" id="đề-bài-3" href="#đề-bài-3"></a><strong>Đề bài</strong></h3>
+<p>Trong một tòa nhà có $f$ tầng, các tầng được đánh số từ $1$ đến $f$, hiện tại bạn đang đứng tại tầng $s$ và cần đi đến tầng $g$. Tại mỗi tầng, thang máy chỉ có $2$ nút là "UP u" và "DOWN d" :</p>
+<ul>
+<li>Nút "UP u" có thể đưa bạn lên đúng $u$ tầng nếu như có đủ số tầng phía trên.</li>
+<li>Nút "DOWN d" có thể đưa bạn xuống đúng $d$ tầng nếu như có đủ số tầng phía dưới.</li>
+</ul>
+<p>Trường hợp không có đủ số tầng thì thang máy sẽ không lên hoặc không xuống. Hãy tính số lần phải bấm nút ít nhất để có thể đến được tầng $g$.</p>
+<p>$1 \le s, g \le f \le 10^6; 0 \le u, d \le 10^6$.</p>
+<h3 class="editable"><a class="anchor" id="phân-tích-1" href="#phân-tích-1"></a><strong>Phân tích</strong></h3>
+<p><strong>Ghi chú:</strong> Từ ứng dụng <strong>tìm đường đi ngắn nhất trong đồ thị không trọng số</strong>, ta có thể áp dụng để giải quyết các vấn đề hoặc trò chơi có số lần di chuyển ít nhất, nếu mỗi trạng thái của nó có thể được biểu diễn bằng một đỉnh của đồ thị và việc chuyển đổi từ trạng thái này sang trạng thái khác là các cạnh của đồ thị.</p>
+<p>Với bài toán này ta <strong>không thể</strong> sử dụng thuật toán vét cạn, hay quay lui có điều kiện vì số lượng tầng ở đây có thể lên đến $10^6$ dẫn tới việc chương trình có thể <strong>chạy quá thời gian</strong>.</p>
+<p>Thay vào đó, ta sẽ sử dụng thuật toán $BFS$. Tư tưởng ở đây là ta sẽ đi tính số lần bấm nút nhỏ nhất để đến được mỗi tầng.</p>
+<p>Từ mối quan hệ được xây dựng trong bài toán, ta có thể xây dựng một <strong>mô hình đồ thị</strong> như sau:</p>
+<ul>
+<li>Gọi mỗi đỉnh của đồ thị tương ứng với mỗi tầng của tòa nhà.</li>
+<li>Nếu từ tầng $x$ ta có thể đến được tầng $y$ bằng một lần bấm nút thì tồn tại cạnh nối $1$ chiều từ đỉnh $x$ đến đỉnh $y$. Tương đương với việc tồn tại cạnh $x \rightarrow (x + u)$ (nếu $(x + u) \le f$ ) và cạnh $x \rightarrow (x - d)$ (nếu $(x - d) \ge 1$ ).</li>
+</ul>
+<p>Sau khi xây dựng được đồ thị, đường đi ngắn nhất từ đỉnh $s$ đến đỉnh $g$ chính là số lần bấm nút ít nhất cần thực hiện.</p>
+<p>Vậy để tìm được kết quả bài toán, ta sẽ áp dụng thuật toán $BFS$.</p>
+<h3 class="editable"><a class="anchor" id="cài-đặt-4" href="#cài-đặt-4"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 1000007</code>.</li>
+<li>Mảng <code>number[]</code> - Mảng lưu lại số lần bấm nút ít nhất để đến được mỗi tầng.</li>
+<li>Mảng <code>visit[]</code> - Mảng đánh dấu lại các tầng đã đến.</li>
+<li>Hàng đợi <code>q</code> - Chứa các tầng sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span>  <span class="o">=</span> <span class="mf">1e6</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">f</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">d</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">],</span> <span class="n">number</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">bfs</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">f</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">visit</span><span class="p">,</span> <span class="n">f</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+
+    <span class="n">queue</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+
+        <span class="c1">// Nếu gặp được tầng đích thì kết thúc thủ tục BFS</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">g</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">:</span> <span class="p">{</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span> <span class="o">-</span> <span class="n">d</span><span class="p">})</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">f</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">y</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>  <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="n">number</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">number</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Kết thúc quá trình BFS mà ko đến được tầng đích </span>
+    <span class="n">number</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="n">s</span> <span class="o">&gt;&gt;</span> <span class="n">g</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">d</span><span class="p">;</span>
+    <span class="n">bfs</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">number</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">number</span><span class="p">[</span><span class="n">g</span><span class="p">];</span>
+    <span class="k">else</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"use the stairs"</span><span class="p">;</span>  
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-3" href="#đánh-giá-3"></a><strong>Đánh giá</strong></h3>
+<p><strong>Độ phức tạp</strong></p>
+<p>Độ phức tạp của bài toán là $O(|V| + |E|)$ (với $|V|$ là số đỉnh và $|E|$ là số cạnh của đồ thị). Trong đó, số đỉnh của đồ thị bằng số tầng của tòa nhà (nghĩa là $|V| = f$ ). Đa số mỗi tầng đều có thể đi đến $2$ tầng khác, nên đồ thị sẽ có khoảng $2 \times |V|$ cạnh.</p>
+<p>Nhìn chung, độ phức tạp của thuật toán là $O(f + 2 \times f)$.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-5" href="#bài-toán-5"></a>Bài toán 5</h2>
+<p><a href="https://lqdoj.edu.vn/problem/cjpaysballas">cjpaysballas - CJ thanh toán BALLAS</a></p>
+<h3 class="editable"><a class="anchor" id="đề-bài-4" href="#đề-bài-4"></a><strong>Đề bài</strong></h3>
+<p>Cho một đồ thị có hướng gồm $N$ đỉnh và $M$ cạnh $(1 \le N \le 10^5; 1 \le M \le 10^6)$. Các đỉnh được đánh số từ $1$ đến $N$. Hãy tìm đường đi ngắn nhất xuất phát tại đỉnh $s$ và kết thúc tại đỉnh $t$. Nếu có nhiều đường đi ngắn nhất thỏa mãn, thì chỉ ra đường đi có <strong>thứ tự từ điển nhỏ nhất</strong> trong số đó.</p>
+<p>Đảm bảo luôn tồn tại ít nhất một đường đi từ $s$ đến $t$.</p>
+<h3 class="editable"><a class="anchor" id="phân-tích-2" href="#phân-tích-2"></a><strong>Phân tích</strong></h3>
+<p><strong>Định lí:</strong> Nếu ta sắp xếp các <strong>danh sách kề</strong> của mỗi đỉnh theo <strong>thứ tự tăng dần</strong> thì thuật toán $BFS$ luôn trả về đường đi có <strong>thứ tự từ điển nhỏ nhất</strong> trong số những đường đi ngắn nhất.</p>
+<ul>
+<li>
+<strong>Chứng minh:</strong> Trong quá trình $BFS$, nếu các đỉnh được đưa vào hàng đợi <em>(queue)</em> theo thứ tự từ điển tăng dần thì theo cơ chế hoạt động $FIFO$ <em>(First In - First Out)</em>, các đỉnh có thứ tự từ điển nhỏ hơn sẽ được thăm trước.</li>
+</ul>
+<p>Từ <strong>định lí</strong> trên, ta sẽ sắp xếp lại thứ tự đỉnh kề theo thứ tự tăng dần để đảm bảo đường đi được in ra theo thứ tự từ điển. Sau đó sử dụng $BFS$ kết hợp với truy vết để giải quyết bài toán.</p>
+<h3 class="editable"><a class="anchor" id="cài-đặt-5" href="#cài-đặt-5"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Mảng <code>par[]</code> - Mảng lưu lại vết đường đi.</li>
+<li>Mảng <code>visit[]</code> - Mảng đánh dấu các đỉnh đã thăm.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Hàng đợi <code>q</code> - Chứa các đỉnh sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span>  <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">par</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="kt">bool</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">visit</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+    
+    <span class="n">queue</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">par</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>   <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span> <span class="o">&gt;&gt;</span> <span class="n">s</span> <span class="o">&gt;&gt;</span> <span class="n">t</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">m</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// Sắp xếp danh sách kề</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> 
+        <span class="n">sort</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span> <span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">end</span><span class="p">());</span>
+
+    <span class="n">bfs</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    
+    <span class="c1">// Truy vết</span>
+    <span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">path</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">t</span><span class="p">;</span> <span class="n">v</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">v</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">v</span><span class="p">])</span>
+        <span class="n">path</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">reverse</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">path</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">path</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">v</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-4" href="#đánh-giá-4"></a><strong>Đánh giá</strong></h3>
+<p><strong>Độ phức tạp</strong></p>
+<ul>
+<li>Độ phức tạp của thuật toán là $O(N + M)$.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="bài-tập-áp-dụng-1" href="#bài-tập-áp-dụng-1"></a><strong>Bài tập áp dụng</strong></h2>
+<p><a href="https://lqdoj.edu.vn/problem/bfs">BFS - BFS Cơ bản</a></p>
+<p><a href="https://oj.vnoi.info/problem/kandp">Kandp - Mã và tốt</a></p>
+<p><a href="https://www.spoj.com/problems/NAKANJ/">NAKANJ - Minimum Knight moves !!!</a></p>
+<p><a href="https://www.spoj.com/problems/DIGOKEYS/">DIGOKEYS - Find the Treasure</a></p>
+<p><a href="https://www.spoj.com/problems/MICEMAZE/">MICEMAZE - Mice and Maze</a></p>
+<p><a href="https://www.spoj.com/problems/INVESORT/">INVESORT - Inversion Sort</a></p>
+<p><a href="https://www.spoj.com/problems/ONEZERO/en/">ONEZERO - Ones and zeros</a></p>
+<p><a href="https://www.spoj.com/problems/CATM/">CATM - The Cats and the Mouse</a></p>
+<p><a href="https://www.spoj.com/problems/NATALIAG/">NATALIAG - Natalia Plays a Game</a></p>
+<p><a href="https://www.spoj.com/problems/MULTII/">MULTII - Yet Another Multiple Problem</a></p>
+<p><a href="https://codeforces.com/contest/769/problem/C">Cycle in Maze - 769C Codeforces</a></p>
+<p><a href="https://codeforces.com/contest/821/problem/D">Okabe and City - 821D Codeforces</a></p>
+<p><a href="https://codeforces.com/contest/796/problem/D">Police Stations - 796D Codeforces</a></p>
+<p><a href="https://cses.fi/problemset/task/1193">CSES - Labyrinth</a></p>
+<p><a href="https://cses.fi/problemset/task/1667/">CSES - Message Route</a></p>
+<p><a href="https://cses.fi/problemset/task/1194">CSES - Monsters</a></p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng-bfs-để-tìm-chu-trình-ngắn-nhất-trong-đồ-thị-có-hướng-không-trọng-số" href="#ứng-dụng-bfs-để-tìm-chu-trình-ngắn-nhất-trong-đồ-thị-có-hướng-không-trọng-số"></a>Ứng dụng BFS để tìm chu trình ngắn nhất trong đồ thị có hướng không trọng số</h1>
+<h2 class="editable"><a class="anchor" id="bài-toán-6" href="#bài-toán-6"></a><strong>Bài toán 6</strong></h2>
+<h3 class="editable"><a class="anchor" id="đề-bài-5" href="#đề-bài-5"></a><strong>Đề bài</strong></h3>
+<p>Ada đang có một chuyến đi ở Bugindia. Ở đó có nhiều thành phố và những con đường một chiều nối giữa chúng. Ada rất băn khoăn về việc tìm con đường ngắn nhất bắt đầu tại một thành phố và kết thúc ở cùng một thành phố. Vì Ada thích những chuyến đi ngắn, cô ấy đã nhờ bạn tìm độ dài của con đường như vậy cho mỗi thành phố ở Bugindia.</p>
+<p><strong>Input</strong></p>
+<ul>
+<li>Dòng đầu tiên chứa số $N$ $(0 &lt; N \le 200)$ là số lượng thành phố.</li>
+<li>$N$ dòng tiếp theo, mỗi dòng chứa $N$ số nguyên $H_{ij}$ $(0 \le H_{ij} \le 1)$ . Nghĩa là, nếu $H_{ij} = 1$ thì tồn tại một con đường nối từ thành phố $i$ đến thành phố $j$. Ngược lại, nếu $H_{ij} = 0$ thì không tồn tại con đường.</li>
+</ul>
+<p><strong>Output</strong></p>
+<ul>
+<li>Gồm $N$ dòng: Dòng thứ $i$ in ra độ dài của con đường ngắn nhất bắt đầu từ thành phố $i$ và kết thúc ở thành phố $i$. Nếu không tồn tại con đường nào như vậy, hãy in ra "<strong>NO WAY</strong>" để thay thế.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="phân-tích-3" href="#phân-tích-3"></a><strong>Phân tích</strong></h3>
+<p>Theo yêu cầu đề bài, với mỗi thành phố, ta phải tìm độ dài con đường ngắn nhất bắt đầu và kết thúc ở cùng một thành phố đó.</p>
+<p>Ta coi các thành phố là các đỉnh của đồ thị và các con đường $1$ chiều là các cạnh có hướng của đồ thị.</p>
+<p>Đồng nghĩa với việc, với mỗi đỉnh của đồ thị, ta phải tìm độ dài của <strong>chu trình ngắn nhất</strong> chứa đỉnh đó. Vì thứ tự duyệt các đỉnh của thuật toán $BFS$ luôn bắt đầu duyệt từ các đỉnh gần đỉnh nguồn nhất cho đến các đỉnh nằm ở xa đỉnh nguồn. Do đó, ta có thể áp dụng <strong>tính chất</strong> này của $BFS$ để có thể tìm ra đỉnh $u$ nằm gần đỉnh nguồn nhất sao cho có cạnh nối từ $u$ đến đỉnh nguồn.</p>
+<p>Đường đi ngắn nhất từ đỉnh nguồn đến đỉnh $u$, rồi từ $u$ trở lại đỉnh nguồn bằng $1$ cạnh có hướng, chính là <strong>chu trình ngắn nhất</strong> chứa đỉnh nguồn.</p>
+<h3 class="editable"><a class="anchor" id="mô-tả-3" href="#mô-tả-3"></a><strong>Mô tả</strong></h3>
+<ul>
+<li>Thực hiện $BFS$ bắt đầu tại đỉnh $S$ :</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_gif4.gif" /></p>
+<h3 class="editable"><a class="anchor" id="thuật-toán-3" href="#thuật-toán-3"></a><strong>Thuật toán</strong></h3>
+<p>Với mỗi đỉnh của đồ thị, ta thực hiện $BFS$ bắt đầu từ đỉnh đó.</p>
+<p>Trong quá trình $BFS$, ghi nhận khoảng cách từ đỉnh nguồn đến đỉnh đang duyệt, nếu gặp lại đỉnh nguồn thì đó là <strong>chu trình ngắn nhất</strong> chứa đỉnh nguồn. Lúc này, ta in ra độ dài chu trình và kết thúc $BFS$, rồi bắt đầu thực hiện một $BFS$ mới từ đỉnh tiếp theo.</p>
+<h3 class="editable"><a class="anchor" id="cài-đặt-6" href="#cài-đặt-6"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 210</code>.</li>
+<li>Mảng <code>visit[]</code> - Mảng đánh dấu các đỉnh đã thăm.</li>
+<li>Mảng <code>d[]</code> - Mảng lưu lại khoảng cách từ đỉnh nguồn đến mọi đỉnh.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Hàng đợi <code>q</code> - Chứa các đỉnh sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span> 
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+ 
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span>  <span class="o">=</span> <span class="mi">210</span><span class="p">;</span>
+ 
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+ 
+<span class="kt">int</span> <span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">visit</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+
+    <span class="n">queue</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+            
+            <span class="c1">// Nếu gặp lại đỉnh nguồn, trả ra độ dài chu trình và kết thúc BFS</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">==</span> <span class="n">s</span><span class="p">)</span> <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+ 
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">h</span><span class="p">;</span> 
+            <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">h</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
+        <span class="p">}</span>
+ 
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">bfs</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ans</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+        <span class="k">else</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"NO WAY</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span> </code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-5" href="#đánh-giá-5"></a><strong>Đánh giá</strong></h3>
+<p>Từ bài toán này, ta có thể áp dụng để <strong>tìm chu trình ngắn nhất trong đồ thị có hướng không trọng số</strong> bằng cách lấy ra chu trình ngắn nhất trong tất cả các chu trình chứa mỗi đỉnh (nhiều nhất một chu trình từ mỗi $BFS$ bắt đầu từ $1$ đỉnh).</p>
+<p><strong>Độ phức tạp</strong></p>
+<p>Theo đề bài, đồ thị ban đầu được biểu diễn bằng <strong>ma trận kề</strong>. Nên để tối ưu về mặt thời gian, ta sẽ chuyển đổi cách biểu diễn đồ thị thành <strong>danh sách kề</strong>.</p>
+<p>Theo cách tính toán độ phức tạp thông thường, hàm $BFS$ sẽ mất $O(N + |E|)$. Với $|E|$ là số cạnh của đồ thị. Trong <strong>trường hợp xấu nhất</strong>, mỗi đỉnh đều có cạnh nối tới tất cả các đỉnh của đồ thị (đồng nghĩa, $H_{ij} = 1$ với $1 \le i, j \le N$), khi đó, số lượng cạnh của đồ thị là $N^2$.</p>
+<p>Vì với mỗi đỉnh của đồ thị, ta phải gọi lại hàm $BFS$. Nên nhìn chung, độ phức tạp của thuật toán là $O(N^3)$.</p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng-bfs-để-tìm-đường-đi-ngắn-nhất-trong-đồ-thị-có-trọng-số-0-hoặc-1" href="#ứng-dụng-bfs-để-tìm-đường-đi-ngắn-nhất-trong-đồ-thị-có-trọng-số-0-hoặc-1"></a>Ứng dụng BFS để tìm đường đi ngắn nhất trong đồ thị có trọng số 0 hoặc 1</h1>
+<h2 class="editable"><a class="anchor" id="bài-toán-7" href="#bài-toán-7"></a><strong>Bài toán 7</strong></h2>
+<p><a href="https://www.codechef.com/problems/REVERSE">REVERSE - Chef and Reversing</a></p>
+<h3 class="editable"><a class="anchor" id="đề-bài-6" href="#đề-bài-6"></a><strong>Đề bài</strong></h3>
+<p>Cho một đồ thị có hướng $N$ đỉnh và $M$ cạnh $(1 \le N, M \le 10^5)$. Tìm số cạnh ít nhất cần phải đảo chiều để tồn tại đường đi từ đỉnh $1$ cho đến đỉnh $N$.</p>
+<p>Các đỉnh được đánh số từ $1$ đến $N$. Đồ thị có thể có nhiều cạnh nối giữa một cặp đỉnh. Và có thể tồn tại cạnh nối từ một đỉnh đến chính nó <em>(đồ thị có thể có khuyên)</em>.</p>
+<h3 class="editable"><a class="anchor" id="phân-tích-4" href="#phân-tích-4"></a><strong>Phân tích</strong></h3>
+<p>Gọi đồ thị ban đầu là $G$.</p>
+<p>Ta sẽ thêm các <strong>cạnh ngược</strong> của mỗi cạnh ban đầu trong đồ thị $G$ (nghĩa là, với mỗi cạnh $u \to v$ của đồ thị, ta sẽ thêm cạnh $v \to u$ vào). Cho các <strong>cạnh ngược</strong> có trọng số bằng $1$ và tất cả các cạnh ban đầu có trọng số bằng $0$. Khi đó, ta sẽ có được đồ thị mới là đồ thị $G '$.</p>
+<p>Độ dài của đường đi ngắn nhất từ đỉnh $1$ cho đến đỉnh $N$ trong đồ thị $G'$ chính là đáp án của bài toán.</p>
+<ul>
+<li>
+<strong>Chứng minh:</strong> Trong đồ thị $G '$, xét từng cạnh trên một đường đi từ $1$ đến $N$. Nếu cạnh đó có trọng số là $0$ thì đã tồn tại cạnh đó trên đồ thị $G$ ban đầu, còn nếu trọng số là $1$ thì cạnh ngược lại của nó tồn tại trong đồ thị $G$. Khi đó ta sẽ phải đảo chiều cạnh đó. Nhận thấy sau khi xét toàn bộ các cạnh, ta sẽ thu được một đường đi từ $1$ đến $N$, và số cạnh ta phải đảo chiều chính là số cạnh $1$ trong đường đi đó.</li>
+</ul>
+<p>Ta sử dụng <strong>kĩ thuật 0-1 BFS</strong> :</p>
+<ul>
+<li>Nó có tên gọi như vậy vì <strong>kĩ thuật 0-1 BFS</strong> thường được sử dụng để tìm đường đi ngắn nhất trong đồ thị có trọng số $0$ hoặc $1$.</li>
+<li>Khi trọng số của các cạnh bằng $0$ hoặc $1$, thuật toán $BFS$ thông thường sẽ trả ra kết quả <strong>sai</strong>, vì thuật toán $BFS$ thông thường chỉ <strong>đúng</strong> trong đồ thị có trọng số của các cạnh <strong>bằng nhau</strong>.</li>
+</ul>
+<p>Ta có thể chỉnh sửa một chút từ thuật toán $BFS$ để có được <strong>kĩ thuật 0-1 BFS</strong> :</p>
+<ul>
+<li>Trong kĩ thuật này, thay vì sử dụng mảng <em>bool</em> để đánh dấu lại các đỉnh đã duyệt, ta sẽ kiểm tra điều kiện <strong>khoảng cách ngắn nhất</strong>. Nghĩa là, trong quá trình $BFS$, với mỗi đỉnh $v$ kề với $u$, đỉnh $v$ chỉ được đẩy vào hàng đợi khi và chỉ khi đường đi đi ngắn nhất từ đỉnh nguồn đến $v$ lớn hơn đường đi ngắn nhất từ đỉnh nguồn đến $u$ cộng với trọng số cạnh $u \to v$ (khoảng cách được giảm bớt khi sử dụng cạnh này) .</li>
+<li>Ta sẽ sử dụng một <a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/Deque">hàng đợi hai đầu</a> <em>(deque)</em> thay cho hàng đợi <em>(queue)</em> để lưu trữ các đỉnh. Trong quá trình $BFS$, nếu ta gặp một cạnh có trọng số bằng $0$ thì đỉnh sẽ được đẩy vào <strong>phía trước</strong> của hàng đợi hai đầu. Ngược lại, nếu ta gặp một cạnh có trọng số bằng $1$ thì đỉnh sẽ được đẩy vào <strong>phía sau</strong> của hàng đợi hai đầu.
+<ul>
+<li>
+<strong>Giải thích:</strong> Ta <em>push</em> đỉnh kết nối bởi cạnh có trọng số $0$ vào đầu <em>deque</em> để giữ cho hàng đợi luôn được sắp xếp theo khoảng cách từ đỉnh nguồn tại mọi thời điểm. Bởi vì, các đỉnh ở gần đầu <em>queue/deque</em> hơn thì nó phải có khoảng cách từ gốc gần hơn, mà đỉnh ta <em>push</em> vào đầu có khoảng cách bằng chính khoảng cách đỉnh vừa <em>pop</em> ra, nên <em>deque</em> lúc này thỏa mãn tính chất của <em>queue</em> trong $BFS$.</li>
+<li>Từ tính chất trên, ta có nhận xét sau: <strong>Kĩ thuật 0-1 BFS</strong> vẫn đúng cho trường hợp đồ thị có trọng số cạnh là $0$ hoặc $x$ $(x \ge 0)$.</li>
+</ul>
+</li>
+</ul>
+<p>Cách tiếp cận của <strong>kĩ thuật 0-1 BFS</strong> khá giống với thuật toán $BFS$ + <a class="internal absent" href="https://vnoi.info/wiki/algo/graph-theory/shortest-path.md#2-thu%E1%BA%ADt-to%C3%A1n-dijkstra">Dijkstra</a>.</p>
+<h3 class="editable"><a class="anchor" id="cài-đặt-7" href="#cài-đặt-7"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>inf = 1000000000</code>.</li>
+<li>Hằng số <code>maxN = 100007</code>.</li>
+<li>Mảng <code>d[]</code> - Mảng lưu lại khoảng cách ngắn nhất từ đỉnh nguồn đến mỗi đỉnh.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Hàng đợi hai đầu <code>q</code> - Chứa các đỉnh sẽ được duyệt theo thứ tự.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">inf</span>  <span class="o">=</span> <span class="mf">1e9</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span> <span class="n">pair</span> <span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">);</span>
+    <span class="n">deque</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">d</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">edge</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">edge</span><span class="p">.</span><span class="n">second</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">w</span> <span class="o">=</span> <span class="n">edge</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">d</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="n">q</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+                <span class="k">else</span> <span class="n">q</span><span class="p">.</span><span class="n">push_front</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">m</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">});</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span> <span class="n">u</span><span class="p">});</span>
+    <span class="p">}</span>
+    <span class="n">bfs</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-6" href="#đánh-giá-6"></a><strong>Đánh giá</strong></h3>
+<p>Ta cũng có thể giải quyết bài toán này bằng thuật toán $Dijkstra$ với độ phức tạp $O(M \times logN)$.</p>
+<p>Trong khi sử dụng $BFS$, độ phức tạp sẽ là $O(N + M)$. Nó tuyến tính và hiệu quả hơn thuật toán $Dijkstra$.</p>
+<h2 class="editable"><a class="anchor" id="bài-tập-áp-dụng-2" href="#bài-tập-áp-dụng-2"></a><strong>Bài tập áp dụng</strong></h2>
+<p><a href="https://www.spoj.com/problems/KATHTHI/">KATHTHI - KATHTHI</a></p>
+<p><a href="https://codeforces.com/problemset/problem/173/B">Chamber of Secrets - 173B</a></p>
+<p><a href="https://codeforces.com/problemset/problem/590/C">Three States - 590C Codeforces</a></p>
+<p><a href="https://codeforces.com/problemset/problem/877/D">Olya and Energy Drinks - 877D Codeforces</a></p>
+<p><a href="https://onlinejudge.org/index.php?option=onlinejudge&amp;page=show_problem&amp;problem=2620">UVA - Ocean Currents</a></p>
+<p><a href="https://onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=2621">UVA - Colliding Traffic</a></p>
+<p><a href="https://www.e-olymp.com/en/contests/16775/problems/173743">Tram</a></p>
+<p><a href="https://www.e-olymp.com/en/contests/16775/problems/173746">Jailbreak</a></p>
+<p><a href="https://leetcode.com/problems/minimum-cost-to-make-at-least-one-valid-path-in-a-grid/">Minimum Cost to Make at Least One Valid Path in a Grid</a></p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng-bfs-để-kiểm-tra-đồ-thị-hai-phía-bipartite-graph" href="#ứng-dụng-bfs-để-kiểm-tra-đồ-thị-hai-phía-bipartite-graph"></a>Ứng dụng BFS để kiểm tra đồ thị hai phía (Bipartite graph)</h1>
+<h2 class="editable"><a class="anchor" id="định-nghĩa" href="#định-nghĩa"></a><strong>Định nghĩa</strong></h2>
+<p>Trong <em>Lý thuyết đồ thị</em>, <strong>đồ thị hai phía</strong> (<strong>đồ thị lưỡng phân</strong> hay <strong>đồ thị hai phần</strong> - <em>Bipartite graph</em>) là một đồ thị đặc biệt, trong đó tập hợp các đỉnh của đồ thị có thể được chia làm hai tập hợp <strong>không</strong> giao nhau thỏa mãn điều kiện <strong>không</strong> có cạnh nối hai đỉnh bất kỳ thuộc cùng một tập.</p>
+<p>Có rất nhiều tình huống thực tế có thể mô phỏng bằng đồ thị hai phía:</p>
+<ul>
+<li>
+<strong>Ví dụ:</strong> Muốn biểu diễn mối quan hệ giữa một nhóm học sinh và một nhóm các trường học, ta có thể xây dựng một đồ thị với mỗi một học sinh và mỗi trường học là một đỉnh. Giữa một người $A$ và một trường $X$ sẽ có một cạnh nếu như $A$ đã hoặc đang đi học ở trường $X$. Kiểu đồ thị này sẽ là một <strong>đồ thị hai phần</strong>, với một nhóm đỉnh là người và nhóm kia là trường; sẽ không có cạnh nối giữa hai người hoặc giữa hai trường.</li>
+</ul>
+<p>Một tính chất thú vị của đồ thị hai phía là ta có thể tô màu các đỉnh đồ thị với hai màu sao cho không có hai đỉnh nào cùng màu kề nhau.</p>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_img6.png" /></p>
+<p>Bạn có thể tìm hiểu thêm về <strong>đồ thị hai phía</strong> tại <a href="https://vi.wikipedia.org/wiki/%C4%90%E1%BB%93_th%E1%BB%8B_hai_ph%C3%ADa"><strong>đây</strong></a>.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-8" href="#bài-toán-8"></a><strong>Bài toán 8</strong></h2>
+<p><a href="https://onlinejudge.org/index.php?option=onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=945">Bicoloring - UVA 10004</a></p>
+<h3 class="editable"><a class="anchor" id="đề-bài-7" href="#đề-bài-7"></a><strong>Đề bài</strong></h3>
+<p>Cho một đồ thị vô hướng liên thông gồm $n$ đỉnh $(0 &lt; n &lt; 200)$. Các đỉnh được đánh số từ $0$ đến $n-1$. Và không tồn tại cạnh nối từ một đỉnh đến chính nó <em>(đồ thị không có khuyên)</em>.</p>
+<p>Bạn hãy kiểm tra xem đồ thị có thể được tô bằng $2$ màu hay không. Nghĩa là ta có thể gán màu (từ một bảng gồm $2$ màu) cho mỗi đỉnh của đồ thị theo cách sao cho không có $2$ đỉnh nào kề cạnh nhau có cùng màu.</p>
+<h3 class="editable"><a class="anchor" id="phân-tích-5" href="#phân-tích-5"></a><strong>Phân tích</strong></h3>
+<p>Theo đề bài, ta phải kiểm tra xem $1$ đồ thị có thể được tô bằng $2$ màu sao cho không có $2$ đỉnh nào kề cạnh nhau có cùng màu hay không. Điều đó tương đương với việc kiểm tra xem đồ thị đã cho có phải là <strong>đồ thị hai phía</strong> hay không.</p>
+<p>Ta có thể dùng thuật toán $BFS$ để kiểm tra xem một đồ thị có phải đồ thị hai phía, bằng cách tìm kiếm từ một đỉnh bất kì và tô màu cho các đỉnh được xem xét. Nghĩa là, ta tô <strong>màu đen</strong> cho đỉnh gốc, tô <strong>màu xanh</strong> cho tất cả các đỉnh kề đỉnh gốc, tô <strong>màu đen</strong> cho tất cả các đỉnh kề với một đỉnh kề đỉnh gốc, và tiếp tục như vậy. Nếu ở một bước nào đó, hai đỉnh kề nhau có cùng màu, thì đồ thị <strong>không phải</strong> là hai phía. Nếu quá trình tìm kiếm kết thúc mà điều này <strong>không</strong> xảy ra thì đồ thị là hai phía.</p>
+<p>Thuật toán này đúng với đồ thị liên thông. Với đồ thị gồm nhiều thành phần liên thông thì ta phải duyệt từng thành phần liên thông một như thuật toán tìm số thành phần liên thông và áp dụng thủ tục $BFS$ tương ứng.</p>
+<h3 class="editable"><a class="anchor" id="mô-tả-4" href="#mô-tả-4"></a><strong>Mô tả</strong></h3>
+<ul>
+<li>Ví dụ mô tả đồ thị <strong>không phải</strong> là đồ thị hai phía:</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_gif5.gif" /></p>
+<ul>
+<li>Ví dụ mô tả <strong>đồ thị hai phía</strong>:</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/breadth-first-search_gif6.gif" /></p>
+<h3 class="editable"><a class="anchor" id="thuật-toán-4" href="#thuật-toán-4"></a><strong>Thuật toán</strong></h3>
+<p>Để tô màu đồ thị, ta sẽ sử dụng $1$ mảng để lưu trạng thái của mỗi đỉnh. Có $3$ trạng thái:</p>
+<ul>
+<li>
+<strong>Trạng thái -1:</strong> Đỉnh vẫn chưa được tô màu <em>(đỉnh chưa được duyệt)</em>.</li>
+<li>
+<strong>Trạng thái 0:</strong> Đỉnh được tô màu đen.</li>
+<li>
+<strong>Trạng thái 1:</strong> Đỉnh được tô màu xanh.</li>
+</ul>
+<p>Ban đầu, tất cả các đỉnh của đồ thị đều ở <strong>trạng thái -1</strong>.</p>
+<p>Ta sử dụng $BFS$ để tô màu đồ thị:</p>
+<ul>
+<li>Bắt đầu từ một đỉnh bất kỳ và tô màu đen cho đỉnh đó.</li>
+<li>Với mỗi đỉnh $v$ kề với đỉnh đang xét $u$, nếu đỉnh $v$ chưa được duyệt, ta sẽ tô màu $v$ ngược với màu của $u$ (nếu $u$ là màu xanh, ta sẽ tô $v$ màu đen và ngược lại).</li>
+<li>Nếu $u$ đã được thăm trước đó và có cùng màu với $v$, ta sẽ dừng thuật toán và kết luận đồ thị <strong>không phải</strong> đồ thị hai phía.</li>
+</ul>
+<p>Cuối cùng, nếu ta có thể tô màu tất cả các đỉnh mà <strong>không</strong> vi phạm quy tắc tô màu, ta có thể kết luận đồ thị là hai phía.</p>
+<h3 class="editable"><a class="anchor" id="cài-đặt-8" href="#cài-đặt-8"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 210</code>.</li>
+<li>Mảng <code>color[]</code> - Mảng lưu trạng thái tô màu của mỗi đỉnh.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Hàng đợi <code>q</code> - Chứa các đỉnh sẽ được duyệt theo thứ tự ưu tiên chiều rộng.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span>  <span class="o">=</span> <span class="mi">210</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">color</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+
+<span class="kt">bool</span> <span class="nf">checkBipartiteGraph</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">fill_n</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">queue</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">==</span> <span class="n">color</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">color</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="o">!</span><span class="n">color</span><span class="p">[</span><span class="n">u</span><span class="p">];</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">){</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">n</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">l</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">l</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span>
+            <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">;</span>
+            <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+            <span class="n">g</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">checkBipartiteGraph</span><span class="p">())</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"NOT "</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"BICOLORABLE.</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">clear</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-7" href="#đánh-giá-7"></a><strong>Đánh giá</strong></h3>
+<p>Ta cũng có thể sử dụng thuật toán tìm kiếm theo chiều sâu <em>(Depth First Search – DFS)</em> để kiểm tra đồ thị hai phía.</p>
+<p><strong>Độ phức tạp</strong></p>
+<p>Độ phức tạp của thuật toán là $O(t \times (n + l))$. Với $t$ là số lượng bộ test.</p>
+</div>
+</div>
+</div>
+</div>

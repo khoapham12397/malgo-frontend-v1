@@ -1,0 +1,757 @@
+<div id="wiki-content">
+<h1 class="pt-4">Kĩ thuật hai con trỏ</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/basic/">basic</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả:</strong> Phan Đình Khôi - Đại học Bách Khoa Đà Nẵng</p>
+<p><strong>Reviewer:</strong> Nguyễn Khánh</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#lời-mở-đầu">Lời mở đầu</a></li><li><a href="#bài-toán-1">Bài toán 1</a><ul><li><a href="#phân-tích">Phân tích</a></li><li><a href="#giải-pháp">Giải pháp</a></li><li><a href="#luyện-tập">Luyện tập</a></li></ul></li><li><a href="#bài-toán-2">Bài toán 2</a><ul><li><a href="#phân-tích-1">Phân tích</a></li><li><a href="#giải-pháp-1">Giải pháp</a></li><li><a href="#luyện-tập-1">Luyện tập</a></li></ul></li><li><a href="#bài-toán-3">Bài toán 3</a><ul><li><a href="#phân-tích-2">Phân tích</a></li><li><a href="#giải-pháp-2">Giải pháp</a></li><li><a href="#luyện-tập-2">Luyện tập</a></li></ul></li><li><a href="#bài-toán-4">Bài toán 4</a><ul><li><a href="#phân-tích-3">Phân tích</a></li><li><a href="#giải-pháp-3">Giải pháp</a><ul><li><a href="#rùa-và-thỏ">Rùa và Thỏ</a></li><li><a href="#tìm-mu">Tìm $\mu$</a></li><li><a href="#tìm-lambda">Tìm $\lambda$</a></li></ul></li><li><a href="#luyện-tập-3">Luyện tập</a></li></ul></li></ul></div>
+<h1 class="editable"><a class="anchor" id="lời-mở-đầu" href="#lời-mở-đầu"></a>Lời mở đầu</h1>
+<p>Bài viết này sẽ giúp bạn tìm hiểu thêm về <strong>kỹ thuật hai con trỏ</strong>. Kỹ thuật này được sử dụng khá phổ biến, giúp chương trình tiết kiệm thời gian và không gian xử lý.</p>
+<h1 class="editable"><a class="anchor" id="bài-toán-1" href="#bài-toán-1"></a>Bài toán 1</h1>
+<p>Cho hai dãy số nguyên đã được <strong>sắp xếp không giảm</strong> $a$ và $b$ lần lượt có $n$ và $m$ phần tử. Hãy ghép chúng thành dãy $c$ được bố trí theo thứ tự <strong>không giảm</strong>.</p>
+<p>Giới hạn: $n, m \leq 10^5$ và $0 \leq a_i, b_i \leq 10^{9}$.</p>
+<h2 class="editable"><a class="anchor" id="phân-tích" href="#phân-tích"></a>Phân tích</h2>
+<p>Hãy cùng xem ví dụ sau đây.</p>
+<p>Cho trước hai dãy số $a$ và $b$ được sắp xếp không giảm:</p>
+<div class="kdmath">$$
+a=[1,3,6,8,10]
+$$</div>
+<div class="kdmath">$$
+b=[2,6,7,12,14,15]
+$$</div>
+<p>Làm cách nào để có thể ghép chúng thành một dãy số $c$ cũng được sắp xếp không giảm ?</p>
+<p>Trước tiên, hãy cùng xác định phần tử đầu tiên của dãy $c$.</p>
+<p>Vì dãy $c$ được bố trí theo thứ tự không giảm, cho nên phần tử đầu tiên của dãy $c$ phải là phần tử có giá trị nhỏ nhất trong cả hai dãy $a$ và $b$.</p>
+<p>Ta có thể so sánh hai phần tử nhỏ nhất của hai dãy $a$, $b$ và đưa phần tử có giá trị nhỏ hơn vào vị trí đầu tiên của dãy $c$.</p>
+<p>Dãy $a$ và $b$ đã được sắp xếp không giảm, vì thế hai phần tử nhỏ nhất ở đây chính là hai phần tử ở vị trí đầu tiên ở mỗi dãy ($a[1]$ và $b[1]$).</p>
+<div class="kdmath">$$
+a=[\overset{\downarrow}{\color{red}1},3,6,8,10]
+$$</div>
+<div class="kdmath">$$
+b=[\overset{\downarrow}{2},6,7,12,14,15]
+$$</div>
+<div class="kdmath">$$
+c=[{\color{red}1}]
+$$</div>
+<p>Bây giờ, phần tử tiếp theo của dãy $c$ sẽ là phần tử nhỏ nhất trong các phần tử chưa được đưa vào dãy $c$.</p>
+<p>Dãy $a$ và $b$ đã được sắp xếp không giảm, vì thế sau khi đưa $a[1]$ vào dãy $c$, $a[2]$ là phần tử nhỏ nhất chưa được chọn ở dãy $a$ và $b[1]$ là phần tử nhỏ nhất chưa được chọn ở dãy $b$.</p>
+<p>So sánh $a[2]$ và $b[1]$, chọn phần tử có giá trị nhỏ hơn và đưa vào dãy $c$.</p>
+<div class="kdmath">$$
+a=[1,\overset{\downarrow}{3},6,8,10]
+$$</div>
+<div class="kdmath">$$
+b=[\overset{\downarrow}{\color{red}2},6,7,12,14,15]
+$$</div>
+<div class="kdmath">$$
+c=[1,{\color{red}2}]
+$$</div>
+<p>Sau khi đưa $b[1]$ vào dãy $c$, $b[2]$ trở thành phần tử nhỏ nhất chưa được chọn ở dãy $b$.</p>
+<p>Vẫn như thế, phần tử tiếp theo của dãy $c$ sẽ là phần tử nhỏ nhất trong các phần tử chưa được đưa vào dãy $c$.</p>
+<p>So sánh $b[2]$ và $a[2]$, chọn phần tử có giá trị nhỏ hơn dãy và đưa vào dãy $c$.</p>
+<div class="kdmath">$$
+a=[1,\overset{\downarrow}{\color{red}3},6,8,10]
+$$</div>
+<div class="kdmath">$$
+b=[2,\overset{\downarrow}{6},7,12,14,15]
+$$</div>
+<div class="kdmath">$$
+c=[1,2,{\color{red}3}]
+$$</div>
+<p>Sau khi đưa $a[2]$ vào dãy $c$, $a[3]$ trở thành phần tử nhỏ nhất chưa được chọn ở dãy $a$.</p>
+<p>Ta nhận thấy rằng</p>
+<ul>
+<li>Tại mọi thời điểm, phần tử tiếp theo được đưa vào dãy $c$ sẽ là phần tử có giá trị nhỏ nhất trong các phần tử chưa được chọn.
+<ul>
+<li>Bằng cách so sánh phần tử nhỏ nhất chưa được chọn ở dãy $a$ và phần tử nhỏ nhất chưa được chọn ở dãy $b$, phần tử nhỏ hơn sẽ được chọn vào dãy $c$.</li>
+</ul>
+</li>
+<li>Ban đầu, lúc dãy $c$ chưa có phần tử nào
+<ul>
+<li>$a[1]$ là phần tử nhỏ nhất chưa được chọn trong dãy $a$.</li>
+<li>$b[1]$ là phần tử nhỏ nhất chưa được chọn trong dãy $b$.</li>
+</ul>
+</li>
+<li>Khi đưa phần tử $a[i]$ vào dãy $c$ thì phần tử nhỏ nhất chưa được chọn trong dãy $a$ sẽ là $a[i+1]$.</li>
+<li>Khi đưa phần tử $b[j]$ vào dãy $c$ thì phần tử nhỏ nhất chưa được chọn trong dãy $b$ sẽ là $b[j+1]$.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="giải-pháp" href="#giải-pháp"></a>Giải pháp</h2>
+<p>Dựa vào những phân tích ta có giải pháp sử dụng <strong>hai con trỏ</strong> như sau:</p>
+<ul>
+<li>Dãy $a$ có con trỏ $i$, con trỏ này bắt đầu ở vị trí đầu dãy $a$.
+<ul>
+<li>Con trỏ $i$ này được thể hiện như phần tử nhỏ nhất chưa được chọn trong dãy $a$.</li>
+</ul>
+</li>
+<li>Dãy $b$ có con trỏ $j$, con trỏ này bắt đầu ở vị trí đầu dãy $b$.
+<ul>
+<li>Con trỏ $j$ này được thể hiện như phần tử nhỏ nhất chưa được chọn trong dãy $b$.</li>
+</ul>
+</li>
+<li>Ta sẽ lặp lại công việc này, cho đến khi đưa hết các phần tử trong dãy $a$ và $b$ vào dãy $c$:
+<ul>
+<li>Khi các phần tử trong một dãy nào đó, dãy $a$ hoặc dãy $b$, đều đã được đưa vào dãy $c$: đưa lần lượt các phần tử trong dãy còn lại vào dãy $c$.</li>
+<li>Ngược lại:
+<ul>
+<li>So sánh hai phần tử ở hai con trỏ.</li>
+<li>Đưa phần tử có giá trị nhỏ hơn vào dãy $c$, nếu hai phần tử có giá trị như nhau thì chọn một trong hai.</li>
+<li>Tăng vị trí con trỏ ở phần tử được đưa vào lên một đơn vị.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Để hiểu rõ hơn, ta hãy cùng xem qua ví dụ sau đây:</p>
+<p>$a = [1, 3, 6, 8, 10], b = [2, 6, 7, 12, 14,15]$</p>
+<ul>
+<li>
+<p>Đặt $i = 1$ và $j = 1$. <br/>
+$a = [\overset{\underset{\downarrow}{\color{red}i}}{\color{red}1}, 3, 6, 8, 10]$<br/>
+$b = [\underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}2}, 6, 7, 12, 14,15]$<br/>
+$c = []$</p>
+</li>
+<li>
+<p>Vì $a[i]&lt;b[j]$ nên ta đưa $a[i]$ vào mảng $c$ và tăng vị trí $i$ lên một. <br/>
+$a = [1,\overset{\underset{\downarrow}{\color{red}i}}{\color{red}3}, 6, 8, 10]$<br/>
+$b = [\underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}2}, 6, 7, 12, 14,15]$<br/>
+$c = [1]$</p>
+</li>
+<li>
+<p>Vì $b[j]&lt;a[i]$ nên ta đưa $b[j]$ vào mảng $c$ và tăng vị trí $j$ lên một. <br/>
+$a = [1, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}3}, 6, 8, 10]$<br/>
+$b = [2, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}6}, 7, 12, 14,15]$<br/>
+$c = [1, 2]$</p>
+</li>
+<li>
+<p>Vì $a[i]&lt;b[j]$ nên ta đưa $a[i]$ vào mảng $c$ và tăng vị trí $i$ lên một. <br/>
+$a = [1, 3, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}6}, 8, 10]$<br/>
+$b = [2, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}6}, 7, 12, 14,15]$<br/>
+$c = [1, 2, 3]$</p>
+</li>
+<li>
+<p>Vì $a[i]=b[j]$ nên ta có thể đưa bất kỳ một trong hai phần tử. Ở đây ta đưa phần tử $a[i]$ vào $c$ và tăng vị trí $i$ lên một.<br/>
+$a = [1, 3, 6, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}8}, 10]$<br/>
+$b = [2, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}6}, 7, 12, 14,15]$<br/>
+$c = [1, 2, 3, 6]$</p>
+</li>
+<li>
+<p>Vì $b[j]&lt;a[i]$ nên ta đưa $b[j]$ vào mảng $c$ và tăng vị trí $j$ lên một. <br/>
+$a = [1, 3, 6, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}8}, 10]$<br/>
+$b = [2, 6, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}7}, 12, 14,15]$<br/>
+$c = [1, 2, 3, 6, 6]$</p>
+</li>
+<li>
+<p>Vì $b[j]&lt;a[i]$ nên ta đưa $b[j]$ vào mảng $c$ và tăng vị trí $j$ lên một. <br/>
+$a = [1, 3, 6, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}8}, 10]$<br/>
+$b = [2, 6, 7, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}12}, 14,15]$<br/>
+$c = [1, 2, 3, 6, 6, 7]$</p>
+</li>
+<li>
+<p>Vì $a[i]&lt;b[j]$ nên ta đưa $a[i]$ vào mảng $c$ và tăng vị trí $i$ lên một. <br/>
+$a = [1, 3, 6, 8, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}10}]$<br/>
+$b = [2, 6, 7, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}12}, 14,15]$<br/>
+$c = [1, 2, 3, 6, 6, 7, 8]$</p>
+</li>
+<li>
+<p>Vì $a[i]&lt;b[j]$ nên ta đưa $a[i]$ vào mảng $c$ và tăng vị trí $i$ lên một. <br/>
+$a = [1, 3, 6, 8, 10]\overset{\underset{\downarrow}{\color{red}i}}{ }$<br/>
+$b = [2, 6, 7, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}12}, 14,15]$<br/>
+$c = [1, 2, 3, 6, 6, 7, 8, 10]$</p>
+</li>
+<li>
+<p>Vì tất cả các phần tử trong dãy $a$ đều đã được đưa vào dãy $c$ nên từ đưa lần lượt các phần tử chưa được chọn trong dãy $b$ vào trong dãy $c$
+$c = [1, 2, 3, 6, 6, 7, 8, 10, 12, 14,15]$</p>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/ZVXyx2n.gif" /></p>
+<p><strong>Cài đặt</strong>
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">||</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">||</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">&amp;&amp;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+        <span class="n">c</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]);</span>
+    <span class="k">else</span> 
+        <span class="n">c</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="o">++</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">it</span><span class="o">:</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">it</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span></code></pre>
+<strong>Độ phức tạp</strong>
+<p>Vị trí con trỏ $i$ luôn tăng và tăng quá không quá $n$ lần, vị trí con trỏ $j$ cũng luôn tăng và tăng không quá $m$ lần.</p>
+<p>Vì thế độ phức tạp của giải pháp là $O(n+m)$.</p>
+<h2 class="editable"><a class="anchor" id="luyện-tập" href="#luyện-tập"></a>Luyện tập</h2>
+<p><a href="https://oj.vnoi.info/problem/nksgame">VNOJ - NKSGAME</a><br/>
+<a href="https://codeforces.com/problemset/problem/1251/C">CODEFORCES - 1251C</a><br/>
+<a href="https://codeforces.com/problemset/problem/1036/D">CODEFORCES - 1036D</a></p>
+<h1 class="editable"><a class="anchor" id="bài-toán-2" href="#bài-toán-2"></a>Bài toán 2</h1>
+<p>Cho một mảng số nguyên $a$ có $n$ phần tử, mảng này đã được <strong>sắp xếp tăng dần</strong>. Hãy tìm hai vị trí <strong>khác nhau</strong> <strong>bất kỳ</strong> sao cho tổng của hai phần tử ở hai vị trí đó có giá trị là $x$.</p>
+<p>Giới hạn: $2 \leq n \leq 10^6$ và $0 \leq a_i, x \leq 10^9$</p>
+<h2 class="editable"><a class="anchor" id="phân-tích-1" href="#phân-tích-1"></a>Phân tích</h2>
+<p>Hãy cùng xem ví dụ sau đây.</p>
+<p>Cho trước mảng số $a$ được sắp xếp tăng dần và $x=16$:</p>
+<div class="kdmath">$$
+a=[2,5,6,8,10,12,15]
+$$</div>
+<p>Làm cách nào để có thể tìm hai vị trí khác nhau mà tổng hai phần tử ở hai vị trí đó có tổng là $x$ ?</p>
+<p>Trước tiên, ta có một chút nhận xét sau:</p>
+<ul>
+<li>$a[1]&lt;a[2]&lt;a[3]&lt;a[4]&lt;a[5]&lt;a[6]&lt;a[7]$ vì dãy $a$ tăng dần.</li>
+<li>$a[1]+a[7]=17&gt;X \Rightarrow X&lt;a[1]+a[7]&lt;a[2]+a[7]&lt;a[3]+a[7]&lt;a[4]+a[7]&lt;a[5]+a[7]&lt;a[6]+a[7]$.</li>
+</ul>
+<p>Có thể thấy, tổng của $a[7]$ với các phần tử khác trong dãy đều lớn hơn $X$. Vì thế ta không quan tâm đến $a[7]$ nữa.</p>
+<div class="kdmath">$$
+a=[2,5,6,8,10,12,{\color{red}15}]
+$$</div>
+<ul>
+<li>$a[1]+a[6]=14&lt;X \Rightarrow a[1]+a[2]&lt;a[1]+a[3]&lt;a[1]+a[4]&lt;a[1]+a[5]&lt;a[1]+a[6]&lt;X$.</li>
+</ul>
+<p>Có thể thấy, tổng của $a[1]$ với các phần tử khác trong các phần tử ta quan tâm đều nhỏ hơn $x$. Vì thế ta không quan tâm đến $a[1]$ nữa.</p>
+<div class="kdmath">$$
+a=[{\color{red}2},5,6,8,10,12,{\color{red}15}]
+$$</div>
+<ul>
+<li>$a[2]+a[6]=17&gt;X \Rightarrow X&lt;a[2]+a[6]&lt;a[3]+a[6]&lt;a[4]+a[6]&lt;a[5]+a[6]$.</li>
+</ul>
+<p>Có thể thấy, tổng của $a[6]$ với các phần tử khác trong các phần tử ta quan tâm đều lớn hơn $x$. Vì thế ta không quan tâm đến $a[6]$ nữa.</p>
+<div class="kdmath">$$
+a=[{\color{red}2},5,6,8,10,{\color{red}12},{\color{red}15}]
+$$</div>
+<p>Như vậy, tại một thời điểm bất kỳ, những phần tử chúng ta cần quan tâm đến sẽ là các phần tử trong đoạn $[i,j]$ nào đó.</p>
+<p>Ta có một số nhận xét sau:</p>
+<ul>
+<li>Nếu $i=j$, trong mảng $A$ không tồn tại hai vị trí khác nhau mà tổng hai phần tử ở đó có giá trị là $X$.</li>
+<li>Ngược lại:
+<ul>
+<li>Nếu $a[i]+a[j]=X$, ta đã tìm được hai vị trí cần tìm ($i$ và $j$).</li>
+<li>Nếu $a[i]+a[j]&lt;X$, không quan tâm đến $a[i]$ nữa và các phần tử chúng ta cần quan tâm đó là các phần tử trong đoạn $[i+1,j]$.</li>
+<li>Nếu $a[i]+a[j]&gt;X$, không quan tâm đến $a[j]$ nữa và các phần tử chúng ta cần quan tâm đó là các phần tử trong đoạn $[i,j-1]$.</li>
+</ul>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="giải-pháp-1" href="#giải-pháp-1"></a>Giải pháp</h2>
+<p>Từ những phân tích vừa rồi ta có giải pháp sử dụng hai con trỏ như sau:</p>
+<ul>
+<li>Một con trỏ $(i)$ được đặt ở đầu mảng $A$, con trỏ còn lại $(j)$ được đặt ở cuối mảng $A$.</li>
+<li>Nếu tổng của hai phần tử ở hai vị trí con trỏ
+<ul>
+<li>Nhỏ hơn $X$: tăng vị trí con trỏ $i$ lên một đơn vị.</li>
+<li>Lớn hơn $X$: giảm vị trí con trỏ $j$ đi một đơn vị.</li>
+</ul>
+</li>
+<li>Tiếp tục di chuyển cho đến khi hai con trỏ gặp nhau.</li>
+<li>Khi con trỏ chưa gặp nhau mà tổng ở hai vị trí con trỏ có giá trị là $X$ thì ta đã tìm được hai vị trí cần tìm ($i$ và $j$), kết thúc chương trình.</li>
+</ul>
+<p>Để hiểu rõ hơn, ta hãy cùng xem qua một số ví dụ sau đây:</p>
+<p><strong>Ví dụ 1:</strong> $a = [2, 5, 6, 8, 10, 12, 15]$ và $x = 16$.</p>
+<ul>
+<li>
+<p>Đặt $i=1$ và $j=N$. <br/>
+$a = [\overset{\underset{\downarrow}{\color{red}i}}{\color{red}2}, 5, 6, 8, 10, 12, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}15}]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=2+15=17&gt;x$ nên giảm vị trí $j$ đi một đơn vị.<br/>
+$a = [\overset{\underset{\downarrow}{\color{red}i}}{\color{red}2}, 5, 6, 8, 10, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}12}, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=2+12=14&lt;x$ nên tăng vị trí $i$ lên một đơn vị.<br/>
+$a = [2, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}5}, 6, 8, 10, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}12}, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=5+12=17&gt;x$ nên giảm vị trí $j$ đi một đơn vị.<br/>
+$a = [2, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}5}, 6, 8, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}10}, 12, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=5+10&lt;x$ nên tăng vị trí $i$ lên một đơn vị.<br/>
+$a = [2, 5, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}6}, 8, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}10}, 12, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=6+10=x$ nên hai vị trí cần tìm là hai vị trí $i$ và $j$.</p>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/4kDvgwj.gif" /></p>
+<p><strong>Ví dụ 2:</strong> $a = [2, 3, 7, 8, 10, 12, 15]$ và $x = 16$.</p>
+<ul>
+<li>
+<p>Đặt $i=1$ và $j=N$. <br/>
+$a = [\overset{\underset{\downarrow}{\color{red}i}}{\color{red}2}, 3, 7, 8, 10, 12, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}15}]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=5+12=17&gt;x$ nên giảm vị trí $j$ đi một đơn vị. <br/>
+$a = [\overset{\underset{\downarrow}{\color{red}i}}{\color{red}2}, 3, 7, 8, 10, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}12}, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=2+12=14&lt;x$ nên tăng vị trí $i$ lên một đơn vị. <br/>
+$a = [2, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}3}, 7, 8, 10, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}12}, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=3+12=15&lt;x$ tăng vị trí $i$ lên một đơn vị. <br/>
+$a = [2, 3, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}7}, 8, 10, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}12}, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=7+12=19&gt;x$ giảm vị trí $j$ đi một đơn vị. <br/>
+$a = [2, 3, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}7}, 8, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}10}, 12, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=7+10=17&gt;x$ giảm vị trí $j$ đi một đơn vị. <br/>
+$a = [2, 3, \overset{\underset{\downarrow}{\color{red}i}}{\color{red}7}, \underset{\overset{\uparrow}{\color{blue}j}}{\color{blue}8}, 10, 12, 15]$</p>
+</li>
+<li>
+<p>Vì $a[i]+a[j]=7+8=15&lt;x$ tăng vị trí $i$ lên một đơn vị. <br/>
+$a = [2, 3, 7, \overset{\underset{\downarrow}{\color{red}i}}{ \underset{\overset{\uparrow}{\color{blue}j}}{\color{purple}8}}, 10, 12, 15]$</p>
+</li>
+<li>
+<p>Vì $i=j$ nên không tìm được hai vị trí cần tìm.</p>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/1KUtV6g.gif" /></p>
+<p><strong>Cài đặt</strong>
+</p><pre class="highlight"><code><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">N</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">j</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">j</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"No solution"</span><span class="p">;</span></code></pre>
+<strong>Độ phức tạp</strong>
+<p>Vị trí con trỏ $i$ luôn tăng, vị trí con trỏ $j$ thì luôn giảm.</p>
+<p>Hơn nữa, sự thay đổi vị trí hai con trỏ này sẽ dừng lại khi tổng hai phần tử ở hai vị trí con trỏ có tổng là $X$ hay khi vị trí $i$ bằng vị trí $j$.</p>
+<p>Vì thế, việc thay đổi vị trí hai con trỏ sẽ không quá $n$ lần, độ phức tạp của giải pháp là $O(n)$.</p>
+<h2 class="editable"><a class="anchor" id="luyện-tập-1" href="#luyện-tập-1"></a>Luyện tập</h2>
+<p><a href="https://lqdoj.edu.vn/problem/findpair">LQDOJ - FINDPAIR</a> <br/>
+<a href="https://lqdoj.edu.vn/problem/cntpair02">LQDOJ - CNTPAIR02</a> <br/>
+<a href="https://oj.vnoi.info/problem/ndccard">VNOJ - NDCCARD</a> <br/>
+<a href="https://oj.vnoi.info/problem/twosum">VNOJ - TWOSUM</a></p>
+<h1 class="editable"><a class="anchor" id="bài-toán-3" href="#bài-toán-3"></a>Bài toán 3</h1>
+<p>Cho dãy số <strong>nguyên dương</strong> $a$ có $n$ phần tử. Hãy tìm độ dài đoạn con dài nhất trong dãy sao cho tổng các phần tử trong đoạn này không quá $s$.</p>
+<p>Dữ liệu đảm bảo các phần tử trong dãy $a$ đều có giá trị không quá $s$.</p>
+<p>Giới hạn: $1\leq n \leq 10^6$, $1 \leq a_i \leq 10^9$ và $s \leq 10^{18}$.</p>
+<h2 class="editable"><a class="anchor" id="phân-tích-2" href="#phân-tích-2"></a>Phân tích</h2>
+<p>Để dễ dàng phân tích, ta tạm gọi</p>
+<ul>
+<li>$sum(l,r)$ là tổng các phần tử trong đoạn $[l,r]$.</li>
+<li>Một đoạn con $[l,r]$ là đoạn con "tốt" nếu $sum(l,r) \leq s$</li>
+</ul>
+<p>Qua đây, bài toán của chúng ta sẽ là tìm độ dài đoạn con "tốt" dài nhất.</p>
+<p>Vì dãy $a$ là một dãy số nguyên dương cho nên</p>
+<ul>
+<li>$sum(1,r)&gt;sum(2,r)&gt;…&gt;sum(r-1,r)&gt;sum(r,r)$.</li>
+<li>Nếu đoạn con $[l,r]$ là đoạn con "tốt" thì với mọi $x\geq l$, đoạn $[x,r]$ là đoạn con "tốt".</li>
+<li>Nếu đoạn con $[l,r]$ không là đoạn con "tốt" thì với mọi $x \leq l$, đoạn $[x,r]$ không là đoạn con "tốt".</li>
+</ul>
+<p>Với $r$ là một vị trí bất kỳ, nếu như $l$ là vị trí nhỏ nhất sao cho đoạn $[l,r]$ là một đoạn "tốt" thì</p>
+<ul>
+<li>mọi $x \geq l$ thì đoạn con $[x,r]$ là một đoạn "tốt".</li>
+<li>mọi $x &lt; l$ thì đoạn con $[x,r]$ không là một đoạn "tốt".</li>
+<li>đoạn con $[l,r]$ là một đoạn con "tốt" dài nhất trong các đoạn con "tốt" có vị trí kết thúc tại $r$.</li>
+</ul>
+<p>Từ đó, với mỗi $r$ từ $1$ đến $n$, nếu ta xác định được vị trí $l$, ta có thể biết được độ dài của đoạn con "tốt" dài nhất của dãy $a$.</p>
+<p>Hãy cùng nhận xét vị trí của $l$ với mỗi $r$ từ $1$ đến $n$ qua ví dụ sau đây:</p>
+<p>Cho trước dãy $a = [2, 6, 5, 3, 6, 8, 9]$ và $s=20$</p>
+<ul>
+<li>$r=1 \rightarrow l=1$
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{{\color{red}l},{\color{blue}r}}}{\color{green}2}, 6, 5, 3, 6, 8, 9]$</li>
+<li>$sum(l,r)=2$</li>
+</ul>
+</li>
+<li>$r=2 \rightarrow l=1$
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{\color{red}l}}{\color{green}2}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}6}, 5, 3, 6, 8, 9]$</li>
+<li>$sum(l,r)=8$</li>
+</ul>
+</li>
+<li>$r=3 \rightarrow l=1$
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{\color{red}l}}{\color{green}2}, {\color{green}6}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}5}, 3, 6, 8, 9]$</li>
+<li>$sum(l,r)=13$</li>
+</ul>
+</li>
+<li>$r=4 \rightarrow l=1$
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{\color{red}l}}{\color{green}2}, {\color{green}6}, {\color{green}5}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}3}, 6, 8, 9]$</li>
+<li>$sum(l,r)=16$</li>
+</ul>
+</li>
+<li>$r=5 \rightarrow l=2$
+<ul>
+<li>$a = [2, \overset{\underset{\downarrow}{\color{red}l}}{\color{green}6}, {\color{green}5}, {\color{green}3}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}6}, 8, 9]$</li>
+<li>$sum(l,r)=20$</li>
+</ul>
+</li>
+<li>$r=6 \rightarrow l=4$
+<ul>
+<li>$a = [2, 6, 5, \overset{\underset{\downarrow}{\color{red}l}}{\color{green}3}, {\color{green}6}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}8}, 9]$</li>
+<li>$sum(l,r)=17$</li>
+</ul>
+</li>
+<li>$r=7 \rightarrow l=6$
+<ul>
+<li>$a = [2, 6, 5, 3, 6, \overset{\underset{\downarrow}{\color{red}l}}{\color{green}8}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}9}]$</li>
+<li>$sum(l,r)=17$</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>$r$</th>
+<th style="text-align:center;">$l$</th>
+<th style="text-align:center;">Độ dài đoạn con</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$1$</td>
+<td style="text-align:center;">$1$</td>
+<td style="text-align:center;">$1$</td>
+</tr>
+<tr>
+<td>$2$</td>
+<td style="text-align:center;">$1$</td>
+<td style="text-align:center;">$2$</td>
+</tr>
+<tr>
+<td>$3$</td>
+<td style="text-align:center;">$1$</td>
+<td style="text-align:center;">$3$</td>
+</tr>
+<tr>
+<td>$4$</td>
+<td style="text-align:center;">$1$</td>
+<td style="text-align:center;">$4$</td>
+</tr>
+<tr>
+<td>$5$</td>
+<td style="text-align:center;">$2$</td>
+<td style="text-align:center;">$4$</td>
+</tr>
+<tr>
+<td>$6$</td>
+<td style="text-align:center;">$4$</td>
+<td style="text-align:center;">$3$</td>
+</tr>
+<tr>
+<td>$7$</td>
+<td style="text-align:center;">$6$</td>
+<td style="text-align:center;">$2$</td>
+</tr>
+</tbody>
+</table>
+<p>Độ dài của đoạn con "tốt" dài nhất của dãy là giá trị lớn nhất của độ dài các đoạn con "tốt" dài nhất với vị trí kết thúc từ $1$ đến $n$.</p>
+<p>Ở đây, độ dài đoạn con "tốt" dài nhất của dãy là $4$.</p>
+<p>Qua ví dụ vừa rồi, ta thấy rằng, vị trí $l$ đối với các giá trị $r$ từ $1$ đến $n$ có giá trị không giảm.</p>
+<p>Thật vậy, với mọi $x&lt;l$ thì $sum(x,r)&gt;s \Rightarrow sum(x,r+1)&gt;s$, vì thế giá trị $l$ đối với $r+1$ phải không quá giá trị $l$ đối với $r$.</p>
+<p>Hơn nữa vì các phần tử trong dãy $a$ đều có giá trị không quá $s$ cho nên luôn tồn tại vị trí $l \leq r$ sao cho đoạn $[l,r]$ là một đoạn "tốt".</p>
+<h2 class="editable"><a class="anchor" id="giải-pháp-2" href="#giải-pháp-2"></a>Giải pháp</h2>
+<p>Với những phân tích như trên, ta có giải quyết bài toán với phương pháp hai con trỏ như sau:</p>
+<ul>
+<li>Hai con trỏ $l$ và $r$ sẽ đặt ở vị trí $1$.
+<ul>
+<li>Hai con trỏ này được thể hiện như hai vị trí $l$, $r$ như ở trên phần phân tích.</li>
+</ul>
+</li>
+<li>Di chuyển lần lượt con trỏ $r$ từ $1$ đến $n$.
+<ul>
+<li>Sau mỗi lần di chuyển con trỏ $r$, nếu
+<ul>
+<li>$sum(l,r) \leq s$: giữ nguyên vị trí con trỏ $l$.</li>
+<li>$sum(l,r) &gt; s$: tăng dần vị trí con trỏ $l$ cho đến khi $sum(l,r) \leq s$.</li>
+</ul>
+</li>
+<li>Hiện tại với vị trí con trỏ $l$ và $r$, ta biết đoạn "tốt" dài nhất với vị trí kết thúc tại $r$ là đoạn $[l,r]$.</li>
+</ul>
+</li>
+<li>Độ dài đoạn con "tốt" dài nhất chính là giá trị độ dài lớn nhất của các đoạn "tốt" dài nhất với vị trí kết thúc tại $r$, với mỗi $r$ từ $1$ đến $n$.</li>
+</ul>
+<p>Để hiểu rõ hơn, ta hãy cùng xem qua một số ví dụ sau đây:</p>
+<p>$a = [2, 6, 5, 3, 6, 8, 9]$ và $s=20$</p>
+<ul>
+<li>
+<p>Sử dụng biến $ans$ để lưu lại giá trị lớn nhất của độ dài đoạn "tốt" có vị trí kết thúc tại $r$, với $r$ từ $1$ đến $n$.</p>
+</li>
+<li>Đặt $l=1$ và $r=1$
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{{\color{red}l},{\color{blue}r}}}{\color{green}2}, 6, 5, 3, 6, 8, 9]$</li>
+<li>vì $a[1] \leq s$ nên đoạn $[1,1]$ là một đoạn "tốt".</li>
+<li>$ans = max(ans, r - l + 1)$</li>
+</ul>
+</li>
+<li>Tăng vị trí $r$ lên $1$ đơn vị
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{\color{red}l}}{\color{green}2}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}6}, 5, 3, 6, 8, 9]$</li>
+<li>vì $sum(l,r) = 8 \leq s$ nên đoạn $[l,r]$ là một đoạn tốt.</li>
+<li>$ans = max(ans, r - l + 1)$</li>
+</ul>
+</li>
+<li>Tăng vị trí $r$ lên $1$ đơn vị
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{\color{red}l}}{\color{green}2}, {\color{green}6}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}5}, 3, 6, 8, 9]$</li>
+<li>vì $sum(l,r) = 13 \leq s$ nên đoạn $[l,r]$ là một đoạn tốt.</li>
+<li>$ans = max(ans, r - l + 1)$</li>
+</ul>
+</li>
+<li>Tăng vị trí $r$ lên $1$ đơn vị
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{\color{red}l}}{\color{green}2}, {\color{green}6}, {\color{green}5}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}3}, 6, 8, 9]$</li>
+<li>vì $sum(l,r) = 16 \leq s$ nên đoạn $[l,r]$ là một đoạn tốt.</li>
+<li>$ans = max(ans, r - l + 1)$</li>
+</ul>
+</li>
+<li>Tăng vị trí $r$ lên $1$ đơn vị
+<ul>
+<li>$a = [\overset{\underset{\downarrow}{\color{red}l}}{\color{orange}2}, {\color{orange}6}, {\color{orange}5}, {\color{orange}3}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{orange}6}, 8, 9]$</li>
+<li>vì $sum(l,r) = 22 &gt; s$ nên tăng vị trí $l$.</li>
+</ul>
+</li>
+<li>Tăng vị trí $l$ lên $1$ đơn vị
+<ul>
+<li>$a = [2, \overset{\underset{\downarrow}{\color{red}l}}{\color{green}6}, {\color{green}5}, {\color{green}3}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}6}, 8, 9]$</li>
+<li>vì $sum(l,r) = 20 \leq s$ nên đoạn $[l,r]$ là một đoạn tốt.</li>
+<li>$ans = max(ans, r - l + 1)$</li>
+</ul>
+</li>
+<li>Tăng vị trí $r$ lên $1$ đơn vị
+<ul>
+<li>$a = [2, \overset{\underset{\downarrow}{\color{red}l}}{\color{orange}6}, {\color{orange}5}, {\color{orange}3}, {\color{orange}6}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{orange}8}, 9]$</li>
+<li>vì $sum(l,r) = 28 &gt; s$ nên tăng vị trí $l$.</li>
+</ul>
+</li>
+<li>Tăng vị trí $l$ lên $1$ đơn vị
+<ul>
+<li>$a = [2, 6, \overset{\underset{\downarrow}{\color{red}l}}{\color{orange}5}, {\color{orange}3}, {\color{orange}6}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{orange}8}, 9]$</li>
+<li>vì $sum(l,r) = 22 &gt; s$ nên tăng vị trí $l$.</li>
+</ul>
+</li>
+<li>Tăng vị trí $l$ lên $1$ đơn vị
+<ul>
+<li>$a = [2, 6, 5, \overset{\underset{\downarrow}{\color{red}l}}{\color{green}3}, {\color{green}6}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}8}, 9]$</li>
+<li>vì $sum(l,r) = 17 \leq s$ nên đoạn $[l,r]$ là một đoạn tốt.</li>
+<li>$ans = max(ans, r - l + 1)$</li>
+</ul>
+</li>
+<li>Tăng vị trí $r$ lên $1$ đơn vị
+<ul>
+<li>$a = [2, 6, 5, \overset{\underset{\downarrow}{\color{red}l}}{\color{orange}3}, {\color{orange}6}, {\color{orange}8}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{orange}9}]$</li>
+<li>vì $sum(l,r) = 26 &gt; s$ nên tăng vị trí $l$.</li>
+</ul>
+</li>
+<li>Tăng vị trí $l$ lên $1$ đơn vị
+<ul>
+<li>$a = [2, 6, 5, 3, \overset{\underset{\downarrow}{\color{red}l}}{\color{orange}6}, {\color{orange}8}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{orange}9}]$</li>
+<li>vì $sum(l,r) = 23 &gt; s$ nên tăng vị trí $l$.</li>
+</ul>
+</li>
+<li>Tăng vị trí $l$ lên $1$ đơn vị
+<ul>
+<li>$a = [2, 6, 5, 3, 6, \overset{\underset{\downarrow}{\color{red}l}}{\color{green}8}, \overset{\underset{\downarrow}{\color{blue}r}}{\color{green}9}]$</li>
+<li>vì $sum(l,r) = 17 \leq s$ nên đoạn $[l,r]$ là một đoạn tốt.</li>
+<li>$ans = max(ans, r - l + 1)$</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/S3HQo51.gif" /></p>
+<p><strong>Cài đặt</strong></p>
+<p>Để có thể tính được tổng các phần tử từ $l$ đến $r$ trong khi $l$ và $r$ đang di động, ta sẽ sử dụng biến $sum$ để lưu lại tổng của đoạn $[l,r]$ hiện tại.</p>
+<p>Sau khi di chuyển $r$ sang phải, biến $sum$ sẽ cộng thêm giá trị $a[r]$.</p>
+<p>Trước khi di chuyển $l$ sang phải, biến $sum$ sẽ trừ đi giá trị $a[l]$.</p>
+<p></p><pre class="highlight"><code><span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">r</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sum</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">r</span><span class="p">];</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">sum</span> <span class="o">&gt;</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">sum</span> <span class="o">-=</span> <span class="n">a</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
+      <span class="n">l</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span> <span class="n">r</span> <span class="o">-</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span><span class="p">;</span></code></pre>
+<strong>Độ phức tạp</strong>
+<p>Vị trí con trỏ $r$ luôn tăng, vị trí con trỏ $l$ luôn tăng và luôn tăng không giá trị $r$.</p>
+<p>Hơn nữa, mỗi vị trí $l$ và $r$ tăng không quá $n$ lần.</p>
+<p>Vì thế độ phức tạp của giải pháp là $O(n)$.</p>
+<h2 class="editable"><a class="anchor" id="luyện-tập-2" href="#luyện-tập-2"></a>Luyện tập</h2>
+<p><a href="https://oj.vnoi.info/problem/sopenp">VNOJ - SOPENP</a><br/>
+<a href="https://oj.vnoi.info/problem/product">VNOJ - PRODUCT</a><br/>
+<a href="https://oj.vnoi.info/problem/krect">VNOJ - KRECT</a><br/>
+<a href="https://oj.vnoi.info/problem/vmquabeo">VNOJ - VMQUABEO</a></p>
+<h1 class="editable"><a class="anchor" id="bài-toán-4" href="#bài-toán-4"></a>Bài toán 4</h1>
+<p>Bạn được cho một dãy số nguyên như sau:</p>
+<ul>
+<li>$x_0=1$</li>
+<li>$x_{i+1} = (a \cdot x_i + x_i \ div \ b) \ mod \ c$.</li>
+</ul>
+<p>Tìm $n$ nhỏ nhất sao cho tồn tại $m &lt; n$ và $x_m = x_n$. Dữ liệu đảm bảo $n$ không quá $2 \cdot 10^7$.</p>
+<p>Giới hạn: $1 \leq a \leq 10^4$ và $1 \leq b,c \leq 10^{14}$.</p>
+<h2 class="editable"><a class="anchor" id="phân-tích-3" href="#phân-tích-3"></a>Phân tích</h2>
+<p>Để dễ dàng phân tích ta định nghĩa hàm $f$ như sau:</p>
+<div class="kdmath">$$
+f(x) = (a \cdot x + x \ div \ b) \ mod \ c
+$$</div>
+<p>Dãy số của chúng ta sẽ có dạng</p>
+<div class="kdmath">$$
+x_0 = 1, x_1=f(x_0), x_2=f(x_1),...,x_i=f(x_{i-1}),...
+$$</div>
+<p>Với phép chia lấy dư cho $c$ thì mọi $i &gt; 0$, giá trị của $x_i$ sẽ có giá trị nằm trong khoảng $[0, c-1] $.</p>
+<p>Vì thế, dãy số với vô hạn phần tử này sẽ tồn tại $x_m = x_n$ với $m &lt; n$. (theo nguyên lý <a href="https://vi.wikipedia.org/wiki/Nguy%C3%AAn_l%C3%BD_ng%C4%83n_k%C3%A9o_Dirichlet">Dirichlet</a>)</p>
+<p>Có thể thấy, khi dãy tồn tại $x_m = x_n$, dãy sẽ xuất hiện chu kỳ. Cụ thể như sau:</p>
+<p>Gọi $n$ là giá trị nhỏ nhất thỏa mãn tồn tại $m &lt; n$ sao cho $x_m=x_n$.</p>
+<div class="kdmath">$$
+x_0,x_1, x_2,...,\underset{\uparrow}{x_m},x_{m+1},...,x_{n-1},\underset{\uparrow}{x_n},...
+$$</div>
+<p>Khi đó, dãy sẽ có chu kỳ lặp lại các phần tử từ $x_m$ đến $x_{n-1}$</p>
+<div class="kdmath">$$
+{\color{blue}\underbrace{\color{black}x_0,x_1,...,x_{m-1}}_{}},{\color{red}\underbrace{\color{black}x_m,x_{m+1},...,x_{n-1}}_{}}, {\color{red}\underbrace{\color{black}x_m,x_{m+1},...,x_{n-1}}_{}}, {\color{red}\underbrace{\color{black}x_m,x_{m+1},...,x_{n-1}}_{}},...
+$$</div>
+<p>Dãy số có thể biễu diễn như hình sau đây:</p>
+<p><img src="https://i.imgur.com/0lHu5lA.png" /></p>
+<p>Bài toán có thể giải quyết nếu chúng ta phần tử bắt đầu chu kỳ ($x_{\mu}$) và độ dài của chu kỳ $\lambda$.</p>
+<p>Cụ thể, xem ví dụ sau đây:</p>
+<div class="kdmath">$$
+a = 8, b = 2, c = 31
+$$</div>
+<p>Ta có dãy số</p>
+<div class="kdmath">$$
+{\color{blue}\underbrace{\color{black}1, 8, 6, 20, 15}_{}},{\color{red}\underbrace{\color{black}3, 25, 26, 4}_{}}, {\color{red}\underbrace{\color{black}3, 25, 26, 4}_{}}, {\color{red}\underbrace{\color{black}3, 25, 26, 4}_{}},...
+$$</div>
+<p>Giá trị $n$ cần tìm của bài toán là $n = 9$.</p>
+<p>Ta có thể tính được giá trị này bằng cách xác định</p>
+<ul>
+<li>phần tử bắt đầu chu kỳ $x_{\mu}$.</li>
+<li>độ dài chu kỳ $\lambda$.</li>
+</ul>
+<p>Ở đây, phần tử bắt đầu chu kỳ là $x_5$ và độ dài chu kỳ là $4$.</p>
+<p>Giá trị $n = \mu + \lambda = 5 + 4 = 9$.</p>
+<h2 class="editable"><a class="anchor" id="giải-pháp-3" href="#giải-pháp-3"></a>Giải pháp</h2>
+<p>Để xác định giá trị $\mu$ và $\lambda$, ta sử dụng thuật toán <a href="https://en.wikipedia.org/wiki/Cycle_detection#Floyd's_tortoise_and_hare">Floyd's tortoise and hare</a></p>
+<h3 class="editable"><a class="anchor" id="rùa-và-thỏ" href="#rùa-và-thỏ"></a>Rùa và Thỏ</h3>
+<p>Khởi tạo hai con trỏ, $toroise$ (rùa) và $hare$ (thỏ).</p>
+<p>Tại mỗi thời điểm, ta tịnh tiến hai con trỏ này như sau:</p>
+<ul>
+<li>Tortoise (rùa): tịnh tiến một "bước"
+<ul>
+<li>Nếu hiện tại con trỏ $tortoise$ đang là $x$, nó sẽ được tịnh tiến đến $f(x)$.</li>
+<li>$x_0 \rightarrow x_1 \rightarrow x_2 \rightarrow x_3 \rightarrow x_4 \rightarrow …$</li>
+<li>Vì dãy số của chúng ta có chu kỳ nên ta có công thức tính giá trị của con trỏ $tortoise$ sau $t$ lần tịnh tiến:
+<ul>
+<li>$t &lt; \mu$: $x_t$</li>
+<li>$t \geq \mu$: $x_{\mu+(t-\mu) \ mod \ \lambda}$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Hare (thỏ): tịnh tiến hai "bước"
+<ul>
+<li>Nếu hiện tại con trỏ $hare$ đang là $x$, nó sẽ được tịnh tiến đến $f(f(x))$.</li>
+<li>$x_0 \rightarrow x_2 \rightarrow x_4 \rightarrow x_6 \rightarrow x_8 \rightarrow …$</li>
+<li>Vì dãy số của chúng ta có chu kỳ nên ta có công thức tính giá trị của con trỏ $hare$ sau $t$ lần tịnh tiến:
+<ul>
+<li>$2t &lt; \mu$: $x_{2t}$</li>
+<li>$2t \geq \mu$: $x_{\mu+(2t-\mu) \ mod \ \lambda}$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Ngoài lúc ban đầu, hai con trỏ $tortoise$ và $hare$ sẽ luôn gặp nhau tại thời điểm nào đó. Thật vậy:</p>
+<ul>
+<li>$2t &lt; \mu$:
+<ul>
+<li>Sau $t$ lần tịnh tiến, $tortoise$ = $x_t$ và $hare$ = $x_{2t}$.</li>
+<li>Tuy nhiên, $\mu + \lambda$ mới bắt đầu lại chu kỳ cho nên các phần tử từ $x_0$ đến $x_{\mu + \lambda - 1}$ phải đôi một khác nhau.</li>
+<li>Vì thế $x_t \neq x_{2t}$, $tortoise$ và $hare$ chưa gặp nhau lúc này.</li>
+</ul>
+</li>
+<li>$2t \geq \mu$ và $t &lt; \mu$
+<ul>
+<li>Sau $t$ lần tịnh tiến, $tortoise$ = $x_t$ và $hare$ = $x_{\mu+(2t-\mu) \ mod \ \lambda}$.</li>
+<li>Tuy nhiên, $\mu + \lambda$ mới bắt đầu lại chu kỳ cho nên các phần tử từ $x_0$ đến $x_{\mu + \lambda - 1}$ phải đôi một khác nhau.</li>
+<li>Vì thế $x_t \neq x_{\mu+(2t-\mu) \ mod \ \lambda}$, $tortoise$ và $hare$ chưa gặp nhau lúc này.</li>
+</ul>
+</li>
+<li>$t \geq \mu$
+<ul>
+<li>Sau $t$ lần tịnh tiến, $tortoise$ = $x_{\mu+(t-\mu) \ mod \ \lambda}$ và $hare$ = $x_{\mu+(2t-\mu) \ mod \ \lambda}$.</li>
+<li>Giả sử $tortoise$ và $hare$ gặp nhau thì $\mu+(t-\mu) \ mod \ \lambda = {\mu+(2t-\mu) \ mod \ \lambda} \Leftrightarrow t \ mod \ \lambda = 0$.</li>
+<li>Vậy, $tortoise$ và $hare$ sẽ gặp nhau sau $t$ lần tịnh tiến, trong đó $t$ là số nguyên có giá trị lớn hơn hoặc bằng $\mu$ và chia hết cho $\lambda$.</li>
+<li>Trừ lúc khởi tạo, hai con trỏ $tortoise$ và $hare$ sẽ gặp nhau khi giá trị của cả hai con trỏ là $x_{\mu+(\lambda -\mu \ mod \ \lambda) \ mod \ \lambda}$.</li>
+</ul>
+</li>
+</ul>
+<p>Cách cài đặt để $tortoise$ và $hare$ gặp nhau:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">tortoise</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hare</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">tortoise</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">tortoise</span><span class="p">);</span>
+    <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">hare</span><span class="p">));</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">tortoise</span> <span class="o">==</span> <span class="n">hare</span><span class="p">)</span>
+      <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="tìm-mu" href="#tìm-mu"></a>Tìm $\mu$</h3>
+<p>Khởi tạo một con trỏ mới $p=x_0$, con trỏ này được tịnh tiến giống như con trỏ $tortoise$.</p>
+<p>Tịnh tiến cùng lúc hai con trỏ $p$ và $tortoise$ và dừng lại cho đến khi chúng gặp nhau.</p>
+<p>Số lần tịnh tiến ở đây chính là $\mu$.</p>
+<p><strong>Chứng minh:</strong></p>
+<ul>
+<li>Trong những lần tịnh tiến từ $0$ đến $\mu - 1$, con trỏ $p$ nhận giá trị từ $x_0$ đến $x_{\mu -1}$ (các giá trị không có trong chu kỳ) . Còn con trỏ $tortoise$, vì đã nằm ở chu kỳ, nên giá trị của $tortoise$ sẽ nhận giá trị của các phần tử có trong chu kỳ. Vì thế $tortoise$ và $p$ chưa gặp nhau.</li>
+<li>Hai con trỏ $p$ và $tortoise$ gặp nhau tại lần tịnh tiến thứ $\mu$:
+<ul>
+<li>Con trỏ $p$ có giá trị $x_{\mu}$.</li>
+<li>Lúc chưa tịnh tiến $p$, con trỏ $tortoise$ có giá trị $x_{\mu+(t-\mu) \ mod \ \lambda}$ (đã nêu ở mục Rùa và Thỏ). Vì đã ở trong chu kỳ cho nên, sau khi tịnh tiến $\mu$ lần con trỏ $tortoise$ sẽ có giá trị là $x_{\mu+(t) \ mod \ \lambda}$. Mà $t$ là số nguyên dương chia hết cho $\lambda$, cho nên con trỏ $tortoise$ có giá trị là $x_{\mu}$.</li>
+</ul>
+</li>
+</ul>
+<p>Cách cài đặt tìm $\mu$:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">p</span> <span class="o">!=</span> <span class="n">tortoise</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+    <span class="n">tortoise</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">tortoise</span><span class="p">);</span>
+    <span class="n">mu</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="tìm-lambda" href="#tìm-lambda"></a>Tìm $\lambda$</h3>
+<p>Bây giờ cả hai con trỏ $tortoise$ và $p$ đang có giá trị là $x_{\mu}$.</p>
+<p>Chúng ta giữ nguyên giá trị $tortoise$, và tịnh tiến $p$ cho đến khi $p$ có giá trị $x_{\mu}$ lại.</p>
+<p>Vì $p$ đã ở trong chu kỳ cho nên, sau khi tinh tiến $\lambda$ lần, $p$ sẽ lại có giá trị là $x_{\mu}$.</p>
+<p></p><pre class="highlight"><code><span class="kt">int</span> <span class="n">lambda</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">lambda</span><span class="o">++</span><span class="p">;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">tortoise</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span>
+      <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+Để hiểu rõ hơn, ta hãy cùng xem qua một số ví dụ sau đây:
+<div class="kdmath">$$
+a = 2, b = 2, c = 32
+$$</div>
+<p>Ta có dãy số</p>
+<div class="kdmath">$$
+{\color{blue}\underbrace{\color{black}1, 2, 5, 12}_{}},{\color{red}\underbrace{\color{black}30, 11, 27, 3, 7, 17, 10, 25}_{}}, {\color{red}\underbrace{\color{black}30, 11, 27, 3, 7, 17, 10, 25}_{}}, {\color{red}\underbrace{\color{black}30, 11, 27, 3, 7, 17, 10, 25}_{}},...
+$$</div>
+<p>Giá trị $n$ cần tìm của bài toán là $n = 12$.</p>
+<p>Ta có thể tính được giá trị này bằng cách xác định</p>
+<ul>
+<li>phần tử bắt đầu chu kỳ $x_{\mu}$.</li>
+<li>độ dài chu kỳ $\lambda$.</li>
+</ul>
+<p>Ở đây, phần tử bắt đầu chu kỳ là $x_4$ và độ dài chu kỳ là $8$.</p>
+<p>Giá trị $n = \mu + \lambda = 4 + 8 = 12$.</p>
+<p><img src="https://i.imgur.com/JwbJOWD.gif" /></p>
+<p><strong>Độ phức tạp</strong></p>
+<p>Khi khởi tạo hai con trỏ $tortoise$ và $hare$ ở $x_0$, hai con trỏ sẽ gặp lại nhau lần đầu tiên sau $t$ bước.</p>
+<p>Cụ thể $t$ là số nguyên nhỏ nhất sao cho $t$ có giá trị lớn hơn hoặc bằng $\mu$ và chia chết cho $\lambda$.</p>
+<p>Vì thế việc xác định được vị trí $tortoise$ và $hare$ gặp nhau sẽ mất không quá $\mu + \lambda$ bước. Hơn nữa, việc xác định $\mu$ mất $\mu$ bước, xác định $\lambda$ mất $\lambda$ bước.</p>
+<p>Kết luận: độ phức tạp của bài toán là $O(\mu + \lambda)$. (trong đó $\mu + \lambda \leq 2 \cdot 10^7$)</p>
+<h2 class="editable"><a class="anchor" id="luyện-tập-3" href="#luyện-tập-3"></a>Luyện tập</h2>
+<p><a href="https://lqdoj.edu.vn/problem/torhar">LODOJ - TORHAR</a><br/>
+<a href="https://codeforces.com/gym/100503/problem/D">CODEFORCES - Sequence analysis</a><br/>
+<a href="https://codeforces.com/gym/102501/problem/H">CODEFORCES - Pseudo-Random Number Generator</a><br/>
+<a href="https://codeforces.com/contest/1137/problem/D">CODEFORCES - Cooperative Game</a></p>
+</div>
+</div>
+</div>
+</div>

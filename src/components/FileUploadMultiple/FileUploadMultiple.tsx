@@ -27,13 +27,13 @@ function FileUploadMultiple({ files, oldFiles, setFiles, setOldFiles }: Props) {
   };
 
   const removeImg = (item: any) => {
-    console.log('remove ' + item.file);
+    //console.log('remove ' + item.file);
     const lst = [];
     if (item.type == 0) {
       for (let i = 0; i < oldFiles.length; i++) {
         if (oldFiles[i] != item.file) lst.push(oldFiles[i]);
       }
-      console.log(lst);
+      //console.log(lst);
       setOldFiles(lst);
       return;
     }

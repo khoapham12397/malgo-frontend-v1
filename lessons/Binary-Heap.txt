@@ -1,0 +1,160 @@
+<div id="wiki-content">
+<h1 class="pt-4">Binary Heap</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/wcipeg/">wcipeg</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Biên soạn:</strong> Đỗ Việt Anh (lion_it)</p>
+<p><strong>Email:</strong> <a href="https://vnoi.info/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aacec5dcc3cfdecbc4c284939feacdc7cbc3c684c9c5c7">[email&#160;protected]</a></p>
+<p><strong>Nguồn:</strong> <a href="http://wcipeg.com/wiki/Binary_heap">wcipeg.com/wiki</a></p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#0-kiến-thức-cần-biết-trước">0. Kiến thức cần biết trước</a></li><li><a href="#1-giới-thiệu-chung">1. Giới thiệu chung</a><ul><li><a href="#1-0-tính-chất">1.0. Tính chất</a></li><li><a href="#1-1-ứng-dụng">1.1. Ứng dụng</a></li><li><a href="#1-2-cài-đặt">1.2. Cài đặt</a></li></ul></li><li><a href="#2-các-thao-tác-trên-binary-heap">2. Các thao tác trên Binary Heap</a><ul><li><a href="#2-0-các-thao-tác-thường-dùng-với-binary-heap-là">2.0. Các thao tác thường dùng với Binary Heap là</a></li><li><a href="#2-1-tìm-phần-tử-lớn-nhất">2.1. Tìm phần tử lớn nhất</a></li><li><a href="#2-2-thêm-một-nút-node-trên-cây">2.2. Thêm một nút (node) trên cây</a></li><li><a href="#2-3-xóa-nút-gốc-khỏi-cây">2.3. Xóa nút gốc khỏi cây</a></li><li><a href="#2-4-tăng-giảm-nhãn-của-một-nút">2.4. Tăng, giảm nhãn của một nút</a></li><li><a href="#2-5-xây-đựng-binary-heap-từ-tập-n-phần-tử">2.5. Xây đựng Binary Heap từ tập $N$ phần tử</a></li></ul></li><li><a href="#3-câu-hỏi-thêm-cho-bạn-đọc">3. Câu hỏi thêm cho bạn đọc</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="0-kiến-thức-cần-biết-trước" href="#0-kiến-thức-cần-biết-trước"></a>0. Kiến thức cần biết trước</h1>
+<p>Để đọc và hiểu được bài viết các bạn cần có kiến thức về cấu trúc cây (<a href="http://wcipeg.com/wiki/Tree">tree</a>) và cây nhị phân đầy đủ (<a href="http://wcipeg.com/wiki/Tree#Binary_and_k-ary_trees">complete binary tree</a>)</p>
+<h1 class="editable"><a class="anchor" id="1-giới-thiệu-chung" href="#1-giới-thiệu-chung"></a>1. Giới thiệu chung</h1>
+<h2 class="editable"><a class="anchor" id="1-0-tính-chất" href="#1-0-tính-chất"></a>1.0. Tính chất</h2>
+<p>Một cấu trúc Binary Heap thỏa mãn 2 điều kiện sau:</p>
+<ul>
+<li>
+<p><strong>Tính chất 1 - Binary</strong> (<strong>TC1</strong>): Là một cây nhị phân đầy đủ (<a href="http://wcipeg.com/wiki/Tree#Binary_and_k-ary_trees">complete binary tree</a>)</p>
+</li>
+<li>
+<p><strong>Tính chất 2 - Heap</strong> (<strong>TC2</strong>) Mỗi nút (node) trên cây đều chứa một nhãn lớn hơn hoặc bằng các con của nó (nếu có) và nhỏ hơn hoặc bằng nút cha (trừ nút gốc là và nó là nút lớn nhất).</p>
+</li>
+</ul>
+<p>Một cấu trúc như trên được gọi là max binary heap vì nhãn ở gốc (root), tương tự ta có thể thay đổi TC 2 để có được min binary heap với nhãn ở gốc là nhỏ nhất trong cây.</p>
+<h2 class="editable"><a class="anchor" id="1-1-ứng-dụng" href="#1-1-ứng-dụng"></a>1.1. Ứng dụng</h2>
+<p>Binary Heap được dùng để cài đặt <a href="https://en.wikipedia.org/wiki/Priority_queue">priority queue</a> (trong C++, java…) hay dùng để tăng tốc các thuật toán như <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">Dijkstra</a>, <a href="https://en.wikipedia.org/wiki/Prim%27s_algorithm">Prim</a>..</p>
+<h2 class="editable"><a class="anchor" id="1-2-cài-đặt" href="#1-2-cài-đặt"></a>1.2. Cài đặt</h2>
+<ul>
+<li>Trong C++, bạn có thể sử dụng CTDL <code>priority_queue</code> hoặc <code>set</code>, vì vậy việc tự cài đặt lại là không cần thiết.</li>
+<li>Với Pascal, bạn có thể tìm hiểu cách cài đặt trong <a class="internal absent" href="https://vnoi.info/wiki/algo/basic/Tai-Lieu-Thuat-Toan">quyển sách của thầy Lê Minh Hoàng</a>
+</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="2-các-thao-tác-trên-binary-heap" href="#2-các-thao-tác-trên-binary-heap"></a>2. Các thao tác trên Binary Heap</h1>
+<h2 class="editable"><a class="anchor" id="2-0-các-thao-tác-thường-dùng-với-binary-heap-là" href="#2-0-các-thao-tác-thường-dùng-với-binary-heap-là"></a>2.0. Các thao tác thường dùng với Binary Heap là</h2>
+<ul>
+<li>Tìm nhãn lớn nhất trên Binary Heap (nút gốc)</li>
+<li>Thêm một nút vào Binary Heap</li>
+<li>Xóa bỏ nút gốc (root) hay nhãn lớn nhất trên Binary Heap</li>
+<li>Xây dựng một Binary Heap từ một tập $N$ phần tử</li>
+</ul>
+<p><em>(<strong>Các bạn có thể vào <a href="http://visualgo.net/heap">visualgo</a> để có thể hình dung cụ thể về các thao tác trên Heap</strong>)</em></p>
+<p>Đặt $h$ là độ cao của cây. Nút gốc ở độ sâu 0, 2 nút con của gốc ở độ sâu 1, và nút sâu nhất có độ sâu là $h$. Ở độ sâu $k$, cây có tối đa $2^k$ nút, do đó tổng số nút trên cây $N \le 2^{h+1}$.</p>
+<h2 class="editable"><a class="anchor" id="2-1-tìm-phần-tử-lớn-nhất" href="#2-1-tìm-phần-tử-lớn-nhất"></a>2.1. Tìm phần tử lớn nhất</h2>
+<ul>
+<li>Rõ ràng gốc (root) luôn chứa nhãn lớn nhất theo <strong>TC2</strong> (các nút con luôn không nhỏ hơn nút cha)</li>
+<li>
+<strong>Độ phức tạp thuật toán:</strong> $O(1)$.
+<ul>
+<li>Thông thường thao tác này sẽ đi kèm với thao tác xóa nút gốc để tìm nhãn tiếp theo (như khi sort). Thao tác xóa sẽ được miêu tả ở mục <strong>2.3</strong>
+</li>
+</ul>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="2-2-thêm-một-nút-node-trên-cây" href="#2-2-thêm-một-nút-node-trên-cây"></a>2.2. Thêm một nút (node) trên cây</h2>
+<ul>
+<li>Chọn vị trí để thêm nút:
+<ul>
+<li>Nếu Binary Heap là rỗng ta chỉ cần cho nút cần thêm làm gốc.</li>
+<li>Nếu Binary Heap không rỗng thêm nó vào vị trí phải nhất ở của lớp đáy, nếu lớp đáy đã đủ (số phần tử đúng bằng $2^h$) thêm nút này vào lớp mới.</li>
+</ul>
+</li>
+<li>Vun đống từ dưới lên (bottom-up heapify):
+<ul>
+<li>Việc thêm như trên sẽ đảm bảo được tính chất <strong>TC1</strong> cây nhị phân đầy đủ (complete binary tree) nhưng <strong>TC2</strong> có thể không được thỏa mãn.</li>
+<li>Nếu nút mới này nhỏ hơn nút cha của nó ta không cần phải làm gì thêm nữa.</li>
+<li>Ngược lại nếu phần tử mới lớn hơn nút cha ta đổi chỗ 2 nút cho nhau, so sánh với nút cha mới đổi chỗ nếu nó lớn hơn nút cha cứ thế đến khi nó nhỏ hoặc bằng nút cha hoặc nó là gốc (không còn nút cha nào nữa).</li>
+</ul>
+</li>
+<li>
+<strong>Độ phức tạp:</strong>
+<ul>
+<li>Quá trình chọn vị trí cho nút chỉ mất $O(1)$</li>
+<li>Quá trình vun đống từ dưới lên (bottom-up heapify): ta có thể thấy số lần so sánh và đổi chỗ 2 phần tử không quá độ sâu $h$ của cây nhị phân hay ($\le log(N+1)$ với $N$ là số nút hiện có trên cây).</li>
+<li>Độ phức tạp của cả quá trình này là $O(logN)$</li>
+</ul>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="2-3-xóa-nút-gốc-khỏi-cây" href="#2-3-xóa-nút-gốc-khỏi-cây"></a>2.3. Xóa nút gốc khỏi cây</h2>
+<ul>
+<li>Ta chỉ có thể xóa phần tử lớn nhất hay góc của Binary Heap ra khỏi cây.
+<ul>
+<li>Nếu cây chỉ có nút gốc ta xóa nó khỏi cây, nếu không</li>
+<li>Gán nhãn nút góc bằng nhãn của nút phải nhất ở lớp sâu nhất</li>
+<li>Xóa nút phải nhất ở lớp sâu nhất đi (nút này vừa được chuyển nhãn lên gốc)</li>
+<li>Khi này tính chất <strong>TC1</strong> vấn được đảm bảo nhưng <strong>TC2</strong> thì có thể không, do đó ta cần vun đống từ trên xuống (top-down heapify):
+<ul>
+<li>So sánh nhãn nút gốc với nút lớn hơn trong 2 nút con của nó (nếu chỉ có 1 nút con, thì nút con đó được coi là nút lớn hơn)</li>
+<li>Nếu nó nhỏ hơn nút con lớn hơn của nó: đổi chỗ 2 nút này, tiếp tục xét tiếp với nút con mới cho đến khi nó lớn hơn hoặc bằng nút con lớn hơn của nó hoặc nó không có con hay nút lá (leaf)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<strong>Độ phức tạp:</strong>
+<ul>
+<li>Nếu cây chỉ có duy nhất nút gốc độ phức tạp là $O(1)$.</li>
+<li>Nếu cây có $N$ nút:
+<ul>
+<li>Xóa nút phải nhất ở lớp sâu nhất khỏi cây có độ phức tạp $O(1)$</li>
+<li>Vun đống từ trên xuống (top-down heapify) cũng như bottom-up heapify không vượt quá độ sâu $h$ của cây nên có độ phức tạp là $O(logN)$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="2-4-tăng-giảm-nhãn-của-một-nút" href="#2-4-tăng-giảm-nhãn-của-một-nút"></a>2.4. Tăng, giảm nhãn của một nút</h2>
+<ul>
+<li>Trước tiên cần xác định vị trí của nút ta cần thay đổi nhãn</li>
+<li>Thay đổi nhãn</li>
+<li>Vun đống heap
+<ul>
+<li>Nếu nhãn tăng so với nhãn trước đó cần thực hiện bottom-up heapify như khi thêm nút</li>
+<li>Nếu nhãn giảm đi so với nhãn trước đó cần thưc hiện top-down heapify như khi xóa nút.</li>
+</ul>
+</li>
+<li>
+<strong>Độ phức tạp:</strong> độ thức tạp của thao tác này bằng độ phức tạp của top-down heapify hoặc bottom-up heapify hay bằng $O(logN)$</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="2-5-xây-đựng-binary-heap-từ-tập-n-phần-tử" href="#2-5-xây-đựng-binary-heap-từ-tập-n-phần-tử"></a>2.5. Xây đựng Binary Heap từ tập $N$ phần tử</h2>
+<ul>
+<li>Một cách đơn giản ta có thể thực hiện $N$ phép thêm nút. Nhưng có một kĩ thuật hiệu quả hơn để xây dựng binary heap được gọi là <strong>bottom-up construction</strong>.</li>
+<li>
+<p><strong>Bottom-up construction:</strong> Kỹ thuật này yêu cầu xây dựng một cây nhị phân đầy đủ trước và thực hiện top-down heapify các nút trên cây theo tứ tự giảm dần độ cao của cây (từ các nút lá lên các nút cha và tiếp tục cho đến gốc). Chứng minh kết quả của cách xây dựng là một Binary Heap không phải là khó.</p>
+</li>
+<li>
+<strong>Độ phức tạp:</strong>
+<ul>
+<li>Khi thực hiện $N$ bước thêm nút ta có thể thấy độ phức tạp là $O(log{1} + log{2} + … + log{N}) = O(NlogN)$.</li>
+<li>Ở cách xây dựng thứ 2 ta thấy nếu một nút ở độ xâu $k$ nó sẽ mất không quá $h - k$ lần so sánh với nút con (nhắc lại $h$ là độ sâu của cây và số nút của cây $N &lt; 2^{h+1}$) và một nửa số nút trên cây là lá và sẽ không phải so sánh với nút con nào cả, ta suy ra được:
+<ul>
+<li>Ở độ sâu $k = h-1$ có $2^{h-1}$ nút số phép so sánh là $1 * 2^{h-1} = 1/4 * N$</li>
+<li>Ở độ sâu $k = h-2$ có $2^{h-2}$ nút số phép so sánh là $2 * 2^{h-2} = 2/8 * N$</li>
+<li>Ở độ sâu $k = h-3$ có $2^{h-3}$ nút số phép so sánh là $3 * 2^{h-3} = 3/16 * N$
+…</li>
+<li>Ở độ sâu $k = 0$ (gốc) có $1$ nút số phép so sánh là $h * 1 = h/N * N$</li>
+<li>Tổng hợp lại ta có: $1/4 * N + 2/8 * N + 3/16 * N + … + h/N * N = N$ phép so sánh</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="3-câu-hỏi-thêm-cho-bạn-đọc" href="#3-câu-hỏi-thêm-cho-bạn-đọc"></a>3. Câu hỏi thêm cho bạn đọc</h1>
+<ul>
+<li>
+<p>Tại sao Binary Heap nên là một cây nhị phân đầy đủ <strong>TC1</strong> ?</p>
+</li>
+<li>
+<p>Nếu Heap không phải là một cây nhị phân mà là một cây tam phân, tứ phân, k-phân thì độ phức tạp của các thao tác sẽ thay đổi thế nào ?</p>
+</li>
+<li>
+<p><strong>TC1</strong> cần thêm điểu kiện tập nhãn phải là một <a href="http://wcipeg.com/wiki/Partial_order#Total_order">totally ordered set</a> (2 giá trị bất kì trong tập đều có thể so sánh được và có tính chất bắc cầu trong các phép so sánh, ví dụ như tập số thực $\mathbb{R}$)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>

@@ -1,9 +1,9 @@
-import React, {  useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { BiPlusCircle } from 'react-icons/bi';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import { processText, formatMathExpr } from '../../utils/utils';
 import parse from 'html-react-parser';
 import { useDispatch, useSelector } from 'react-redux';
@@ -93,12 +93,12 @@ function ModalEditThread({ threadData }: Props) {
       }
     }
     setChosenTypes(lst);
-    console.log(threadData.category?.id);
+    //console.log(threadData.category?.id);
     setCategory(threadData.category ? threadData.category.id : '2');
   }, []);
   const handleAddTag = (e: any) => {
     const ind = e.currentTarget.value;
-    console.log('add tag: ind= ' + ind);
+    //console.log('add tag: ind= ' + ind);
     if (chosenTypes.includes(ind) || ind == 0) return;
     let lst = [...chosenTypes];
     lst.push(ind);
@@ -109,7 +109,7 @@ function ModalEditThread({ threadData }: Props) {
   );
   const tags = useSelector((state: RootState) => state.threadBase.tags);
   const removeTypeTag = (ind: number) => {
-    console.log('remove ' + ind);
+    //console.log('remove ' + ind);
     if (chosenTypes.includes(ind as never)) {
       var lst = [...chosenTypes];
       let index = lst.indexOf(ind as never);
@@ -161,9 +161,7 @@ function ModalEditThread({ threadData }: Props) {
               style={{ display: showPreview ? 'block' : 'none' }}
               className='mb-3'
             >
-              <MathJaxContext>
-                <MathJax>{parse(content)}</MathJax>
-              </MathJaxContext>
+              <MathJax>{parse(content)}</MathJax>
             </Form.Group>
             <div style={{ display: 'flex' }}>
               <Form.Group style={{ width: '32%' }}>

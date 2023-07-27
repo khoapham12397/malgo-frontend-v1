@@ -1,44 +1,51 @@
-.profile-hd{
-    font-size: 18px;
-    width: 250px;
-    font-weight: bold;    
-    color: #f2f3f5;
+.profile-hd {
+  font-size: 18px;
+  width: 250px;
+  font-weight: bold;
+  color: #f2f3f5;
 }
 .info-profile-item {
-    color: #bbbdc0;
-    width: 100%;
+  color: #bbbdc0;
+  width: 100%;
 }
-.profile-summary-container{
-    background-color: #48494c;
-    padding: 10px;
-    width: 350px;
-    color: white;
-    font-size: 15px;
-    border-radius: 8px;
-    border: none;
-    padding-bottom: 20px;
+.profile-summary-container {
+  background-color: #48494c;
+  padding: 10px;
+  width: 350px;
+  color: white;
+  font-size: 15px;
+  border-radius: 8px;
+  border: none;
+  padding-bottom: 20px;
 }
-.info-contain{
-    background-color: #22272e;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
+.info-contain {
+  background-color: #22272e;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
 }
-.profile-name{
-    font-size: 18px;
-    font-weight: bold;
+.profile-name {
+  font-size: 18px;
+  font-weight: bold;
 }
-.add-friend-btn{
-    display: flex;
-    justify-content: right;
+.add-friend-btn {
+  display: flex;
+  justify-content: right;
 }
-.avatar-profile-summary{
-    width: 80px;
-    height: 80px;
-    border-radius: 90px;
+.avatar-profile-summary {
+  width: 80px;
+  height: 80px;
+  border-radius: 90px;
 }
-.send-msg-inp{
-    border-radius: 5px;
-    width: 100%;
-    background-color: #22272e;
+.send-msg-inp {
+  border-radius: 5px;
+  width: 100%;
+  background-color: #22272e;
+}
+.friend-mark {
+  background-color: gray;
+  outline: none;
+  border: none;
+  font-size: 13px;
+  margin-right: 10px;
 }

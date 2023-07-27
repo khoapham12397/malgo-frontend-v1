@@ -1,0 +1,332 @@
+<div id="wiki-content">
+<h1 class="pt-4">Thuật toán KMP</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/string/">string</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Người viết:</strong> Trịnh Quang Anh - University of Melbourne</p>
+<p><strong>Review bởi:</strong></p>
+<ul>
+<li>Cao Thanh Hậu - Đại học Khoa học Tự nhiên - ĐHQG-HCM</li>
+<li>Lê Minh Hoàng - Đại học Khoa học Tự nhiên - ĐHQG-HCM</li>
+<li>Hồ Ngọc Vĩnh Phát - Đại học Khoa học Tự nhiên - ĐHQG-HCM</li>
+<li>Hoàng Xuân Nhật - Đại học Khoa học Tự nhiên - ĐHQG-HCM</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#định-nghĩa">Định nghĩa</a></li><li><a href="#thuật-toán-ngây-thơ">Thuật toán ngây thơ</a></li><li><a href="#thuật-toán-tối-ưu-để-tìm-hàm-tiền-tố">Thuật toán tối ưu để tìm hàm tiền tố</a><ul><li><a href="#phép-tối-ưu-đầu-tiên">Phép tối ưu đầu tiên</a></li><li><a href="#phép-tối-ưu-thứ-hai">Phép tối ưu thứ hai</a></li><li><a href="#thuật-toán-cuối-cùng">Thuật toán cuối cùng</a></li><li><a href="#cài-đặt">Cài đặt</a></li></ul></li><li><a href="#ứng-dụng">Ứng dụng</a><ul><li><a href="#thuật-toán-knuth-morris-pratt-kmp">Thuật toán Knuth-Morris-Pratt (KMP)</a></li><li><a href="#đếm-số-lần-xuất-hiện-của-từng-tiền-tố">Đếm số lần xuất hiện của từng tiền tố</a></li><li><a href="#đếm-số-xâu-con-phân-biệt-trong-một-xâu">Đếm số xâu con phân biệt trong một xâu</a></li><li><a href="#nén-xâu">Nén xâu</a></li><li><a href="#tạo-automaton-từ-hàm-tiền-tố">Tạo automaton từ hàm tiền tố</a></li></ul></li><li><a href="#bài-tập">Bài tập</a></li></ul></div>
+<p>Bài viết được dịch từ <a href="https://cp-algorithms.com/string/prefix-function.html">đây</a> và đã được chỉnh sửa bổ sung thêm một số phần.</p>
+<p><strong>Kiến thức cần biết</strong>: Xử lý xâu cơ bản. Bạn đọc có thể xem lại các thuật ngữ và bài tập về xâu <a href="https://vnoi.info/wiki/algo/string/basic">tại đây</a>.</p>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Một trong những bài toán kinh điển nhất về xử lý xâu là bài toán so khớp chuỗi: Cho xâu $s$ độ dài $n$ và xâu $t$ độ dài $m$, đếm số lần $s$ xuất hiện trong $t$. Chẳng hạn, nếu $s = \text{"ab"}$ và $t = \text{"aabcabaab"}$, thì $s$ xuất hiện $3$ lần tại ở các vị trí $1$, $4$, $7$ của $t$. Mục tiêu của chúng ta là tìm một thuật toán tối ưu hơn để giải quyết bài toán này, thay vì duyệt từng vị trí để kiểm tra trong $O(mn)$.</p>
+<p>Knuth-Morris-Pratt (KMP) là một thuật toán có độ phức tạp <strong>$O(n+m)$</strong> để giải quyết bài toán so khớp chuỗi. Ý tưởng của KMP là mở rộng một hậu tố kết thúc tại $i$ sang hậu tố kết thúc tại $i+1$ mà vẫn đảm bảo khớp với tiền tố tương ứng, từ đó cải thiện độ phức tạp nhờ loại bỏ được thao tác so sánh xâu tốn kém. Các phần tiếp theo sẽ nói rõ các bước để đạt được điều này. Nhưng trước tiên, ta sẽ làm quen với khái niệm <strong>hàm tiền tố</strong>, một hàm giúp chúng ta phân tích kỹ hơn về các cấu trúc "tự khớp" trong xâu $s$, và là cốt lõi của thuật toán KMP.</p>
+<h1 class="editable"><a class="anchor" id="định-nghĩa" href="#định-nghĩa"></a>Định nghĩa</h1>
+<p><em>Lưu ý: Xuyên suốt bài viết này các vị trí trong mỗi xâu sẽ được đếm từ 0.</em></p>
+<p><strong>Tiền tố chuẩn.</strong> Cho một xâu $s$. Một tiền tố của $s$ được gọi là một <em>tiền tố chuẩn</em> nếu nó không là cả xâu $s$.</p>
+<p><strong>Hàm tiền tố.</strong> Cho một xâu $s$ có độ dài $n$. <em>Hàm tiền tố</em> của $s$ được định nghĩa là một mảng $\pi$ có độ dài $n$, trong đó $\pi[i]$ là độ dài của tiền tố chuẩn dài nhất của xâu con $s[0 \dots i]$ mà cũng là hậu tố của xâu con này. Từ định nghĩa này ta có $\pi[0] = 0$.</p>
+<p>Biểu diễn toán học của hàm tiền tố:
+<span class="kdmath">$\pi[i] = \max_ {k = 0 \dots i} \{k : s[0 \dots k-1] = s[i-(k-1) \dots i] \}$</span></p>
+<p>Ví dụ, hàm tiền tố của xâu "$abcabcd$" là $[0, 0, 0, 1, 2, 3, 0]$ và hàm tiền tố của xâu "$aabaaab$" là $[0, 1, 0, 1, 2, 2, 3]$.</p>
+<p>Tính nhanh hàm tiền tố là hết sức quan trọng vì nó là một bước thiết yếu trong thuật toán KMP. Ở phần sau, bài viết giới thiệu một thuật toán "ngây thơ" để tính hàm tiền tố với độ phức tạp $O(n^3)$. Từ đó, ta sẽ dùng các nhận xét để tối ưu thuật toán thành độ phức tạp $O(n)$.</p>
+<h1 class="editable"><a class="anchor" id="thuật-toán-ngây-thơ" href="#thuật-toán-ngây-thơ"></a>Thuật toán ngây thơ</h1>
+<p>Từ biểu diễn toán học của hàm tiền tố, ta có thể xây dựng một thuật vét cạn như sau: Với mỗi $i$ từ $0$ đến $n - 1$, duyệt qua mọi $k$ để kiểm tra điều kiện $s[0 \dots k-1] = s[i - (k-1) \dots i]$, khi đó $\pi[i]$ là giá trị lớn nhất của $k$ có điều kiện được thỏa mãn.</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">prefix_function</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pi</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+                <span class="n">pi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">pi</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Do có $O(n^2)$ cặp $(i, k)$ và so sánh hai xâu bằng <code>s.substr()</code> mất $O(n)$, độ phức tạp của thuật toán này là $O(n^3)$.</p>
+<h1 class="editable"><a class="anchor" id="thuật-toán-tối-ưu-để-tìm-hàm-tiền-tố" href="#thuật-toán-tối-ưu-để-tìm-hàm-tiền-tố"></a>Thuật toán tối ưu để tìm hàm tiền tố</h1>
+<p>Một chút bối cảnh lịch sử: Thuật toán này được tìm ra bởi Morris, chỉ vài tuần trước khi được Knuth tìm ra một cách độc lập. Morris &amp; Pratt đăng báo cáo vào năm 1970, rồi cả ba đồng xuất bản thuật toán này vào năm 1977 (Nguồn: <a href="https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm">Wikipedia</a>)</p>
+<h2 class="editable"><a class="anchor" id="phép-tối-ưu-đầu-tiên" href="#phép-tối-ưu-đầu-tiên"></a>Phép tối ưu đầu tiên</h2>
+<p>Nhận xét quan trọng đầu tiên là giá trị của hàm tiền tố chỉ có thể tăng thêm tối đa $1$ đơn vị khi duyệt từ $i$ lên $i + 1$.</p>
+<p>Thật vậy, giả sử $\pi[i + 1] \gt \pi[i] + 1$, ta lấy hậu tố kết thúc ở $i + 1$ có độ dài $\pi[i + 1]$ và bỏ chữ cái cuối của nó đi. Xâu thu được là một hậu tố kết thúc ở $i$ khớp với tiền tố có cùng độ dài là $\pi[i + 1] - 1$, lớn hơn $\pi[i]$, mâu thuẫn với việc $\pi[i]$ là hậu tố dài nhất thỏa mãn của $i$.</p>
+<p>Để hình dung sự mâu thuẫn này, ta xét ví dụ dưới đây. Ở vị trí $i$, hậu tố dài nhất mà cũng là tiền tố có độ dài $2$ ($\pi[i] = 2$), và ở vị trí $i + 1$ thì ta có $\pi[i + 1] = 4 \gt 2 + 1$. Khi đó, xâu $s_0 ~ s_1 ~ s_2 ~ s_3$ bằng xâu $s_{i-2} ~ s_{i-1} ~ s_i ~ s_{i+1}$, dẫn tới hai xâu $s_0 ~ s_1 ~ s_2$ và $s_{i-2} ~ s_{i-1} ~ s_i$ bằng nhau. Do đó, $\pi[i]$ phải bằng $3$ chứ không phải $2$.</p>
+<div class="kdmath">$$
+\underbrace{\overbrace{s_0 ~ s_1}^{\pi[i] = 2} ~ s_2 ~ s_3}_{\pi[i+1] = 4} ~ \dots ~ \underbrace{s_{i-2} ~ \overbrace{s_{i-1} ~ s_{i}}^{\pi[i] = 2} ~ s_{i+1}}_{\pi[i+1] = 4}
+$$</div>
+<p>Do đó, khi duyệt sang vị trí tiếp theo, giá trị của hàm tiền tố chỉ có thể tăng thêm $1$, giữ nguyên, hoặc giảm đi.</p>
+<p>Chỉ riêng nhận xét này là đủ để chúng ta giảm độ phức tạp xuống còn $O(n^2)$: Thay vì mỗi lần duyệt $i$ xét mọi giá trị có thể của $k$, thuật toán bắt đầu với $k = \pi[i-1] + 1$ (hàm tiền tố tăng tối đa $1$ nên đây là giá trị lớn nhất có thể của $k$) và giảm dần $k$ đến khi so khớp thành công. Vì hàm tiền tố suốt cả quá trình duyệt $i$ chỉ có thể tăng $k$ tối đa $1 * n = n$ bước, dẫn tới chỉ có tối đa $n$ bước giảm $k$, nên số bước thực hiện so sánh hai xâu chỉ còn là $O(n)$. Vì vậy, độ phức tạp tổng của thuật chỉ còn là $O(n^2)$ (so sánh xâu vẫn là $O(n)$).</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">prefix_function</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pi</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> 
+        <span class="k">while</span> <span class="p">(</span><span class="n">k</span> <span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">!=</span> <span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+            <span class="n">k</span><span class="o">--</span><span class="p">;</span> 
+        <span class="n">pi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span><span class="p">;</span> 
+    <span class="k">return</span> <span class="n">pi</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Tuy nhiên, chúng ta có thể làm tốt hơn.</p>
+<h2 class="editable"><a class="anchor" id="phép-tối-ưu-thứ-hai" href="#phép-tối-ưu-thứ-hai"></a>Phép tối ưu thứ hai</h2>
+<p>Trước tiên, ta nhận thấy nhược điểm làm cho thuật toán có độ phức tạp $O(n^2)$ là thao tác so sánh xâu mất $O(n)$.</p>
+<p>Như đã đề cập từ đầu bài viết, ý tưởng chính để triệt tiêu thao tác này là mở rộng một hậu tố kết thúc ở $i$ đã khớp tiền tố để có được một hậu tố kết thúc ở $i + 1$ cũng khớp với tiền tố.</p>
+<p>Cụ thể, nếu ta có một hậu tố kết thúc tại $i$ khớp với tiền tố cùng độ dài $j$, và ta có $s[j] = s[i+1]$, thì hậu tố kết thúc tại $i + 1$ có độ dài $j + 1$ khớp với tiền tố có độ dài $j + 1$.</p>
+<p>Vậy nếu ta nhanh chóng duyệt qua được các giá trị $j$ là độ dài cho cặp tiền tố - hậu tố ứng với $i$ đã khớp sẵn, theo thứ tự $j$ giảm dần, thì giá trị $j$ đầu tiên (và lớn nhất) cũng thỏa mãn $s[j] = s[i+1]$ cho ta biết $\pi[i+1] = j+1$. Nói cách khác, nhờ có cặp xâu khớp sẵn mà ta chỉ cần so sánh một cặp ký tự (thao tác có thể thực hiện trong $O(1)$), và từ đó loại bỏ được thao tác so sánh xâu.</p>
+<p>Ta bắt đầu duyệt bằng cách xét hậu tố kết thúc tại $i$ có độ dài $j = \pi[i]$. Từ định nghĩa hàm tiền tố, hậu tố này khớp với tiền tố có độ dài $\pi[i] ~ (s[0 \dots \pi[i] - 1])$. Nếu $s[i + 1] = s[j] = s[\pi[i]]$, ta có thể khẳng định được rằng $\pi[i+1] = \pi[i] + 1$ vì $\pi$ chỉ tăng tối đa $1$ khi từ $i$ sang $i+1$.</p>
+<div class="kdmath">$$
+\underbrace{\overbrace{s_0 ~ s_1 ~ s_2}^{\pi[i]} ~ \overbrace{s_3}^{s_3 = s_{i+1}}}_{\pi[i+1] = \pi[i] + 1} ~ \dots ~ \underbrace{\overbrace{s_{i-2} ~ s_{i-1} ~ s_{i}}^{\pi[i]} ~ \overbrace{s_{i+1}}^{s_3 = s_{i + 1}}}_{\pi[i+1] = \pi[i] + 1}
+$$</div>
+<p>Nếu $s[i + 1] \neq s[\pi[i]]$, ta duyệt đến hậu tố kết thúc tại $i$ có độ dài lớn nhì, và khớp với tiền tố cùng độ dài.</p>
+<p>Nếu đặt độ dài này là $k$ thì ta có $s[0 \dots k-1] = s[i-k+1 \dots i]$ (từ định nghĩa) và $k &lt; j = \pi[i]$:</p>
+<div class="kdmath">$$
+\overbrace{\underbrace{s_0 ~ s_1}_{k} ~ s_2 ~ s_3 ~ s_4}^{j = \pi[i]} ~ \dots ~ \overbrace{s_{i-4} ~ s_{i-3} ~ s_{i-2} ~ \underbrace{s_{i-1} ~ s_{i}}_{k}}^{j = \pi[i]} ~ s_{i+1}
+$$</div>
+<p>Tuy nhiên, do hậu tố kết thúc ở $i$ độ dài $\pi[i]$ cũng khớp với tiền tố độ dài $\pi[i]$ là $s[0 \dots \pi[i] - 1]$, hậu tố độ dài $k$ kết thúc ở $\pi[i]-1$ khớp với tiền tố độ dài $k$.</p>
+<div class="kdmath">$$
+\overbrace{\underbrace{s_0 ~ s_1}_{k} ~ s_2 ~ \underbrace{s_3 ~ s_4}_{k}}^{j = \pi[i]} ~ \dots ~ \overbrace{s_{i-4} ~ s_{i-3} ~ s_{i-2} ~ \underbrace{s_{i-1} ~ s_{i}}_{k}}^{j = \pi[i]} ~ s_{i+1}
+$$</div>
+<p>Do $k$ lớn nhất, ta phải có $k = \pi[\pi[i]-1]$. Nói cách khác, độ dài hậu tố lớn thứ nhì kết thúc ở $i$ mà khớp với tiền tố tương ứng là $\pi[\pi[i]-1]$. So sánh $s[k]$ và $s[i+1]$, nếu chúng bằng nhau thì ta có $\pi[i+1] = k+1$.</p>
+<p>Minh họa cho hai trường hợp trên:</p>
+<center>
+<img src="https://i.imgur.com/zPJRhGA.gif" style="width:60%;" />
+</center>
+<p>Nếu $s[k] \neq s[i+1]$, lập luận tương tự, độ dài lớn thứ ba cho hậu tố kết thúc tại $i$ khớp với tiền tố là $\pi[\pi[\pi[i]-1]-1]$, độ dài lớn thứ tư là $\pi[\pi[\pi[\pi[i]-1]-1]-1]$,…</p>
+<p>Từ đó, ta có thể duyệt qua mọi hậu tố kết thúc tại $i$ khớp với tiền tố độ dài $j$ như sau: Ban đầu đặt $j = \pi[i]$, để đến độ dài tiếp theo thỏa mãn, ta gán $j = \pi[j-1]$. Tương tự lập luận ở phần <a href="#Ph%C3%A9p-t%E1%BB%91i-%C6%B0u-%C4%91%E1%BA%A7u-ti%C3%AAn">phép tối ưu đầu tiên</a>, khi chuyển từ $i$ sang $i+1$ ta gán $j = \pi[i] = j+1$ nên $j$ tăng tối đa $1$, và khi cập nhật $j = \pi[j-1]$ thì $j$ giảm ít nhất $1$. Do đó, ta chỉ duyệt qua $O(n)$ giá trị của $j$ và mỗi lần thao tác so sánh hai ký tự mất $O(1)$, đẫn đến độ phức tạp tổng là $O(n)$.</p>
+<h2 class="editable"><a class="anchor" id="thuật-toán-cuối-cùng" href="#thuật-toán-cuối-cùng"></a>Thuật toán cuối cùng</h2>
+<p>Tổng kết lại, thuật toán của chúng ta hoạt động như sau:</p>
+<ol>
+<li>Tính hàm tiền tố $\pi[i]$ bằng cách duyệt từ $i = 1$ đến $i = n - 1$ (gán mặc định $\pi[0] = 0$).</li>
+<li>Giả sử đã tính xong $\pi[0], \pi[1], \dots, \pi[i-1]$. Để tính $\pi[i]$, ta khởi tạo biến $j = \pi[i-1]$ mang ý nghĩa là độ dài của hậu tố dài nhất của $i - 1$ mà chưa được kiểm tra.</li>
+<li>Kiểm tra liệu hậu tố của $i$ có độ dài $j + 1$ cũng khớp với tiền tố tương ứng hay không bằng cách so sánh hai chữ cái cuối ($s[j]$ và $s[i]$).</li>
+<li>Nếu chúng bằng nhau, ta tìm được $\pi[i] = j + 1$. Nếu không, gán $j = \pi[j-1]$ rồi lặp lại bước 3.</li>
+<li>Nếu $j = 0$ mà vẫn chưa ghép cặp được với $s[i]$, ta đặt $\pi[i] = 0$ rồi tiếp tục tính $\pi[i + 1]$.</li>
+</ol>
+<center>
+<img src="https://i.imgur.com/6LnQDXZ.gif" style="width:60%;" />
+</center>
+<h2 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h2>
+<p>Cài đặt các bước trên rất ngắn và trực quan:</p>
+<p></p><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">prefix_function</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pi</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="n">j</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">pi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">pi</span><span class="p">;</span>
+<span class="p">}</span> </code></pre>
+Code có độ phức tạp $O(n)$ và sử dụng $O(n)$ bộ nhớ.
+<p>Một điểm đáng lưu ý nữa là đây là một thuật toán <strong>online</strong>: Ta có thể đọc lần lượt từng chữ cái của xâu $s$, mỗi chữ cái mới vào có thể được xử lý ngay lập tức để tính được $\pi[i]$. Nói cách khác, nếu đề bài yêu cầu tính hàm tiền tố nhưng có thêm truy vấn "thêm một chữ cái vào cuối xâu" thì ta vẫn có thể làm như bình thường.</p>
+<p>Về mặt bộ nhớ, ta vẫn cần phải lưu lại xâu và giá trị các hàm tiền tố trước đó nên vẫn cần đến $O(n)$ bộ nhớ. Trường hợp đặc biệt là khi hàm tiền tố luôn nhỏ hơn một hằng số $M$ nào đó, khi đó ta chỉ cần lưu $M + 1$ chữ cái đầu và $M + 1$ hàm tiền tố tương ứng của xâu. Nhận xét này sẽ tỏ ra rất hữu ích ở các phần sau.</p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng" href="#ứng-dụng"></a>Ứng dụng</h1>
+<h2 class="editable"><a class="anchor" id="thuật-toán-knuth-morris-pratt-kmp" href="#thuật-toán-knuth-morris-pratt-kmp"></a>Thuật toán Knuth-Morris-Pratt (KMP)</h2>
+<p>Quay trở lại với bài toán ban đầu: Đếm số lần xâu $s$ độ dài $n$ xuất hiện trong xâu $t$ độ dài $m$. Lời giải cho bài toán này - thuật toán KMP - là một áp dụng kinh điển của hàm tiền tố. Vậy làm thế nào để dùng hàm tiền tố khi có hai xâu cần khớp chứ không phải trong một xâu? Bằng cách gộp chúng vào nhau.</p>
+<p>Nhận xét rằng nếu ta nối xâu $t$ vào sau xâu $s$ và hai xâu được ngăn cách bởi một ký tự $\text{#}$ không nằm trong cả 2 xâu (ví dụ nếu $s$, $t$ gồm toàn chữ cái thì có thể lấy $\text{#}$ là $0$, xâu mới là $s + 0 + t$), thì mỗi một lần $s$ xuất hiện trong $t$ tương đương với một vị trí $i$ ở xâu mới có hàm tiền tố = $\pi[i] = n$.</p>
+<p>Thuật toán KMP đảm bảo tính đúng đắn, vì nếu $i$ thỏa mãn $\pi[i] = n$ thì phải có $i \gt n$ (nghĩa là các giá trị $i$ thỏa mãn phải nằm ở nửa sau tạo bởi $t$) và hậu tố của $i$ có độ dài $\pi[i]$ không thể "tràn" sang phần của $s$.</p>
+<p>Ta có thể cài đặt KMP bằng cách sử dụng code trên: <code>prefix_function(s + # + t)</code> trả về hàm tiền tố cho $s + \text{#} + t$ và ta chỉ cần đếm xem có bao nhiêu phần tử trong đó có giá trị là $n$. Cách cài đặt này tốn $O(n + m)$ bộ nhớ.</p>
+<p>Tuy nhiên, việc chọn ký tự ngăn cách là một chữ cái không nằm trong cả hai xâu còn dẫn đến $\pi[i] \leq n$. Như đã nói ở trên, chặn trên này cho phép ta chỉ lưu xâu $s + \text{#}$ và hàm tiền tố của xâu này. Với các vị trí thuộc xâu $t$ thì ta có thể tính $\pi$ lần lượt (bằng cách lưu một biến $j$ chứa giá trị $\pi$ ở vị trí hiện tại) và thêm $1$ vào đáp án nếu $\pi$ tại vị trí đang xét là $n$:</p>
+<p></p><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">prefix_function</span><span class="p">(</span><span class="n">s</span><span class="p">);</span> 
+<span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// Số lần s xuất hiện trong t</span>
+<span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// Hàm tiền tố ở vị trí đang xét của xâu t</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">j</span><span class="o">++</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">ans</span><span class="o">++</span><span class="p">;</span> 
+<span class="p">}</span></code></pre>
+Code trên lưu cả hai xâu $s$, $t$ nên vẫn dùng $O(n + m)$ bộ nhớ, nhưng có thể giảm xuống còn $O(n)$ bộ nhớ nếu ta đọc lần lượt từng ký tự của $t$ rồi tính luôn $\pi$ thay vì lưu cả xâu rồi mới tính.
+<p>Tổng kết lại, thuật toán KMP giải quyết được bài toán so khớp chuỗi trong thời gian $O(n + m)$ và sử dụng $O(n)$ bộ nhớ.</p>
+<h2 class="editable"><a class="anchor" id="đếm-số-lần-xuất-hiện-của-từng-tiền-tố" href="#đếm-số-lần-xuất-hiện-của-từng-tiền-tố"></a>Đếm số lần xuất hiện của từng tiền tố</h2>
+<p><strong>Bài toán</strong>
+Ở đây ta xét hai bài toán tương đối giống nhau:
+Cho một xâu $s$ độ dài $n$.</p>
+<ol>
+<li>Với mỗi $0 \leq i \lt n$, đếm số lần tiền tố $s[0 \dots i]$ xuất hiện trong xâu $s$.</li>
+<li>Thay vì đếm trong xâu $s$, đếm số lần $s[0 \dots i]$ xuất hiện trong một xâu $t$ khác có độ dài $m$.</li>
+</ol>
+<p><strong>Lời giải</strong>
+Trước tiên, ta giải phiên bản 1.
+Xét giá trị của $\pi[i]$ tại vị trí $i$. Dựa vào định nghĩa của $\pi$, một trong các hậu tố của $s[0 \dots i]$ là tiền tố $s[0 \dots \pi[i]-1]$. $\pi[i]$ lớn nhất nên không thể có tiền tố nào dài hơn mà cũng khớp với một hậu tố của $s[0 \dots i]$, <strong>nhưng có thể có một số tiền tố ngắn hơn thỏa mãn.</strong></p>
+<p>Ý tưởng là duyệt qua mỗi $i$ và kiểm soát xem số lần các tiền tố $s[0 \dots 0], s[0 \dots 1], \dots, s[0 \dots i]$ xuất hiện thay đổi như thế nào. Xét các hậu tố kết thúc ở $i$ mà khớp với tiền tố có cùng độ dài, khi đó ta đơn giản cộng một vào số lần xuất hiện của các tiền tố này.</p>
+<p>Như đã đề cập ở phần <a href="#Thu%E1%BA%ADt-to%C3%A1n-cu%E1%BB%91i-c%C3%B9ng">thuật toán cuối cùng</a>, độ dài các tiền tố mà cũng là hậu tố kết thúc ở $i$ từ lớn đến bé là $\pi[i]$, $\pi[\pi[i] - 1]$, $\pi[\pi[\pi[i] - 1] - 1], \dots$ Ta duyệt qua lần lượt từng tiền tố này rồi cộng $1$ vào đáp án cho tiền tố đó (đáp án cho tiền tố độ dài $i$ là $ans[i-1]$), thì độ phức tạp sẽ là $O(n^2)$:</p>
+<p></p><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ans</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> 
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">pi</span><span class="p">[</span><span class="n">j</span><span class="p">];</span> <span class="n">j</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ans</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">++</span><span class="p">;</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pi</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">break</span><span class="p">;</span> 
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+Thuật toán trên có độ phức tạp lớn do mỗi tiền tố ta phải duyệt qua nhiều lần. Để khắc phục điều này, ta sẽ dùng ý tưởng tương tự như mảng cộng dồn.
+<p>Để ý rằng nếu ta xét đồ thị cho $n + 1$ đỉnh $0, 1, 2, \dots, n$, trong đó đỉnh $i ~ (i \leq 1)$ ứng với tiền tố thứ $i$, và có các cạnh nối từ $i + 1$ đến $\pi[i]$ với mọi $i$ từ $0$ đến $n - 1$, thì đồ thị này là một cây có hướng.</p>
+<p>Ví dụ: với xâu "$abcabcd$", ta có hàm tiền tố $[0, 1, 0, 1, 2, 2, 3]$, tương ứng với các cạnh $(1, 0), (2, 1), (3, 0), (4, 1), (5, 2), (6, 2), (7, 3)$ của cây:</p>
+<center>
+<img src="https://vnoi.info/wiki/uploads/kmp_img1.png" />
+</center>
+<p>Ý tưởng này phần nào giúp chúng ta dễ hình dung hơn cách giải: việc tính $ans$ đưa về bài toán cập nhật truy vấn cộng <strong>$1$ vào các nút trên đường đi từ một nút đến gốc</strong> và tìm giá trị tại tất cả các nút sau mọi truy vấn - một bài toán có cách giải dùng mảng cộng dồn.</p>
+<p>Giả sử cần cộng $1$ vào các giá trị $ans[i], ans[\pi[i]-1]$, $ans[\pi[\pi[i] - 1]-1]$,… Thay vì duyệt qua từng giá trị một ta chỉ gán $ans[i] = 1$. Sau đó, duyệt giảm dần từ $n-1$ về $0$, khi duyệt đến $i$ thì cộng $ans[i]$ vào $ans[\pi[i]-1]$ khi duyệt đến $\pi[i]-1$ thì cộng $ans[\pi[i]-1]$ vào $ans[\pi[\pi[i]-1]]$, khi duyệt đến $\pi[\pi[i]-1]$ thì cộng $ans[\pi[\pi[i]-1]]$ vào $ans[\pi[\pi[\pi[i]-1]-1]]$,… Đến khi duyệt xong thì giá trị của $ans[\pi[i]]$, $ans[\pi[\pi[i] - 1]]$,… đều là đã được cộng thêm 1.</p>
+<p>Do ta duyệt qua mỗi phần tử đúng một lần và độ phức tạp tính hàm tiền tố là $O(n)$, tổng độ phức tạp thuật chỉ còn là $O(n)$.</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ans</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> 
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">pi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">ans</span><span class="p">[</span><span class="n">pi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="p">];</span></code></pre>
+<p>Để giải quyết phiên bản thứ 2, ta chỉ cần áp dụng kỹ thuật được sử dụng ở thuật toán KMP: <strong>nối hai xâu để tạo xâu mới $s + \text{#} + t$ và xây dựng hàm tiền tố cho xâu này</strong>. Sau đó, tìm $ans$ tương tự như phiên bản 1, đáp án là $ans$ của các vị trí $i$ thuộc về xâu $t$ ($i \ge n + 1$).</p>
+<h2 class="editable"><a class="anchor" id="đếm-số-xâu-con-phân-biệt-trong-một-xâu" href="#đếm-số-xâu-con-phân-biệt-trong-một-xâu"></a>Đếm số xâu con phân biệt trong một xâu</h2>
+<p><strong>Bài toán</strong>
+Cho một xâu $s$ có độ dài $n$. Đếm số xâu con phân biệt của $s$.</p>
+<p><strong>Lời giải</strong>
+Hướng làm của chúng ta là bắt đầu với xâu rỗng, rồi mở rộng xâu bằng cách thêm lần lượt $s[0], s[1], \dots, s[n-1]$ vào cuối xâu, đồng thời cập nhật số xâu con phân biệt hiện tại. Sau khi đã thêm đủ $n$ ký tự $s[i]$, ta sẽ có được số xâu con phân biệt của xâu ban đầu.</p>
+<p>Mỗi lần thêm ký tự $s[i]$ ta sẽ có thêm $i$ xâu mới là $s[0 \dots i], s[1 \dots i], \dots s[i \dots i]$, nhưng ta chỉ được thêm vào đáp án các xâu không nằm trong xâu trước khi thêm $s[i]$ (hay nói cách khác là không nằm trong $s[0 \dots i - 1]$). Làm thế nào để đếm nhanh số xâu không lặp này? Một lần nữa ta sử dụng hàm tiền tố.</p>
+<p>Gọi xâu có được sau khi thêm $s[i]$ vào cuối là $t$. Nhận xét là nếu ta đảo ngược xâu $t$ thì số xâu bị lặp chính là số tiền tố của $t$ khớp với một xâu con nào đó của $t$. Nếu ta tính hàm tiền tố $\pi$ trên xâu $t$ bị đảo ngược, thì số xâu bị lặp này chính là giá trị lớn nhất $\pi_{max}$ của $\pi$ vì:</p>
+<ul>
+<li>$s[i - \pi_{max} \dots i]$ khớp với một xâu trong $t$ không phải chính nó (theo định nghĩa hàm tiền tố) nên nó bị lặp, dẫn các xâu $s[i - \pi_{max} + 1], \dots, s[i - 1 \dots i], s[i \dots i]$ cũng bị lặp.</li>
+<li>Các xâu $s[j \dots i] ~ (j \leq i)$ có độ dài lớn hơn $\pi_{max}$ chắc chắn không lặp vì nếu có thì $\pi_{max}$ sẽ không phải giá trị lớn nhất của $\pi$.</li>
+</ul>
+<p>Vậy số xâu mới bị lặp với một xâu con có trước là $\pi_{max}$, dẫn đến số xâu cần thêm vào đáp án là $i - \pi_{max}$ (Do có $i$ xâu mới). Tính $\pi_{max}$ với mỗi $i$ hết $O(i)$ nên tổng độ phức tạp thuật toán là $O(n^2)$.</p>
+<p>Ngoài ra, thay vì mỗi bước cập nhật kết quả sau khi thêm một chữ cái vào cuối xâu hiện tại, ta cũng có thể thêm một chữ vào đầu xâu hiện tại, hoặc bắt đầu với xâu hoàn chỉnh và mỗi bước bỏ đi chữ cái đầu (hoặc cuối). Độ phức tạp $O(n^2)$ cũng chưa phải là độ phức tạp tốt nhất - ta có thể đếm số xâu con của một xâu trong $O(n)$ hoặc $O(n \log n)$ nhờ mảng hậu tố (Suffix Array).</p>
+<h2 class="editable"><a class="anchor" id="nén-xâu" href="#nén-xâu"></a>Nén xâu</h2>
+<p><strong>Bài toán</strong>
+Cho một xâu $s$ độ dài $n$. Tìm xâu $t$ có độ dài nhỏ nhất sao cho có thể tạo được xâu $s$ bằng cách lặp lại xâu $t$ hữu hạn lần.</p>
+<p><strong>Lời giải</strong>
+Trước tiên, nhận xét là chúng ta chỉ cần tìm độ dài của $t$, vì khi đó đáp án của bài toán sẽ là tiền tố của $s$ có độ dài này.</p>
+<p>Giả sử ta cố định độ dài của $t$ là $l$ (chỉ xét $l$ là ước của $n$) thì khi đó bài toán đưa về kiểm tra $s[0 \dots l - 1] = s[l \dots 2l-1] = \dots = s[n - l, n - 1]$ $(*)$ có được thỏa mãn hay không.</p>
+<p>Nếu ta dùng thẳng điều kiện $(*)$), với mỗi giá trị của $l$ kiểm tra sẽ cần duyệt qua $O(
+\frac{n}{l})$ cặp xâu liền kề, mỗi cặp kiểm tra xem chúng bằng nhau không mất độ phức tạp $O(l)$, nên độ phức tạp để kiểm tra khi cố định $l$ là $O(
+\frac{n}{l}) * O(l) = O(n)$. $l$ chỉ có thể nhận $O(n^{\frac{1}{3}})$ giá trị khác nhau do là ước của $n$, dẫn tới tổng độ phức tạp là $O(n^{\frac{4}{3}})$. Độ phức tạp này là đủ tốt để AC với $n \leq 10^5$, nhưng ta có thể dùng hàm tiền tố để làm tốt hơn.</p>
+<p>Chìa khóa ở đây là thay đổi cách viết $(*)$ thành:</p>
+<div class="kdmath">$$
+s[0 \dots l - 1] = s[l \dots 2l-1] \\ s[l \dots 2l-1] = s[2l \dots 3l-1] \\ \dots \\ s[n - 2l \dots n-l-1]= s[n - l, n - 1]
+$$</div>
+<p>Rồi gộp các xâu ở các vế trái thành một, gộp các xâu ở các vế phải thành một, ta thu được:</p>
+<div class="kdmath">$$
+s[0 \dots n-l-1] = s[l \dots n-1]
+$$</div>
+<p>Hay nói cách khác, $l$ phải thỏa mãn tiền tố độ dài $n-l$ khớp với hậu tố có cùng độ dài của xâu. Kiểm tra điều kiện rút gọn này là đủ vì từ nó ta có thể suy ngược lại ra điều kiện $(*)$. Áp dụng hàm tiền tố: Các tiền tố mà cũng là hậu tố kết thúc tại $n-1$ có độ dài $\pi[n-1], \pi[\pi[n-1]-1], \pi[\pi[\pi[n-1]-1] - 1], \dots$, duyệt qua từng độ dài này và dừng lại khi có một độ dài $l$ thỏa mãn $n$ chia hết cho $n - l$, khi đó đáp án sẽ là $n - l$. Nếu không có độ dài nào thỏa mãn, đáp án khi đó là $n$. Độ phức tạp của thuật chỉ là $O(n)$.</p>
+<p>Thậm chí ta chỉ cần kiểm tra cho tiền tố độ dài $\pi[n-1]$ là đủ: nếu $k = n - \pi[n-1]$ là ước của $n$ thì đó chính là đáp án, nếu không thì đáp án là $n$. Chứng minh:</p>
+<ul>
+<li>Nếu $n$ chia hết cho $k$, do $\pi[n-1]$ là tiền tố dài nhất cũng là hậu tố của xâu, $k$ là độ dài ngắn nhất thỏa mãn.</li>
+<li>Nếu $n$ không chia hết cho $k$, giả sử phản chứng tồn tại $p \lt n$ sao cho nén được xâu $s$ thành tiền tố độ dài $p$ của xâu. Khi đó ta có $\pi[n-1]$ &gt; $n-p$, dẫn đến hậu tố độ dài $\pi[n-1]$ của xâu sẽ chứa một phần của $s[0 \dots p-1]$.</li>
+</ul>
+<p>Xét xâu $s[k \dots (k+p-1)]$. Do tiền tố và hậu độ dài $\pi[n-1]$ bằng nhau, $s[k \dots (k+p-1)] = s[0 \dots p-1]$, so sánh từng cặp chữ cái tương ứng của hai xâu này, ta rút ra $s_i = s_{(i+k) \mod p} ~ \forall ~ 0 \leq i \lt p$.</p>
+<p>Đặt $d = \gcd(k,p)$, điều kiện trên khi đó tương đương với $s_i = s_{(i+d) \mod p} ~ \forall ~ 0 \leq i \lt p$, nghĩa là $s[0 \dots d-1]$ là một xâu nén của $s[0 \dots p-1]$. Do $d \leq k \lt p$, $s[0 \dots d-1]$ là một xâu nén của $s$ có độ dài nhỏ hơn $p$, mâu thuẫn với cách chọn $p$ là xâu nén nhỏ nhất. Ta có điều phải chứng minh.</p>
+<p>Ví dụ minh họa:</p>
+<div class="kdmath">$$
+\overbrace{s_0 ~ s_1 ~ s_2 ~ s_3 ~ s_4}^p ~ \overbrace{s_0 ~ s_1 ~ s_2 ~ s_3 ~ s_4}^p ~ \overbrace{s_{0} ~ s_{1} ~ s_{2} ~ s_{3} ~ s_{4}}^p
+$$</div>
+<div class="kdmath">$$
+\underbrace{s_0 ~ s_1}_k ~ \rlap{\underbrace{\phantom{s_2 ~ s_3 ~ s_4 ~ s_5 ~ s_6 s_7 ~ s_8 ~ s_9 ~ s_{0} ~ s_{1} ~ s_{2} ~ s_{3} ~ s_{4}}}_{\pi[15]=13}} \overbrace{s_2 ~ s_3 ~ s_4 ~ s_0 ~ s_1}^p ~ s_2 ~ s_3 ~ s_4 ~ s_{0} ~ s_{1} ~ s_{2} ~ s_{3} ~ s_{4}
+$$</div>
+<div class="kdmath">$$
+s_0 = s_2, s_1 = s_3, s_2 = s_4, s_3 = s_0, s_4 = s_1 \\ \Rightarrow s_0 = s_1 = s_2 = s_3 = s_4 \\ \Rightarrow s_0 ~ \text{nén được } s
+$$</div>
+<h2 class="editable"><a class="anchor" id="tạo-automaton-từ-hàm-tiền-tố" href="#tạo-automaton-từ-hàm-tiền-tố"></a>Tạo automaton từ hàm tiền tố</h2>
+<p>Một kỹ thuật đặc trưng đã được sử dụng ở các bài nêu trên là: ghép hai xâu $s, t$ vào nhau bằng một ký tự ngăn cách $\text{#}$ không nằm trong $s$ hoặc $t$, rồi tính hàm tiền tố cho xâu $s + \text{#} + t$ này.
+Việc $\text{#}$ là ký tự không nằm trong cả hai xâu dẫn tới $\pi[i]$ không thể vượt quá $\lvert s \rvert$ với mọi $i$, qua đó cho phép chúng ta chỉ cần lưu xâu $s + \text{#}$ và các giá trị $\pi$ tương ứng với xâu này.</p>
+<div class="kdmath">$$
+\underbrace{s_0 ~ s_1 ~ \dots ~ s_{n-1} ~ \#}_{\text{cần lưu}} ~ \underbrace{t_0 ~ t_1 ~ \dots ~ t_{m-1}}_{\text{không cần lưu}}
+$$</div>
+<p>Để tính hàm tiền tố cho các chữ cái sau đó, ta chỉ cần biết chữ cái tiếp theo $c$ trong xâu $t$ và giá trị của hàm tiền tố ở vị trí trước mà không cần lưu lại cả xâu $t$.</p>
+<p>Nói cách khác, ta có thể dựng một <strong>automaton</strong> (máy hữu hạn trạng thái), trong đó các trạng thái là các giá trị có thể của hàm tiền tố hiện tại (từ $0$ đến $\lvert s \rvert$), và các bước chuyển trạng thái là các giá trị có thể của chữ cái tiếp theo.</p>
+<p>Do đó, kể cả khi không có xâu $t$ thì ta vẫn có thể tính ma trận chuyển trạng thái $(\text{old} _\pi, c) \rightarrow \text{new} _\pi$ tương tự như khi ta tìm $\pi[i]$ hiện tại, chỉ là ở vị trí $i$ có thể là bất kỳ ký tự nào trong bảng chữ cái:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">compute_automaton</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;&amp;</span> <span class="n">aut</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">s</span> <span class="o">+=</span> <span class="sc">'#'</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">prefix_function</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">aut</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">26</span><span class="p">));</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="mi">26</span><span class="p">;</span> <span class="n">c</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="sc">'a'</span> <span class="o">+</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="sc">'a'</span> <span class="o">+</span> <span class="n">c</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">j</span><span class="o">++</span><span class="p">;</span>
+            <span class="n">aut</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Đối với bảng chữ cái tiếng Anh không hoa (26 chữ cái), độ phức tạp của thuật toán trên là $O(n^2 * 26)$.</p>
+<p>Một lần nữa, lý do độ phức tạp của thuật lớn là vì chưa tận dụng các thông tin đã được tính trước đó. Do đó ta tối ưu bằng quy hoạch động: Khi chúng ta gán $j$ bằng $\pi[j-1]$, bước chuyển $(j, c)$ dẫn đến cũng trạng thái với bước chuyển $(\pi[j-1], c)$, và trạng thái ứng với $(\pi[j-1], c)$ thì đã được tính trước đó, nên với mỗi cặp $(j, c)$ ta tính được trong $O(1)$ và độ phức tạp tổng chỉ là $O(n * 26)$.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">compute_automaton</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;&amp;</span> <span class="n">aut</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">s</span> <span class="o">+=</span> <span class="sc">'#'</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">prefix_function</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">aut</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">26</span><span class="p">));</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="mi">26</span><span class="p">;</span> <span class="n">c</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="sc">'a'</span> <span class="o">+</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">aut</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">aut</span><span class="p">[</span><span class="n">pi</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]][</span><span class="n">c</span><span class="p">];</span>
+            <span class="k">else</span>
+                <span class="n">aut</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="p">(</span><span class="sc">'a'</span> <span class="o">+</span> <span class="n">c</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Vậy thì tại sao xây một automaton như vậy lại hữu ích?</p>
+<p>Trước tiên, ta cần hiểu mục đích chính của việc tạo xâu $s + \text{#} + t$ là để đếm số lần xâu $s$ xuất hiện trong xâu $t$.</p>
+<p>Do đó, lợi ích gần nhất của automaton này là <strong>tăng tốc độ tính hàm tiền tố</strong> cho xâu $s + \text{#} + t$. Nhờ có automaton mà ta không cần lưu lại xâu $s$ và hàm tiền tố $\pi$, vì mọi bước chuyển trạng thái có thể đều đã được tính trong ma trận.</p>
+<p>Nhưng còn có một ứng dụng khác, ít hiển nhiên hơn của automaton: giải bài toán so khớp chuỗi khi $t$ là một xâu cực đại được xây theo một quy tắc nào đó. Ví dụ, xâu $t$ có thể là các xâu Gray (định nghĩa ở dưới), hoặc một xâu được định nghĩa theo một công thức đệ quy dựa vào các xâu đầu vào. Để minh họa cụ thể hơn, ta xét bài tập sau:</p>
+<p><strong>Bài toán</strong>
+Cho một số nguyên dương $k \leq 10^5$ và một xâu $s$ có độ dài $\leq 10^5$. Tính số lần $s$ xuất hiện trong xâu Gray thứ $k$, trong đó các xâu Gray $g_i$ được định nghĩa như sau:</p>
+<div class="kdmath">$$
+\begin{align}
+g_1 &amp;= \text{"a"}\\
+g_2 &amp;= \text{"aba"}\\
+g_3 &amp;= \text{"abacaba"}\\
+g_4 &amp;= \text{"abacabadabacaba"}
+\end{align}
+$$</div>
+<p><em>Lưu ý: chữ cái ở chính giữa $g_i$ không nhất thiết phải là chữ cái thứ $i$ trong bảng chữ cái mà có thể là bất kỳ chữ nào, và chữ cái ở chính giữa của $g_i$, $g_j$ $(i \neq j)$ được phép giống nhau.</em></p>
+<p><strong>Lời giải</strong>
+Hướng làm của chúng ta vẫn không đổi: tính hàm tiền tố cho $t = g_i$. Viết theo "ngôn ngữ" automaton, ta cần duy trì trạng thái hiện tại khi thêm dần các chữ cái của $t$ từ trái sang phải.</p>
+<p>Dựng hẳn xâu $t$ là không thể trong trường hợp này, vì xâu Gray thứ $k$ có độ dài $2^k-1$, quá lớn so với giới hạn bộ nhớ cho phép.</p>
+<p>Tuy vậy, bản chất xâu $g$ là lặp lại chính nó, nên cách trạng thái hiện tại thay đổi trong automaton cũng sẽ có thể tính được dựa vào các bước trước.</p>
+<p>Cụ thể hơn, trạng thái của automaton khi duyệt tới cuối $g_i$ có thể được tính nếu chúng ta biết trạng thái của automaton ở đầu $g_i$.</p>
+<ol>
+<li>Đặt $G[i][j]$ là trạng thái của automaton sau khi duyệt qua tất cả các chữ cái của $g_i$ từ trái sang phải, biết rằng trạng thái lúc ở đầu $g_i$ là $j$.</li>
+<li>Do cấu trúc $g_i = g_{i-1} + \text{char(i)} + g_{i-1}$, khi duyệt đến hết nửa đầu của $g_i$ (duyệt qua các chữ cái của $g_{i-1}$) thì trạng thái đã chuyển từ $j$ sang $G[i-1][j]$.</li>
+<li>Khi đọc đến $\text{char(i)}$, trạng thái mới dễ dàng tính được bằng ma trận chuyển trạng thái: $G[i-1][j] \rightarrow \text{mid}$, trong đó $\text{mid} = \text{aut}(G[i-1][j], \text{char(i)})$.</li>
+<li>Cuối cùng, ta duyệt qua nửa bên phải của $g_i$, tương đương với duyệt qua $g_{i-1}$ một lần nữa, nên trạng thái cuối cùng là $G[i-1][\text{mid}]$.</li>
+</ol>
+<p>Ta có thể tóm gọn cách trạng thái thay đổi bằng công thức:</p>
+<div class="kdmath">$$
+\text{mid} = \text{aut}[G[i-1][j]][i]
+$$</div>
+<div class="kdmath">$$
+G[i][j] = G[i-1][\text{mid}]
+$$</div>
+<p>Biết được trạng thái thay đổi như thế nào, ta có thể dùng nó để tính lại đáp án khi đi từ $g_{i-1}$ đến $g_i$. Để thống nhất với cách ta tính $G$, đặt $K[i][j]$ là số lần xâu $s$ xuất hiện trong $g_i$, biết trạng thái ở đầu xâu là $j$. Khi duyệt đến giữa xâu, ta đang có $K[i][j] = K[i-1][j]$. Khi trạng thái chuyển thành $mid$, ta cộng $1$ vào $K[i][j]$ nếu $\text{mid} = \lvert s \rvert$. Phần còn lại chỉ là $K[i-1][\text{mid}]$. Công thức:</p>
+<div class="kdmath">$$
+K[i][j] = K[i-1][j] + (\text{mid} == |s|) + K[i-1][\text{mid}]
+$$</div>
+<p>Chốt lại, nhờ việc sử dụng automaton mà ta giải được bài toán so khớp trên xâu Gray, và ta có thể dùng lại ý tưởng này cho nhiều xâu khác được tạo bởi các quy tắc phức tạp hơn.
+Cụ thể là bài toán: Tìm số lần $s$ xuất hiện trong $t_i$, biết $t_i$ được tạo bằng cách nối các xâu $t_k^{\text{cnt}}$ (lặp lại $t_k$ $\text{cnt}$ lần, $k \lt n$) vào nhau.
+Ví dụ một quy tắc như thế:</p>
+<div class="kdmath">$$
+\begin{align}
+t_1 &amp;= \text{"abdeca"}\\
+t_2 &amp;= \text{"abc"} + t_1^{30} + \text{"abd"}\\
+t_3 &amp;= t_2^{50} + t_1^{100}\\
+t_4 &amp;= t_2^{10} + t_3^{100}
+\end{align}
+$$</div>
+<p>Ta không thể dựng cả xâu vì độ lớn bùng nổ lên tới $100^{100}$ chữ cái (!). Tuy nhiên, cách giải cho bài nay không khác gì bài trước, đó là xây dựng automaton và tìm quy hoạch động để miêu tả cách trạng thái thay đổi.</p>
+<h1 class="editable"><a class="anchor" id="bài-tập" href="#bài-tập"></a>Bài tập</h1>
+<p>Test code KMP: <a href="https://oj.vnoi.info/problem/substr">VNOJ - SUBSTR</a></p>
+<ul>
+<li><a href="http://codeforces.com/contest/808/problem/G">Codeforces - Anthem of Berland</a></li>
+<li><a href="https://codeforces.com/problemset/problem/471/D">Codeforces - MUH and Cube Walls</a></li>
+<li><a href="https://codeforces.com/contest/432/problem/D">Codeforces - Prefixes and Suffixes</a></li>
+<li><a href="https://codeforces.com/problemset/problem/126/B">Codeforces - Password</a></li>
+<li><a href="https://codeforces.com/contest/346/problem/B">Codeforces - Lucky Common Subsequence</a></li>
+<li><a href="https://www.spoj.com/problems/PSTRING/">SPOJ - PSTRING</a></li>
+<li><a href="https://atcoder.jp/contests/abc257/editorial/4203">AtCoder Beginner Contest 257 - Prefix Concatenation</a></li>
+<li><a href="https://dmoj.ca/problem/noi14p4">NOI 2014 Problem 4 - Zoo</a></li>
+<li><a href="https://lightoj.com/problem/unlucky-strings">LightOJ - Unlucky Strings</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

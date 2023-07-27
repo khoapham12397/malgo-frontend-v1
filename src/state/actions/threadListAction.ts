@@ -7,7 +7,7 @@ import store from '..';
 import { toggleLikeThread } from '../reducers/threadReducer';
 import { toast } from 'react-hot-toast';
 import { getAccessTokenFromStorage } from '../../utils/getUser';
-const host = (import.meta.env.VITE_API_URL as string)+'discussion';
+const host = (import.meta.env.VITE_API_URL as string) + 'discussion';
 
 export const fetchThreads = (
   category: string,
@@ -27,8 +27,11 @@ export const fetchThreads = (
       '&page=' +
       page;
     if (username != undefined) url += '&username=' + username;
-    console.log(`fetch threads with username: ${username}`);
-    fetch(url, {method: 'GET', headers :{'Authorization': `Bearer ${getAccessTokenFromStorage()}`}})
+    //console.log(`fetch threads with username: ${username}`);
+    fetch(url, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${getAccessTokenFromStorage()}` }
+    })
       .then(res => res.json())
       .then(result => {
         const threadsResult: FetchThreadsApiResult = result.data;
@@ -48,7 +51,6 @@ export const fetchThreads = (
       });
   };
 };
-
 export const likeThreadInList = (
   threadId: string,
   username: string | undefined
@@ -65,8 +67,9 @@ export const likeThreadInList = (
     fetch(host + '/likeThread', {
       method: 'POST',
       body: JSON.stringify(params),
-      headers: { 'Content-Type': 'application/json',
-        'Authorization':`Bearer ${getAccessTokenFromStorage()}`
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getAccessTokenFromStorage()}`
       }
     })
       .then(res => res.json())

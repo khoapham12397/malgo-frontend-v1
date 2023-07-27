@@ -36,10 +36,6 @@ const Header: FunctionComponent = () => {
               MATH
             </Link>
 
-            <Link to='contest' className='nav-link'>
-              CONTEST
-            </Link>
-
             <Link to='threads' className='nav-link'>
               THREAD
             </Link>
@@ -55,17 +51,22 @@ const Header: FunctionComponent = () => {
                 <Link to='admin' className='nav-link'>
                   ADMIN
                 </Link>
-               
               )}
-              <Link to='chat' className='nav-link'>
-                CHAT
-              </Link>
-              <Link to='game' className='nav-link'>
-                GAME
-              </Link>
-              <Link to='contest2' className='nav-link'>
-                CONTEST V2
-              </Link>
+            <Link to='chat' className='nav-link'>
+              CHAT
+            </Link>
+            <Link to='game' className='nav-link'>
+              GAME
+            </Link>
+            <Link to='contest2' className='nav-link'>
+              CONTEST
+            </Link>
+            <Link to='lesson' className='nav-link'>
+              LESSON
+            </Link>
+            <Link to='dashboard/math' className='nav-link'>
+              MATH-AD
+            </Link>
           </div>
         </div>
 

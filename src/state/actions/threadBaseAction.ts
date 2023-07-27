@@ -1,7 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { setCategoriesAndTags } from '../reducers/threadBaseReducer';
 
-const host = (import.meta.env.VITE_API_URL as string)+'discussion';
+const host = (import.meta.env.VITE_API_URL as string) + 'discussion';
 
 export const fetchCategoriesAndTags = () => {
   return function (dispatch: Dispatch<any>) {

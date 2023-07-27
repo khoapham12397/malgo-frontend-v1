@@ -1,0 +1,643 @@
+<div id="wiki-content">
+<h1 class="pt-4">Các thuật toán về tìm đường đi ngắn nhất</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/graph-theory/">graph-theory</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả:</strong></p>
+<ul>
+<li>Trần Hoài An - THPT Hoàng Lê Kha, Tây Ninh</li>
+</ul>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Nguyễn Xuân Tùng - Đại học Quốc Tế, Đại học Quốc gia Thành phố Hồ Chí Minh</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#1-thuật-toán-bellman-ford">1. Thuật toán Bellman - Ford</a><ul><li><a href="#bài-toán">Bài toán.</a><ul><li><a href="#khái-niệm-về-chu-trình-âm">Khái niệm về chu trình âm</a></li></ul></li><li><a href="#ý-tưởng-của-thuật-toán">Ý tưởng của thuật toán.</a></li><li><a href="#cài-đặt">Cài Đặt</a></li><li><a href="#tìm-lại-đường-đi-ngắn-nhất">Tìm lại đường đi ngắn nhất</a></li><li><a href="#các-trường-hợp-có-chu-trình-âm">Các trường hợp có chu trình âm</a><ul><li><a href="#nhận-biết-đường-đi-âm-vô-cực">Nhận biết đường đi âm vô cực</a></li><li><a href="#tìm-chu-trình-âm">Tìm chu trình âm</a></li></ul></li></ul></li><li><a href="#2-thuật-toán-dijkstra">2. Thuật toán Dijkstra</a><ul><li><a href="#bài-toán-1">Bài toán.</a></li><li><a href="#ý-tưởng-của-thuật-toán-1">Ý tưởng của thuật toán.</a></li><li><a href="#minh-họa-thuật-toán">Minh họa thuật toán</a></li><li><a href="#cài-đặt-1">Cài đặt</a></li><li><a href="#cải-tiến-đối-với-đồ-thị-thưa">Cải tiến đối với đồ thị thưa</a></li><li><a href="#tìm-lại-đường-đi-ngắn-nhất-1">Tìm lại đường đi ngắn nhất</a></li></ul></li><li><a href="#3-thuật-toán-floyd-warshall">3. Thuật toán Floyd-Warshall</a><ul><li><a href="#bài-toán-2">Bài toán</a></li><li><a href="#ý-tưởng-của-thuật-toán-2">Ý tưởng của thuật toán.</a></li><li><a href="#cài-đặt-2">Cài đặt</a></li><li><a href="#tìm-lại-đường-đi-ngắn-nhất-2">Tìm lại đường đi ngắn nhất</a></li></ul></li><li><a href="#4-lưu-ý">4. Lưu ý</a></li><li><a href="#bài-tập-vận-dụng">Bài tập vận dụng.</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Bài toán tìm đường đi ngắn nhất trên đồ thị là một trong những bài toán đa dạng, có nhiều ứng dụng thực tế (như trong Google Maps, hay các bài toán networking, …). Các dạng bài về tìm đường đi ngắn nhất cũng thường xuyên có mặt trong các kì thi lập trình.</p>
+<p>Bài viết này sẽ giới thiệu ba thuật toán cơ bản của dạng bài tìm đường đi ngắn nhất:</p>
+<ul>
+<li>Thuật toán Bellman - Ford.</li>
+<li>Thuật toán Dijkstra.</li>
+<li>Thuật toán Floyd-Warshall (còn gọi là thuật toán Floyd).</li>
+</ul>
+<p>Cần lưu ý rằng, <a href="https://vnoi.info/wiki/algo/basic/two-pointers.md#gi%E1%BA%A3i-ph%C3%A1p-3">có một thuật toán thông dụng khác</a> cũng có tên thường gọi là thuật toán Floyd, dùng để tìm chu trình trong đồ thị có hướng. Bài viết này sẽ chỉ đề cập đến thuật toán tìm đường đi ngắn nhất.</p>
+<h1 class="editable"><a class="anchor" id="1-thuật-toán-bellman-ford" href="#1-thuật-toán-bellman-ford"></a>1. Thuật toán Bellman - Ford</h1>
+<p>Thuật toán Bellman-Ford dùng để giải quyết bài toán <strong>đường đi ngắn nhất một nguồn</strong> (Single-source shortest path), đồ thị <strong>có thể có trọng số âm</strong>.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán" href="#bài-toán"></a>Bài toán.</h2>
+<p>Cho đồ thị có hướng $N$ đỉnh và $M$ cạnh, và một đỉnh nguồn là đỉnh $S$. Mỗi cạnh có trọng số nguyên. <strong>Trọng số này có thể âm hoặc dương hoặc bằng 0</strong>. Với mỗi đỉnh $u$ từ $1$ đến $N$. Yêu cầu xuất kết quả tại mỗi đỉnh $u$ như sau:</p>
+<ol>
+<li>Nếu không tồn tại đường đi từ $S$ đến $u$ thì in ra: <strong>Impossible</strong>
+</li>
+<li>Nếu tồn tại đường đi từ $S$ đến $u$ nhưng không có đường đi ngắn nhất in ra: <strong>-Infinity</strong>
+</li>
+<li>Trường hợp còn lại in ra đường đi ngắn nhất từ $S$ đến $u$.</li>
+</ol>
+<p><strong>Input:</strong> Dòng đầu tiên gồm 3 số nguyên $N, M, S$. $M$ dòng tiếp theo, mỗi dòng gồm ba số nguyên $u, v, W_{u, v}$ biểu diễn một cạnh một chiều từ $u$ đến $v$ với trọng số là $W_{u, v}$.</p>
+<p><strong>Output:</strong> gồm $N$ dòng cho biết đường đi ngắn nhất từ đỉnh $S$ đến các đỉnh từ $0$ đến $N-1$</p>
+<p>Giới hạn bài toán : $1 \le N \le 1000, 1 \le M \le 5000$</p>
+<p><strong>Sample Input</strong>
+</p><pre class="highlight"><code>7 6 4
+0 1 7
+2 0 1
+1 2 -9
+2 5 1000
+3 0 7
+4 3 3</code></pre>
+<strong>Sample Output</strong>
+<pre class="highlight"><code>-Infinity
+-Infinity
+-Infinity
+3
+0
+-Infinity
+Impossible</code></pre>
+<h3 class="editable"><a class="anchor" id="khái-niệm-về-chu-trình-âm" href="#khái-niệm-về-chu-trình-âm"></a>Khái niệm về chu trình âm</h3>
+<ul>
+<li>Chu trình âm là một chu trình trong đó tổng trọng số các cạnh là số âm. Ví dụ trong hình dưới, ta có một chu trình âm $0 \rightarrow 1 \rightarrow 2$ có tổng trọng số là $7-9+1 = -1$</li>
+</ul>
+<p><img src="https://i.ibb.co/jbkzpCB/dijsktra.png" /></p>
+<ul>
+<li>Nếu trên đường đi từ $u$ đến $v$ chứa chu trình âm thì độ dài đường đi ngắn nhất từ $u$ đến $v$ sẽ là $-\infty$. Vì vậy nên sự xuất hiện của chu trình âm trong đồ thị sẽ khiến một số cặp đỉnh không tồn tại đường đi ngắn nhất (chỉ tồn tại đường đi có độ dài âm vô cực).
+<ul>
+<li>Ví dụ: Ở đồ thị trên, đường đi ngắn nhất từ $4$ đến $5$ sẽ có cách đi là vô hạn lần qua chu trình âm đã nhắc đến, sau đó mới đi đến $5$. Như vậy không có đường đi ngắn nhất.</li>
+</ul>
+</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="ý-tưởng-của-thuật-toán" href="#ý-tưởng-của-thuật-toán"></a>Ý tưởng của thuật toán.</h2>
+<p>Xét trường hợp đơn giản hơn, khi đồ thị không có trọng số âm (tức đường đi ngắn nhất luôn tồn tại).</p>
+<p>Thuật toán Bellman-Ford sẽ lặp nhiều lần. Ở mỗi vòng lặp, ta sẽ đi qua <strong>tất cả</strong> các cạnh $(u, v)$ trên đồ thị, so sánh đường đi $S \rightarrow v$ đã tìm được với đường đi $S \rightarrow u \rightarrow v$</p>
+<ul>
+<li>Ví dụ đồ thị sau:</li>
+</ul>
+<p><img src="https://i.imgur.com/YMKQtKM.png" /></p>
+<ul>
+<li>Giả sử ta tìm được đường đi từ $1\rightarrow 3$ có độ dài là $4$, và đường đi từ $1 \rightarrow 2$ có độ dài là $2$. Như vậy ta có thể sử dụng cạnh $(2, 3)$ để nối dài đường đi $1 \rightarrow 2$ thành $1 \rightarrow 2 \rightarrow 3$ có độ dài bằng $3$, tốt hơn đường đi trực tiếp $1 \rightarrow 3$ ta đã tìm được.</li>
+</ul>
+<p>Có thể chứng minh được rằng, vòng lặp trên cần thực hiện $N-1$ lần, mỗi lần đi qua toàn bộ $M$ cạnh, là sẽ đủ để tìm đường đi ngắn nhất.</p>
+<ul>
+<li>
+<strong>Chứng minh</strong>: Nhận xét rằng một đường đi ngắn nhất bất kì sẽ không có đỉnh nào được đi lại quá một lần. Như vậy một đường đi ngắn nhất sẽ không có quá $N-1$ cạnh. Việc thực hiện phép tính $D_v = D_u + W_{u, v}$ cũng đồng nghĩa với thêm một cạnh $u \rightarrow v$ vào hành trình đi từ $s$ đến $v$. Vậy một $D_u$ chỉ có thể được tối ưu tối đa $N-1$ lần, và từ lần thứ $N$ trở đi sẽ không thể tối ưu hơn được nữa.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài Đặt</h2>
+<p>Ở thuật toán này, đồ thị thường được lưu ở dạng <strong>danh sách cạnh</strong>.</p>
+<ul>
+<li>
+<p>Định nghĩa $W[u, v]$ là trọng số cạnh nối từ đỉnh $u$ đến đỉnh $v$ (nếu có).</p>
+</li>
+<li>Định nghĩa mảng $D[u]$ là đường đi ngắn nhất từ $s\rightarrow u$. Ban đầu, chưa có đường đi nào, $D[u] = \infty$ với mọi $u$, ngoại trừ $D[s] = 0$.
+<ul>
+<li>Nếu cần tìm lại chính đường đi ngắn nhất, ta có thể định nghĩa thêm một mảng truy vết $trace[u]$. Ban đầu mọi $trace[u]$ bằng $-1$ nghĩa là chưa có đường đi.</li>
+</ul>
+</li>
+<li>
+<p>Thực hiện $N-1$ lần: Xét lần lượt các cạnh $(u, v)$ trong đồ thị. Nếu $D[u] + W[u, v] &lt; D[v]$, cập nhật $D[v] = D[u] + W[u, v])$, đồng thời cập nhật $trace[v] = u$.</p>
+</li>
+<li>
+<strong>Độ phức tạp</strong>: Ta có một vòng lặp được thực hiện $N-1$ lần, mỗi lần lặp ta sẽ xử lí tất cả các cạnh trong đồ thị, như vậy độ phức tạp của thuật toán là $O(N*M)$.</li>
+</ul>
+<p><strong>Code:</strong>
+</p><pre class="highlight"><code><span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">INF</span> <span class="o">=</span> <span class="mi">2000000000000000000LL</span><span class="p">;</span>
+<span class="k">struct</span> <span class="nc">Edge</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">w</span><span class="p">;</span> <span class="c1">// cạnh từ u đến v, trọng số w</span>
+<span class="p">};</span>
+<span class="kt">void</span> <span class="nf">bellmanFord</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">S</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">e</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">D</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// e: danh sách cạnh</span>
+    <span class="c1">// n: số đỉnh</span>
+    <span class="c1">// S: đỉnh bắt đầu</span>
+    <span class="c1">// D: độ dài đường đi ngắn nhất</span>
+    <span class="c1">// trace: mảng truy vết đường đi</span>
+    <span class="c1">// INF nếu không có đường đi</span>
+    <span class="c1">// -INF nếu có đường đi âm vô tận</span>
+    <span class="n">D</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">INF</span><span class="p">);</span>
+    <span class="n">trace</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">D</span><span class="p">[</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">T</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">T</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">E</span> <span class="o">:</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">u</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">v</span><span class="p">;</span>
+            <span class="kt">long</span> <span class="kt">long</span> <span class="n">w</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">!=</span> <span class="n">INF</span> <span class="o">&amp;&amp;</span> <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">;</span>
+                <span class="n">trace</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="tìm-lại-đường-đi-ngắn-nhất" href="#tìm-lại-đường-đi-ngắn-nhất"></a>Tìm lại đường đi ngắn nhất</h2>
+<p>Thao tác tìm đường đi ngắn nhất từ $S$ đến $u$ khá đơn giản, ta sẽ bắt đầu từ đỉnh $u$, sau đó truy vết theo mảng $trace$ ngược về $S$.</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">trace_path</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">,</span> <span class="kt">int</span> <span class="n">S</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">!=</span> <span class="n">S</span> <span class="o">&amp;&amp;</span> <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// không có đường đi</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">path</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">u</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// truy vết ngược từ u về S</span>
+        <span class="n">path</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">reverse</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">path</span><span class="p">.</span><span class="n">end</span><span class="p">());</span> <span class="c1">// cần reverse vì đường đi lúc này là từ u về S</span>
+    
+    <span class="k">return</span> <span class="n">path</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+<h2 class="editable"><a class="anchor" id="các-trường-hợp-có-chu-trình-âm" href="#các-trường-hợp-có-chu-trình-âm"></a>Các trường hợp có chu trình âm</h2>
+<p>Thuật toán Bellman-Ford có thể xử lí được thêm trường hợp nhận biết chu trình âm, cũng như nhận biết nếu không tồn tại đường đi ngắn nhất đến một đỉnh.</p>
+<h3 class="editable"><a class="anchor" id="nhận-biết-đường-đi-âm-vô-cực" href="#nhận-biết-đường-đi-âm-vô-cực"></a>Nhận biết đường đi âm vô cực</h3>
+<ul>
+<li>Nhận xét tiếp rằng, ta có thể chạy vòng quanh chu trình âm liên tục để được đường đi ngắn hơn. Như vậy thuật toán Bellman-Ford ở vòng lặp thứ $N$ trở đi vẫn sẽ liên tục tối ưu được đường đi, thay vì dừng lại ở lần thứ $N-1$.
+<ul>
+<li>Ta chỉ cần chạy thuật toán Bellman-Ford thêm một lần nữa với $N$ vòng lặp, những đỉnh nào vẫn còn tối ưu được ở lần chạy thứ hai sẽ tối ưu được mãi mãi, và đó là các đỉnh không tồn tại đường đi ngắn nhất.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Code:</strong>
+</p><pre class="highlight"><code><span class="c1">// sau khi chạy xong N-1 vòng lặp Bellman-Ford </span>
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">T</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">T</span><span class="o">++</span><span class="p">){</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">E</span> <span class="o">:</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">u</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">v</span><span class="p">;</span>
+        <span class="kt">long</span> <span class="kt">long</span> <span class="n">w</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">!=</span> <span class="n">INF</span> <span class="o">&amp;&amp;</span> <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// vẫn còn tối ưu được --&gt; âm vô cực</span>
+            <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">INF</span><span class="p">;</span>
+            <span class="n">trace</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="tìm-chu-trình-âm" href="#tìm-chu-trình-âm"></a>Tìm chu trình âm</h3>
+<p>Một số bài toán có thể yêu cầu ta tìm một chu trình âm bất kì trong đồ thị. Ta có thể chỉnh sửa thuật toán Bellman-Ford lại như sau:</p>
+<ul>
+<li>Thay vì chạy $N$ vòng lặp Bellman-Ford như trường hợp trên, ta chỉ cần chạy một vòng lặp. Như vậy là đủ để phát hiện ít nhất một đỉnh có đường đi bằng $-\infty$ (nếu có).</li>
+<li>Tiến hành truy vết: Bắt đầu từ đỉnh $u$ bất kì có đường đi bằng $-\infty$, ta sẽ truy vết theo mảng $trace$:
+<ul>
+<li>Trước hết gán $u = trace[u]$ đủ $N$ lần.
+<ul>
+<li>Mục đích của bước này là để $u$ chắc chắn thuộc chu trình âm. Ban đầu có thể đỉnh $u$ có đường đi bằng $-\infty$ nhưng chưa chắc thuộc chu trình âm. Ví dụ trường hợp sau:</li>
+</ul>
+<p><a><img src="https://i.imgur.com/PblptAC.png" />
+</a></p>
+<p>Ở đây, từ $0$ đến $1$ có độ dài đường đi ngắn nhất bằng $-\infty$, tuy nhiên đỉnh $1$ lại không thuộc chu trình âm nào.</p>
+</li>
+<li>Sau đó, $u$ sẽ thuộc một chu trình âm. Ta chỉ cần truy vết đỉnh $u$ theo mảng $trace$ cho đến khi gặp lại chính nó, sẽ được một chu trình.</li>
+</ul>
+</li>
+<li>Chu trình vừa truy vết chính là một chu trình âm của đồ thị. Lưu ý ta vẫn phải đảo ngược kết quả truy vết, vì ta đang truy vết ngược so với đồ thị gốc.</li>
+</ul>
+<pre class="highlight"><code><span class="kt">bool</span> <span class="nf">findNegativeCycle</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">D</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">negCycle</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// mảng D và trace đã được chạy qua thuật toán Bellman-Ford</span>
+    <span class="kt">int</span> <span class="n">negStart</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// đỉnh bắt đầu</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">E</span> <span class="o">:</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">u</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">v</span><span class="p">;</span>
+        <span class="kt">long</span> <span class="kt">long</span> <span class="n">w</span> <span class="o">=</span> <span class="n">E</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">!=</span> <span class="n">INF</span> <span class="o">&amp;&amp;</span> <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">INF</span><span class="p">;</span> 
+            <span class="n">trace</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+            <span class="n">negStart</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="c1">// đã tìm thấy -INF</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">negStart</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// không có chu trình âm</span>
+
+    <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">negStart</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">];</span> <span class="c1">// đưa u về chu trình âm</span>
+    <span class="p">}</span>
+
+    <span class="n">negCycle</span> <span class="o">=</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">u</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">];</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">u</span><span class="p">;</span> <span class="n">v</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+        <span class="n">negCycle</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span> <span class="c1">// truy vết một vòng</span>
+    <span class="p">}</span>
+    <span class="n">reverse</span><span class="p">(</span><span class="n">negCycle</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">negCycle</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+    
+    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="2-thuật-toán-dijkstra" href="#2-thuật-toán-dijkstra"></a>2. Thuật toán Dijkstra</h1>
+<p>Thuật toán Dijkstra dùng để giải quyết bài toán <strong>đường đi ngắn nhất một nguồn</strong> (Single-source shortest path), đồ thị <strong>trọng số không âm</strong>.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-1" href="#bài-toán-1"></a>Bài toán.</h2>
+<p>Cho một đồ thị có hướng với $N$ đỉnh (được đánh số từ $0$ đến $N-1$), $M$ cạnh có hướng, có trọng số, và một đỉnh nguồn $S$. <strong>Trọng số của tất cả các cạnh đều không âm</strong>. Yêu cầu tìm ra đường đi ngắn nhất từ đỉnh $S$ tới tất cả các đỉnh còn lại (hoặc cho biết nếu không có đường đi).</p>
+<p><strong>Sample Input</strong>
+</p><pre class="highlight"><code>7 8 0
+0 2 7
+0 1 1
+0 3 4
+2 5 8
+5 3 3
+4 5 6
+1 4 3
+2 4 3</code></pre>
+<strong>Sample Output</strong>
+<pre class="highlight"><code>0
+1
+7
+4
+4
+10
+-1</code></pre>
+<p>Hình ảnh của Test ví dụ. Ở đồ thị này, đỉnh nguồn là đỉnh $0$, đường đi ngắn nhất từ $0$ đến các đỉnh $0$ đến $5$ là $[0, 1, 7, 4, 4, 10]$. Riêng đỉnh $6$ không có đường đi đến.</p>
+<p><img src="https://i.imgur.com/UhI67bO.png" /></p>
+<h2 class="editable"><a class="anchor" id="ý-tưởng-của-thuật-toán-1" href="#ý-tưởng-của-thuật-toán-1"></a>Ý tưởng của thuật toán.</h2>
+<p>Giống như thuật toán Bellman-Ford, thuật toán Dijkstra cũng tối ưu hóa đường đi bằng cách xét các cạnh $(u, v)$, so sánh hai đường đi $S \rightarrow v$ sẵn có với đường đi $S \rightarrow u \rightarrow v$.</p>
+<p>Thuật toán hoạt động bằng cách duy trì một tập hợp các đỉnh trong đó ta đã biết <strong>chắc chắn</strong> đường đi ngắn nhất. Mỗi bước, thuật toán sẽ chọn ra một đỉnh $u$ mà chắc chắn sẽ không thể tối ưu hơn nữa, sau đó tiến hành tối ưu các đỉnh $v$ khác dựa trên các cạnh $(u, v)$ đi ra từ đỉnh $u$. Sau $N$ bước, tất cả các đỉnh đều sẽ được chọn, và mọi đường đi tìm được sẽ là ngắn nhất.</p>
+<p>Cụ thể hơn, thuật toán sẽ duy trì đường đi ngắn nhất đến tất cả các đỉnh. Ở mỗi bước, chọn đường đi $S \rightarrow u$ có tổng trọng số nhỏ nhất trong tất cả các đường đi đang được duy trì. Sau đó tiến hành tối ưu các đường đi $S \rightarrow v$ bằng cách thử kéo dài thành $S \rightarrow u\rightarrow v$ như đã mô tả trên.</p>
+<h2 class="editable"><a class="anchor" id="minh-họa-thuật-toán" href="#minh-họa-thuật-toán"></a>Minh họa thuật toán</h2>
+<p>Ta sẽ minh họa thuật toán bằng một đồ thị như hình. Định nghĩa:</p>
+<ul>
+<li>$D_u$ là đường đi ngắn nhất từ đỉnh nguồn đên đỉnh $u$ đã tìm được.</li>
+<li>$P_u$ nhận hai giá trị $true$, $false$ cho biết đỉnh $P_u$ đã được chọn để tối ưu chưa.</li>
+</ul>
+<p><strong>Đỉnh được tô đen (đỉnh 0) sẽ là đỉnh nguồn.</strong></p>
+<p><img src="https://i.imgur.com/FPDbyq9.png" /></p>
+<p>Ban đầu, $D = [0, \infty, \infty, \infty]$, $P = [false, false, false, false]$</p>
+<ul>
+<li>Bước 1: Thuật toán sẽ chọn đỉnh $0$, vì $D_0 = 0$ là nhỏ nhất thỏa mãn $P_0 = false$. Tiến hành tối ưu các cạnh đi ra:
+<ul>
+<li>Cạnh $(0, 2)$: cập nhật $D_2 = min(D_2, D_0 + W_{0, 2}) = min(\infty, 0+1) = 1$</li>
+<li>Cạnh $(0, 3)$: cập nhật $D_3 = min(D_3, D_0 + W_{0, 3}) = min(\infty, 0+4) = 4$</li>
+</ul>
+</li>
+</ul>
+<p>Sau bước này, $D = [0, \infty, 1, 4]$, $P = [true, false, false, false]$</p>
+<ul>
+<li>Bước 2: thuật toán sẽ chọn ra đỉnh $2$, có $D_2 = 1$ là nhỏ nhất thỏa mãn $P_2 = false$. Tiến hành tối ưu các cạnh đi ra:
+<ul>
+<li>Cạnh $(2, 1)$: cập nhật $D_1 = min(D_1, D_2 + W_{2, 1}) = min(\infty, 1+3) = 4$</li>
+<li>Cạnh $(2, 3)$: cập nhật $D_3 = min(D_3, D_2 + W_{2, 3}) = min(4, 1+2) = 3$</li>
+</ul>
+</li>
+</ul>
+<p>Sau bước này, $D = [0, 4, 1, 3]$, $P = [true, false, true, false]$</p>
+<ul>
+<li>Bước 3: thuật toán sẽ chọn ra đỉnh $3$, có $D_3 = 1$ là nhỏ nhất thỏa mãn $P_3 = false$. Tiến hành tối ưu các cạnh đi ra:
+<ul>
+<li>Cạnh $(3, 1)$: cập nhật $D_1 = min(D_1, D_3 + W_{3, 1}) = min(4, 3+2) = 4$</li>
+</ul>
+</li>
+</ul>
+<p>Sau bước này, $D = [0, 4, 1, 3]$, $P = [true, false, true, true]$</p>
+<ul>
+<li>Bước 4: thuật toán sẽ chọn đỉnh $1$. Không có cạnh nào đi ra.</li>
+</ul>
+<p>Đến đây, tất cả các đỉnh đều đã được đánh dấu. Thuật toán kết thúc. Đường đi ngắn nhất tìm được từ đỉnh $0$ là $D = [0, 4, 1, 3]$.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt-1" href="#cài-đặt-1"></a>Cài đặt</h2>
+<p>Ở thuật toán này, ta sẽ lưu đồ thị dưới dạng <strong>danh sách kề</strong>. Ta định nghĩa như sau:</p>
+<ul>
+<li>$D[u]$ là đường đi ngắn nhất từ $s\rightarrow u$. Ban đầu khởi tạo $D[u] = \infty$ với mọi $u$, riêng $D[s] = 0$.
+<ul>
+<li>Cũng như thuật toán Bellman-Ford, ta có thể định nghĩa thêm mảng $trace$ để truy vết đường đi nếu cần.</li>
+</ul>
+</li>
+<li>$W[u,v]$ là trọng số cạnh trên đường đi từ $u\rightarrow v$.</li>
+<li>$P[u]$ là mảng đánh dấu các đỉnh $u$ đã được xử lí chưa. Ban đầu tất cả các giá trị đều là <strong>false</strong>.</li>
+</ul>
+<p>Ta sẽ lặp $N$ lần quá trình sau:</p>
+<ul>
+<li>Tìm đỉnh $u$ có $D[u]$ nhỏ nhất và $P[u] = false$.</li>
+<li>Sau khi tìm được đỉnh $u$, ta xét các đỉnh $v$ kề với đỉnh $u$ và tiến hành tối ưu hóa $D[v]$: nếu $D[v] &gt; D[u] + W[u,v]$ thì $D[v] = D[u] + W[u,v]$.
+<ul>
+<li>Nếu việc tối ưu hóa diễn ra, ta sẽ cập nhật $trace[v] = u$.</li>
+</ul>
+</li>
+<li>Đánh dấu $P[u] = true$, nghĩa là đỉnh $u$ đã được xử lí xong</li>
+</ul>
+<p><strong>Độ phức tạp thuật toán</strong>: Ta có $N$ lần lặp:</p>
+<ul>
+<li>Bước đầu tiên có độ phức tạp $O(N)$ <strong>mỗi lần lặp</strong>.</li>
+<li>Bước thứ hai có <strong>tổng độ phức tạp $O(M)$ qua tất cả các lần lặp</strong>
+</li>
+</ul>
+<p>Như vậy độ phức tạp của cách cài đặt cơ bản sẽ là $O(N^2 + M)$.</p>
+<p><strong>Code:</strong>
+</p><pre class="highlight"><code><span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">INF</span> <span class="o">=</span> <span class="mi">2000000000000000000LL</span><span class="p">;</span>
+<span class="k">struct</span> <span class="nc">Edge</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">v</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">w</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="kt">void</span> <span class="nf">dijkstra</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">S</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;&gt;</span> <span class="n">E</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">D</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">D</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">INF</span><span class="p">);</span>
+    <span class="n">trace</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">D</span><span class="p">[</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">uBest</span><span class="p">;</span> <span class="c1">// tìm đỉnh u chưa dùng, có khoảng cách nhỏ nhất</span>
+        <span class="kt">long</span> <span class="kt">long</span> <span class="n">Max</span> <span class="o">=</span> <span class="n">INF</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">u</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">u</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Max</span> <span class="o">&amp;&amp;</span> <span class="n">P</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">uBest</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+                <span class="n">Max</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        
+        <span class="c1">// cải tiến các đường đi qua u</span>
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">uBest</span><span class="p">;</span>
+        <span class="n">P</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">x</span> <span class="o">:</span> <span class="n">E</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">v</span><span class="p">;</span>
+            <span class="kt">long</span> <span class="kt">long</span> <span class="n">w</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">;</span>
+                <span class="n">trace</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="cải-tiến-đối-với-đồ-thị-thưa" href="#cải-tiến-đối-với-đồ-thị-thưa"></a>Cải tiến đối với đồ thị thưa</h2>
+<ul>
+<li>Nhận xét rằng bước đầu tiên: "Tìm đỉnh $u$ có $D_u$ nhỏ nhất và $P_u = false$", có thể được cải tiến. Ta có thể sử dụng cấu trúc dữ liệu <a href="https://vnoi.info/wiki/translate/wcipeg/Binary-Heap.md">Heap</a> (cụ thể là Min Heap) hoặc cây nhị phân tìm kiếm để cải tiến bước này.
+<ul>
+<li>Mỗi lần tối ưu hóa $D_v$, ta đẩy cặp ${D_v, v}$ vào trong Heap.</li>
+<li>Để tìm đỉnh có $D_u$ nhỏ nhất, ta chỉ cần liên tục lấy phần tử trên cùng trong Heap ra, cho đến khi gặp đỉnh $u$ thỏa mãn $P_u = false$.</li>
+</ul>
+</li>
+<li>Mỗi lần tối ưu $D_v$, ta phải push vào Heap một lần. Với mỗi lần push vào trong Heap, ta đều phải pop ra lại một lần. Do có tối đa $O(M)$ lần tối ưu, độ phức tạp của thuật toán là $O(MlogN)$.</li>
+</ul>
+<p>Độ phức tạp sau khi cải tiến: $O(MlogN)$. <strong>Lưu ý rằng với $M$ lớn thì độ phức tạp này không tốt hơn cài đặt cơ bản.</strong> Chứng minh như sau:</p>
+<ul>
+<li>Ta có độ phức tạp của hai cách cài đặt:
+<ul>
+<li>Cách cài đặt cơ bản: $O(N^2 + M)$.</li>
+<li>Cách cài đặt cải tiến: $O(MlogN)$.</li>
+</ul>
+</li>
+<li>Số lượng cạnh $M$ trong đơn đồ thị không vượt quá $N^2$, như vậy độ phức tạp của cách cơ bản có thể được viết đơn giản thành $O(N^2)$.</li>
+<li>Để cách cài đặt cải tiến tốt hơn, ta cần $MlogN &lt; N^2$ suy ra $M &lt; N^2/logN$.
+<ul>
+<li>Ví dụ: đối với $N = 10^5$, ta cần $M &gt; 6 \cdot 10^8$ để cách cài đặt cơ bản tốt hơn cách cài đặt cải tiến. Thực tế trong lập trình thi đấu khó có đồ thị nào có số cạnh lớn như vậy. Vì thế nhìn chung khi $N$ lớn thì thuật $O(MlogN)$ luôn tốt hơn.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Code:</strong>
+</p><pre class="highlight"><code><span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">INF</span> <span class="o">=</span> <span class="mi">2000000000000000000LL</span><span class="p">;</span>
+<span class="k">struct</span> <span class="nc">Edge</span><span class="p">{</span><span class="c1">// kiểu dữ liệu tự tạo để lưu thông số của một cạnh.</span>
+    <span class="kt">int</span> <span class="n">v</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">w</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">struct</span> <span class="nc">Node</span><span class="p">{</span><span class="c1">// kiểu dữ liệu để lưu đỉnh u và độ dài của đường đi ngắn nhất từ s đến u.</span>
+    <span class="kt">int</span> <span class="n">u</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">Dist_u</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">struct</span> <span class="nc">cmp</span><span class="p">{</span>
+    <span class="kt">bool</span> <span class="k">operator</span><span class="p">()</span> <span class="p">(</span><span class="n">Node</span> <span class="n">a</span><span class="p">,</span> <span class="n">Node</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">Dist_u</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">.</span><span class="n">Dist_u</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="kt">void</span> <span class="nf">dijkstraSparse</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">s</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">E</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">D</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">D</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">INF</span><span class="p">);</span>
+    <span class="n">trace</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="n">P</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    
+    <span class="n">D</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">priority_queue</span><span class="o">&lt;</span><span class="n">Node</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">cmp</span><span class="o">&gt;</span> <span class="n">h</span><span class="p">;</span> <span class="c1">// hàng đợi ưu tiên, sắp xếp theo dist[u] nhỏ nhất trước</span>
+    <span class="n">h</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">s</span><span class="p">,</span> <span class="n">D</span><span class="p">[</span><span class="n">s</span><span class="p">]});</span>
+    
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">h</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">Node</span> <span class="n">x</span> <span class="o">=</span> <span class="n">h</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">h</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        
+        <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">u</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">==</span> <span class="nb">true</span><span class="p">)</span> <span class="c1">// Đỉnh u đã được chọn trước đó, bỏ qua</span>
+            <span class="k">continue</span><span class="p">;</span>
+            
+        <span class="n">P</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> <span class="c1">// Đánh dấu đỉnh u đã được chọn</span>
+        <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">e</span> <span class="o">:</span> <span class="n">E</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">v</span><span class="p">;</span>
+            <span class="kt">long</span> <span class="kt">long</span> <span class="n">w</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">w</span><span class="p">;</span> 
+            
+            <span class="k">if</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">;</span>
+                <span class="n">h</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">v</span><span class="p">,</span> <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">]});</span>
+                <span class="n">trace</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="tìm-lại-đường-đi-ngắn-nhất-1" href="#tìm-lại-đường-đi-ngắn-nhất-1"></a>Tìm lại đường đi ngắn nhất</h2>
+<p>Cũng giống như thuật toán Bellman-Ford, để tìm lại đường đi ngắn nhất từ $S$ về $u$, ta sẽ bắt đầu từ đỉnh $u$, sau đó truy vết theo mảng $trace$ ngược về $S$.</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">trace_path</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">,</span> <span class="kt">int</span> <span class="n">S</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">!=</span> <span class="n">S</span> <span class="o">&amp;&amp;</span> <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// không có đường đi</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">path</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">u</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// truy vết ngược từ u về S</span>
+        <span class="n">path</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">reverse</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">path</span><span class="p">.</span><span class="n">end</span><span class="p">());</span> <span class="c1">// cần reverse vì đường đi lúc này là từ u về S</span>
+    
+    <span class="k">return</span> <span class="n">path</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+<h1 class="editable"><a class="anchor" id="3-thuật-toán-floyd-warshall" href="#3-thuật-toán-floyd-warshall"></a>3. Thuật toán Floyd-Warshall</h1>
+<p>Thuật toán Floyd-Warshll dùng để giải quyết bài toán <strong>đường đi ngắn nhất mọi cặp đỉnh</strong> (All-pairs shortest path), đồ thị <strong>có thể có trọng số âm</strong>.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-2" href="#bài-toán-2"></a>Bài toán</h2>
+<p>Cho đồ thị gồm $N$ đỉnh và một ma trận trọng số $W$, trong đó ô $(i,j)$ cho biết rằng có một đường đi trực tiếp từ $i\rightarrow j$ với trọng số là $W_{i, j}$. Yêu cầu tìm đường đi ngắn nhất giữa <strong>mọi cặp đỉnh</strong> trên đồ thị.</p>
+<p>Giới hạn bài toán: $1 \leq N \leq 100$</p>
+<p><strong>Input</strong>: Dòng đầu tiên gồm số nguyên dương $N$, $N$ dòng tiếp theo, mỗi dòng gồm $N$ số biểu diễn một ma trận trong đó ô $(i,j)$ cho biết đường đi trực tiếp từ $i\rightarrow j$ có trọng số là $W[i, j]$.</p>
+<p><strong>Output</strong>: Ma trận kết quả trong đó giá trị ô $(i,j)$ là đường đi ngắn nhất từ $i\rightarrow j$.</p>
+<p><strong>Sample Input</strong>
+</p><pre class="highlight"><code>5
+0 4 2 1 6
+7 0 1 2 4
+2 3 0 1 2
+4 5 5 0 1
+6 8 7 3 0</code></pre>
+<strong>Sample Output</strong>
+<pre class="highlight"><code>0 4 2 1 2
+3 0 1 2 3
+2 3 0 1 2
+4 5 5 0 1
+6 8 7 3 0</code></pre>
+<h2 class="editable"><a class="anchor" id="ý-tưởng-của-thuật-toán-2" href="#ý-tưởng-của-thuật-toán-2"></a>Ý tưởng của thuật toán.</h2>
+<p>Ý tưởng của thuật toán này là: "Liệu chúng ta có thể chèn một đỉnh $k$ vào đường đi ngắn nhất giữa 2 đỉnh $u$ và $v$?".</p>
+<ul>
+<li>Ví dụ như có một đường đi ngắn nhất từ $0 \rightarrow 4$ như sau: $0\rightarrow 1\rightarrow 2\rightarrow 3 \rightarrow 4$. Vậy việc tính đường đi ngắn nhất từ $0\rightarrow 4$ hoàn toàn có thể được chia thành tính đường đi ngắn nhất từ $0\rightarrow 2$ sau đó cộng với đường đi ngắn nhất từ $2\rightarrow 4$. Tương tự thế đường đi ngắn nhất từ $0\rightarrow 2$ và $2\rightarrow 4$ lại tiếp tực được phân hoạch thành những đường đi ngắn nhất khác đơn giản hơn và tối ưu hơn.</li>
+</ul>
+<p>Ta nhận thấy có một cấu trúc đệ quy, chia nhỏ bài toán ở đây. Ý tưởng này cho phép chúng ta thực hiện một thuật toán mang hương vị quy hoạch động như sau:</p>
+<ul>
+<li>Gọi $D(u, v, k)$ là đường đi ngắn nhất, trong đó ta chỉ được đi qua $k$ đỉnh đầu tiên (có số thứ tự từ $0$ đến $k-1$), ngoại trừ chính $u$ và $v$. Ta có công thức truy hồi:
+<ul>
+<li>$D(u, v, 0) = W_{u, v}$ (không được dùng đỉnh nào ngoài chính $u, v$).</li>
+<li>$D(u, u, k) = 0$</li>
+<li>$D(u, v, k) =$ min của 2 trường hợp:
+<ul>
+<li>$D(u, v, k-1)$: ta không dùng đỉnh $k$ làm trung gian, giữ nguyên đường đi cũ.</li>
+<li>$D(u, k, k-1) + D(k, v, k-1)$: ta dùng đỉnh $k$ làm trung gian, từ đường đi $u \rightarrow v$ thành đường đi $u \rightarrow k \rightarrow v$.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Đến đây ta có thể sử dụng trực tiếp công thức quy hoạch động để cài đặt thuật toán. Tuy nhiên, để đảm bảo bộ nhớ, ta có thể tính các $D(u, v, k)$ với $k$ lần lượt từ $1$ đến $N$, và khi cài đặt chỉ cần lưu lại $D(u, v)$.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt-2" href="#cài-đặt-2"></a>Cài đặt</h2>
+<ul>
+<li>
+<p>Định nghĩa:</p>
+<ul>
+<li>$W[u, v]$ là giá trị đường đi trực tiếp từ $u\rightarrow v$.</li>
+<li>$D[u, v]$ là giá trị đường đi ngắn nhất từ $u\rightarrow v$.</li>
+<li>$trace[u, v]$ là mảng truy vết đường đi ngắn nhất từ $u\rightarrow v$</li>
+</ul>
+</li>
+<li>Đồ thị sẽ được lưu dưới dạng <strong>ma trận kề</strong>. Ban đầu sẽ khởi tạo mọi $D[u, v] = W[u, v]$ vì khi chưa tối ưu gì thì đường đi trực tiếp luôn là đường đi ngắn nhất.
+<ul>
+<li>$trace[u, v]$ sẽ khởi tạo bằng $u$ với mọi cặp $u, v$.</li>
+<li>Nếu không có cạnh nối giữa $u$ và $v$, coi như $W[u, v] = \infty$ .</li>
+</ul>
+</li>
+<li>Thuật toán chỉ cần một vòng lặp xét mọi đỉnh $k$ như một đỉnh trung gian. Tiếp theo đến là 2 vòng lặp $u$, $v$, có ý nghĩa thử chèn đỉnh $k$ vào giữa đường đi từ $u$ đến $v$.
+<ul>
+<li>Nếu như $D[u, v]$ được tối ưu bằng đỉnh $k$, ta cập nhật thêm $trace[u, v] = trace[k, v]$</li>
+</ul>
+</li>
+<li>Độ phức tạp của thuật toán là $O(N^3)$.</li>
+</ul>
+<p><strong>Code:</strong>
+Thuật toán có thể được cài đặt rất dễ dàng chỉ với 3 vòng lặp:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">init_trace</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">trace</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">u</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">u</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">v</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">floydWarshall</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">w</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">D</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">w</span><span class="p">;</span>
+    <span class="n">init_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">);</span> <span class="c1">// nếu cần dò đường đi</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">u</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">u</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">v</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">D</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">v</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">D</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">v</span><span class="p">];</span>
+                    <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">v</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="tìm-lại-đường-đi-ngắn-nhất-2" href="#tìm-lại-đường-đi-ngắn-nhất-2"></a>Tìm lại đường đi ngắn nhất</h2>
+<p>Giống như hai thuật toán Bellman-Ford và Dijkstra, để tìm đường đi từ $u$ đến $v$, ta sẽ bắt đầu từ $v$, truy ngược về $u$ theo mảng trace đã tìm được.</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">trace_path</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="o">&amp;</span><span class="n">trace</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">path</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// truy vết ngược từ v về u</span>
+        <span class="n">path</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">path</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+    
+    <span class="n">reverse</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">path</span><span class="p">.</span><span class="n">end</span><span class="p">());</span> <span class="c1">// cần reverse vì đường đi từ v ngược về u</span>
+    
+    <span class="k">return</span> <span class="n">path</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+<h1 class="editable"><a class="anchor" id="4-lưu-ý" href="#4-lưu-ý"></a>4. Lưu ý</h1>
+<ul>
+<li>Bảng so sánh các thuật toán được đề cập:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th> </th>
+<th>Bellman-Ford</th>
+<th>Dijkstra (cơ bản)</th>
+<th>Dijkstra (trên đồ thị thưa)</th>
+<th>Floyd-Warshall</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bài toán giải quyết</td>
+<td>Đường đi ngắn nhất <strong>một nguồn</strong>
+</td>
+<td>Đường đi ngắn nhất <strong>một nguồn</strong>
+</td>
+<td>Đường đi ngắn nhất <strong>một nguồn</strong>
+</td>
+<td>Đường đi ngắn nhất <strong>mọi cặp đỉnh</strong>
+</td>
+</tr>
+<tr>
+<td>Độ phức tạp</td>
+<td>$O(N*M)$</td>
+<td>$O(N^2+M)$</td>
+<td>$O(MlogN)$</td>
+<td>$O(N^3)$</td>
+</tr>
+<tr>
+<td>Sử dụng được cho trọng số âm</td>
+<td>Có</td>
+<td>Không</td>
+<td>Không</td>
+<td>Có</td>
+</tr>
+<tr>
+<td>Tìm được chu trình âm</td>
+<td>Có</td>
+<td>Không</td>
+<td>Không</td>
+<td>Không</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Trong trường hợp có chu trình âm, thuật toán Floyd-Warshall có thể phải tính toán đến những giá trị rất nhỏ (về phía số âm), đủ để gây ra hiện tượng tràn số (thậm chí với $N$ tương đối nhỏ). Cần phải chú ý đặc biệt đến trường hợp này khi cài đặt.
+<ul>
+<li>Một cách thường dùng để giải quyết trường hợp này là gán <code>D[u][v] = max(D[u][v], -INF)</code> ngay sau mỗi lần tối ưu, chặn không cho $D[u, v]$ xuống dưới hằng số âm vô tận.</li>
+</ul>
+</li>
+<li>
+<p>Thuật toán Floyd-Warshall có thứ tự 3 vòng lặp là $k \rightarrow u \rightarrow v$ thay vì $u\rightarrow v\rightarrow k$ (đỉnh trung gian phải được đặt ở vòng lặp ngoài cùng), đây là một nhầm lẫn tương đối phổ biến khi cài đặt.</p>
+</li>
+<li>
+<p>Heap không phải là cấu trúc dữ liệu duy nhất có thể sử dụng khi cài đặt Dijkstra dành cho đồ thị thưa. Ta có thể sử dụng bất cứ cấu trúc dữ liệu nào hỗ trợ các thao tác <em>"xóa khỏi tập hợp"</em>, <em>"cập nhật phần tử trong tập hợp"</em>, <em>"tìm phần tử nhỏ nhất trong tập hợp"</em>. Thực tế cây nhị phân tìm kiếm (<code>std::set</code> trong C++) cũng là một lựa chọn phổ biến khi cài đặt thuật toán này.</p>
+</li>
+<li>Với đồ thị thưa, không có trọng số âm, thay vì sử dụng thuật toán Floyd, ta có thể chạy thuật toán Dijkstra cải tiến $N$ lần với $N$ đỉnh nguồn để tìm đường đi ngắn nhất giữa mọi cặp đỉnh, với độ phức tạp tốt hơn thuật toán Floyd:
+<ul>
+<li>Ta có độ phức tạp của hai thuật toán:
+<ul>
+<li>Dijkstra cải tiến, $N$ lần: $O(N*MlogN)$</li>
+<li>Floyd-Warshall: $O(N^3)$</li>
+</ul>
+</li>
+<li>Như vậy, để Dijkstra $N$ lần tốt hơn, ta cần có $N*MlogN &lt; N^3$ suy ra $M &lt; N^2/logN$ (tương tự như so sánh giữa hai cách cài đặt thuật Dijkstra).</li>
+</ul>
+</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="bài-tập-vận-dụng" href="#bài-tập-vận-dụng"></a>Bài tập vận dụng.</h1>
+<p>Thuật toán Bellman-Ford:</p>
+<ul>
+<li><a href="https://open.kattis.com/problems/shortestpath3">Kattis - shortestpath3</a></li>
+<li><a href="https://cses.fi/problemset/task/1673">CSES - High Score</a></li>
+<li>
+<a href="https://cses.fi/problemset/task/1197">CSES - Cycle Finding</a> (tìm chu trình âm)</li>
+<li><a href="https://open.kattis.com/problems/xyzzy">Kattis - xyzzy</a></li>
+</ul>
+<p>Thuật toán Dijkstra:</p>
+<ul>
+<li><a href="https://open.kattis.com/problems/shortestpath1">Kattis - shortestpath1</a></li>
+<li>
+<a href="https://codeforces.com/problemset/problem/20/C">Codeforces - Dijsktra?</a> (truy vết đường đi)</li>
+<li><a href="https://cses.fi/problemset/task/1195">CSES - Flight Discount</a></li>
+<li><a href="https://codeforces.com/problemset/problem/1433/G">Codeforces - Reducing Delivery Cost</a></li>
+<li><a href="https://oj.vnoi.info/problems/?type=24&amp;point_start=&amp;point_end=">Các bài theo tag trên VNOJ</a></li>
+</ul>
+<p>Thuật toán Floyd-Warshall:</p>
+<ul>
+<li>
+<a href="https://cses.fi/problemset/task/1672">CSES - Shortest Route II</a> (trọng số không âm)</li>
+<li>
+<a href="https://open.kattis.com/problems/allpairspath">Kattis - allpairspath</a> (trọng số có thể âm)</li>
+<li><a href="https://codeforces.com/problemset/problem/295/B">Codeforces - Greg and Graph</a></li>
+<li><a href="https://oj.vnoi.info/problems/?type=56&amp;point_start=&amp;point_end=">Các bài theo tag trên VNOJ</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

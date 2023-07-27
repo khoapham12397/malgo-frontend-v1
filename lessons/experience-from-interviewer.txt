@@ -1,0 +1,161 @@
+<div id="wiki-content">
+<h1 class="pt-4">Kinh nghiệm phỏng vấn - Góc nhìn từ người phỏng vấn</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/interview/">interview</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả</strong>: Nguyễn <em>RR</em> Thành Trung</p>
+<h1 class="editable"><a class="anchor" id="mở-đầu" href="#mở-đầu"></a>Mở đầu</h1>
+<p>Bạn đã bao giờ bước vào một cuộc phỏng vấn mà không biết phải chuẩn bị gì? Bạn đã bao giờ phỏng vấn xong, nghĩ mình trả lời cũng ổn, nhưng vẫn bị đánh trượt? Trong bài viết này, mình muốn chia sẻ về việc phỏng vấn từ góc nhìn của người <em>phía bên kia chiến tuyến</em>.</p>
+<p>Ở Garena Singapore, mình được làm nhiệm vụ phỏng vấn các ứng viên nộp đơn vào vị trí Software Engineer.</p>
+<p>Quy trình phỏng vấn của Garena có thể nói là khá đơn giản, sau khi hồ sơ qua được vòng duyệt hồ sơ, thí sinh phải trải qua:</p>
+<ul>
+<li>2 vòng phỏng vấn kiến thức cơ bản trong khoa học máy tính như thuật toán, kĩ năng code, hệ điều hành, mạng máy tính, database, …
+<ul>
+<li>Trong thời gian mình làm ở Garena, công ty có phỏng vấn rất nhiều người từ Việt Nam qua. Mình thường sẽ phỏng vấn những thí sinh này qua Skype bằng tiếng Việt. Vòng còn lại sẽ phỏng vấn bằng tiếng Anh. Quan điểm của công ty mình là kiến thức và kĩ năng quan trọng hơn ngôn ngữ, nên tiếng Anh của bạn kém 1 chút cũng không sao (miễn có thể hiểu nhau là được). Điều này hoàn toàn khác với một số công ty như Google.</li>
+<li>Vì phỏng vấn qua Skype, thí sinh ngồi phỏng vấn qua máy tính, và code luôn trực tiếp qua online editor.</li>
+</ul>
+</li>
+<li>Nếu vị trí có tính chất đặc biệt như lập trình Android / iOS, frontend, thì thí sinh sẽ phải trải qua thêm 1 vòng phỏng vấn nữa, hỏi chuyên sâu về kiến thức cần biết của vị trí đó.</li>
+</ul>
+<p>Chú ý rằng trong bài viết này, mình chỉ chia sẻ quan điểm của cá nhân mình về việc phỏng vấn. Nó không phản ánh quan điểm của Garena và có thể không đúng nếu bạn phỏng vấn Garena với một người phỏng vấn khác.</p>
+<h1 class="editable"><a class="anchor" id="mục-đích-phỏng-vấn" href="#mục-đích-phỏng-vấn"></a>Mục đích phỏng vấn</h1>
+<p>Theo quan điểm của mình, một cuộc phỏng vấn là một cuộc tìm hiểu lẫn nhau của ứng viên và công ty:</p>
+<ul>
+<li>Trong suốt quá trình phỏng vấn, người phỏng vấn sẽ cố gắng tìm hiểu kiến thức, kĩ năng cũng như tính cách của bạn, để xem có phù hợp với công ty hay không. Dù bạn có giỏi nhưng tính cách không phù hợp thì cũng chắc chắn không được nhận.</li>
+<li>Ngược lại, là ứng viên, bạn cũng cần tìm hiểu công ty. Mình thường đánh giá rất thấp những ứng viên chỉ biết trả lời những gì được hỏi, và không có chút gì muốn tìm hiểu về công ty.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="nội-dung-phỏng-vấn" href="#nội-dung-phỏng-vấn"></a>Nội dung phỏng vấn</h1>
+<p>Như đã nói ở trên, nội dung phỏng vấn gồm rất nhiều phần:</p>
+<ul>
+<li>Thuật toán</li>
+<li>Kĩ năng code</li>
+<li>Hệ điều hành</li>
+<li>Mạng máy tính</li>
+<li>Database</li>
+</ul>
+<p>Tùy theo người phỏng vấn, họ sẽ hỏi các phần ở các độ sâu khác nhau, tuy nhiên thuật toán và kĩ năng code thường là phần quan trọng nhất. Cá nhân mình thì chỉ giỏi về thuật toán và code, nên mình thường chỉ hỏi tập trung vào 2 phần đó, và các phần khác mình thường hỏi khá đơn giản.</p>
+<h2 class="editable"><a class="anchor" id="thuật-toán-và-kĩ-năng-code" href="#thuật-toán-và-kĩ-năng-code"></a>Thuật toán và Kĩ năng code</h2>
+<p>Thông thường, với câu hỏi về thuật toán, mình sẽ nhìn vào Resume của ứng viên để chọn câu hỏi. Thường sau khi nhìn hồ sơ mình chia thành 3 nhóm:</p>
+<ol>
+<li>Nhóm chưa từng tham gia Competitive Programming</li>
+<li>Nhóm đã từng tham gia Competitive Programming: đã từng thi những giải như HSG cấp tỉnh, quốc gia hoặc Tin học trẻ</li>
+<li>Nhóm có rất nhiều kinh nghiệm Competitive Programming: thường là mình đã từng nghe tên hoặc đã biết.</li>
+</ol>
+<p>Với 3 nhóm, độ khó câu hỏi cũng như yêu cầu của mình sẽ khác nhau.</p>
+<h3 class="editable"><a class="anchor" id="ai-aj-s" href="#ai-aj-s"></a>Ai + Aj = S</h3>
+<p>Với nhóm 1 và 2 (và thỉnh thoảng là nhóm 3), mình hỏi cùng 1 câu hỏi như sau:</p>
+<blockquote>
+<p>Cho mảng A gồm N phần tử và một số nguyên S. Đếm số cặp chỉ số (i, j) mà A(i) + A(j) = S
+Ví dụ:
+A = [1, 5, 2, 4, 3]
+S = 6
+–&gt; code của bạn cần trả lại 2</p>
+</blockquote>
+<p>Sau khi nghe xong câu hỏi thì thường bạn sẽ phải nói cho mình cách làm, sau khi mình thấy hợp lý thì bạn có thể bắt đầu code. Mình chọn câu hỏi này vì nó có nhiều cách làm:</p>
+<p><strong>1. Cách $O(N^2)$</strong></p>
+<p>Cách hiển nhiên nhất $O(N^2)$: Dùng 2 vòng <code>for</code> để đếm. Đây là cách cơ bản nhất và ứng viên buộc phải trả lời được. Cài đặt cũng rất đơn giản như sau:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">S</span><span class="p">)</span>
+      <span class="n">result</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span></code></pre>
+<p>Chú ý vòng <code>for</code> bên trong chạy từ <code>i+1</code> để tránh đếm trùng. Điều này tưởng như rất đơn giản nhưng nhiều thí sinh thuộc nhóm 1 không làm được (các bạn thường <code>for</code> từ 0 và không xử lý được khi thấy đếm bị trùng).</p>
+<p><strong>2. Cách $O(N * logN)$</strong></p>
+<p>Một cách cài đặt "trâu bò" hơn là $O(N * logN)$:</p>
+<p>Sắp xếp lại rồi với mỗi $A_i$, chặt nhị phân để đếm số lượng giá trị $j$. Cách này có nhược điểm là dễ bị đếm trùng. Để khắc phục thì có 2 cách:</p>
+<ul>
+<li>Chặt nhị phân 2 lần, lần đầu tìm vị trí đầu tiên của $j$, lần 2 tìm vị trí cuối cùng của $j$.</li>
+<li>Rời rạc hóa.</li>
+</ul>
+<p>Mình nhận thấy 1 số bạn trong nhóm 2 đi theo hướng này, nhưng mình không đánh giá cao vì nó phức tạp hơn cách 3 ở dưới. Nhưng tất nhiên nếu bạn cài đặt tốt và đơn giản thì không sao cả.</p>
+<p>Khi ứng viên trả lời theo hướng này, thường (tùy theo cảm hứng của mình lúc phỏng vấn), mình có thể hỏi thêm:</p>
+<ul>
+<li>Bạn biết những thuật toán <code>sort</code> nào?</li>
+<li>Ngôn ngữ lập trình bạn đang dùng cài đặt thuật toán <code>sort</code> nào?</li>
+<li>Bạn có thể tự cài đặt 1 thuật toán <code>sort</code> với độ phức tạp $O(N * logN)$ không?</li>
+</ul>
+<p><strong>3. Cách $O(N)$</strong></p>
+<p>Cách "chuẩn" $O(N)$ là sử dụng <a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/hash-table">hash table</a> hoặc <code>map</code> trong C++ để lưu lại các phần tử của dãy, vừa lưu vừa đếm:</p>
+<pre class="highlight"><code><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">count</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">result</span> <span class="o">+=</span> <span class="n">count</span><span class="p">[</span><span class="n">S</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]];</span>
+  <span class="n">count</span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Thường nếu các bạn chỉ nghĩ ra cách 1, sau khi bạn cài đặt xong, nếu thấy còn đủ thời gian mình sẽ gợi ý để làm được cách này.</p>
+<p>Nếu ứng viên trả lời theo hướng này, mình cũng có thể hỏi thêm:</p>
+<ul>
+<li>Bạn có biết hash table được cài đặt thế nào không?</li>
+<li>Bạn có thể tự cài đặt hash table không?</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="đánh-giá" href="#đánh-giá"></a>Đánh giá</h2>
+<p>Khi ứng viên trả lời, mình đánh giá theo nhiều tiêu chí:</p>
+<ul>
+<li>Giải thích thuật toán: Bạn có diễn đạt cho mình hiểu được không?</li>
+<li>Cẩn thận: Bạn có tránh được các trường hợp lỗi không (chẳng hạn nếu làm theo cách 2 thì dễ bị đếm lặp và bạn có nhận ra không?).</li>
+<li>Cài đặt: Cách cài đặt của bạn có dễ hiểu không? Có xét đủ hết các trường hợp hay không?</li>
+<li>Debug: Sau khi code xong bạn có thể chạy thử code của mình. Nếu code sai, mình sẽ quan sát xem bạn debug như nào? Kĩ năng debug có tốt không?</li>
+</ul>
+<p>Mình dùng đi dùng lại 1 câu hỏi vì như vậy mình sẽ nắm được rất rõ các cách trả lời khác nhau và các lỗi bạn đã gặp phải. Tuy nhiên tùy ngẫu hứng mình sẽ có thể hỏi thêm các chi tiết khác nhau, ví dụ:</p>
+<ul>
+<li>Nếu bạn dùng C++: Nếu dùng hàm <code>sort</code>, bạn có biết <code>sort</code> của C++ dùng thuật toán gì không? Nếu dùng <code>vector</code>, bạn có biết độ phức tạp mỗi thao tác là bao nhiêu không?</li>
+<li>Nếu bạn dùng Python: Bạn có biết trong Python 2 có hàm <code>range</code> và <code>xrange</code> không? Bạn có biết nó khác gì nhau không?</li>
+</ul>
+<p>Thường những câu hỏi này mình hỏi khá ngẫu hứng và trong trường hợp không trả lời được, bạn cũng không cần lo lắng.</p>
+<h3 class="editable"><a class="anchor" id="count-palindrome" href="#count-palindrome"></a>Count Palindrome</h3>
+<p>Với nhóm 3, thường mình sẽ hỏi câu như sau:</p>
+<blockquote>
+<p>Cho 1 xâu S. Đếm số substring của S là Palindrome</p>
+</blockquote>
+<p>Bài này cũng có 2 cách làm chính với độ phức tạp $O(N^2)$:</p>
+<ol>
+<li>Quy hoạch động</li>
+<li>Xét tâm của Palindrome và duyệt sang 2 bên.</li>
+</ol>
+<p>Thỉnh thoảng, với nhóm 1 hoặc 2, nếu bạn trả lời câu trước quá kém và mình thấy còn thời gian, mình sẽ cho "gỡ gạc" bằng câu này, tuy nhiên mình chỉ yêu cầu làm cách duyệt toàn bộ với độ phức tạp $O(N^3)$ là đủ.</p>
+<p>Đánh giá của mình cũng dựa trên những tiêu chí như phần trên.</p>
+<h2 class="editable"><a class="anchor" id="hệ-điều-hành" href="#hệ-điều-hành"></a>Hệ điều hành</h2>
+<p>Phần này mình thường không hỏi nhiều. Mình thường sẽ bắt đầu bằng câu hỏi:</p>
+<blockquote>
+<p>Thread và Process giống và khác nhau thế nào?</p>
+</blockquote>
+<p>Sau đó, tùy theo cách bạn trả lời hoặc tâm trạng của mình lúc đó, mình có thể hỏi thêm 1 số phần khác như:</p>
+<ul>
+<li>Thread Communication và Process Communication</li>
+<li>Lock, Semaphore</li>
+<li>Context Switch</li>
+</ul>
+<p>Mình không giỏi về hệ điều hành nên thường yêu cầu không cao. Bạn trả lời được những ý cơ bản là đạt yêu cầu của mình.</p>
+<h2 class="editable"><a class="anchor" id="mạng-máy-tính" href="#mạng-máy-tính"></a>Mạng máy tính</h2>
+<p>Phần này mình cũng thường không hỏi nhiều. Mình thường bắt đầu bằng câu hỏi:</p>
+<blockquote>
+<p>UDP và TCP khác nhau thế nào?</p>
+</blockquote>
+<p>Sau đó, mình có thể hỏi thêm 1 số phần khác như:</p>
+<ul>
+<li>TCP handshake</li>
+<li>Congestion control</li>
+</ul>
+<p>Mình không giỏi về phần nên thường yêu cầu không cao. Bạn trả lời được những ý cơ bản là đạt yêu cầu của mình.</p>
+<h1 class="editable"><a class="anchor" id="những-lỗi-cần-tránh" href="#những-lỗi-cần-tránh"></a>Những lỗi cần tránh</h1>
+<p>Ở Garena mình được đánh giá là một trong những người phỏng vấn khó tính nhất. Với những người khó tính như mình, có một số lỗi mà bạn cần tránh trong suốt quá trình phỏng vấn:</p>
+<ul>
+<li>Dùng Google mà không nói với mình: Mình đã từng gặp trường hợp sau khi mình vừa nói câu hỏi, thí sinh xin phép suy nghĩ nhưng sau đó mình lại nghe thấy nhiều tiếng gõ phím và click chuột (chú ý mình phỏng vấn qua Skype nên mới có trường hợp như vậy). Mình đoán bạn đó đang Google để tìm lời giải, và trường hợp như vậy gần như chắc chắn sẽ bị đánh trượt.</li>
+<li>Đến muộn lúc phỏng vấn: Nếu bạn vào muộn không quá 5 phút thì thường mình cũng không có vấn đề gì, tuy nhiên nếu bạn đến quá muộn mà không có lý do phù hợp thì mình sẽ đánh giá là bạn không có sự chuẩn bị cẩn thận cho cuộc phỏng vấn.</li>
+<li>Chém gió quá nhiều trong Resume: Nếu bạn viết bất kỳ cái gì vào Resume, mình có thể sẽ hỏi. Nếu bạn không trả lời được những kiến thức cơ bản, mình sẽ đánh giá rất thấp. Ví dụ bạn viết vào Resume là biết dùng git, nhưng không thể giải thích được <code>git commit</code> là gì.</li>
+<li>Xin đổi câu hỏi với câu thuật toán / code: Đã có trường hợp sau khi mình nói đề, thí sinh không suy nghĩ nhiều mà xin đổi câu hỏi luôn. Vì thuật toán và kỹ năng code là câu hỏi quan trọng, nên thông thường mình sẽ đổi câu hỏi khó hơn.</li>
+<li>Thể hiện không có tinh thần học hỏi. Ví dụ ứng viên không muốn học ngôn ngữ lập trình mới. Đối với Software Engineer mình thấy đây là điều tối kị, vì công nghệ thay đổi liên tục mỗi ngày và bạn phải không ngừng học hỏi. Ngược lại, cũng đã có trường hợp mình đánh đỗ ứng viên vì mình thấy bạn đó có tinh thần học hỏi rất tốt mặc dù kiến thức không tốt lắm.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="feedback" href="#feedback"></a>Feedback</h1>
+<p>Thông thường, các công ty sẽ hạn chế đưa ra Feedback đối với thí sinh. Thông thường nếu bạn hỏi sẽ chỉ nhận được những câu trả lời chung chung và hầu hết công ty sẽ không đưa ra lý do chính xác khiến bạn bị đánh trượt. Lý do là để bảo vệ công ty:</p>
+<ul>
+<li>Nếu không cẩn thận trong việc đưa ra lý do, công ty có thể bị ném đá nếu bạn chia sẻ bừa bãi lý do và lý do đó không được số đông đồng tình.</li>
+<li>Lý do bạn bị trượt là do người phỏng vấn và có thể là thêm người review lại feedback của người phỏng vấn. Lý do đó có thể không áp dụng cho toàn bộ các cuộc phỏng vấn của công ty và do đó không thể phản ánh đúng về công ty.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>

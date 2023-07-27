@@ -1,0 +1,373 @@
+<div id="wiki-content">
+<h1 class="pt-4">Xác suất</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/topcoder/">topcoder</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Nguồn: <a href="https://www.topcoder.com/community/data-science/data-science-tutorials/understanding-probabilities/">Understanding Probabilities - Topcoder</a>
+</p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#cơ-bản">Cơ bản</a><ul><li><a href="#ví-dụ">Ví dụ</a></li><li><a href="#biến-cố-độc-lập">Biến cố độc lập</a></li><li><a href="#birthdayodds">BirthdayOdds</a></li></ul></li><li><a href="#các-kiến-thức-nâng-cao">Các kiến thức nâng cao</a><ul><li><a href="#biến-ngẫu-nhiên-random-variable">Biến ngẫu nhiên (Random variable)</a></li><li><a href="#giá-trị-kỳ-vọng-expected-value">Giá trị kỳ vọng (Expected value):</a></li><li><a href="#linearity-of-expectation">Linearity of Expectation</a></li></ul></li><li><a href="#tính-xác-suất-từng-bước-một">Tính xác suất từng bước một</a><ul><li><a href="#nested-randomness">Nested Randomness</a></li><li><a href="#geneticcrossover">GeneticCrossover</a><ul><li><a href="#khái-niệm">Khái niệm</a></li><li><a href="#tóm-tắt-đề-bài">Tóm tắt đề bài</a></li><li><a href="#phân-tích">Phân tích</a></li></ul></li></ul></li><li><a href="#thuật-toán-ngẫu-nhiên">Thuật toán ngẫu nhiên</a></li><li><a href="#bài-tập-luyện-tập">Bài tập luyện tập</a></li></ul></div>
+<p>Xác suất là một nhánh của Toán học có rất nhiều ứng dụng trong thực tế, chẳng hạn như trong phân tích giá cả thị trường, chuẩn bị chiến lược trong thi đấu thể thao, dự báo thời tiết.. Bạn có thể đọc thêm về ứng dụng của xác suất trên <a href="https://www.quora.com/What-are-the-real-life-applications-of-probability-in-math">Quora</a>.</p>
+<p>Đa số các bài toán về xác suất đều được lấy ví dụ từ thực tế. Ví dụ:</p>
+<blockquote>
+<p>Kỳ thi sắp đến, có 20 chủ đề cần học và bạn chỉ có đủ thời gian để học 15 chủ đề. Nếu trong bài kiểm tra chỉ có 2 câu hỏi (mỗi câu hỏi về 1 chủ đề), thì xác suất bạn có thể trả lời đc cả 2 câu là bao nhiêu?</p>
+</blockquote>
+<p>Không khó để nhận ra bài tập nào cần dùng kiến thức về xác suất nhưng giải được chúng là một câu chuyện hoàn toàn khác. Biết cách để tiếp cận những bài toán như vậy là một lợi thế lớn trong các cuộc thi lập trình, và bài viết dưới đây sẽ trang bị những kiến thức nền tảng cho bạn.</p>
+<h1 class="editable"><a class="anchor" id="cơ-bản" href="#cơ-bản"></a>Cơ bản</h1>
+<p>Ta hình dung làm việc với xác suất như tiến hành một cuộc thí nghiệm. Tập hợp của tất cả những kết quả (outcome) có thể xảy ra của thí nghiệm được gọi là <strong>không gian mẫu</strong> (<em>sample space</em>), thường được kí hiệu bởi $S$. Mỗi kết quả có thể xảy ra được biểu diễn bởi một và chỉ một điểm trong không gian mẫu.</p>
+<p>Chúng ta cùng xem xét ví dụ dưới đây:</p>
+<ul>
+<li>Tung xúc sắc một lần
+<ul>
+<li>Không gian mẫu $S = {1,2,3,4,5,6} $</li>
+</ul>
+</li>
+<li>Tung hai đồng xu
+<ul>
+<li>Không gian mẫu $S = { (0, 0), (0, 1), (1, 0), (1, 1) }$ với 0 thể hiện đồng xu sấp và 1 thể hiện đồng xu ngửa.</li>
+</ul>
+</li>
+</ul>
+<p>Ta định nghĩa một <strong>biến cố</strong> (<strong>event</strong>) là một tập hợp các kết quả của một thí nghiệm. Do đó, một biến cố là một tập con của không gian mẫu $S$. Nếu ta đặt biến cố là $E$, thì $E \subseteq S$. Một biến cố có thể chỉ bao gồm một kết quả duy nhất trong không gian mẫu. Biến cố bao gồm nhiều hơn một kết quả được gọi là <strong>biến cố phức hợp</strong> (<strong>compound event</strong>), ví dụ như trong thí nghiệm tung 2 đồng xu ở trên.</p>
+<p>Cái chúng ta quan tâm nhất là xác suất để một biến cố nhất định xảy ra, $P(E)$. Theo định nghĩa, $P(E)$ là một số thực trong khoảng từ $0$ đến $1$, trong đó $0$ thể hiện biến cố không có khả năng xảy ra và $1$ thể hiện biến cố chắc chắn xảy ra (hay là toàn bộ không gian mẫu).</p>
+<p><img src="https://vnoi.info/wiki/uploads/translate_topcoder_undertstandprobabilities_1.gif" /></p>
+<ul>
+<li>Impossible Event: biến cố chắc chắn ko thể xảy ra</li>
+<li>Certain: biến cố chắc chắn xảy ra</li>
+<li>Even chance: biến cố có xác suất 50-50.</li>
+</ul>
+<p>Như đã đề cập, mỗi kết quả khả thi được biểu diễn bởi đúng một điểm trong không gian mẫu. Điều này đưa ta đến công thức:</p>
+<p>$P(E) = \frac{\left | E \right |}{\left | S \right |}$</p>
+<p>Nói cách khác, ta có thể tính xác suất để một biến cố xảy ra bằng cách chia <strong>số kết quả thuộc biến cố $E$</strong> cho <strong>tổng số kết quả có thể xảy ra</strong> (theo không gian mẫu $S$). Để diễn tả mối quan hệ giữa các biến cố, bạn có thể dùng các quy ước từ lý thuyết về tập hợp. Xét trường hợp tung con xúc sắc một lần. Như trên, ta có $S = {1,2,3,4,5,6}$. Xem xét những biến cố dưới đây:</p>
+<ul>
+<li>Biến cố $A$: <em>điểm &gt; 3</em>: ${4,5,6}$</li>
+<li>Biến cố $B$: <em>điểm là số lẻ</em>: ${1,3,5}$</li>
+<li>Biến cố $C$: <em>điểm là 7</em>: $\varnothing $</li>
+<li>$A \cup B$: <em>điểm &gt; 3</em> hoặc <em>điểm là số lẻ</em>: $={1, 3, 4, 5, 6}$</li>
+<li>$A \cap B$: <em>điểm &gt; 3</em> và <em>là số lẻ</em>: $ {5}$</li>
+<li>$A'$: <em>biến cố A không xảy ra</em>: ${1, 2, 3}$</li>
+</ul>
+<p>Xác suất:</p>
+<ul>
+<li>$P(A \cup B) = 5/6$</li>
+<li>$P(A \cap B) = 1/6$</li>
+<li>$P(A’) = 1 – P(A) = 1 – 1/2 = 1/2 $</li>
+<li>$P(C) = 0$</li>
+</ul>
+<p>Bước đầu tiên khi giải một bài toán về xác suất là xác định được không gian mẫu. Tiếp theo, bạn sẽ phải xác định số lượng phần tử của biến cố thỏa mãn. Đây là cách tiếp cận cơ bản, nhưng khi áp dụng, nó có thể thay đổi tùy vào từng bài tập.</p>
+<h2 class="editable"><a class="anchor" id="ví-dụ" href="#ví-dụ"></a>Ví dụ</h2>
+<p><a href="https://community.topcoder.com/stat?c=problem_statement&amp;pm=2989&amp;rd=5869">QuizShow (SRM 223, Div 1 – Easy)</a>.</p>
+<p><strong>Tóm tắt đề bài</strong></p>
+<p>Trong một cuộc thi, bạn đang đấu với 2 người nữa để tiến vào câu hỏi cuối cùng. Mỗi người đang sở hữu một số điểm nhất định giành được từ các câu hỏi trước. Tại câu hỏi này, mỗi người sẽ đưa ra số điểm cược trong khoảng từ 0 đến số điểm đang có, nếu trả lời đúng sẽ được số điểm cược này, trả lời sai sẽ bị trừ đúng bằng số điểm đã cược. Để chiến thắng, bạn phải là người sở hữu số điểm cao nhất sau khi hoàn thành câu hỏi cuối cùng.</p>
+<p>Bạn biết điểm hiện tại của cả 3 người (số nguyên không quá $10^4$), và giá trị tiền cược của 2 người kia.</p>
+<p>Hỏi bạn nên cược bao nhiêu để xác suất thắng là lớn nhất.</p>
+<p><strong>Phân tích</strong></p>
+<p>Mấu chốt để giải quyết bài toán là xét đến tất cả các khả năng có thể, số lượng này không nhiều. Sau một lúc đánh giá, ta sẽ xác định được không gian mẫu:</p>
+<pre class="highlight"><code>S = {
+  ( người 1 đúng, người 2 sai, bạn sai),
+  ( người 1 đúng, người 2 sai, bạn đúng),
+  ( người 1 đúng, người 2 đúng, bạn sai),
+  ( người 1 đúng, người 2 đúng, bạn đúng),
+
+  ( người 1 sai, người 2 sai, bạn sai),
+  ( người 1 sai, người 2 sai, bạn đúng),
+  ( người 1 sai, người 2 đúng, bạn sai),
+  ( người 1 sai, người 2 đúng, bạn đúng)
+}</code></pre>
+<p>Đề bài yêu cầu bạn tìm số tiền cược để tối đa số kết quả mà trong đó bạn thắng. Để đếm được số kết quả như vậy cho từng số tiến cược, ta cần xác định xem cả ba người chơi sẽ kết thúc với bao nhiêu điểm trong 8 trường hợp có thể xảy ra. Ý tưởng được thể hiện trong code dưới đây</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">wager</span> <span class="p">(</span><span class="n">vector</span>  <span class="n">scores</span><span class="p">,</span> <span class="kt">int</span> <span class="n">wager1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">wager2</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="kt">int</span> <span class="n">best</span><span class="p">,</span> <span class="n">bet</span><span class="p">,</span> <span class="n">odds</span><span class="p">,</span> <span class="n">wage</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">K</span><span class="p">;</span>
+ <span class="n">best</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">bet</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+ <span class="k">for</span> <span class="p">(</span><span class="n">wage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">wage</span> <span class="o">&lt;=</span> <span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="n">wage</span><span class="o">++</span><span class="p">)</span>
+ <span class="p">{</span>
+  <span class="n">odds</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="c1">// 'odds' dem so ket qua tot</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">I</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">I</span> <span class="o">=</span> <span class="n">I</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+   <span class="k">for</span> <span class="p">(</span><span class="n">J</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">J</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">J</span> <span class="o">=</span> <span class="n">J</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">K</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">K</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">I</span> <span class="o">*</span> <span class="n">wage</span> <span class="o">&gt;</span> <span class="n">scores</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">J</span> <span class="o">*</span> <span class="n">wager1</span>  <span class="o">&amp;&amp;</span>
+      <span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">I</span> <span class="o">*</span> <span class="n">wage</span> <span class="o">&gt;</span> <span class="n">scores</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">K</span> <span class="o">*</span> <span class="n">wager2</span><span class="p">)</span> <span class="p">{</span> <span class="n">odds</span><span class="o">++</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="c1">//  mot so tien cuoc tot hon duoc tim thay, cap nhat ket qua</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">odds</span> <span class="o">&gt;</span> <span class="n">best</span><span class="p">)</span>  <span class="p">{</span> <span class="n">bet</span> <span class="o">=</span> <span class="n">wage</span> <span class="p">;</span> <span class="n">best</span> <span class="o">=</span> <span class="n">odds</span><span class="p">;</span> <span class="p">}</span>
+ <span class="p">}</span>
+ <span class="k">return</span> <span class="n">bet</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Một bài thú vị khác là <a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=3994&amp;rd=6532">PipeCuts (SRM 233, Div 1 – Easy)</a>, bài này có thể giải bằng cách tương tự như trên.</p>
+<h2 class="editable"><a class="anchor" id="biến-cố-độc-lập" href="#biến-cố-độc-lập"></a>Biến cố độc lập</h2>
+<p>Xét $n$ biến cố độc lập (<em>independent events</em>): $ E_1, E_2, …, E_n$ . Hai câu hỏi thường gặp là:</p>
+<ol>
+<li>Xác suất để tất cả biến cố xảy ra?: $P(all)$</li>
+<li>Xác suất để ít nhất một biến cố trong số chúng xảy ra? $P(any)$</li>
+</ol>
+<p>Để trả lời câu hỏi thứ nhất, ta xét biến cố đầu tiên ($E_1$):</p>
+<ul>
+<li>Nếu $E_1$ không xảy ra, giả thuyết không còn đúng nữa.</li>
+<li>Vì vậy, phải chắc rằng $E1$ sẽ xảy ra với xác suất $P(E_1)$. Điều này có nghĩa là có xác suất $P(E_1)$ để ta kiểm tra sự xảy ra của biến cố tiếp theo (gọi là $E_2$).</li>
+<li>Biến cố $E_2$ xảy ra với xác suất là $P(E_2)$, và chúng ta có thể tiếp tục quá trình này tương tự như vậy.</li>
+</ul>
+<p>Vì xác suất được định nghĩa là một số thực nằm trong khoảng từ 0 đến 1, ta tổng hợp được xác suất để tất cả các biến cố xảy ra bằng công thức dưới đây:</p>
+<p>$P(all) = P(E_1) * P(E_2) * … * P(En) $</p>
+<p>Cách tốt nhất để trả lời câu hỏi thứ hai là tìm xác suất để không có biến cố nào diễn ra và lấy phần bù.</p>
+<p>$P(any) = 1 - P(E_1') * P(E_2') * … * P(E_n') $</p>
+<p>Những công thức trên được ứng dụng rất nhiều, cần nắm chắc để đi đền phần tiếp theo.</p>
+<h2 class="editable"><a class="anchor" id="birthdayodds" href="#birthdayodds"></a><a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=1848&amp;rd=4675">BirthdayOdds</a></h2>
+<p>Một ví dụ điển hình để mô tả nội dung xác suất được bàn luận ở phần trên là <strong>Nghịch lí về ngày sinh</strong> (<a href="https://en.wikipedia.org/wiki/Birthday_problem"><strong>Birthday Paradox</strong></a>): Nếu có ít nhất 23 người trong một căn phòng, xác suất để 2 người bất kì trong số họ có cùng ngày sinh là lớn hơn 0.5. Thoạt nhìn, kết quả này có vẻ trái ngược với trực giác thông thường nhưng nó hoàn toàn có thể được chứng minh bằng toán học.</p>
+<p>Bây giờ, một bài toán đặt ra là tìm số người nhỏ nhất để xác suất có ít nhất 2 người trong số họ cùng ngày sinh nhật là lớn hơn x %. Đôi khi trong các bài toán xác suất, cách tiếp cận dễ dàng hơn là thử giải bài toán ngược: "Tìm xác suất để $N$ người ngẫu nhiên có ngày sinh khác nhau?". Chiến thuật là bắt đầu với một cái phòng rỗng và lần lượt thêm từng người một vào và so sánh ngày sinh của người đó với tất cả những người đã có trong phòng.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">minPeople</span> <span class="p">(</span><span class="kt">int</span> <span class="n">minOdds</span><span class="p">,</span> <span class="kt">int</span> <span class="n">days</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">nr</span><span class="p">;</span>
+  <span class="kt">double</span> <span class="n">target</span><span class="p">,</span> <span class="n">p</span><span class="p">;</span>
+
+  <span class="n">target</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">minOdds</span> <span class="o">/</span> <span class="mi">100</span><span class="p">;</span>
+  <span class="n">nr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;</span> <span class="n">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">nr</span> <span class="o">/</span> <span class="n">days</span><span class="p">);</span>
+    <span class="n">nr</span> <span class="o">++</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="n">nr</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Các bài toán về xác suất có thể rất phức tạp và nhiều khi kết quả tạo cảm giác mâu thuẫn với những nhận đinh thông thường của chúng ta (Ví dụ như <strong>Nghịch lí về ngày sinh</strong> ở trên hoặc một ví dụ khác là <a href="https://en.wikipedia.org/wiki/Monty_Hall_problem">Bài toán Monty Hall</a>). Để có thể giải nhưng bài toán như vậy một cách thành thạo, ngoài việc nắm chắc các công thức toán học, các bạn cũng cần luyện tập cho mình một lối tư duy, trực giác toán học nhạy bén để tránh đưa ra những nhận định sai lầm về bài toán. Các bạn có thể làm bài <a href="http://teacherlink.org/content/math/interactive/probability/interactivequiz/question1/home.html">kiểm tra</a> để đánh giá trực giác toán học của mình.</p>
+<h1 class="editable"><a class="anchor" id="các-kiến-thức-nâng-cao" href="#các-kiến-thức-nâng-cao"></a>Các kiến thức nâng cao</h1>
+<h2 class="editable"><a class="anchor" id="biến-ngẫu-nhiên-random-variable" href="#biến-ngẫu-nhiên-random-variable"></a>Biến ngẫu nhiên (Random variable)</h2>
+<p><strong>Random Variable</strong> là một biến mà giá trị của nó là kết quả của một lần thí nghiệm. Ví dụ:</p>
+<ul>
+<li>$X1$ là giá trị của xúc sắc.</li>
+<li>$X2$ là 2 lần giá trị xúc sắc (có thể viết $2 * X1$)</li>
+<li>$X3$ là bình phương giá trị xúc sắc</li>
+<li>…</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="giá-trị-kỳ-vọng-expected-value" href="#giá-trị-kỳ-vọng-expected-value"></a>Giá trị kỳ vọng (Expected value):</h2>
+<p>Với $X$ là 1 random variable, $E(X)$ là giá trị trung bình của X, nếu ta thực hiện thí nghiệm vô số lần. Ta cũng có thể hình dung như giá trị trung bình có trọng số.</p>
+<p>Ví dụ:</p>
+<p>Có 2 lớp học:</p>
+<ul>
+<li>lớp A có 40 học sinh và điểm trung bình là 5</li>
+<li>lớp B có 30 học sinh và điểm trung bình là 6</li>
+</ul>
+<p>Điểm trung bình của tất cả học sinh là:</p>
+<p><code>(5 * 40 + 6 * 30) / (40 + 30) = 5 * (40 / 70) + 6 * (30 / 70)</code></p>
+<p>Các trọng số $40 / 70$ và $30 / 70$ được nhân thêm do số lượng trường hợp điểm 5 và 6 khác nhau.</p>
+<p>Công thức tổng quát:</p>
+<p><code>E(X) = prob(X = 1) * 1 + prob(X = 2) * 2 + ...</code></p>
+<h2 class="editable"><a class="anchor" id="linearity-of-expectation" href="#linearity-of-expectation"></a>Linearity of Expectation</h2>
+<p>Linearity of Expectation là 1 kĩ năng rất quan trọng nhất khi làm các bài về Expected value.</p>
+<p>Ví dụ:</p>
+<ul>
+<li>Tung 2 xúc sắc</li>
+<li>Tính Expected value của tổng giá trị 2 xúc sắc.</li>
+</ul>
+<p>Xét riêng từng xúc sắc:</p>
+<ul>
+<li>Đặt $E(X1)$ là expected value của giá trị xúc sắc 1</li>
+<li>Đặt $E(X2)$ là expected value của giá trị xúc sắc 2</li>
+</ul>
+<p>$E(X1) = E(X2) = (1/6) * 1 + (1/6) * 2 + … + (1/6) * 6 = 3.5$.</p>
+<p>Linearity of Expectation cho ta công thức sau:</p>
+<p>$E(X1 + X2) = E(X1) + E(X2) = 7$.</p>
+<p>Phát biểu chính xác:</p>
+<p>Nếu $X1$, $X2$, …, $Xk$ là các random variable có cùng không gian mẫu:</p>
+<p>$E(X1 * a1 + X2 * a2 + … + Xk * ak) = a1 * E(X1) + a2 * E(X2) + … + ak * E(Xk)$.</p>
+<p>Chú ý rằng các biến không cần độc lập.</p>
+<h1 class="editable"><a class="anchor" id="tính-xác-suất-từng-bước-một" href="#tính-xác-suất-từng-bước-một"></a>Tính xác suất từng bước một</h1>
+<p>Trong phần dưới đây, chúng ta sẽ tiếp tục thảo luận một vài bài tập trên Topcoder mà trong đó: <strong>Xác suất của một biến cố bị ảnh hưởng bởi biến cố khác</strong>.</p>
+<p>Chúng ta có thể hình dung nó như một đồ thị mà trong đó:</p>
+<ul>
+<li>Mỗi nút là một biến cố</li>
+<li>Mỗi cạnh thể hiện sự phụ thuộc giữa các biến cố.</li>
+</ul>
+<p>So sánh này hơi gượng ép, nhưng cách chúng ta tính toán xác suất cho các biến cố rất giống cách chúng ta duyệt qua các đỉnh của đồ thị: Ta bắt đầu ở gốc - là trạng thái ban đầu và có xác suất là 1. Sau đó, ta xem xét các cạnh kề để đến các khả năng khác nhau kèm theo các xác suất tương ứng.</p>
+<h2 class="editable"><a class="anchor" id="nested-randomness" href="#nested-randomness"></a><a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=3510&amp;rd=6527">Nested Randomness</a></h2>
+<p><strong>Tóm tắt đề bài</strong>:</p>
+<p>Hàm <code>random(N)</code> trả về một số nguyên ngẫu nhiên trong khoảng từ $0$ đến $N-1$, mỗi số có xác suất được trả lại như nhau và bằng $1/N$.</p>
+<p>Giờ xét <code>random(random(N))</code>. Để dễ hình dung, ta xét $N=4$:</p>
+<ul>
+<li>
+<code>random(N)</code> trả lại các số nguyên 0 đến 3 với xác suất bằng nhau là $1/4$.</li>
+<li>
+<code>random(random(N))</code>, ta có 4 trường hợp với xác suất bằng nhau (phụ thuộc vào kết quả của hàm <code>random</code> bên trong):
+<ul>
+<li>
+<code>random(0)</code>: được gọi với xác suất $1/4$: báo lỗi</li>
+<li>
+<code>random(1)</code>: được gọi với xác suất $1/4$: luôn trả về 0</li>
+<li>
+<code>random(2)</code>: được gọi với xác suất $1/4$: trả về 0 hoặc 1 với xác suất $1/2$.</li>
+<li>
+<code>random(3)</code>: được gọi với xác suất $1/4$: trả về 0, 1, hoặc 2 với xác suất $1/3$.</li>
+</ul>
+</li>
+<li>Nếu xét tiếp <code>random(random(random(N)))</code>:
+<ul>
+<li>
+<code>random(0)</code>: được gọi với xác suất $1/4 + 1/8 + 1/12 = 11/24$</li>
+<li>
+<code>random(1)</code>: được gọi với xác suất $1/8 + 1/12 = 5/24$</li>
+<li>
+<code>random(2)</code>: được gọi với xác suất $1/12$</li>
+</ul>
+</li>
+<li>…</li>
+</ul>
+<p>Ta hình dung bằng hình sau:</p>
+<p><img src="https://vnoi.info/wiki/uploads/translate_topcoder_understandprobabilties_02.gif" /></p>
+<p>Code để giải bài này</p>
+<pre class="highlight"><code><span class="kt">double</span> <span class="nf">probability</span> <span class="p">(</span><span class="kt">int</span> <span class="n">N</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nestings</span><span class="p">,</span> <span class="kt">int</span> <span class="n">target</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">I</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">K</span><span class="p">;</span>
+  <span class="kt">double</span> <span class="n">A</span><span class="p">[</span><span class="mi">1001</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="mi">2001</span><span class="p">];</span>
+  <span class="c1">// A[I] la xac suat de so I xuat hien</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">I</span> <span class="o">&lt;</span> <span class="n">N</span> <span class="p">;</span> <span class="n">I</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">A</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">N</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="n">K</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">K</span> <span class="o">&lt;=</span> <span class="n">nestings</span><span class="p">;</span> <span class="n">K</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">I</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">I</span><span class="o">++</span><span class="p">)</span>
+      <span class="n">B</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="c1">// voi moi I giua 0 den N-1, ta goi ham random(I)</span>
+    <span class="c1">// theo yeu cau de bai</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">I</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">I</span><span class="o">++</span><span class="p">)</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">J</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">J</span> <span class="o">&lt;</span> <span class="n">I</span><span class="p">;</span> <span class="n">J</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">B</span><span class="p">[</span><span class="n">J</span><span class="p">]</span> <span class="o">+=</span>  <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">A</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="o">/</span> <span class="n">I</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">I</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">I</span><span class="o">++</span><span class="p">)</span>
+      <span class="n">A</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">I</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">A</span><span class="p">[</span><span class="n">target</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<p>Bài tập tương tự:</p>
+<ul>
+<li>
+<a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=3509&amp;rd=6528">ChessKnight</a>,</li>
+<li>
+<a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=4450&amp;rd=7217">DiceThrows</a>,</li>
+<li>
+<a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=1954&amp;rd=5006">RockSkipping</a>,</li>
+<li>
+<a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=1849&amp;rd=4675">PointSystem</a>,</li>
+<li><a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=2959&amp;rd=5880">VolleyBall</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="geneticcrossover" href="#geneticcrossover"></a><a href="https://community.topcoder.com/stat?c=problem_statement&amp;pm=2974&amp;rd=5875">GeneticCrossover</a></h2>
+<h3 class="editable"><a class="anchor" id="khái-niệm" href="#khái-niệm"></a>Khái niệm</h3>
+<p>Ở bài này có khái niệm về <strong>xác suất có điều kiện</strong> (<em>conditional probability</em>):</p>
+<blockquote>
+<p>Xác suất có điều kiện là xác suất để một biến cố A nào đó xảy ra, biết rằng một biến cố B khác đã xảy ra.</p>
+</blockquote>
+<p>Ký hiệu $P(A|B)$, và đọc là "xác suất của A, biết B". Nếu $A$ và $B$ là các biến cố, và $P(B) &gt; 0$, thì xác suất có điều kiện của $A$ nếu biết $B$ là:</p>
+<p>$P(A|B) = \frac{P(A \cap B)}{P(B)}$</p>
+<p>Tương đương, ta có</p>
+<p>$P(A \cap B) = P(A|B) P(B)$</p>
+<h3 class="editable"><a class="anchor" id="tóm-tắt-đề-bài" href="#tóm-tắt-đề-bài"></a>Tóm tắt đề bài</h3>
+<p>Theo di truyền học ở động vật, mỗi cặp gen sẽ biểu thị một tính trạng. Mỗi gen có hai dạng cơ bản là trội hoặc lặn. Nếu trong cặp gen có gen trội thì tính trạng của gen trội này sẽ được thể hiện ra ngoài, ngược lại, trường hợp cả hai đều là gen lặn thì tính trạng của gen lặn này sẽ được thể hiện ra ngoài.</p>
+<p>Ngoài ra, một số gen còn có tính phụ thuộc. Nếu một gen phụ thuộc vào một gen khác thì gen đó chỉ có thể thể hiện tính trội nếu gen nó phụ thuộc vào cũng thể hiện tính trội. Bên cạnh đó, có những gen không phụ thuộc vào bất cứ gen nào khác và tính trạng của nó sẽ được thể hiện như trong đoạn đầu. Đảm bảo không có trường hợp một gen phụ thuộc vào chính nó hay chuỗi phụ thuộc tạo thành một vòng (ví dụ I phụ thuộc J, J phụ thuộc K, K phụ thuộc I).</p>
+<p>Cho $n$ cặp gen của cá thể bố mẹ và một số thông tin về chúng. Với mỗi cặp gen, cá thể bố/mẹ sẽ cho con của chúng một trong hai gen. Ví dụ như cá thể mẹ có hai chuỗi gen là ‘ABC’ và ‘abc’ thì với cặp gen đầu tiên, cá thể mẹ có thể cho cá thể con gen ‘a’ hoặc ‘A’, với cặp thứ hai là ‘b’ hoặc ‘B’ và cứ thế. Tương tự cá thể bố sẽ cho cá thể con một gen trong từng cặp như vậy. Sau cùng, cá thể con sẽ nhận được $n$ cặp gen từ bố và mẹ.
+Chất lượng con giống của cá thể con được đánh giá dựa vào tính trạng thể hiện ở mỗi cặp gen. Nếu cặp gen thứ $i$ thể hiện tính trạng trội, chất lượng con giống sẽ được cộng thêm <code>troi[i]</code>, còn nếu là tính trạng lặn thì sẽ cộng thêm <code>lan[i]</code>.</p>
+<p>Nhiệm vụ của bạn là tính giá trị kì vọng của chất lượng con giống.</p>
+<p>Bạn sẽ được cung cấp 2 chuỗi gen thể hiện $n$ $(n \le 50)$ cặp gen của cá thể mẹ; 2 chuỗi gen thể hiện $n$ cặp gen của cá thể bố; 1 mảng $n$ số nguyên thể hiện quan hệ phụ thuộc giữa các gen, 2 mảng $n$ số nguyên <code>troi[i]</code> va <code>lan[i]</code> là giá trị công thêm cho chất lượng con giống gen thứ $i$ thể hiện tính trạng trội / lăn.</p>
+<p>Từ những dữ liệu trên, bạn cần xuất ra giá trị kì vọng cần tìm.</p>
+<p>(ND: Giá trị kì vọng được tính bằng cách lấy tổng của tất cả tích các giá trị có thể xảy ra với xác suất để xảy ra giá trị đó. Ví dụ:</p>
+<ul>
+<li>Giá trị chất lượng con giống: xác suất để đạt giá trị này
+<ul>
+<li>17 : 0.5625</li>
+<li>13 : 0.1875</li>
+<li>9 : 0.25</li>
+</ul>
+</li>
+</ul>
+<p>Vậy giá trị kì vọng của chất lượng con giống sẽ là $17 * 0.5625 + 13 * 0.1875 + 9 * 0.25 = 14.25$)</p>
+<h3 class="editable"><a class="anchor" id="phân-tích" href="#phân-tích"></a>Phân tích</h3>
+<p>Dựa vào mô tả đề bài, có hai trường hợp có thể xảy ra: một gen không phụ thuộc vào gen khác, hoặc gen này có phụ thuộc.</p>
+<p>Trường hợp thứ nhất, gọi $p$ là xác suất mà gen này là gen trội. Có 4 trường hợp:</p>
+<ul>
+<li>Ít nhất bố hoặc mẹ có hai gen trội ($p = 1$)</li>
+<li>Mỗi bố hoặc mẹ có đúng một gen trội ($p = 0.5$)</li>
+<li>Mỗi bố hoặc mẹ có một gen trội và người còn lại có duy nhất một gen lặn ($p = 0.25$)</li>
+<li>Cả hai bố mẹ có hai gen lặn ($p = 0$)</li>
+</ul>
+<p>Trường hợp thứ hai, gen này có phụ thuộc vào một gen khác. Điều này làm bài toán trở nên phức tạp hơn do gen bị phụ thuộc có thể lại phụ thuộc vào một gen khác nữa và cứ thế… Do đó, để xác định được xác suất mà một gen phụ thộc là gen trội, ta cần xét xác suất để mỗi gen trong chuỗi phụ thuộc (bắt đầu từ gen đang xét) đều là gen trội. Xác suất để gen đang xét là gen trội sẽ bằng tích của tất cả các xác suất đó. Thuật toán thực hiện một cách đệ quy, và đây code hoàn chỉnh cho bài tập này:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="mi">200</span><span class="p">];</span>
+<span class="kt">double</span> <span class="n">power</span><span class="p">[</span><span class="mi">200</span><span class="p">];</span>
+
+<span class="c1">// here we determine the characteristic for each gene (in power[I]</span>
+<span class="c1">// we keep the probability of gene I to be expressed dominantly)</span>
+<span class="kt">double</span> <span class="nf">detchr</span> <span class="p">(</span><span class="n">string</span> <span class="n">p1a</span><span class="p">,</span> <span class="n">string</span> <span class="n">p1b</span><span class="p">,</span> <span class="n">string</span> <span class="n">p2a</span><span class="p">,</span> <span class="n">string</span> <span class="n">p2b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nr</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">double</span> <span class="n">p</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">;</span>
+  <span class="n">p</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p1a</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="sc">'Z'</span><span class="p">)</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">;</span>
+
+  <span class="c1">//  is a dominant gene</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p1b</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="sc">'Z'</span><span class="p">)</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p2a</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="sc">'Z'</span><span class="p">)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p2b</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="sc">'Z'</span><span class="p">)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">;</span>
+  <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p1</span> <span class="o">*</span> <span class="n">p2</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">power</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">detchr</span> <span class="p">(</span><span class="n">p1a</span><span class="p">,</span> <span class="n">p1b</span><span class="p">,</span> <span class="n">p2a</span><span class="p">,</span> <span class="n">p2b</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">nr</span><span class="p">]);</span>
+  <span class="c1">// gene 'nr' is dependent on gene d[nr]</span>
+  <span class="k">else</span> <span class="n">power</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">power</span><span class="p">[</span><span class="n">nr</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">double</span> <span class="nf">cross</span> <span class="p">(</span><span class="n">string</span> <span class="n">p1a</span><span class="p">,</span> <span class="n">string</span> <span class="n">p1b</span><span class="p">,</span> <span class="n">string</span> <span class="n">p2a</span><span class="p">,</span> <span class="n">string</span> <span class="n">p2b</span><span class="p">,</span>
+ <span class="n">vector</span> <span class="n">dom</span><span class="p">,</span> <span class="n">vector</span> <span class="n">rec</span><span class="p">,</span> <span class="n">vector</span> <span class="n">dependencies</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">I</span><span class="p">;</span>
+  <span class="kt">double</span> <span class="n">fitness</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+
+
+  <span class="n">n</span> <span class="o">=</span> <span class="n">rec</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">I</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span><span class="n">I</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">I</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">power</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">I</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">power</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+      <span class="n">detchr</span> <span class="p">(</span><span class="n">p1a</span><span class="p">,</span> <span class="n">p1b</span><span class="p">,</span> <span class="n">p2a</span><span class="p">,</span> <span class="n">p2b</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+
+  <span class="c1">// we check if the dominant character of gene I has</span>
+  <span class="c1">// not already been computed</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">I</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">I</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">I</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">fitness</span> <span class="o">=</span> <span class="n">fitness</span> <span class="o">+</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="n">power</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">dom</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">power</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="c1">// we compute the expected 'quality' of an animal based on the</span>
+  <span class="c1">// probabilities of each gene to be expressed dominantly</span>
+
+  <span class="k">return</span> <span class="n">fitness</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Bài tương tự: <a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=2234&amp;rd=4675">ProbabilityTree</a></p>
+<h1 class="editable"><a class="anchor" id="thuật-toán-ngẫu-nhiên" href="#thuật-toán-ngẫu-nhiên"></a>Thuật toán ngẫu nhiên</h1>
+<p>Ta gọi những thuật toán ngẫu nhiên là những thuật toán sử dụng hàm ngẫu nhiên để đưa ra quyết định trong quá trình chạy. Không giống như những thuật toán đã xác định trước, với mỗi dữ liệu vào xác định thì sẽ cho ra duy nhất một kết quả ra cũng như thời gian chạy, thuật toán ngẫu nhiên có thể biểu hiện khác nhau trong mỗi lần chạy. Về cơ bản, ta sẽ phân biệt hai loại của thuật toán ngẫu nhiên:</p>
+<ol>
+<li>Thuật toán Monte Carlo: có thể đưa ra kết quả sai - tuy nhiên xác suất của sai sót là chấp nhận được.</li>
+<li>Thuật toán Las Vegas: luôn cho kết quả đúng, và điểm khác biệt giữa các lần chạy với cùng một dữ liệu vào là thời gian chạy - ta sẽ nghiên cứu và sự phân phối theo xác suất của thời gian chạy.</li>
+</ol>
+<p>Tham khảo <a href="http://www.ews.uiuc.edu/~kumar/lectures/lecture.10.3.pdf">tài liệu</a> từ College of Engineering at UIUC để xem cách các thuật toán này hoạt động.</p>
+<p>Mục tiêu chính của thuật toán ngẫu nhiêu là để tìm kiếm một hướng tiếp cận đơn giản hơn cho những bài toán phức tạp hoặc không có lời giải. Những thuật toán ngẫu nhiên không đảm bảo sẽ luôn tìm được kết quả tối ưu nhất, nhưng chúng có thể tìm được một kết quả đủ tốt trong một giới hạn về thời gian và bộ nhớ "chấp nhận được".</p>
+<p>Một câu hỏi thú vị được đưa ra là liệu những thuật toán như vậy có ích trong các kì thi lập trình hay không. Khi bạn không nghĩ ra một cách nào để giải, hướng đi hợp lý là thử cài một cách random. Độ tốt của việc random phụ thuộc nhiều vào tính chất của bài toán, và khi có kinh nghiệm cũng như cảm nhận Toán học tốt, bạn có thể đoán được là random có thể chạy đúng được với bài toán hay không. Tham khảo <a href="http://community.topcoder.com/stat?c=problem_statement&amp;pm=2935&amp;rd=585">QueenInterference</a></p>
+<p>Trong các bài toán tối ưu hóa, nếu số nghiệm tối ưu khá nhiều so với số khả năng có thể xảy ra, một thuật toán random đơn giản như sau cũng có thể có hi vọng chạy đúng:</p>
+<pre class="highlight"><code><span class="n">Max</span> <span class="o">=</span> <span class="mi">1000000</span><span class="p">;</span> <span class="n">attempt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">Max</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">answer</span> <span class="o">=</span> <span class="n">solve_random</span> <span class="p">(...);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">better</span> <span class="p">(</span><span class="n">answer</span><span class="p">,</span> <span class="n">optimum</span><span class="p">))</span>
+  <span class="c1">// Tìm được kết quả tốt hơn</span>
+  <span class="p">{</span>
+    <span class="n">optimum</span> <span class="o">=</span> <span class="n">answer</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Solution "</span> <span class="o">&lt;&lt;</span> <span class="n">answer</span> <span class="o">&lt;&lt;</span> <span class="s">" found on step "</span> <span class="o">&lt;&lt;</span> <span class="n">attempt</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">attempt</span> <span class="o">++</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="bài-tập-luyện-tập" href="#bài-tập-luyện-tập"></a>Bài tập luyện tập</h1>
+<p>ND: Mình không chép lại danh sách bài tập trong bài viết gốc ở Topcoder do sau này tác giả có thể chỉnh sửa hay bổ sung. Các bạn xem cuối <a href="https://www.topcoder.com/community/data-science/data-science-tutorials/understanding-probabilities/">bài viết gốc trên Topcoder</a> để luyện tập thêm.</p>
+</div>
+</div>
+</div>
+</div>

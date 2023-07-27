@@ -3,6 +3,8 @@
   height: 50px;
   background-color: var(--primary-color);
   display: flex;
+  position: absolute;
+  bottom: 0;
 }
 
 .footer-container .footer-item {

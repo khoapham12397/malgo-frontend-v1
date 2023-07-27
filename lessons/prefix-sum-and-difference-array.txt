@@ -1,0 +1,420 @@
+<div id="wiki-content">
+<h1 class="pt-4">Mảng cộng dồn và mảng hiệu</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/data-structures/">data-structures</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả:</strong></p>
+<ul>
+<li>Bùi Nguyễn Đức Tân - VNU-HCM, High School for the Gifted</li>
+</ul>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Trần Quang Lộc - ITMO University</li>
+<li>Hoàng Xuân Nhật - VNU-HCM, University of Science</li>
+<li>Nguyễn Phú Bình - Hung Vuong High School for the Gifted, Binh Duong Province</li>
+</ul>
+<hr/>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><ul><li><a href="#khái-niệm">Khái niệm</a><ul><li><a href="#mảng-cộng-dồn-prefix-sum">Mảng cộng dồn (prefix sum)</a></li><li><a href="#mảng-hiệu-difference-array">Mảng hiệu (difference array)</a></li></ul></li><li><a href="#cài-đặt">Cài đặt</a><ul><li><a href="#mảng-cộng-dồn">Mảng cộng dồn</a></li><li><a href="#mảng-hiệu">Mảng hiệu</a></li></ul></li><li><a href="#tính-chất">Tính chất</a><ul><li><a href="#độ-dài-mảng">Độ dài mảng</a></li><li><a href="#tính-riêng-biệt">Tính riêng biệt</a></li><li><a href="#liên-hệ-giữa-mảng-cộng-dồn-và-mảng-hiệu">Liên hệ giữa mảng cộng dồn và mảng hiệu</a></li></ul></li><li><a href="#ứng-dụng-của-mảng-cộng-dồn">Ứng dụng của mảng cộng dồn</a><ul><li><a href="#bài-toán-minh-họa">Bài toán minh họa</a></li></ul></li><li><a href="#ứng-dụng-của-mảng-hiệu">Ứng dụng của mảng hiệu</a><ul><li><a href="#bài-toán-minh-họa-1">Bài toán minh họa</a></li></ul></li><li><a href="#mở-rộng-sang-mảng-nhiều-chiều">Mở rộng sang mảng nhiều chiều</a><ul><li><a href="#mảng-cộng-dồn-hai-chiều">Mảng cộng dồn hai chiều</a></li><li><a href="#mảng-cộng-dồn-ba-chiều">Mảng cộng dồn ba chiều</a></li><li><a href="#mảng-hiệu-hai-chiều">Mảng hiệu hai chiều</a></li><li><a href="#mảng-hiệu-ba-chiều">Mảng hiệu ba chiều</a></li></ul></li><li><a href="#mở-rộng-sang-mảng-động">Mở rộng sang mảng động</a></li><li><a href="#bài-tập">Bài tập</a><ul><li><a href="#mảng-cộng-dồn-1-chiều">Mảng cộng dồn 1 chiều</a></li><li><a href="#mảng-hiệu-1-chiều">Mảng hiệu 1 chiều</a></li><li><a href="#mảng-cộng-dồn-nhiều-chiều">Mảng cộng dồn nhiều chiều</a></li><li><a href="#mảng-hiệu-nhiều-chiều">Mảng hiệu nhiều chiều</a></li></ul></li><li><a href="#references">References</a></li></ul></li></ul></div>
+<h2 class="editable"><a class="anchor" id="khái-niệm" href="#khái-niệm"></a>Khái niệm</h2>
+<h3 class="editable"><a class="anchor" id="mảng-cộng-dồn-prefix-sum" href="#mảng-cộng-dồn-prefix-sum"></a>Mảng cộng dồn (prefix sum)</h3>
+<p>Cho một mảng $A$ có $n$ phần tử được đánh số từ $0$ đến $n - 1$, ta dựng mảng $S(A)$ theo quy tắc sau:</p>
+<ul>
+<li>$S_0 = c$, với $c$ là một hằng số thực</li>
+<li>$S_i = S_{i - 1} + A_{i -1} = \displaystyle c +\sum_{j = 0}^{i - 1} A_j$, với $1 \le i &lt; n$</li>
+</ul>
+<p>Mảng $S(A)$ được gọi là <strong>mảng cộng dồn (tiền tố)</strong> theo $c$ của $A$, gọi cách khác là prefix sum của $A$. Từ một mảng $A$, ta có thể sinh ra vô hạn mảng $S(A)$ bằng cách chọn một số thực $c$ tùy ý; trên thực tế, ta thường chọn $c = 0$ để thuận tiện hơn khi tính toán.</p>
+<p><img src="https://i.imgur.com/lzBYJ89.gif" /></p>
+<h3 class="editable"><a class="anchor" id="mảng-hiệu-difference-array" href="#mảng-hiệu-difference-array"></a>Mảng hiệu (difference array)</h3>
+<p>Cũng với mảng $A$, ta có thể dựng mảng $D(A)$ theo quy tắc: $D_i = A_{i + 1} - A_i\;(0 \le i &lt; n - 1)$.</p>
+<p>Mảng $D(A)$ được gọi là <strong>mảng hiệu</strong> của $A$, có tên tiếng Anh là difference array.</p>
+<p><img src="https://i.imgur.com/3IQ1YlB.gif" /></p>
+<h2 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h2>
+<h3 class="editable"><a class="anchor" id="mảng-cộng-dồn" href="#mảng-cộng-dồn"></a>Mảng cộng dồn</h3>
+<p>Để dựng mảng cộng dồn, ta có thể áp dụng định nghĩa ở trên để dựng trực tiếp mảng:</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">buildPrefixSum</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">C</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">prefixSum</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">prefixSum</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">prefixSum</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefixSum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="k">return</span> <span class="n">prefixSum</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Ngoài ra, thư viện C++ STL cũng cung cấp hàm <code>partial_sum</code> để phục vụ quá trình dựng mảng cộng dồn, cú pháp của hàm như sau:</p>
+<pre class="highlight"><code><span class="n">partial_sum</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">binary_op</span><span class="p">)</span></code></pre>
+<p>Hàm trên sẽ thực hiện tính mảng cộng dồn với toán tử <code>binary_op</code> trên các container của C++ có iterator trỏ từ <code>[first, last)</code> và trả mảng cộng dồn sang container bắt đầu từ iterator trỏ về <code>result</code>.</p>
+<p>Có hai lưu ý quan trọng khi sử dụng hàm này:</p>
+<ul>
+<li>Hàm <code>partial_sum</code> duyệt qua các phần tử của container theo tính chất của iterator của container đó; vì thế giá trị của mảng cộng dồn sẽ phụ thuộc vào thứ tự xuất hiện của các phần tử trong container đó.</li>
+<li>Tham số <code>binary_op</code> có thể được để trống. Khi này, toán tử mặc định là phép cộng (<code>+</code>).</li>
+</ul>
+<p>Bạn đọc có thể tham khảo thêm về hàm này tại trang <a href="https://en.cppreference.com/w/cpp/algorithm/partial_sum">cppreference</a>.</p>
+<p>Code minh họa:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">printArray</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">arr</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">v</span> <span class="o">:</span> <span class="n">arr</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">v</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">};</span>
+<span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+
+<span class="c1">// Dựng thủ công</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">prefOne</span> <span class="o">=</span> <span class="n">buildPrefixSum</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+<span class="n">printArray</span><span class="p">(</span><span class="n">prefOne</span><span class="p">);</span> <span class="c1">// 0 3 2 -2 -1 4 13 11 5</span>
+
+<span class="c1">// Dựng bằng partial_sum</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">prefTwo</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="n">partial_sum</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">a</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">prefTwo</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+<span class="n">printArray</span><span class="p">(</span><span class="n">prefTwo</span><span class="p">);</span> <span class="c1">// 3 2 -2 -1 4 13 11 5</span></code></pre>
+<p>Trong cả hai cách trên, độ phức tạp của quá trình dựng là $\mathcal{O}(n)$.</p>
+<h3 class="editable"><a class="anchor" id="mảng-hiệu" href="#mảng-hiệu"></a>Mảng hiệu</h3>
+<p>Tương tự, ta cũng có thể áp dụng định nghĩa để dựng trực tiếp mảng hiệu:</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">buildDifferenceArray</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">differenceArray</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">differenceArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="k">return</span> <span class="n">differenceArray</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Ngoài ra, thư viện C++ STL cũng cung cấp hàm <code>adjacent_difference</code> để phục vụ quá trình dựng mảng cộng dồn, cú pháp của hàm như sau:</p>
+<pre class="highlight"><code><span class="n">adjacent_difference</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">binary_op</span><span class="p">)</span></code></pre>
+<p>Hàm trên sẽ thực hiện tính mảng hiệu với toán tử <code>binary_op</code> trên các container của C++ có iterator trỏ từ <code>[first, last)</code> và trả mảng hiệu sang container bắt đầu từ iterator trỏ về <code>result</code>.</p>
+<p>Các lưu ý ở phần <code>partial_sum</code> cũng được áp dụng cho hàm này.</p>
+<p>Bạn đọc có thể tham khảo thêm về hàm này tại trang <a href="https://en.cppreference.com/w/cpp/algorithm/difference_array">cppreference</a>.
+Code minh họa:</p>
+<pre class="highlight"><code><span class="c1">// Dựng thủ công</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">diffOne</span> <span class="o">=</span> <span class="n">buildDifferenceArray</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+<span class="n">printArray</span><span class="p">(</span><span class="n">diffOne</span><span class="p">);</span>
+<span class="c1">// -4 -3 5 4 4 -11 -4</span>
+
+<span class="c1">// Dựng bằng partial_sum</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">diffTwo</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="n">adjacent_difference</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">a</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">diffTwo</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+<span class="n">printArray</span><span class="p">(</span><span class="n">diffTwo</span><span class="p">);</span>
+<span class="c1">// 3 -4 -3 5 4 4 -11 -4</span></code></pre>
+<p>Trong cả hai cách trên, độ phức tạp của quá trình dựng là $\mathcal{O}(n)$.</p>
+<h2 class="editable"><a class="anchor" id="tính-chất" href="#tính-chất"></a>Tính chất</h2>
+<h3 class="editable"><a class="anchor" id="độ-dài-mảng" href="#độ-dài-mảng"></a>Độ dài mảng</h3>
+<ul>
+<li>Đối với <strong>mảng cộng dồn</strong>, do ta cần thêm một hằng số $c$ ở đầu mảng, độ dài của mảng $S(c, A)$ là $n + 1$, nhiều hơn 1 phần tử so với mảng $A$ gốc.</li>
+<li>Ngược lại, <strong>mảng hiệu</strong> được dựng dựa trên hiệu của hai phần tử liền kề nhau. Tuy nhiên, trong mảng $A$ chỉ có $n - 1$ cặp như vậy, vì thế độ dài của $D(A)$ là $n - 1$, ít hơn 1 phần tử so với mảng $A$ gốc.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="tính-riêng-biệt" href="#tính-riêng-biệt"></a>Tính riêng biệt</h3>
+<ul>
+<li>Từ một mảng $A$ bất kỳ, ta sinh được vô hạn mảng cộng dồn $S(c, A)$ từ $A$. Tuy nhiên, các mảng cộng dồn này chỉ khác nhau ở giá trị $c$ được chọn.</li>
+<li>Cũng với mảng $A$ đó, ta sinh được <strong>một và chỉ một</strong> mảng hiệu $D(A)$ từ $A$.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="liên-hệ-giữa-mảng-cộng-dồn-và-mảng-hiệu" href="#liên-hệ-giữa-mảng-cộng-dồn-và-mảng-hiệu"></a>Liên hệ giữa mảng cộng dồn và mảng hiệu</h3>
+<p>Cho mảng cộng dồn $S(c, A)$ và mảng hiệu $D(A)$, ta có thể dễ dàng khôi phục nội dung của mảng $A$ thông qua các phép sau:</p>
+<ul>
+<li>$S(A_0, D(A)) = A$</li>
+<li>$D(S(c, A)) = A$ với mọi $c$ thực</li>
+</ul>
+<p>Hình dưới đây mô tả rõ hơn mối liên hệ giữa mảng gốc, mảng hiệu và mảng cộng dồn sinh ra từ nó:
+<img src="https://i.imgur.com/agrVFdU.png" /></p>
+<p>Hàm <code>partial_sum</code> và <code>adjacent_difference</code> trong C++ STL cũng tuân theo quy tắc này trên. Tuy nhiên, các thao tác trên hai hàm này có phần phức tạp hơn so với thao tác trên mảng mà ta cài đặt thủ công.</p>
+<h2 class="editable"><a class="anchor" id="ứng-dụng-của-mảng-cộng-dồn" href="#ứng-dụng-của-mảng-cộng-dồn"></a>Ứng dụng của mảng cộng dồn</h2>
+<p>Mảng cộng dồn có một tính chất quan trọng: các phần tử được cộng lại chồng chất lên nhau một cách liên tiếp, vì thế, với mọi nửa khoảng $[l, r)$ $(0 \le l &lt; r \le n)$, ta chỉ cần tính $S_r - S_l$ để tính tổng của các phần tử $A_l, A_{l + 1},\dots, A_{r - 2}, A_{r - 1}$. Việc trừ này cũng sẽ khử đi hằng số $c$ của $S$, vì thế ta có thể dùng bất kỳ mảng $S$ nào được sinh từ $A$ để tính tổng.</p>
+<p><strong>Chứng minh:</strong></p>
+<p>Theo định nghĩa: $S_i = c + \displaystyle \sum_{j = 0}^{i - 1} A_j$</p>
+<p>Khi này:</p>
+<div class="kdmath">$$
+\begin{align*}
+S_r - S_l &amp;= c + \displaystyle \sum_{j = 0}^{r - 1} A_j - \bigg(c + \displaystyle \sum_{j = 0}^{l - 1} A_j\bigg) \\
+&amp;= c + \displaystyle \sum_{j = 0}^{r - 1} A_j - c - \displaystyle \sum_{j = 0}^{l - 1} A_j \\
+&amp;= c - c + \displaystyle \sum_{j = 0}^{r - 1} A_j - \displaystyle \sum_{j = 0}^{l - 1} A_j \\
+&amp;= \displaystyle \sum_{j = l}^{r - 1} A_j + \displaystyle \sum_{j = 0}^{l - 1} A_j - \displaystyle \sum_{j = 0}^{l - 1} A_j \\
+&amp;= \displaystyle \sum_{j = l}^{r - 1} A_j \quad \blacksquare
+\end{align*}
+$$</div>
+<p>Trong đa số trường hợp, mảng cộng dồn thường được sử dụng nếu bài toán yêu cầu tính tổng một đoạn con nhiều lần liên tiếp. Dưới đây, ta sẽ đề cập một số bài toán có điều kiện trên.</p>
+<h3 class="editable"><a class="anchor" id="bài-toán-minh-họa" href="#bài-toán-minh-họa"></a>Bài toán minh họa</h3>
+<p>Nguồn: <a href="https://cses.fi/problemset/task/1643">CSES - Maximum Subarray Sum</a></p>
+<p>Đề bài: Cho một mảng $A$ gồm $n$ phần tử. Tìm đoạn con khác rỗng có tổng lớn nhất. Giới hạn: $1 \le n \le 2 \cdot 10^5$, $\lvert A_i \rvert \le 10^9$</p>
+<p>Trước hết, ta tạo mảng $pref = S(0, A)$ để lưu mảng cộng dồn của $A$. Giả sử với $r$ cố định, ta cần tìm $l &lt; r$ sao cho tổng các phần tử trong nửa khoảng $[l, r)$ đạt cực đại. Ta viết lại bài toán theo công thức sau:</p>
+<div class="kdmath">$$
+\begin{align*}
+ans_r &amp;= \max_{0 \, \le \, l \, &lt; \, r} (pref_r - pref_l) \\
+&amp;= pref_r + \max_{0 \, \le \, l \, &lt; \, r} (- pref_l) \\
+&amp;= pref_r - \min_{0 \, \le \, l \, &lt; \, r} pref_l \\
+\end{align*}
+$$</div>
+<p>Nếu ta chạy $r$ từ $1$ đến $n$, ta có thể cập nhật cuốn chiếu $\min$ theo từng $pref_r$; việc này cho phép chúng ta tính $ans_r$ với độ phức tạp $O(1)$. Đáp án của bài toán là $\displaystyle \max_{r} ans_r$ với $1 \le r \le n$.</p>
+<p>Độ phức tạp của cách trên là $\mathcal{O}(n)$. Code tham khảo:</p>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mi">200003</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">INF</span> <span class="o">=</span> <span class="mf">1e18</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
+<span class="kt">long</span> <span class="kt">long</span> <span class="n">prefSum</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="n">prefMin</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="n">ans</span> <span class="o">=</span> <span class="o">-</span><span class="n">INF</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">prefSum</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefMin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+      <span class="n">prefSum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefSum</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prefMin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">prefMin</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">prefSum</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span> <span class="n">prefSum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">prefMin</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Lưu ý, ta có thể thu gọn <code>prefSum</code> và <code>prefMin</code> thành một biến duy nhất để tối ưu bộ nhớ sử dụng.
+Bên cạnh cách giải đã đề cập, bài toán này cũng có thể giải bằng phương pháp quy hoạch động hoặc chia để trị.</p>
+<h2 class="editable"><a class="anchor" id="ứng-dụng-của-mảng-hiệu" href="#ứng-dụng-của-mảng-hiệu"></a>Ứng dụng của mảng hiệu</h2>
+<p>Giả sử, ta cần cộng thêm một lượng $k$ vào một đoạn con $[l, r]$ của mảng $A$. Thay vì cộng lần lượt từng phần tử với độ phức tạp $\mathcal{O}(n)$, ta có thể dựng mảng hiệu $D(A)$ và cập nhật trên đó với độ phức tạp $\mathcal{O}(1)$. Dựng mảng hiệu $D$ từ $A$ lưu trữ chênh lệch của các cặp phần tử liền kề nhau, ta chia các trường hợp sau để nhận xét:</p>
+<ul>
+<li>Nếu $A_i$ và $A_{i + 1}$ đều nằm ngoài $[l, r]$ $\Rightarrow$ Giá trị của hai phần tử không đổi $\Rightarrow$ $D_i$ không đổi</li>
+<li>Nếu $A_i$ và $A_{i + 1}$ đều nằm trong $[l, r]$ $\Rightarrow$ Giá trị của hai phần tử đều được cộng một lượng $k$ $\Rightarrow$ $D_i$ không đổi</li>
+<li>Nếu chỉ một trong $A_i$ hoặc $A_{i + 1}$ nằm trong $[l, r]$ $\Rightarrow$ Giá trị của một phần tử giữ nguyên còn phần tử còn lại được cộng một lượng $k$ $\Rightarrow$ <strong>$D_i$ thay đổi</strong>
+</li>
+</ul>
+<p>Chỉ duy nhất trường hợp cuối cùng ta cần tác động trực tiếp lên $D$. Nhận thấy, trường hợp cuối chỉ thỏa khi $i = l - 1$ hoặc $i = r$, ta chỉ cần tác động trực tiếp lên $D_{l - 1}$ và $D_{r}$ để cập nhật đoạn. Sau khi cập nhật hoàn tất, ta áp dụng tính chất $S(D, A_0) = A$ để lấy giá trị cuối cùng của $A$.</p>
+<h3 class="editable"><a class="anchor" id="bài-toán-minh-họa-1" href="#bài-toán-minh-họa-1"></a>Bài toán minh họa</h3>
+<p>Nguồn: <a href="https://codeforces.com/contest/816/problem/B">Codeforces - Karen and Coffee</a></p>
+<p>Đề bài: Cho một mảng $A$ có vô số phần tử mang giá trị $0$. Có $n$ truy vấn cập nhật, mỗi truy vấn yêu cầu cập nhật toàn bộ phần tử từ $l_i$ đến $r_i$ thêm $1$.</p>
+<p>Sau khi cập nhật xong, trả lời $q$ câu hỏi với nội dung sau: có bao nhiêu vị trí $i$ thỏa $a \le i \le b$ và $A_i \ge k$?</p>
+<p>Giới hạn: $k \le n \le 2 \cdot 10^5, q \le 2 \cdot 10^5, 1 \le l_i \le r_i \le 2 \cdot 10^5, 1 \le a \le b \le 2 \cdot 10^5$</p>
+<p>Do điều kiện $l_i, r_i, a, b$ của đề bài, mảng $A$ sẽ chỉ lưu trữ tối đa 200 nghìn phần tử, toàn bộ phần tử này đều có chỉ số dương, vì thế ta sẽ đơn thuần lưu 2 mảng này dưới dạng mảng thường.</p>
+<p>Gọi $D$ là mảng hiệu của $A$. Để xử lý truy vấn cập nhật, ta chỉ cần cập nhật giá trị của mảng $D$ tại 2 biên $l$ và $r + 1$ bằng cách tăng $D_l$ thêm $1$ và trừ $1$ khỏi $D_{r + 1}$. Sau khi xử lý toàn bộ truy vấn cập nhật, ta sử dụng hệ thức $S(D, 0) = A$ để cập nhật lại giá trị của mảng $A$.</p>
+<p>Để trả lời câu hỏi, ta có thể hình dung mỗi chỉ số trong đoạn $[a, b]$ mang giá trị $1$ nếu thỏa điều kiện đề bài và $0$ nếu không thỏa; số chỉ số thỏa mãn cũng chỉ là tổng của các phần tử nằm trong đoạn $[a, b]$. Từ tính chất này, ta có thể ứng dụng mảng cộng dồn để trả lời nhau câu hỏi trong $\mathcal{O}(1)$. Ta đặt mảng $A'$ đánh dấu giá trị $A_i$ tương ứng có thỏa điều kiện $\ge k$ không, rồi dựng mảng cộng dồn $S$ trên $A'$. Đáp án của mỗi câu hỏi sẽ là kết quả của phép tính $S_{b} - S_{a - 1}$.</p>
+<p>Độ phức tạp thời gian và không gian của cách này đều là $\mathcal{O}(n)$. Code tham khảo:</p>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mi">200003</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">++</span><span class="n">d</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="o">--</span><span class="n">d</span><span class="p">[</span><span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">buildPrefixSum</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">k</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">k</span> <span class="o">&gt;&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">l</span> <span class="o">&gt;&gt;</span> <span class="n">r</span><span class="p">;</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">buildPrefixSum</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">q</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">query</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="mở-rộng-sang-mảng-nhiều-chiều" href="#mở-rộng-sang-mảng-nhiều-chiều"></a>Mở rộng sang mảng nhiều chiều</h2>
+<p>Ta có thể mở rộng mảng cộng dồn và mảng hiệu để thao tác trên mảng nhiều chiều.</p>
+<h3 class="editable"><a class="anchor" id="mảng-cộng-dồn-hai-chiều" href="#mảng-cộng-dồn-hai-chiều"></a>Mảng cộng dồn hai chiều</h3>
+<p>Cho mảng hai chiều $A$ có kích thước $m \times n$ (chỉ số hàng và cột đầu tiên đều là 1), mảng cộng dồn $S(A)$ được dựng theo công thức sau: <span class="kdmath">$S_{i,j}=\displaystyle \sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} A_{t_i,t_j}$</span></p>
+<p>Các phần tử trong mảng cộng dồn lưu tổng của toàn bộ phần tử chứa trong hình chữ nhật $[1, i] \times [1, j]$.
+Điểm khác biệt so với mảng cộng dồn 1 chiều ở đây là sự lược bỏ của hằng số $C$, ta ngầm quy ước: $S_{0,x} = S_{y,0} = 0$ với $x, y$ nguyên không âm khi dựng mảng cộng dồn.</p>
+<p><img src="https://i.imgur.com/FhmEVv3.png" /></p>
+<p>Từ công thức quy ước trên, ta thực hiện biến đổi sau để dựng mảng cộng dồn:</p>
+<div class="kdmath">$$
+\begin{alignat*}{2}
+\displaystyle
+S_{i,j} &amp; =\sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} A_{t_i,t_j}\\
+&amp;=\sum_{t_i\,=\,1}^{i - 1} \sum_{t_j\,=\,1}^{j - 1} A_{t_i,t_j} + \sum_{t_i\,=\,1}^{i - 1} A_{t_i,j} + \sum_{t_j\,=\,1}^{j - 1} A_{i,t_j} + A_{i, j}\\
+&amp;=\sum_{t_i\,=\,1}^{i - 1} \sum_{t_j\,=\,1}^{j - 1} A_{t_i,t_j} + \sum_{t_i\,=\,1}^{i - 1} A_{t_i,j} + \sum_{t_j\,=\,1}^{j - 1} A_{i,t_j} + A_{i, j}\\
+&amp;=\sum_{t_i\,=\,1}^{i - 1} \sum_{t_j\,=\,1}^{j - 1} A_{t_i,t_j} + \Bigg(\sum_{t_i\,=\,1}^{i - 1} \sum_{t_j\,=\,1}^{j} A_{t_i,t_j} - \sum_{t_i\,=\,1}^{i - 1} \sum_{t_j\,=\,1}^{j - 1} A_{t_i,t_j}\Bigg) + \Bigg(\sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j - 1} A_{t_i,t_j} - \sum_{t_i\,=\,1}^{i - 1} \sum_{t_j\,=\,1}^{j - 1} A_{t_i,t_j}\Bigg) + A_{i, j}\\
+&amp;= S_{i-1,j-1} + S_{i-1,j} - S_{i-1,j-1} + S_{i,j-1} - S_{i-1,j-1} + A_{i, j} \\
+&amp;= S_{i-1,j} + S_{i,j-1} - S_{i-1,j-1} + A_{i, j}
+\end{alignat*}
+$$</div>
+<p>Để hình dung rõ hơn công thức biến đổi trên, bạn đọc có thể tham khảo hình ảnh dưới:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;"><img src="https://i.imgur.com/3vhyF37.gif" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;"><img src="https://i.imgur.com/TlZhWxX.png" /></td>
+</tr>
+<tr>
+<td style="text-align:center;">Các phần tử $A_i$ tô màu xanh nhạt được đánh dấu 1 lần, tô màu xanh đậm được đánh dấu tới 2 lần</td>
+</tr>
+</tbody>
+</table>
+<p>Code dưới đây dựng mảng cộng dồn hai chiều:</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">build2DPrefixSum</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;&amp;</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">size</span><span class="p">();</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">prefixSum</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">prefixSum</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefixSum</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">prefixSum</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">prefixSum</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span> <span class="c1">// ta truy cập a(i - 1, j - 1) do mảng A là 0-indexed</span>
+    <span class="k">return</span> <span class="n">prefixSum</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Để tính tổng của toàn bộ các phần tử nằm trong hình chữ nhật có góc trái trên là $(x_1, y_1)$ và góc phải dưới $(x_2, y_2)$, ta biến đổi tương tự để thu được công thức tính sau:</p>
+<div class="kdmath">$$
+\displaystyle
+\sum_{i = x_1}^{x_2} \sum_{j = y_1}^{y_2} A_{i, j} = S_{x_2,\, y_2} - S_{x_1 - 1,\, y_2} - S_{x_2,\, y_1 - 1} + S_{x_1 - 1,\, y_1 - 1}
+$$</div>
+<p>Phần chứng minh công thức trên xin được nhường lại cho bạn đọc. Hình ảnh dưới minh họa vì sao công thức trên cho kết quả chính xác:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;"><img src="https://i.imgur.com/aqfFaz3.gif" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;"><img src="https://i.imgur.com/3qzbjwL.png" /></td>
+</tr>
+<tr>
+<td style="text-align:center;">Các phần tử $A_i$ tô màu đỏ bị trừ tới 2 lần, vì thế cần phải cộng bù lại</td>
+</tr>
+</tbody>
+</table>
+<h3 class="editable"><a class="anchor" id="mảng-cộng-dồn-ba-chiều" href="#mảng-cộng-dồn-ba-chiều"></a>Mảng cộng dồn ba chiều</h3>
+<p>Giả sử ta có mảng $A$ trong không gian 3 chiều với kích thước $m \times n \times p$, ta dựng mảng $S(A)$ theo quy tắc sau: <span class="kdmath">$S_{i, j, k}=\displaystyle \sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} \sum_{t_k\,=\,1}^{k} A_{t_i,t_j,t_k}$</span></p>
+<p>Công thức sau được sử dụng để dựng mảng cộng dồn 3 chiều:</p>
+<div class="kdmath">$$
+\begin{align*}
+\displaystyle
+S_{t_i,t_j,t_k}&amp;=A_{t_i,t_j,t_k} + S_{t_i-1,t_j,t_k} + S_{t_i,t_j-1,t_k} + S_{t_i,t_j,t_k-1} \\
+&amp; \hspace{1em}- S_{t_i-1,t_j-1,t_k} - S_{t_i-1,t_j,t_k-1} - S_{t_i,t_j-1,t_k-1} + S_{t_i-1,t_j-1,t_k-1}
+\end{align*}
+$$</div>
+<p>Tương tự, ta tính tổng các phần tử trong không gian $[x_1, x_2] \times [y_1, y_2] \times [z_1, z_2]$ qua công thức sau:</p>
+<div class="kdmath">$$
+\begin{align*}
+\displaystyle
+\sum_{i=x_1}^{x_2}\sum_{j=y_1}^{y_2}\sum_{k=z_1}^{z_2} A_{i, j, k}
+&amp;=S_{x_2,y_2,z_2}-S_{x_1-1,y_2,z_2}-S_{x_2,y_1-1,z_2}-S_{x_2,y_2,z_1-1}\\
+&amp; \, + S_{x_1-1,y_1-1,z_2} + S_{x_1-1,y_2,z_1-1} + S_{x_2,y_1-1,z_1-1} - S_{x_1-1,y_1-1,z_1-1}
+\end{align*}
+$$</div>
+<p>Hai công thức trên được xây dựng thông qua phương pháp bao hàm - loại trừ. Bạn đọc có thể tham khảo bài viết <a href="https://vnoi.info/wiki/translate/he/Number-Theory-7.md">Bao hàm - Loại trừ</a> trên VNOI Wiki để hiểu rõ hơn lý do có được công thức trên.</p>
+<p>Ta cũng có thể áp dụng phương pháp này để mở rộng cho các mảng $n$-chiều. Tuy nhiên, do số lượng bài toán liên quan đến mảng trong không gian từ 4 chiều trở lên là cực hiếm, mảng cộng dồn trong không gian này gần như không có ứng dụng thực tiễn. Vì thế, bài viết xin giới hạn lại tại mảng cộng dồn trong không gian 3 chiều trở xuống.</p>
+<h3 class="editable"><a class="anchor" id="mảng-hiệu-hai-chiều" href="#mảng-hiệu-hai-chiều"></a>Mảng hiệu hai chiều</h3>
+<p>Trước khi bắt đầu xây dựng mảng hiệu 2 chiều, ta cần định nghĩa thêm 2 khái niệm sau cho một mảng $A$ hai chiều có kích thước $m \times n$:</p>
+<ul>
+<li>$D_{hàng}(A)$ gồm $m$ hàng, hàng thứ $i$ biểu thị mảng hiệu của mảng gồm toàn bộ phần tử nằm trên hàng đó.</li>
+<li>$D_{cột}(A)$ gồm $n$ cột, cột thứ $i$ biểu thị mảng hiệu của mảng gồm toàn bộ phần tử nằm trên cột đó.</li>
+</ul>
+<p>Trong không gian 1 chiều, ta thấy được $S(D(A)) = A$. Để tính chất này được áp dụng cho mảng 2 chiều, ta tạo mảng $A'$ thỏa: $A_{i, j}^{'}= A_{i, j}$ với $i, j$ dương và $A_{i, j} = 0$ với $i = 0$ hoặc $j = 0$. Mảng $A'$ này đánh số theo dạng 0-indexed và có kích thước là $(m + 1) \times (n + 1)$. Khi này, mảng hiệu của $A$ sẽ là mảng $D$ thỏa $S(D) = A'$.</p>
+<p>Đặt $D = D_{cột}(D_{hàng}(A))$, khi này, ta có:</p>
+<div class="kdmath">$$
+\begin{align*}
+D_{i, j} &amp;= [D_{cột}(D_{hàng}(A))]_{i, j} \\
+&amp;= [D_{hàng}(A_i)]_j - [D_{hàng}(A_{i - 1})]_j \\
+&amp;= (A_{i, j} - A_{i, j - 1}) - (A_{i - 1, j} - A_{i - 1, j - 1}) \\
+&amp;= A_{i, j} - A_{i, j - 1} - A_{i - 1, j} + A_{i - 1, j - 1}
+\end{align*}
+$$</div>
+<p>Mảng $S(D)$ có giá trị như sau:</p>
+<div class="kdmath">$$
+\begin{align*}
+\displaystyle
+S(D)_{i,j} &amp;= \sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} D_{t_i,t_j}\\
+&amp;=\sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} (A_{t_i, t_j} - A_{t_i, t_j - 1} - A_{t_i - 1, t_j} + A_{t_i - 1, t_j - 1})\\
+&amp;=\sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} A_{t_i, t_j} - \sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} A_{t_i, t_j - 1} - \sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} A_{t_i - 1, t_j} + \sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} A_{t_i - 1, t_j - 1}\\
+&amp;=\sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j} A_{t_i, t_j} - \sum_{t_i\,=\,1}^{i} \sum_{t_j\,=\,1}^{j-1} A_{t_i, t_j} - \sum_{t_i\,=\,1}^{i-1} \sum_{t_j\,=\,1}^{j} A_{t_i, t_j} + \sum_{t_i\,=\,1}^{i-1} \sum_{t_j\,=\,1}^{j-1} A_{t_i, t_j}\\
+&amp;= S_{i,j} - S_{i-1,j} - S_{i,j-1} + S_{i-1,j-1} \\
+&amp;= {A'}_{i, j} \\
+\end{align*}
+$$</div>
+<p>Ta kết luận rằng $S(D) = A'$, mảng $D$ ta vừa dựng chính là mảng hiệu của $A$.</p>
+<p><img src="https://i.imgur.com/w7txGHE.png" /></p>
+<p>Từ các quan sát trên, ta có thể dựng mảng hiệu của $A$ bằng hai cách:</p>
+<ul>
+<li>Sử dụng trực tiếp công thức:
+$D_{i, j} = A_{i, j} - A_{i, j - 1} - A_{i - 1, j} + A_{i - 1, j - 1}$</li>
+<li>Tính $D_{hàng}$ cho từng hàng của $A$ và gán kết quả vào $A'$, sau đó tính $D_{cột}$ cho từng cột của $A'$.</li>
+</ul>
+<p>Code dưới đây dựng mảng hiệu 2 chiều $D$ theo $A$ theo cách thứ nhất:</p>
+<pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">build2DDifferenceArray</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;&amp;</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">size</span><span class="p">();</span>
+    <span class="n">vector</span><span class="o">&lt;</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">differenceArray</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">differenceArray</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="n">differenceArray</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="n">differenceArray</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="n">differenceArray</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">differenceArray</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Quay lại bài toán cũ trong không gian 1 chiều: làm thế nào để ta tăng thêm một lượng $k$ lên toàn bộ phần tử trong lưới $[r_1, r_2] \times [c_1, c_2]$ một cách hiệu quả? Khi ta tính $D_{hàng}$ cho từng hàng của $A$, ta nhận thấy chỉ giá trị của phần tử ở biên trái (tại $c_1$) và biên phải (tại $c_2 + 1$). Tiếp tục tính $D_{cột}$ cho từng cột của mảng $D_{hàng}(A)$, quan sát tương tự cho thấy chỉ phần tử tại $r_1$ và $r_2 + 1$ sẽ bị tác động bởi thao tác cập nhật này.</p>
+<p>Từ nhận xét trên, ta thấy chỉ có 4 phần tử của $D(A)$ sẽ bị tác động bởi thao tác này là tọa độ $(r_1, c_1)$, $(r_1, c_2 + 1)$, $(r_2 + 1, c_1)$ và $(r_2 + 1, c_2 + 1)$ - trong đó, phần tử tại $(r_1, c_1)$ và $(r_2 + 1, c_2 + 1)$ tăng thêm lượng $k$, phần tử tại $(r_1, c_2 + 1)$ và $(r_2 + 1, c_1)$ trừ đi lượng $k$. Ta dễ dàng cập nhật đoạn trên mảng hai chiều với độ phức tạp $\mathcal{O}(1)$.</p>
+<h3 class="editable"><a class="anchor" id="mảng-hiệu-ba-chiều" href="#mảng-hiệu-ba-chiều"></a>Mảng hiệu ba chiều</h3>
+<p>Cũng như mảng cộng dồn, ta cũng có thể dựng mảng hiệu của các mảng trong không gian 3 chiều. Tương tự, nếu ta coi $D$ là mảng sinh ra mảng cộng dồn $A$, ta có công thức dựng $D$ sau:</p>
+<div class="kdmath">$$
+\begin{align*}
+D_{i,j,k} &amp;= A_{i,j,k} - A_{i-1,j,k} - A_{i,j-1,k} - A_{i,j,k-1} \\
+&amp; \, + A_{i-1,j-1,k} + A_{i-1,j,k-1} + A_{i,j-1,k-1} - A_{i-1,j-1,k-1}
+\end{align*}
+$$</div>
+<p>Để xử lý truy vấn cập nhật toàn bộ phần tử trong không gian $[x_1, x_2] \times [y_1, y_2] \times [z_1, z_2]$, ta cần cập nhật giá trị tại $8$ vị trí, các vị trí đều nằm tại biên của không gian. Nếu ta coi mảng $n$-chiều như một hình lập phương chứa số, vị trí cần cập nhật sẽ tương ứng với đỉnh của hình lập phương đại diện cho không gian cần cập nhật. Ta sẽ tô xen kẽ các đỉnh này theo hai màu đen - trắng, đỉnh có tọa độ $(x_1, y_1, z_1)$ được tô màu trắng. Phần tử $D$ ứng với các đỉnh trắng được cộng thêm lượng $k$, ngược lại, phần tử ứng với đỉnh đen thì trừ đi lượng $k$.</p>
+<p><img src="https://i.imgur.com/jO0h9zp.png" /></p>
+<p>Hình trên minh họa những vị trí mà ta cần cập nhật trên mảng hiệu. Tương tự mảng cộng dồn, phương pháp <a href="https://vnoi.info/wiki/translate/he/Number-Theory-7.md">bao hàm - loại trừ</a> được áp dụng để đưa đến kết luận này.</p>
+<h2 class="editable"><a class="anchor" id="mở-rộng-sang-mảng-động" href="#mở-rộng-sang-mảng-động"></a>Mở rộng sang mảng động</h2>
+<p>Trong các ví dụ đã đề cập, các bài toán chúng ta phải giải đều không có truy vấn cập nhật hoặc toàn bộ truy vấn cập nhật được thực hiện trước truy vấn hỏi. Tuy nhiên, trong một số bài toán yêu cầu phải thực hiện xen kẽ hai loại truy vấn này, ta cần sử dụng các cấu trúc dữ liệu để giải quyết hiệu quả các truy vấn này.</p>
+<p>Có hai dạng bài toán liên quan đến mảng cộng dồn và mảng hiệu:</p>
+<ul>
+<li>
+<strong>Dạng 1:</strong> Cập nhật giá trị của $A_i$ hoặc tính tổng của $i$ phần tử đầu tiên.</li>
+<li>
+<strong>Dạng 2:</strong> Cập nhật toàn bộ giá trị từ $A_i$ đến $A_j$ $(i \le j)$ hoặc cho biết giá trị hiện tại của $A_i$.</li>
+</ul>
+<p>Nếu bài toán chỉ xử lý một trong hai dạng nói trên, ta có thể áp dụng cấu trúc dữ liệu <a href="https://vnoi.info/wiki/algo/data-structures/fenwick.md">Binary Indexed Tree</a> để giải quyết các truy vấn trên. Độ phức tạp của từng truy vấn sẽ phụ thuộc vào số chiều của mảng, thí dụ, thao tác trên mảng 1D sẽ cho độ phức tạp $\mathcal{O}(\log n)$ còn trên mảng 2D sẽ là $\mathcal{O}(\log^2 n)$.</p>
+<p>Trong một số bài toán yêu cầu xử lý kết hợp 2 dạng (cập nhật đoạn và tính tổng đoạn), ta thường áp dụng <a href="https://vnoi.info/wiki/algo/data-structures/segment-tree-extend.md">Segment Tree</a> có lazy propagation (cập nhật lười). Mặc dù có chung độ phức tạp, cách cài đặt này thường khó hơn, có thời gian chạy lâu hơn và dùng nhiều bộ nhớ hơn so với cài đặt Binary Indexed Tree. Nếu ta làm việc trên mảng 1 chiều, ta cũng có thể biến đổi hệ thức giữa mảng hiệu và mảng cộng dồn để cài đặt trực tiếp BIT làm việc trên các truy vấn này. Bạn đọc có thể tham khảo thêm cách cài đặt này tại <a href="https://vnoi.info/wiki/algo/data-structures/fenwick.md#truy-v%E1%BA%A5n-tr%C3%AAn-%C4%91o%E1%BA%A1n">đây</a>.</p>
+<h2 class="editable"><a class="anchor" id="bài-tập" href="#bài-tập"></a>Bài tập</h2>
+<h3 class="editable"><a class="anchor" id="mảng-cộng-dồn-1-chiều" href="#mảng-cộng-dồn-1-chiều"></a>Mảng cộng dồn 1 chiều</h3>
+<p><a href="https://oj.vnoi.info/problem/nkseq">VNOJ - NKSEQ</a></p>
+<p><a href="https://cses.fi/problemset/task/1661">CSES - Subarray Sums II</a></p>
+<p><a href="https://cses.fi/problemset/task/1662">CSES - Subarray Divisibility</a></p>
+<p><a href="https://codeforces.com/contest/1398/problem/C">Codeforces - Good Subarrays</a></p>
+<p><a href="https://www.codechef.com/problems/XXOR">Codechef - XXOR</a></p>
+<h3 class="editable"><a class="anchor" id="mảng-hiệu-1-chiều" href="#mảng-hiệu-1-chiều"></a>Mảng hiệu 1 chiều</h3>
+<p><a href="https://codeforces.com/problemset/problem/276/C">Codeforces - Little Girl and Maximum Sum</a></p>
+<p><a href="https://codeforces.com/contest/296/problem/C">Codeforces - Greg and Array</a></p>
+<p><a href="https://codeforces.com/group/1rv4rhCsHp/contest/319055/problem/E">Codeforces Gym - 319055E</a> (lưu ý: để xem nội dung bài tập cần tham gia nhóm tại <a href="https://codeforces.com/group/1rv4rhCsHp">link đây</a>)</p>
+<h3 class="editable"><a class="anchor" id="mảng-cộng-dồn-nhiều-chiều" href="#mảng-cộng-dồn-nhiều-chiều"></a>Mảng cộng dồn nhiều chiều</h3>
+<p><a href="https://cses.fi/problemset/task/1652">CSES - Forest Queries</a></p>
+<p><a href="http://www.usaco.org/index.php?page=viewproblem2&amp;cpid=416">USACO - The Lazy Cow</a></p>
+<p><a href="http://www.usaco.org/index.php?page=viewproblem2&amp;cpid=923">USACO - Painting the Barn</a></p>
+<p><a href="https://oj.vnoi.info/problem/maxcub">VNOJ - MAXCUB</a></p>
+<h3 class="editable"><a class="anchor" id="mảng-hiệu-nhiều-chiều" href="#mảng-hiệu-nhiều-chiều"></a>Mảng hiệu nhiều chiều</h3>
+<p><a href="https://www.codechef.com/COW42020/problems/COW3E">Codechef - COW3E</a></p>
+<p><a href="https://wcipeg.com/problem/cake">WCIPEG - CAKE</a></p>
+<p>VNOJ có phân loại riêng các bài tập về mảng cộng dồn, bạn đọc có thể tham khảo tại <a href="https://oj.vnoi.info/tags/?tag_id=prefix_sum">đây</a>.</p>
+<h2 class="editable"><a class="anchor" id="references" href="#references"></a>References</h2>
+<p><a href="http://wcipeg.com/wiki/Prefix_sum_array_and_difference_array">WCIPEG - Prefix sum array and difference array</a></p>
+<p><a href="https://en.cppreference.com/w/cpp/algorithm/partial_sum">cppreference.com - partial_sum</a></p>
+<p><a href="https://en.cppreference.com/w/cpp/algorithm/adjacent_difference">cppreference.com - adjacent_difference</a></p>
+</div>
+</div>
+</div>
+</div>

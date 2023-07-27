@@ -14,7 +14,7 @@ const store = configureStore({
     threadBase: threadBaseReducer,
     mathProblemList: MathProblemListReducer,
     chat: chatReducer,
-    notification: notificationReducer,
+    notification: notificationReducer
   }
 });
 

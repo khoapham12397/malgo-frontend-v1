@@ -5,7 +5,7 @@ import { RootState } from '../../state';
 import { setFocusComment, setReply } from '../../state/reducers/threadReducer';
 import parse from 'html-react-parser';
 import { likeComment } from '../../state/actions/threadAction';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import SmallLoader from '../SmallLoader/SmallLoader';
 import { getAvatarLink } from '../../utils/utils';
 import { getFixedUsername, getUsernameFromStorage } from '../../utils/getUser';
@@ -58,7 +58,7 @@ export const CommentItem = ({ commentData, isFetched }: CommentItemProps) => {
       likeComment(
         commentData.id,
         commentData.rootId,
-        myUsername?myUsername : undefined
+        myUsername ? myUsername : undefined
       )
     );
   };
@@ -88,15 +88,11 @@ export const CommentItem = ({ commentData, isFetched }: CommentItemProps) => {
                 >
                   {getFixedUsername(commentData.parent.author)}{' '}
                 </span>
-                <MathJaxContext>
-                  <MathJax> {parse(commentData.content)}</MathJax>
-                </MathJaxContext>
+                <MathJax> {parse(commentData.content)}</MathJax>
               </div>
             ) : (
               <div>
-                <MathJaxContext>
-                  <MathJax>{parse(commentData.content)}</MathJax>
-                </MathJaxContext>
+                <MathJax>{parse(commentData.content)}</MathJax>
               </div>
             )}
           </div>

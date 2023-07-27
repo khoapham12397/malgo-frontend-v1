@@ -10,7 +10,7 @@ import { toast } from 'react-hot-toast';
 import {
   editMathProblem,
   fetchMathCategoriesAndTags,
-  getMathProblem,
+  getMathProblem
 } from '../../state/actions/mathProblemListAction';
 import { Button, FormProps } from 'react-bootstrap';
 import './MathProblemForm.css';
@@ -167,11 +167,10 @@ function MathProblemForm({
   useEffect(() => {
     if (categories.length == 0) dispatch(fetchMathCategoriesAndTags());
   }, []);
-  
+
   useEffect(() => {
     if (problemId != null) {
-      getMathProblem(problemId, undefined)
-      .then(result => {
+      getMathProblem(problemId, undefined).then(result => {
         if (result.successed) {
           //setProblem(result.data.mathProblem);
           const prob: MathProbItem = result.data.mathProblem;
@@ -203,7 +202,6 @@ function MathProblemForm({
             );
 
           setChosenTypes(lst);
-          
         }
       });
     }
@@ -233,7 +231,7 @@ function MathProblemForm({
     setShowPreview(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (problemId) {
       const params: EditMathProbParam = {
         categoryId: category,
@@ -252,11 +250,12 @@ function MathProblemForm({
 
         username: 'test2'
       };
-      console.log(params);
+      //console.log(params);
       editMathProblem(params);
       handleChangeMode('');
     }
   };
+
   const handleCancel = () => {
     handleChangeMode('');
   };
@@ -275,7 +274,7 @@ function MathProblemForm({
     (state: RootState) => state.mathProblemList.problemTags
   );
   const removeTypeTag = (ind: number) => {
-    console.log('remove ' + ind);
+    //console.log('remove ' + ind);
     if (chosenTypes.includes(ind as never)) {
       var lst = [...chosenTypes];
       let index = lst.indexOf(ind as never);

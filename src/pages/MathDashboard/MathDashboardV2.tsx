@@ -33,7 +33,7 @@ const ProblemSetForm = ({ mode, handleChangeMode }: ProblemSetProps) => {
   const [clickChoose, setClickChoose] = useState(false);
 
   const handleSubmit = () => {
-    if(!myUsername){
+    if (!myUsername) {
       toast.error("you haven't logined yet");
       return;
     }
@@ -57,8 +57,7 @@ const ProblemSetForm = ({ mode, handleChangeMode }: ProblemSetProps) => {
       }))
     };
 
-    createMathSet(params)
-    .then(result => {
+    createMathSet(params).then(result => {
       if (result.successed) {
         toast.success('successed');
         handleChangeMode('');
@@ -139,8 +138,10 @@ const MathPanel = () => {
   const problems = useSelector(
     (state: RootState) => state.mathProblemList.problems
   );
-  
-  const [page, setPage] = useState<number>((filter?(filter.page?filter.page:1):1));
+
+  const [page, setPage] = useState<number>(
+    filter ? (filter.page ? filter.page : 1) : 1
+  );
   const [mode, setMode] = useState('');
 
   const handleChangePage = (page: number) => setPage(page);
@@ -156,7 +157,7 @@ const MathPanel = () => {
   useEffect(() => {
     if (filter.page != 0 && filter.page != null) setPage(filter.page);
   }, [filter.page]);
-  
+
   return (
     <div>
       <div className='pagination'>

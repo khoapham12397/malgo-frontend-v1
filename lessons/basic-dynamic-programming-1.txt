@@ -1,0 +1,724 @@
+<div id="wiki-content">
+<h1 class="pt-4">Quy hoạch động cơ bản (Phần 1)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/dp/">dp</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Bài viết có tham khảo và bổ sung, chỉnh sửa từ <a href="https://www.topcoder.com/thrive/articles/Dynamic%20Programming:%20From%20Novice%20to%20Advanced">TopCoder</a> và một số nguồn khác.</p>
+<p><strong>Người viết:</strong> Nguyễn Anh Bảo - Đại học Bách Khoa Hà Nội</p>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Hồ Ngọc Vĩnh Phát - Đại học Khoa học Tự nhiên, ĐHQG-HCM</li>
+<li>Ngô Nhật Quang - Trường THPT chuyên Khoa học Tự Nhiên, ĐHQGHN</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#beginner">Beginner</a><ul><li><a href="#ví-dụ-1">Ví dụ 1</a><ul><li><a href="#thuật-toán-đệ-quy">Thuật toán đệ quy</a></li><li><a href="#tối-ưu-thuật-toán-đệ-quy">Tối ưu thuật toán đệ quy</a></li></ul></li><li><a href="#phương-pháp-tiếp-cận">Phương pháp tiếp cận</a><ul><li><a href="#khi-nào-có-thể-áp-dụng-qhđ">Khi nào có thể áp dụng QHĐ</a></li><li><a href="#trạng-thái-của-bài-toán-là-gì">Trạng thái của bài toán là gì?</a></li><li><a href="#liên-hệ-giữa-các-trạng-thái">Liên hệ giữa các trạng thái</a></li><li><a href="#tìm-kết-quả-cuối-cùng">Tìm kết quả cuối cùng</a></li><li><a href="#code-mẫu">Code mẫu:</a></li></ul></li><li><a href="#ví-dụ-2">Ví dụ 2</a><ul><li><a href="#code-tham-khảo">Code tham khảo:</a></li></ul></li><li><a href="#tìm-độ-dài-dãy-con-không-giảm-dài-nhất">Tìm độ dài dãy con không giảm dài nhất</a><ul><li><a href="#code-tham-khảo-1">Code tham khảo</a></li><li><a href="#tìm-dãy-con-không-giảm-dài-nhất">Tìm dãy con không giảm dài nhất</a></li><li><a href="#bố-trí-phòng-họp-mất-tính-thứ-tự-so-với-dãy-ban-đầu">Bố trí phòng họp (mất tính thứ tự so với dãy ban đầu)</a></li><li><a href="#cho-thuê-máy">Cho thuê máy</a></li><li><a href="#dãy-tam-giác-bao-nhau">Dãy tam giác bao nhau</a></li><li><a href="#dãy-đổi-dấu">Dãy đổi dấu</a></li><li><a href="#dãy-số-wavio">Dãy số WAVIO</a></li></ul></li></ul></li><li><a href="#intermediate">Intermediate</a><ul><li><a href="#ví-dụ-khác">Ví dụ khác</a></li><li><a href="#xếp-vali-knapsack">Xếp vali (Knapsack)</a></li><li><a href="#mô-hình">Mô hình</a></li><li><a href="#công-thức">Công thức</a></li><li><a href="#2-3-cài-đặt">2.3. Cài đặt</a></li><li><a href="#2-4-một-số-bài-toán-khác">2.4. Một số bài toán khác</a><ul><li><a href="#dãy-con-có-tổng-bằng-s">Dãy con có tổng bằng S</a></li><li><a href="#chia-kẹo">Chia kẹo</a></li><li><a href="#market-olympic-balkan-2000">Market (Olympic Balkan 2000)</a></li><li><a href="#điền-dấu">Điền dấu</a></li><li><a href="#expression">Expression</a></li><li><a href="#farmer-ioi-2004">Farmer (IOI 2004)</a></li></ul></li></ul></li><li><a href="#kết">Kết</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p><strong>Quy hoạch động (QHĐ) (Dynamic Programming)</strong> là một trong những kĩ thuật quan trọng và cơ bản nhất trong lập trình thi đấu. Bài viết này sẽ trình bày và giải thích các khái niệm liên quan đến quy hoạch động đồng thời đưa ra các ví dụ minh họa.</p>
+<h1 class="editable"><a class="anchor" id="beginner" href="#beginner"></a>Beginner</h1>
+<p>Để mở đầu, ta xét ví dụ sau:</p>
+<h2 class="editable"><a class="anchor" id="ví-dụ-1" href="#ví-dụ-1"></a>Ví dụ 1</h2>
+<blockquote>
+<p><em>Bạn An có $n$ chiếc ghế màu trắng, $n$ chiếc ghế màu đen và $n$ chiếc ghế màu đỏ. An muốn chọn ra $n$ chiếc ghế để xếp thành một hàng ngang. Do An không thích màu đỏ nên An không muốn xếp hai chiếc ghế đỏ cạnh nhau. Tính số cách xếp ghế thỏa mãn điều kiện đó.</em>
+<strong>Điều kiện:</strong> $1\le n\le 10^5$.</p>
+</blockquote>
+<p><em><strong>Lưu ý</strong>: hai cách xếp được xem là khác nhau khi tồn tại một vị trí mà hai cách có hai loại ghế khác nhau.</em></p>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img1.png" /></p>
+<p>Bây giờ ta sẽ xây dựng thuật giải:</p>
+<h3 class="editable"><a class="anchor" id="thuật-toán-đệ-quy" href="#thuật-toán-đệ-quy"></a>Thuật toán đệ quy</h3>
+<p>Gọi số cách xếp $i$ cái ghế là $f[i]$. Ta xét chiếc ghế thứ $n$.</p>
+<ul>
+<li>Nếu nó có màu đen hoặc trắng thì chiếc ghế cạnh nó có thể có một trong ba màu. Do đó ta chỉ cần bố trí $n-1$ chiếc ghế còn lại thỏa mãn yêu cầu. Do có 2 cách chọn màu cho ghế thứ $n$ và $f[n-1]$ cách chọn màu cho các ghế còn lại nên số cách xếp trong trường hợp này là $2 * f[n-1]$.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img2.png" /></p>
+<ul>
+<li>Nếu nó có màu đỏ thì chiếc ghế cạnh nó chỉ có thể có màu trắng hoặc đen. Do vậy nên chiếc ghế thứ $n-2$ có thể có một trong ba màu. Khi đó ta cũng chỉ cần bố trí $n-2$ chiếc ghế còn lại thỏa mãn yêu cầu. Số cách xếp trong trường hợp này là $1* 2* f[n-2]$.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img3.png" /></p>
+<p>Với ý tưởng trên, ta có thể giải bài toán này như các bài toán đệ quy đơn giản. Cài đặt như sau:</p>
+<p></p><pre class="highlight"><code><span class="c1">// Tính số cách sắp xếp n cái ghế</span>
+<span class="kt">int</span> <span class="nf">solve</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Trường hợp cơ bản</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">8</span><span class="p">;</span>
+    <span class="c1">// Bước đệ quy</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">solve</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">solve</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+Thuật toán trên có độ phức tạp lũy thừa nên chỉ áp dụng được với $n$ nhỏ $(n &lt; 45)$, không đủ nhanh so với yêu cầu bài toán.
+<h3 class="editable"><a class="anchor" id="tối-ưu-thuật-toán-đệ-quy" href="#tối-ưu-thuật-toán-đệ-quy"></a>Tối ưu thuật toán đệ quy</h3>
+<p>Thuật toán trên chạy chậm vì một số hàm <code>solve(i)</code> được gọi rất nhiều lần. Ta lấy ví dụ sau:</p>
+<p>Giả sử cần tính <code>solve(1000)</code>. Khi đó cần tính <code>solve(999)</code> và <code>solve(998)</code>.</p>
+<p>Để tính <code>solve(999)</code> cần gọi hàm <code>solve(998)</code> và <code>solve(997)</code>.
+Để tính <code>solve(998)</code> cần gọi hàm <code>solve(997)</code> và <code>solve(996)</code>.
+Để tính <code>solve(997)</code> cần gọi hàm <code>solve(996)</code> và <code>solve(995)</code>.
+$\ldots$
+Ta có thể biểu diễn các hàm được gọi bằng một sơ đồ như sau:</p>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img4.png" /></p>
+<p>Từ sơ đồ trên ta thấy có nhiều hàm bị gọi rất nhiều lần một cách không cần thiết:</p>
+<ul>
+<li>
+<code>solve(998)</code> được gọi $2$ lần</li>
+<li>
+<code>solve(997)</code> được gọi $3$ lần</li>
+<li>
+<code>solve(996)</code> được gọi $5$ lần</li>
+<li>$\ldots$</li>
+</ul>
+<p>Để khắc phục điều này ta có thể sử dụng một mảng nhớ $d$ sao cho $d[i]$ là giá trị của <code>solve(i)</code>:</p>
+<p></p><pre class="highlight"><code><span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="mi">100010</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="nf">solve</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">8</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">f</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">f</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+Thuật toán trên có độ phức tạp $O(n)$.
+<p>Với cách tiếp cận trên, ta quan tâm đến giá trị cuối cùng $f[n]$, sau đó mới xem xét những giá trị bé hơn cần thiết cho tính toán.</p>
+<p>Nhưng với phương pháp quy hoạch động, ta sẽ quan tâm đến các bài toán với tham số nhỏ hơn trước tiên.</p>
+<h2 class="editable"><a class="anchor" id="phương-pháp-tiếp-cận" href="#phương-pháp-tiếp-cận"></a>Phương pháp tiếp cận</h2>
+<h3 class="editable"><a class="anchor" id="khi-nào-có-thể-áp-dụng-qhđ" href="#khi-nào-có-thể-áp-dụng-qhđ"></a>Khi nào có thể áp dụng QHĐ</h3>
+<p>Quy hoạch động được sử dụng khi ta tìm được công thức liên hệ giữa kết quả bài toán có đầu vào cho trước với một (hoặc một số) bài toán con tương tự nhưng có đầu vào nhỏ hơn. Khi ta biết được một số trạng thái bắt đầu của bài toán, nói cách khác - bài toán con với những đầu vào rất nhỏ, ta có thể sử dụng QHĐ để tính ra kết quả cuối cùng.</p>
+<h3 class="editable"><a class="anchor" id="trạng-thái-của-bài-toán-là-gì" href="#trạng-thái-của-bài-toán-là-gì"></a>Trạng thái của bài toán là gì?</h3>
+<p>Trạng thái là một trường hợp, một bài toán con của bài toán lớn với tham số cho trước.</p>
+<p>Ví dụ, trạng thái trong bài này là số cách sắp xếp $n$ chiếc ghế thỏa mãn không có hai ghế đỏ cạnh nhau.</p>
+<h3 class="editable"><a class="anchor" id="liên-hệ-giữa-các-trạng-thái" href="#liên-hệ-giữa-các-trạng-thái"></a>Liên hệ giữa các trạng thái</h3>
+<p>Để giải bài toán quy hoạch động, điều quan trọng nhất là tìm ra mối liên hệ giữa một trạng thái và các trạng thái có tham số nhỏ hơn.</p>
+<p>Gọi $f[i]$ là cách sắp xếp $i$ chiếc ghế thành một hàng dọc. Khi đó ta có:</p>
+<p>\begin{cases}
+f[1] = 3; f[2] = 8 \newline
+f[i] = 2f[i - 1] + 2f[i - 2], \forall i=3;4;\ldots;n(*)
+\end{cases}</p>
+<p>Công thức $(*)$ được gọi là <strong>công thức truy hồi</strong>.</p>
+<h3 class="editable"><a class="anchor" id="tìm-kết-quả-cuối-cùng" href="#tìm-kết-quả-cuối-cùng"></a>Tìm kết quả cuối cùng</h3>
+<p>Sau khi đã biết công thức truy hồi và tính được $f[1]$, $f[2]$, ta có thể tìm $f[n]$.</p>
+<h3 class="editable"><a class="anchor" id="code-mẫu" href="#code-mẫu"></a>Code mẫu:</h3>
+<p></p><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="mi">100010</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">];</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+Độ phức tạp của thuật toán trên là $O(n)$, nhưng cách thực hiện đơn giản hơn đệ quy có nhớ.
+<p><strong>Phân tích:</strong> Từ ví dụ trên, ta thấy phương pháp QHĐ được triển khai theo các bước sau:</p>
+<ul>
+<li>Xác định trạng thái của bài toán</li>
+<li>Tìm mối liên hệ giữa các trạng thái (tìm <strong>công thức truy hồi</strong>)</li>
+<li>Khởi tạo các giá trị ban đầu và cài đặt công thức truy hồi</li>
+</ul>
+<p>Ta tiếp tục với ví dụ tiếp theo:</p>
+<h2 class="editable"><a class="anchor" id="ví-dụ-2" href="#ví-dụ-2"></a>Ví dụ 2</h2>
+<blockquote>
+<p><em>Cho $N$ loại đồng xu và giá tiền của mỗi loại là các số nguyên $v_1,v_2,\ldots,v_n$, và số nguyên dương $S$. Tìm số đồng xu nhỏ nhất để tổng giá trị của chúng bằng $S$ (số lượng đồng xu không giới hạn), nếu không tồn tại một số đồng xu có tổng là $S$ thì in ra $-1$.</em>
+<strong>Điều kiện:</strong> $1\le S,N\le1000$ và $1\le v_1,v_2,\dots,v_n\le S$.</p>
+</blockquote>
+<p>Ta xây dựng thuật toán QHĐ:</p>
+<p>Trạng thái của bài toán là số đồng xu nhỏ nhất có tổng giá tiền là $i$. Ta sẽ dùng mảng $f[i]$ để lưu số đồng xu ít nhất có tổng giá trị là $i$, nếu không tồn tại các đồng xu có tổng là $i$ thì gán $f[i] = -1$.</p>
+<p>Cần một công thức truy hồi để tính $f[i]$ theo $f[1],f[2],\ldots,f[i-1]$.</p>
+<p>Để ý thấy với $i$ bất kì, nếu có một đồng xu giá trị $v_j \le i$ thì ta có thể thêm đồng đó vào các đồng có tổng giá trị là $i-v_j$. Giả sử $m$ là số đồng xu ít nhất có tổng là $i-v_j$, khi đó có $m+1$ đồng xu có tổng giá trị $i$. Nếu $f[i] = -1$ thì ta cập nhật $f[i] = m + 1$, nếu $f[i] \ne -1$ thì $f[i]=\min(f[i], m+1)$.</p>
+<p>Sau đây là ví dụ: <strong><em>Cho các đồng xu với giá tiền $1,3,5$. Và $S = 11$.</em></strong></p>
+<p>Đầu tiên, ta bắt đầu từ trạng thái cơ bản nhất: $f[0]=0$.</p>
+<p>Xét đến tổng $1$. Có duy nhất đồng xu $1$ nhỏ hơn hoặc bằng tổng $1$, nên ta có $f[1]=f[1−v_1]+1=f[0]+1=1$.</p>
+<p>Xét đến tổng $2$. Cũng giống như tổng trước, chỉ có $1$ đổng xu không vượt quá $2$, suy ra $f[2]=f[2−v_1]+1=f[1]+1=2$.</p>
+<p>Đến tổng $3$. Lần này có hai đồng xu không vượt quá $3$ là $1$ và $3$. Nếu ta chọn đồng $1$, ta có $f[3]=f[3−v_1]+1=f[2]+1=3$; nếu ta chọn đồng $3$, ta có $f[3]=f[3−v_2]+1=f[0]+1=1$. Rõ ràng $1 ≤ 3$ nên ta chọn đồng $3$ và $f[3]=1$.</p>
+<p>Xét tiếp đến tổng $4,$ tổng $5,\ldots$ đến $11$ bằng cách như trên.</p>
+<p>Đây là lời giải cho tất cả các tổng:</p>
+<table>
+<thead>
+<tr>
+<th>Tổng</th>
+<th>Lượng xu nhỏ nhất</th>
+<th>Xu được chọn<br/>(Tổng còn lại)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$0$</td>
+<td>$0$</td>
+<td>-</td>
+</tr>
+<tr>
+<td>$1$</td>
+<td>$1$</td>
+<td>$1 (0)$</td>
+</tr>
+<tr>
+<td>$2$</td>
+<td>$2$</td>
+<td>$1 (1)$</td>
+</tr>
+<tr>
+<td>$3$</td>
+<td>$1$</td>
+<td>$3 (0)$</td>
+</tr>
+<tr>
+<td>$4$</td>
+<td>$2$</td>
+<td>$1 (3)$</td>
+</tr>
+<tr>
+<td>$5$</td>
+<td>$1$</td>
+<td>$5 (0)$</td>
+</tr>
+<tr>
+<td>$6$</td>
+<td>$2$</td>
+<td>$3 (3)$</td>
+</tr>
+<tr>
+<td>$7$</td>
+<td>$3$</td>
+<td>$1 (6)$</td>
+</tr>
+<tr>
+<td>$8$</td>
+<td>$2$</td>
+<td>$3 (5)$</td>
+</tr>
+<tr>
+<td>$9$</td>
+<td>$3$</td>
+<td>$1 (8)$</td>
+</tr>
+<tr>
+<td>$10$</td>
+<td>$2$</td>
+<td>$5 (5)$</td>
+</tr>
+<tr>
+<td>$11$</td>
+<td>$3$</td>
+<td>$1 (10)$</td>
+</tr>
+</tbody>
+</table>
+<h3 class="editable"><a class="anchor" id="code-tham-khảo" href="#code-tham-khảo"></a>Code tham khảo:</h3>
+<p></p><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">f</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">n</span><span class="p">,</span> <span class="n">S</span><span class="p">;</span>
+<span class="c1">// Gán f[i] = -1 nếu không thể tìm được một số đồng xu tổng bằng i</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">S</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">S</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">S</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                    <span class="k">else</span>
+                        <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">f</span><span class="p">[</span><span class="n">S</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<strong>Nhận xét:</strong> Đôi khi, trạng thái trong bài QHĐ chính là yêu cầu của bài toán.
+<h2 class="editable"><a class="anchor" id="tìm-độ-dài-dãy-con-không-giảm-dài-nhất" href="#tìm-độ-dài-dãy-con-không-giảm-dài-nhất"></a>Tìm độ dài dãy con không giảm dài nhất</h2>
+<p>Phần này giới thiệu một lớp bài toán QHĐ điển hình. Ta bắt đầu bằng bài toán sau:</p>
+<blockquote>
+<p><em>Cho dãy số nguyên dương $a_1,a_2,\ldots,a_n$. Tìm độ dài của dãy con không giảm dài nhất của dãy.
+Dãy con của một dãy là dãy số thu được bằng cách bỏ đi một số phần tử của dãy ban đầu.</em>
+<strong>Điều kiện:</strong> $1\le n\le 1000$ và $1\le a_1,a_2,\dots,a_n\le 10^9$.</p>
+</blockquote>
+<p>Đầu tiên cần xác định trạng thái của bài toán.</p>
+<p>Ta đặt $f[i]$ là độ dài của dãy con không giảm dài nhất kết thúc ở $a_i$. $f[i]$ là trạng thái của bài toán. Ta khởi tạo $f[i] = 1$ ($a_i$ là một dãy không giảm).</p>
+<p>Với $j&lt;i$ mà $a_j \ge a_i$ thì ta có thể thêm $a_i$ vào dãy không giảm kết thúc ở $a_j$, do đó nếu $f[j] + 1$ lớn hơn giá trị hiện tại của $f[i]$ thì ta cập nhật $f[i] = f[j] + 1$.</p>
+<p>Cuối cùng để tìm được độ dài dãy con không giảm dài nhất ta tính $\max (f[1],f[2],\ldots,f[n])$.</p>
+<h3 class="editable"><a class="anchor" id="code-tham-khảo-1" href="#code-tham-khảo-1"></a>Code tham khảo</h3>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">f</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">n</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">mx</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">mx</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">mx</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p><strong>Ví dụ minh họa:</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;">$i$</th>
+<th style="text-align:center;">$1$</th>
+<th style="text-align:center;">$2$</th>
+<th style="text-align:center;">$3$</th>
+<th style="text-align:center;">$4$</th>
+<th style="text-align:center;">$5$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">$a[i]$</td>
+<td style="text-align:center;">$1$</td>
+<td style="text-align:center;">$4$</td>
+<td style="text-align:center;">$2$</td>
+<td style="text-align:center;">$3$</td>
+<td style="text-align:center;">$7$</td>
+</tr>
+<tr>
+<td style="text-align:center;">$f[i]$</td>
+<td style="text-align:center;">$1$</td>
+<td style="text-align:center;">$f[1]+1=2$</td>
+<td style="text-align:center;">$f[1]+1=2$</td>
+<td style="text-align:center;">$f[3]+1=3$</td>
+<td style="text-align:center;">$f[4]+1=4$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Nhận xét:</strong> Một số bài QHĐ có trạng thái là yêu cầu bài toán với $i$ phần tử đầu tiên của dãy số.</p>
+<p>Bài toán tìm dãy con không giảm dài nhất là một ví dụ điển hình của phương pháp QHĐ. Một số biến thể của bài toán này tạo thành một lớp các bài toán tương tự nhau. Các bài toán đó có một số tính chất đặc trưng sau:</p>
+<ul>
+<li>Mỗi phần tử $a_i$ xuất hiện tối đa một lần trong dãy con. Vì vậy ta sẽ dùng vòng <code>For</code> duyệt qua các phần tử $a_i$ trong dãy.</li>
+<li>Thứ tự của các phần tử được chọn phải được giữ nguyên so với dãy ban đầu.</li>
+</ul>
+<p>Một số biến thể:</p>
+<h3 class="editable"><a class="anchor" id="tìm-dãy-con-không-giảm-dài-nhất" href="#tìm-dãy-con-không-giảm-dài-nhất"></a>Tìm dãy con không giảm dài nhất</h3>
+<p>Bài toán giống ví dụ 3, nhưng yêu cầu in ra dãy con đó. Ta có thể làm tương tự như trên, nhưng thêm mảng truy vết $d[i]$ lưu vị trí $j&lt;i$ mà $f[i]=f[j]+1$. Ta có thể cài đặt như sau:</p>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">f</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">n</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="c1">// Bước QHĐ</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span>
+            <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// Tìm t là vị trí cuối cùng của dãy dài nhất</span>
+    <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">f</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="c1">// In ra dãy con đó</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">seq</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">seq</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">t</span><span class="p">]);</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="n">seq</span><span class="p">.</span><span class="n">rbegin</span><span class="p">();</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">seq</span><span class="p">.</span><span class="n">rend</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="bố-trí-phòng-họp-mất-tính-thứ-tự-so-với-dãy-ban-đầu" href="#bố-trí-phòng-họp-mất-tính-thứ-tự-so-với-dãy-ban-đầu"></a>Bố trí phòng họp (mất tính thứ tự so với dãy ban đầu)</h3>
+<blockquote>
+<p><em>Có $n$ cuộc họp, cuộc họp thứ $i$ bắt đầu vào thời điểm $A_i$ và kết thúc ở thời điểm $B_i$. Do chỉ có một phòng hội thảo nên 2 cuộc họp bất kì sẽ được cùng bố trí phục vụ nếu khoảng thời gian làm việc của chúng chỉ giao nhau tại đầu mút hoặc không giao nhau. Hãy bố trí phòng họp để phục vụ được nhiều cuộc họp nhất.</em>
+<strong>Điều kiện:</strong> $1\le n\le1000$ và $1\le A_i\le B_i\le10^9$ với mọi $i=1;2;\dots;n$.
+<strong>Input:</strong> Số nguyên $n$ và $n$ dòng tiếp theo có dòng thứ $i$ là thời điểm bắt đầu $A_i$ và kết thúc $B_i$ của cuộc họp thứ $i$.
+<strong>Output:</strong> một dòng gồm số thứ tự ban đầu của các cuộc họp được bố trí, theo thứ tự thời gian.</p>
+</blockquote>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img5.png" />
+<strong>Hướng dẫn</strong>:</p>
+<p>Sắp xếp các cuộc họp tăng dần theo thời điểm bắt đầu $A_i$. Thế thì cuộc họp $i$ sẽ bố trí được sau cuộc họp $j$ khi và chỉ khi $j&lt;i$ và $B_j \le A_i$. Yêu cầu bố trí được nhiều cuộc họp nhất có thể đưa về việc tìm dãy các cuộc họp dài nhất thoả mãn điều kiện trên.</p>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img6.png" /></p>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">Meeting</span>
+<span class="p">{</span>
+    <span class="n">Meeting</span><span class="p">(</span><span class="kt">int</span> <span class="n">aa</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">bb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="o">:</span> <span class="n">a</span><span class="p">(</span><span class="n">aa</span><span class="p">),</span> <span class="n">b</span><span class="p">(</span><span class="n">bb</span><span class="p">),</span> <span class="n">num</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span>
+    <span class="p">{</span> <span class="p">};</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span> <span class="c1">// Thời điểm bắt đầu cuộc họp</span>
+    <span class="kt">int</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// Thời điểm kết thúc cuộc họp</span>
+    <span class="kt">int</span> <span class="n">num</span><span class="p">;</span> <span class="c1">// Số thứ tự của cuộc họp</span>
+<span class="p">};</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="n">Meeting</span> <span class="n">m</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="c1">// Hàm so sánh để sắp xếp</span>
+<span class="kt">bool</span> <span class="nf">compare</span><span class="p">(</span><span class="k">const</span> <span class="n">Meeting</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">Meeting</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">.</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">.</span><span class="n">a</span> <span class="o">||</span> <span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">a</span> <span class="o">==</span> <span class="n">y</span><span class="p">.</span><span class="n">a</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="p">.</span><span class="n">b</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">.</span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">num</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">b</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m</span> <span class="o">+</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">compare</span><span class="p">);</span>
+    <span class="c1">// Bước quy hoạch động</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">b</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">a</span> <span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span>
+            <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// Truy vết</span>
+    <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">f</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">seq</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">seq</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">t</span><span class="p">].</span><span class="n">num</span><span class="p">);</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="n">seq</span><span class="p">.</span><span class="n">rbegin</span><span class="p">();</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">seq</span><span class="p">.</span><span class="n">rend</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="cho-thuê-máy" href="#cho-thuê-máy"></a>Cho thuê máy</h3>
+<blockquote>
+<p><em>Trung tâm tính toán hiệu năng cao nhận được đơn đặt hàng của $n$ khách hàng. Khách hàng $i$ muốn sử dụng máy trong khoảng thời gian từ $a_i$ đến $b_i$ và trả tiền thuê là $c_i$. Hãy bố trí lịch thuê máy để tổng số tiền thu được là lớn nhất mà thời gian sử dụng máy của 2 khách hàng bất kì được phục vụ đều không giao nhau (cả trung tâm chỉ có một máy cho thuê).</em>
+<strong>Điều kiện:</strong> $1\le n\le1000$ và $1\le A_i\le B_i\le10^9, 1\le c_i\le10^6$ với mọi $i=1;2;\dots;n$.</p>
+</blockquote>
+<p><strong>Hướng dẫn</strong>:</p>
+<p>Tương tự như bài toán bố trí phòng họp, nếu sắp xếp các đơn đặt hàng theo thời điểm bắt đầu, ta sẽ đưa được về bài toán <strong>tìm dãy con có tổng lớn nhất</strong>. Bài toán này là biến thể của bài toán tìm dãy con tăng dài nhất, ta có thể cài đặt bằng đoạn chương trình như sau:</p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">Value</span>
+<span class="p">{</span>
+    <span class="n">Value</span><span class="p">(</span><span class="kt">int</span> <span class="n">aa</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">bb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">cc</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="o">:</span> <span class="n">a</span><span class="p">(</span><span class="n">aa</span><span class="p">),</span> <span class="n">b</span><span class="p">(</span><span class="n">bb</span><span class="p">),</span> <span class="n">num</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span>
+    <span class="p">{</span> <span class="p">};</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span> <span class="c1">// Thời điểm bắt đầu thuê</span>
+    <span class="kt">int</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// Thời điểm kết thúc thuê</span>
+    <span class="kt">int</span> <span class="n">c</span><span class="p">;</span> <span class="c1">// Tiền thuê</span>
+    <span class="kt">int</span> <span class="n">num</span><span class="p">;</span> <span class="c1">// Số thứ tự</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="n">Value</span> <span class="n">m</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">bool</span> <span class="nf">compare</span><span class="p">(</span><span class="k">const</span> <span class="n">Value</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span> <span class="k">const</span> <span class="n">Value</span><span class="o">&amp;</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">.</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">.</span><span class="n">a</span> <span class="o">||</span> <span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">a</span> <span class="o">==</span> <span class="n">y</span><span class="p">.</span><span class="n">a</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="p">.</span><span class="n">b</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">.</span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m</span> <span class="o">+</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">compare</span><span class="p">);</span>
+    <span class="c1">// Bước quy hoạch động</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">c</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">b</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">a</span> <span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">c</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">c</span><span class="p">;</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span>
+            <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// ... truy vết</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="dãy-tam-giác-bao-nhau" href="#dãy-tam-giác-bao-nhau"></a>Dãy tam giác bao nhau</h3>
+<blockquote>
+<p><em>Cho $n$ tam giác trên mặt phẳng. Tam giác $i$ bao tam giác $j$ nếu 3 đỉnh của tam giác $j$ đều nằm trong tam giác $i$ (có thể nằm trên cạnh). Hãy tìm dãy tam giác bao nhau có nhiều tam giác nhất.</em>
+<strong>Điều kiện:</strong> $1\le n\le 1000$ và tọa độ các đỉnh của các tam giác thuộc đoạn ${-10}^6$ đến $10^6$.</p>
+</blockquote>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img7.png" /></p>
+<p><strong>Hướng dẫn</strong>:</p>
+<p>Sắp xếp các tam giác tăng dần về diện tích. Khi đó tam giác $i$ sẽ bao tam giác $j$ nếu $j&lt;i$ và 3 đỉnh của $j$ nằm trong $i$. Từ đó có thể đưa về bài toán tìm dãy “tăng” dài nhất.</p>
+<p>Bài toán có một số biến thể khác như tìm dãy hình tam giác, hình chữ nhật… bao nhau có tổng diện tích lớn nhất.</p>
+<p>Việc kiểm tra điểm $M$ có nằm trong tam giác $ABC$ không có thể dựa trên 2 phương pháp sau:</p>
+<ul>
+<li>Tính diện tích: điểm $M$ nằm trong nếu $S(ABC) = S(ABM) + S(ACM) + S(BCM)$.</li>
+<li>Kẻ một tia song song $Ox$ từ $M$ và đếm số giao điểm với $3$ đoạn $AB,BC,CA$. Nếu số giao điểm là số lẻ thì $M$ nằm trong tam giác.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img8.png" /></p>
+<h3 class="editable"><a class="anchor" id="dãy-đổi-dấu" href="#dãy-đổi-dấu"></a>Dãy đổi dấu</h3>
+<blockquote>
+<p><em>Cho dãy số nguyên gồm $n$ phần tử $a_1, a_2,\ldots, a_n$ và các số nguyên dương $L,U$. Hãy tìm dãy con đổi dấu dài nhất của dãy đó.</em>
+Dãy con của dãy $a$ là dãy thu được bằng cách xóa đi một số phần tử của $a$.
+<strong>Điều kiện:</strong> $1\le L\le n\le1000, 1\le U\le10^9$ và $1\le a_1, a_2,\dots, a_n\le10^9$.</p>
+</blockquote>
+<p>Dãy con đổi dấu $a_{i_1},a_{i_2},\ldots, a_{i_k}$ phải thoả mãn các điều kiện sau:</p>
+<ul>
+<li>$A_{i_1} &lt; A_{i_2} &gt; A_{i_3} &lt;\ldots$ hoặc $A_{i_1} &gt; A_{i_2} &lt; A_{i_3} &gt;\ldots$</li>
+<li>Các chỉ số phải cách nhau ít nhất $L: i_2 - i_1 \ge L, i_3 - i_2 \ge L, \ldots$</li>
+<li>Chênh lệch giữa 2 phần tử liên tiếp không vượt quá $U:$ $|A_{i1} - A_{i2}| \le U,$ $|A_{i2} - A_{i3}| \le U, \ldots$</li>
+</ul>
+<p><strong>Hướng dẫn</strong>:</p>
+<p>Gọi $Q[i]$ là số phần tử của dãy con đổi dấu có phần tử cuối cùng là $a_i$ và phần tử cuối cùng lớn hơn phần tử đứng trước. Tương tự, $P[i]$ là số phần tử của dãy con đổi dấu có phần tử cuối cùng là $a_i$ và phần tử cuối cùng nhỏ hơn phần tử đứng trước.</p>
+<p>Ta dễ dàng suy ra:</p>
+<ul>
+<li>$Q[i] = \max (1, P[j] + 1)$, với mọi $j$ thỏa mãn: $j \le i-L$ và $A_i - U \le A_j &lt; A_i$.</li>
+<li>$P[i] = \max (1, Q[j] + 1)$, với mọi $j$ thỏa mãn: $j \le i-L$ và $A_i &lt; A_j \le A_i + U$.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">Q</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">n</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">L</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">U</span> <span class="o">&gt;&gt;</span> <span class="n">L</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">L</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">U</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">U</span><span class="p">)</span>
+                <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Q</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mx</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">mx</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">max</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">mx</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="dãy-số-wavio" href="#dãy-số-wavio"></a>Dãy số WAVIO</h3>
+<blockquote>
+<p><em>Dãy số nguyên $a_1,a_2,a_3,\ldots,a_k$ được gọi là dãy số WAVIO nếu tồn tại số tự nhiên $1\le m\le k$ sao cho:</em></p>
+<ul>
+<li>$a_1\le a_2 \le \ldots \le a_m$</li>
+<li>$a_k\le a_{k-1} \le \ldots \le a_m$</li>
+</ul>
+<p><em>Ví dụ dãy số <code>1 2 3 4 5 2 1</code> là 1 dãy WAVIO độ dài 7. Cho dãy $a$ gồm $n$ số nguyên, hãy chỉ ra một dãy con Wavio có độ dài lớn nhất trích ra từ dãy đó.</em>
+<strong>Điều kiện:</strong> $1\le n\le 1000$ và $1\le a_1,a_2,\ldots,a_n\le10^9$ với mọi $i=1;2;\ldots;n$.</p>
+</blockquote>
+<p><strong>Hướng dẫn</strong>:</p>
+<p>Ta sẽ quy hoạch động theo phần tử $a_m$ của dãy WAVIO như sau:</p>
+<ul>
+<li>$Q[i]$ là độ dài của dãy con tăng dần dài nhất kết thúc ở $i$</li>
+<li>$P[i]$ là độ dài của dãy con giảm dần dài nhất bắt đầu ở $i$</li>
+</ul>
+<p>Khi đó, trong các dãy WAVIO có $i$ là đỉnh thì dãy dài nhất sẽ có độ dài $Q[i]+P[i]-1$. Đến đây, chỉ cần tìm $\max(Q[i]+P[i]-1)$.</p>
+<h1 class="editable"><a class="anchor" id="intermediate" href="#intermediate"></a>Intermediate</h1>
+<p>Ở mục này, chúng ta sẽ làm quen với QHĐ hai chiều, ta bắt đầu bằng ví dụ sau:</p>
+<blockquote>
+<p><em>Cho một bảng ô vuông gồm $m$ hàng và $n$ cột. Kí hiệu $(i, j)$ là ô ở hàng $i$, cột $j$. Giả sử $(i, j)$ có $a_{i,j}$ quả táo. Bạn An muốn đi từ $(1, 1)$ đến $(m, n)$. Ở mỗi bước, An đi sang phải hoặc xuống dưới đúng một ô. Khi An ở ô $(i, j)$, An có thể lấy hết các quả táo ở ô đó. Tính số quả táo nhiều nhất mà An có thể lấy được.</em>
+<strong>Điều kiện:</strong> $1\le mn\le10^6$ và $1\le a_{i, j}\le 10^9$ với mọi $i,j$.</p>
+</blockquote>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img9.png" /></p>
+<p><strong>Ý tưởng:</strong></p>
+<p>Bài toán này cũng tương tự như các ví dụ trước.</p>
+<p>Đầu tiên, trạng thái của bài toán chính là số quả táo nhiều nhất An có thể lấy khi đi từ ô $(1,1)$ đến ô $(i,j)$, gọi là $f[i][j]$.</p>
+<p>Đầu tiên ta khởi tạo $f[1][1] = a_{1,1}$.</p>
+<p>Với mọi $i,j\ge 2$, để đi từ $(1, 1)$ đến $(i, j)$ An có hai lựa chọn: đi qua $(i - 1, j)$ hoặc đi qua $(i, j - 1)$. An sẽ chọn đường đi thu được nhiều táo nhất, do đó $f[i][j] = a_{i, j} + \max(f[i][j - 1], f[i - 1][j])$.</p>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img10.png" /></p>
+<pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e3</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">long</span> <span class="kt">long</span> <span class="n">f</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">f</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">n</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="ví-dụ-khác" href="#ví-dụ-khác"></a>Ví dụ khác</h3>
+<p><a href="https://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4709&amp;pm=1889">AvoidRoads</a> - 2003 TCO Semifinals 4
+<a href="https://community.topcoder.com/tc?module=ProblemDetail&amp;rd=4482&amp;pm=1592">ChessMetrics</a> - 2003 TCCC Round 4</p>
+<p>QHĐ hai chiều được áp dụng nhiều trong những bài toán phức tạp hơn. Tiêu biểu là lớp bài toán xếp đồ.</p>
+<h2 class="editable"><a class="anchor" id="xếp-vali-knapsack" href="#xếp-vali-knapsack"></a>Xếp vali (Knapsack)</h2>
+<h2 class="editable"><a class="anchor" id="mô-hình" href="#mô-hình"></a>Mô hình</h2>
+<p>Có $n$ đồ vật, vật thứ $i$ có trọng lượng $A_i$ và giá trị $B_i$. Hãy chọn ra một số các đồ vật, mỗi vật một cái để xếp vào 1 vali có trọng lượng tối đa $W$ sao cho tổng giá trị của vali là lớn nhất.</p>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img11.png" /></p>
+<h2 class="editable"><a class="anchor" id="công-thức" href="#công-thức"></a>Công thức</h2>
+<p>Trạng thái bài toán: tổng giá trị lớn nhất của vali nếu khối lượng không vượt quá $i$.</p>
+<p><strong>Nhận xét:</strong> giá trị của vali phụ thuộc vào 2 yếu tố: có bao nhiêu vật đang được xét và trọng lượng của các vật. Do đó bảng phương án sẽ là bảng 2 chiều:</p>
+<ul>
+<li>$L[i,j]$: tổng giá trị lớn nhất của vali khi xét từ vật 1 đến vật $i$ và trọng lượng của vali chưa vượt quá $j$. Chú ý rằng khi xét đến $L[i,j]$ thì các giá trị trên bảng phương án đều đã được tối ưu.</li>
+</ul>
+<p>Tính $L[i,j]$: vật đang xét là $A_i$ với trọng lượng của vali không được quá $j$. Có 2 khả năng xảy ra:</p>
+<ul>
+<li>Nếu chọn $A_i$ đưa vào vali, trọng lượng vali trước đó phải không quá $j - A_i$. Vì mỗi vật chỉ được chọn 1 lần nên giá trị lớn nhất của vali lúc đó là $L[i-1, j - A_i] + B_i$.</li>
+<li>Nếu không chọn $A_i$, trọng lượng của vali là như cũ (như lúc trước khi chọn $A_i$): $L[i-1,j]$.</li>
+</ul>
+<p>Tóm lại ta có $L[i,j] = \max(L[i-1, j - A_i] + B_i, L[i-1, j])$.</p>
+<h2 class="editable"><a class="anchor" id="2-3-cài-đặt" href="#2-3-cài-đặt"></a>2.3. Cài đặt</h2>
+<pre class="highlight"><code><span class="kt">long</span> <span class="kt">long</span> <span class="n">L</span><span class="p">[</span><span class="mi">1010</span><span class="p">];</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">W</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>  <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]);</span>
+        <span class="k">else</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">];</span></code></pre>
+<h2 class="editable"><a class="anchor" id="2-4-một-số-bài-toán-khác" href="#2-4-một-số-bài-toán-khác"></a>2.4. Một số bài toán khác</h2>
+<h3 class="editable"><a class="anchor" id="dãy-con-có-tổng-bằng-s" href="#dãy-con-có-tổng-bằng-s"></a>Dãy con có tổng bằng S</h3>
+<blockquote>
+<p><em>Cho dãy $A_1,A_2,\ldots, A_N$. Tìm một dãy con của dãy đó có tổng bằng $S$.</em>
+<strong>Điều kiện:</strong> $1\le n\le 1000$ và $1\le A_1,A_2,\ldots,A_n\le10^9$.</p>
+</blockquote>
+<p><strong>Hướng dẫn</strong>:</p>
+<p>Đặt $L[i,t]=1$ nếu có thể tạo ra tổng $t$ từ một dãy con của dãy gồm các phần tử $A_1,A_2,\ldots,A_i$. Ngược lại thì $L[i,t]=0$. Nếu $L[n,S]=1$ thì đáp án của bài toán trên là “có”.</p>
+<p>Ta có thể tính $L[i,t]$ theo công thức: $L[i,t]=1$ nếu $L[i-1,t]=1$ hoặc $L[i-1,t-a[i]]=1$.</p>
+<p><strong>Cài đặt</strong>:</p>
+<p>Nếu áp dụng luôn công thức trên thì ta cần dùng bảng phương án hai chiều. Ta có thể nhận xét rằng để tính dòng thứ $i$, ta chỉ cần dòng $i-1$. Bảng phương án khi đó chỉ cần 1 mảng 1 chiều $L[0..S]$ và được tính như sau:</p>
+<pre class="highlight"><code><span class="kt">long</span> <span class="kt">long</span> <span class="n">L</span><span class="p">[</span><span class="mi">1010</span><span class="p">];</span>
+
+<span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">S</span><span class="p">;</span> <span class="n">t</span> <span class="o">&gt;=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="n">t</span><span class="o">--</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></code></pre>
+<p>Dễ thấy độ phức tạp bộ nhớ của cách cài đặt trên là $O(m)$, độ phức tạp thời gian là $O(nm)$, với $m$ là tổng của $n$ số.</p>
+<p><strong>Bonus:</strong> Hãy thử kiểm tra xem vì sao trong vòng <code>for</code> thứ hai, $t$ được duyệt từ $S$ về $a[i]$ chứ không phải từ $a[i]$ lên $S$.</p>
+<h3 class="editable"><a class="anchor" id="chia-kẹo" href="#chia-kẹo"></a>Chia kẹo</h3>
+<blockquote>
+<p><em>Cho $n$ gói kẹo, gói thứ $i$ có $a_i$ viên. Hãy chia các gói thành 2 phần sao cho chênh lệch giữa 2 phần là ít nhất.</em>
+<strong>Điều kiện:</strong> $1\le n\le 300$ và $1\le a_1,a_2,\ldots,a_n\le1000$.</p>
+</blockquote>
+<p><strong>Hướng dẫn</strong>:</p>
+<p>Gọi $T$ là tổng số kẹo của $n$ gói. Chúng ta cần tìm số $S$ lớn nhất thoả mãn:</p>
+<ul>
+<li>$S \le T/2$.</li>
+<li>Có một dãy con của dãy $a$ có tổng bằng $S$.</li>
+</ul>
+<p>Khi đó sẽ có cách chia với chênh lệch 2 phần là $T-2S$ là nhỏ nhất và dãy con có tổng bằng $S$ ở trên gồm các phần tử là các gói kẹo thuộc phần thứ nhất. Phần thứ hai là các gói kẹo còn lại. Ta quy hoạch động mảng $L[i,j]$ $(j\le \frac{T}{2})$ như sau: $L[i,j]=true$ nếu tồn tại một số phần tử của dãy $a$ từ $1$ đến $i$ có tổng bằng $j$. Khi đó:</p>
+<ul>
+<li>Nếu $L[i-1,j]=true$ thì $L[i,j] = true$.</li>
+<li>Nếu $L[i-1,j-a[i]]=true$ thì $L[i,j] = true$.</li>
+</ul>
+<p>Cuối cùng, ta cần tìm số $j$ lớn nhất không vượt quá $\frac{T}{2}$ sao cho tồn tại số nguyên dương $i$ để $L[i,j]=true$, hay $L[n,j]=true$.
+</p><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">310</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">bool</span> <span class="n">L</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">t</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">|=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">)</span>
+                <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">|=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]];</span>
+        <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">mx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">mx</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">mx</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="n">t</span> <span class="o">-</span> <span class="n">mx</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="market-olympic-balkan-2000" href="#market-olympic-balkan-2000"></a>Market (Olympic Balkan 2000)</h3>
+<blockquote>
+<p><em>Người đánh cá Clement bắt được $n$ con cá, khối lượng con cá thứ $i$ là $a_i$, đem bán ngoài chợ. Ở chợ cá, người ta không mua cá theo từng con mà mua theo một lượng nào đó. Chẳng hạn $3 kg$, $5kg$…</em></p>
+<p><strong><em>Ví dụ:** có 3 con cá, khối lượng lần lượt là: $3, 2, 4$. Mua lượng $6kg$ sẽ phải lấy con cá thứ 2 và và thứ 3. Mua lượng $3 kg$ thì lấy con thứ nhất. Không thể mua lượng $8 kg$. Nếu bạn là người đầu tiên mua cá, có bao nhiêu lượng bạn có thể chọn?</em>
+**Điều kiện:</strong> $1\le n\le1000$, $1\le a_i\le1000$.</p>
+</blockquote>
+<p><strong>Hướng dẫn</strong></p>
+<p>Thực chất bài toán là tìm các số $S$ mà có một dãy con của dãy $a$ có tổng bằng $S$.</p>
+<p>Ta có thể dùng phương pháp đánh dấu của bài chia kẹo ở trên rồi đếm các giá trị $t$ mà $L[n, t]=true$.</p>
+<h3 class="editable"><a class="anchor" id="điền-dấu" href="#điền-dấu"></a>Điền dấu</h3>
+<blockquote>
+<p><em>Cho $n$ số tự nhiên $A_1,A_2, \ldots,A_n$. Ban đầu các số được đặt liên tiếp theo đúng thứ tự cách nhau bởi dấu "?": <code>A1 ? A2 ? ... ? AN</code>. Cho trước số nguyên $S$, có cách nào thay các dấu <code>?</code> bằng dấu <code>+</code> hay dấu <code>−</code> để được một biểu thức số học cho giá trị là $S$ không?</em></p>
+</blockquote>
+<p><strong>Hướng dẫn</strong>:</p>
+<p>Đặt $L[i,t]=1$ nếu có thể điền dấu vào $i$ số đầu tiên và cho kết quả bằng $t$. Ta có công thức sau để tính $L$:</p>
+<ul>
+<li><code>L[1, a[1]] = 1</code></li>
+<li>
+<code>L[i, t] = 1</code> nếu <code>L[i - 1, t + a[i]] = 1</code> hoặc <code>L[i - 1, t - a[i]] = 1</code>.</li>
+</ul>
+<p>Nếu <code>L[n, S] = 1</code> thì câu trả lời của bài toán là có.</p>
+<p>Khi cài đặt, có thể dùng một mảng 2 chiều (lưu toàn bộ bảng phương án) hoặc 2 mảng một chiều (để lưu dòng $i$ và dòng $i-1$). Chú ý là chỉ số theo $t$ của các mảng phải có cả phần âm (tức là từ $-T$ đến $T$, với $T$ là tổng của $n$ số), vì trong bài này chúng ta dùng cả dấu <code>-</code> nên có thể tạo ra các tổng âm.</p>
+<p>Bài này có một biến thể là đặt dấu sao cho kết quả là một số chia hết cho $k$. Ta có thuật giải tương tự bài toán trên bằng cách thay các phép cộng, trừ bằng các phép cộng và trừ theo modulo $k$ và dùng mảng đánh dấu với các giá trị từ 0 đến $k-1$ (là các số dư có thể có khi chia cho $k$). Đáp số của bài toán là $L[n,0]$.</p>
+<h3 class="editable"><a class="anchor" id="expression" href="#expression"></a>Expression</h3>
+<blockquote>
+<p><em>Cho $n$ số nguyên dương. Hãy chia chúng thành 2 nhóm sao cho tích của tổng 2 nhóm là lớn nhất.</em></p>
+</blockquote>
+<p><strong>Hướng dẫn</strong>:</p>
+<ul>
+<li>Gọi $T$ là tổng $n$ số nguyên đó. Giả sử ta chia dãy thành 2 nhóm, gọi $S$ là tổng của một nhóm, tổng nhóm còn lại là $T-S$ và tích của tổng 2 nhóm là $S(T-S)$. Bằng phương pháp đánh dấu ta xác định được mọi số $S$ là tổng của một nhóm (như bài Market) và tìm số $S$ sao cho $S(T-S)$ đạt $\max$.</li>
+<li>Bài toán trên có thể đưa về bài chia kẹo. Không mất tính tổng quát, giả sử $S\le \frac{T}{2}$. Để ý rằng $S+(T-S)=T$, là một số cố định. Có thể chứng minh $S(T-S)$ đạt max khi và chỉ khi $S$ lớn nhất có thể. Khi đó chỉ cần chia các số thành hai nhóm sao cho chênh lệch giữa hai nhóm là ít nhất.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="farmer-ioi-2004" href="#farmer-ioi-2004"></a>Farmer (IOI 2004)</h3>
+<blockquote>
+<p><em>Một người có $N$ mảnh đất và $M$ dải đất. Các mảnh đất có thể coi là một tứ giác và các dải đất thì coi như một đường thẳng. Dọc theo các dải đất ông ta trồng các cây bách, dải đất thứ $i$ có $A_i$ cây bách. Ông ta cũng trồng các cây bách trên viền của các mảnh đất, mảnh đất thứ $j$ có $B_j$ cây bách. Cả ở trên các mảnh đất và dải đất, xen giữa 2 cây bách ông ta trồng một cây ôliu. Ông ta cho con trai được chọn các mảnh đất và dải đất tuỳ ý với điều kiện tổng số cây bách không vượt quá $Q$. Người con trai phải chọn thế nào để có nhiều cây ôliu (loài cây mà anh ta thích) nhất.</em></p>
+</blockquote>
+<p><img src="https://vnoi.info/wiki/uploads/basic-dynamic-programming-1_img12.png" /></p>
+<p><strong>Hướng dẫn</strong></p>
+<p>Dễ thấy mảnh đất thứ $i$ có $A_i$ cây ôliu và dải đất thứ $j$ có $B_j-1$ cây ôliu. Coi các mảnh đất và dải đất là các “đồ vật”, đồ vật thứ $k$ có khối lượng $W_k$ và giá trị $V_k$ (nếu $k$ là mảnh đất $i$ thì $W_k=V_k=A_i$, nếu $k$ là dải đất $j$ thì $W_k=B_j,V_k=B_j-1$). Ta cần chọn các “đồ vật”, sao cho tổng “khối lượng” của chúng không vượt $Q$ và tổng “giá trị” là lớn nhất. Đây chính là bài toán xếp balô đã trình bày ở trên.</p>
+<h1 class="editable"><a class="anchor" id="kết" href="#kết"></a>Kết</h1>
+<p>Quy hoạch động là phương pháp tự nhiên và có thể áp dụng được trong rất nhiều bài toán. Khi gặp một bài toán, hãy để ý xem nó có được giải trong thời gian đa thức không. Nếu có, hãy thử xác định trạng thái của nó và mối liên hệ giữa các trạng thái. Đôi khi ta cần phân tích một chút để đưa bài toán về QHĐ như các ví dụ ở trên.</p>
+<p>Chúc các bạn học tập tốt!</p>
+</div>
+</div>
+</div>
+</div>

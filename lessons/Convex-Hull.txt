@@ -1,0 +1,568 @@
+<div id="wiki-content">
+<h1 class="pt-4">Bao lồi (Convex Hull)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/wcipeg/">wcipeg</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Nguồn: <a href="http://wcipeg.com/wiki/Convex_hull">wcipeg</a></p>
+<p><strong>Tác giả:</strong></p>
+<ul>
+<li>Lê Minh Hoàng - Đại học Khoa học Tự nhiên, ĐHQG-HCM</li>
+</ul>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Hồ Ngọc Vĩnh Phát - Đại học Khoa học Tự nhiên, ĐHQG-HCM</li>
+<li>Ngô Nhật Quang - HUS High School for Gifted Students</li>
+</ul>
+<hr/>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#các-thuật-toán-tìm-bao-lồi-trên-mặt-phẳng">Các thuật toán tìm bao lồi trên mặt phẳng</a><ul><li><a href="#thuật-toán-bọc-gói-quà-gift-wrapping-algorithm">Thuật toán bọc gói quà (Gift wrapping algorithm)</a><ul><li><a href="#cài-đặt">Cài đặt</a></li></ul></li><li><a href="#thuật-toán-graham-graham-scan">Thuật toán Graham (Graham scan)</a><ul><li><a href="#cài-đặt-1">Cài đặt</a></li></ul></li><li><a href="#thuật-toán-chuỗi-đơn-điệu-monotone-chain-algorithm">Thuật toán chuỗi đơn điệu (Monotone chain algorithm)</a><ul><li><a href="#cài-đặt-2">Cài đặt</a></li></ul></li></ul></li><li><a href="#xử-lí-trường-hợp-suy-biến">Xử lí trường hợp suy biến</a></li><li><a href="#bao-lồi-3d">Bao lồi 3D</a></li><li><a href="#ứng-dụng">Ứng dụng</a><ul><li><a href="#vnoj-kmix">VNOJ - KMIX</a><ul><li><a href="#tóm-tắt">Tóm tắt</a></li><li><a href="#ý-tưởng">Ý tưởng</a></li><li><a href="#cài-đặt-3">Cài đặt</a></li></ul></li></ul></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Trong <strong>hình học tính toán (computational geometry)</strong>, <strong>bao lồi (convex hull)</strong> của một tập điểm là tập lồi (convex set) <strong>nhỏ nhất</strong> (theo diện tích, thể tích, …) mà tất cả các điểm đều nằm trong tập đó.</p>
+<p>Theo một cách trực quan, nếu ta coi những điểm trong một tập hợp là những cái đinh đóng trên một tấm gỗ, bao lồi của tập điểm đó có viền ngoài tạo bởi sợi dây chun mắc vào những cái đinh sau khi bị kéo căng về các phía.</p>
+<p><img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_nail.png" /></p>
+<h1 class="editable"><a class="anchor" id="các-thuật-toán-tìm-bao-lồi-trên-mặt-phẳng" href="#các-thuật-toán-tìm-bao-lồi-trên-mặt-phẳng"></a>Các thuật toán tìm bao lồi trên mặt phẳng</h1>
+<p>Bài toán tìm bao lồi của một tập điểm trên mặt phẳng là một trong những bài toán được nghiên cứu nhiều nhất trong hình học tính toán và có rất nhiều thuật toán để giải bài toán này. Sau đây là ba thuật toán phổ biến nhất, được giới thiệu theo thứ tự tăng dần về độ khó.</p>
+<p><strong>Chú ý 1:</strong> Bạn đọc nên xem qua <a class="internal absent" href="https://vnoi.info/wiki/algo/geometry/basic-geometry-1">Hình học tính toán phần 1</a> và <a class="internal absent" href="https://vnoi.info/wiki/algo/geometry/basic-geometry-2">Hình học tính toán phần 2</a> trước khi tiếp tục để biết về các khái niệm cơ bản.</p>
+<p><strong>Chú ý 2:</strong> Bạn đọc nên hiểu phần thuật toán trước khi đọc phần cài đặt để dễ hiểu hơn.</p>
+<h2 class="editable"><a class="anchor" id="thuật-toán-bọc-gói-quà-gift-wrapping-algorithm" href="#thuật-toán-bọc-gói-quà-gift-wrapping-algorithm"></a>Thuật toán bọc gói quà (Gift wrapping algorithm)</h2>
+<p><strong>Thuật toán bọc gói quà</strong>, hay còn gọi là thuật toán <strong>Jarvis march</strong>, là một trong những thuật toán tìm bao lồi đơn giản và dễ hiểu nhất. Tên thuật toán xuất phát từ sự tương tự của thuật toán với việc đi bộ xung quanh các điểm và cầm theo một dải băng gói quà.</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_gift_wrapping_algorithm.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>source: <a href="https://en.wikipedia.org/wiki/Gift_wrapping_algorithm">wikipedia - Gift wrapping algorithm</a>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Thuật toán này được mô tả như sau:</p>
+<ul>
+<li>Bước đầu:
+<ul>
+<li>Chọn $P$ là điểm trái nhất trong tập các điểm (để đảm bảo $P$ nằm trong tập bao lồi).</li>
+<li>Chọn hướng ta đang nhìn $\vec{v}$ là từ hướng dưới lên trên.</li>
+</ul>
+</li>
+<li>Tiếp theo, các bước sẽ lặp lại đến khi tìm được bao lồi:
+<ul>
+<li>Ta quay $\vec{v}$ theo chiều kim đồng hồ cho đến khi ta nhìn thấy một điểm, gọi điểm đó là $Q$.</li>
+<li>Ta cầm theo dải băng và đi đến điểm $Q$.</li>
+<li>Khi ta đến $Q$, ta thay:
+<ul>
+<li>$\vec{v}$ thành $\overrightarrow{PQ}$</li>
+<li>$P$ thành $Q$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Thuật toán kết thúc khi ta trở về điểm ban đầu. Lúc này ta đã đi đến tất cả các đỉnh của bao lồi theo chiều kim đồng hồ.</li>
+</ul>
+<p>Với mỗi lần tìm $Q$, ta duyệt qua tất cả các điểm $R$ trong tập và tính góc tạo bởi $\vec{v}$ và $\overrightarrow{PR}$, vì vậy độ phức tạp của mỗi lần tìm điểm là $\mathcal{O}(n)$, với $n$ là số lượng điểm trong tập. Gọi số điểm thuộc bao lồi là $h$, Khi đó độ phức tạp của thuật toán là $\mathcal{O}(nh)$</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Animation_depicting_the_gift_wrapping_algorithm.gif" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Minh hoạ của thuật toán bọc gói quà<br/> source: <a href="https://en.wikipedia.org/wiki/Gift_wrapping_algorithm">wikipedia - Gift wrapping algorithm</a>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h3>
+<p>Nhược điểm của cách cài đặt này là sai số của số thực khi tính góc.</p>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">double</span> <span class="n">EPS</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">;</span>
+
+<span class="c1">// Kiểu điểm</span>
+<span class="k">struct</span> <span class="nc">Point</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+    <span class="n">Point</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="n">x</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="n">o</span><span class="p">.</span><span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">==</span> <span class="n">o</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="p">(</span><span class="o">*</span><span class="k">this</span> <span class="o">==</span> <span class="n">o</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">Point</span> <span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">o</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">o</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">double</span> <span class="n">length</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">1LL</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Tích vô hướng của vector A và vector B</span>
+<span class="kt">long</span> <span class="kt">long</span> <span class="nf">dot</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">B</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">B</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Góc giữa vector A và vector B</span>
+<span class="kt">double</span> <span class="nf">calcAngle</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">acos</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">/</span> <span class="n">A</span><span class="p">.</span><span class="n">length</span><span class="p">()</span> <span class="o">/</span> <span class="n">B</span><span class="p">.</span><span class="n">length</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="c1">// Trả về bao lồi với thứ tự các điểm được liệt kê cùng chiều kim đồng hồ</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">convexHull</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+
+    <span class="c1">// Đưa điểm trái nhất lên đầu tập</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">)</span> <span class="n">swap</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Tập bao lồi</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">hull</span><span class="p">;</span>
+    <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+
+    <span class="c1">// Dựng bao lồi</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="c1">// Đỉnh cuối của tập hull</span>
+        <span class="n">Point</span> <span class="n">P</span> <span class="o">=</span> <span class="n">hull</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+
+        <span class="c1">// Đỉnh kế cuối của tập hull</span>
+        <span class="c1">// Nếu hull.size() == 1 thì đặt đỉnh kế cuối là (P.x, P.y - 1)</span>
+        <span class="c1">// Vì ban đầu hướng đang nhìn là từ dưới lên trên</span>
+        <span class="n">Point</span> <span class="n">P0</span> <span class="o">=</span> <span class="p">(</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">?</span> <span class="n">Point</span><span class="p">(</span><span class="n">P</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">P</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="n">hull</span><span class="p">[</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]);</span>
+
+        <span class="c1">// Q là đỉnh tiếp theo của tập hull</span>
+        <span class="n">Point</span> <span class="n">Q</span>      <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="kt">double</span> <span class="n">angle</span> <span class="o">=</span> <span class="n">calcAngle</span><span class="p">(</span><span class="n">P0</span> <span class="o">-</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span> <span class="o">-</span> <span class="n">P</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">Q</span> <span class="o">==</span> <span class="n">P</span> <span class="o">||</span> <span class="n">Q</span> <span class="o">==</span> <span class="n">P0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">Q</span>     <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">calcAngle</span><span class="p">(</span><span class="n">P0</span> <span class="o">-</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span> <span class="o">-</span> <span class="n">P</span><span class="p">);</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span> <span class="o">||</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">P0</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+
+            <span class="kt">double</span> <span class="n">newAngle</span> <span class="o">=</span> <span class="n">calcAngle</span><span class="p">(</span><span class="n">P0</span> <span class="o">-</span> <span class="n">P</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">P</span><span class="p">);</span>
+            <span class="c1">// Nếu góc (P0, P, Q) nhỏ hơn góc (P0, P, p[i]) thì gán Q = p[i]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">angle</span> <span class="o">-</span> <span class="n">newAngle</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">angle</span> <span class="o">&lt;</span> <span class="n">newAngle</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">Q</span>     <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+                    <span class="n">angle</span> <span class="o">=</span> <span class="n">newAngle</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">((</span><span class="n">Q</span> <span class="o">-</span> <span class="n">P</span><span class="p">).</span><span class="n">length</span><span class="p">()</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">P</span><span class="p">).</span><span class="n">length</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="n">Q</span>     <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+                    <span class="n">angle</span> <span class="o">=</span> <span class="n">newAngle</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">Q</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">hull</span><span class="p">.</span><span class="n">back</span><span class="p">());</span>
+
+    <span class="c1">// Đỉnh đầu tiên lặp lại ở cuối 1 lần</span>
+    <span class="n">hull</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">hull</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="thuật-toán-graham-graham-scan" href="#thuật-toán-graham-graham-scan"></a>Thuật toán Graham (Graham scan)</h2>
+<p>Thuật toán Graham có độ phức tạp trong trường hợp xấu nhất nhỏ hơn thuật toán bọc gói, song thuật toán Graham lại phức tạp hơn.</p>
+<ul>
+<li>Đầu tiên, ta xác định một điểm mà chắc chắn thuộc bao lồi. Thông thường, khi cài đặt người ta chọn điểm có tung độ nhỏ nhất (nếu có nhiều điểm như vậy thì chọn điểm trái nhất). Gọi điểm này là điểm $O$.</li>
+<li>Chọn hệ trục tọa độ có gốc là điểm $O$ vừa chọn, sắp xếp các điểm còn lại theo thứ tự tăng dần của góc tạo bởi trục hoành theo chiều dương và $\overrightarrow{OI}$ với $I$ là một trong các điểm còn lại.</li>
+<li>Gọi tập bao lồi hiện tại là $H$ và điểm cuối của tập bao lồi $H$ là $H_h$ (ban đầu $h = 1$, tức tập $H$ chỉ chứa $O$).</li>
+<li>Duyệt theo thứ tự các điểm vừa sắp xếp. Với mỗi điểm ta sửa lại bao lồi $H$:
+<ul>
+<li>Thêm điểm $P$ vào cuối bao lồi $H$ (tức là ta tăng $h$ lên $1$ và đặt $H_h = P$).</li>
+<li>Nếu $h &lt; 3$, ta bỏ qua bước $3$ và xét điểm tiếp theo.</li>
+<li>Xét $3$ điểm $H_{h-2}, H_{h-1}$ và $H_h$. Gọi $\vec{u} = \overrightarrow{H_{h-2}H_{h-1}}$ và $\vec{v} = \overrightarrow{H_{h-1}H_h}$.
+<ul>
+<li>Nếu $\vec{u}\times\vec{v}&gt;0$, tức là thứ tự của $H_{h-2}, H_{h-1}$, $H_h$ là <strong>ngược chiều kim đồng hồ</strong>, thì cả $3$ điểm đều <strong>tạm thời</strong> thuộc bao lồi $H$, và ta xét điểm tiếp theo.</li>
+<li>Nhưng nếu $\vec{u}\times\vec{v}&lt;0$, tức là góc $\widehat{H_{h-2}H_{h-1}H_h}$ sẽ tạo ra <strong>phần lõm</strong>, thì ta bỏ điểm $H_{h-1}$ ra khỏi bao lồi $H$ (tức là ta đặt $H_{h-1} = H_h$ giảm $h$ đi $1$) và quay lại bước $2$.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Về độ phức tạp thuật toán, ta thấy bước sắp xếp các điểm có độ phức tạp $\mathcal{O}(n\log{n})$. Mỗi điểm được thêm/xoá nhiều nhất một lần nên tổng độ phức tạp của các bước thêm/xoá điểm là $\mathcal{O}(n)$. Vậy độ phức tạp của thuật toán Graham là $\mathcal{O}(n\log{n})$, phù hợp cho hầu hết các bài toán.</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_graham_scan.gif" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Minh hoạ của thuật toán Graham<br/> source: <a href="https://en.wikipedia.org/wiki/Graham_scan">wikipedia - Graham scan</a>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 class="editable"><a class="anchor" id="cài-đặt-1" href="#cài-đặt-1"></a>Cài đặt</h3>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="c1">// Kiểu điểm</span>
+<span class="k">struct</span> <span class="nc">Point</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// Tích có hướng của AB và AC</span>
+<span class="kt">long</span> <span class="kt">long</span> <span class="nf">cross</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// A -&gt; B -&gt; C đi theo thứ tự theo chiều kim đồng hồ (-1), thẳng hàng (0), ngược chiều kim đồng hồ (1)</span>
+<span class="kt">int</span> <span class="nf">ccw</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">S</span> <span class="o">=</span> <span class="n">cross</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">S</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">S</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Trả về bao lồi với thứ tự các điểm được liệt kê ngược chiều kim đồng hồ</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">convexHull</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Đưa điểm có tung độ nhỏ nhất (và trái nhất) lên đầu tập</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">||</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">y</span> <span class="o">==</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">&amp;&amp;</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">swap</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Sắp xếp các điểm I theo góc tạo bởi trục hoành theo chiều dương và OI</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">p</span><span class="p">](</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">ccw</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">B</span><span class="p">.</span><span class="n">x</span> <span class="o">||</span> <span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">B</span><span class="p">.</span><span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">B</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Tập bao lồi</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">hull</span><span class="p">;</span>
+    <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+
+    <span class="c1">// Dựng bao lồi</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">ccw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span> <span class="n">hull</span><span class="p">.</span><span class="n">back</span><span class="p">(),</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">hull</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">hull</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="thuật-toán-chuỗi-đơn-điệu-monotone-chain-algorithm" href="#thuật-toán-chuỗi-đơn-điệu-monotone-chain-algorithm"></a>Thuật toán chuỗi đơn điệu (Monotone chain algorithm)</h2>
+<p>Thuật toán chuỗi đơn điệu vừa dễ cài đặt, vừa là thuật toán nhanh nhất trong $3$ thuật toán được giới thiệu trong bài này. Thuật toán dựa trên việc tìm hai chuỗi đơn điệu của bao lồi: bao trên (hay chuỗi trên) và bao dưới (hay chuỗi dưới).</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_UpperAndLowerConvexHulls.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>source: <a href="https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain">wikibooks - Monotone chain</a>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Ta thấy điểm ở xa về phía bên trái nhất (từ đây gọi là điểm trái nhất) và điểm ở xa về phía bên phải nhất (từ đây gọi là điểm phải nhất) luôn thuộc bao lồi. Phần bao lồi theo chiều kim đồng hồ tính từ điểm trái nhất đến điểm phải nhất gọi là bao trên trên, phần còn lại của bao lồi gọi là bao dưới. Ta sẽ tìm bao trên và bao dưới độc lập với nhau.</p>
+<ul>
+<li>Bước đầu tiên, ta sắp xếp các điểm được cho theo thứ tự tăng dần theo hoành độ. Nếu hai điểm có cùng hoành độ, điểm có tung độ nhỏ hơn sẽ đứng trước. Sau bước này thì điểm trái nhất sẽ ở đầu và điểm phải nhất sẽ ở cuối tập điểm.</li>
+<li>Ta xét việc xây dựng bao trên. Gọi $H$ là bao trên hiện tại và độ lớn của bao là $h$. Điểm đầu của bao là $H_1$ và điểm cuối của bao là $H_h$. Xét từng điểm $P$ theo thứ tự đã sắp xếp:
+<ul>
+<li>Thêm $P$ vào cuối bao trên $H$.</li>
+<li>Nếu $h &lt; 3$, ta bỏ qua bước $3$ và xét điểm tiếp theo.</li>
+<li>Xét $3$ điểm $H_{h-2}, H_{h-1}$ và $H_h$. Gọi $\vec{u} = \overrightarrow{H_{h-2}H_{h-1}}$ và $\vec{v} = \overrightarrow{H_{h-1}H_h}$.
+<ul>
+<li>Nếu $\vec{u}\times\vec{v}&lt;0$, tức là thứ tự của $H_{h-2}, H_{h-1}$, $H_h$ là <strong>cùng chiều kim đồng hồ</strong>, thì cả $3$ điểm đều <strong>tạm thời</strong> thuộc bao trên $H$, và ta xét điểm tiếp theo.</li>
+<li>Nhưng nếu $\vec{u}\times\vec{v}&gt;0$, tức là góc $\widehat{H_{h-2}H_{h-1}H_h}$ sẽ tạo ra <strong>phần lõm</strong> ở bao trên, thì ta bỏ điểm $H_{h-1}$ ra khỏi bao lồi $H$ và quay lại bước $2$.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Sau khi xét hết các điểm, $H$ sẽ chứa toàn bộ phần bao trên. Sau đó, ta tìm chuỗi bao dưới bằng cách tương tự, chỉ khác là ta xét các điểm theo thứ tự ngược lại (tức là ta xét điểm phải nhất trước). Lưu ý không thêm điểm phải nhất hai lần. Khi thuật toán kết thúc, $H$ sẽ chứa tất cả các đỉnh của bao lồi, với điểm đầu được lặp lại ở cuối.</p>
+<p>Thuật toán này cũng có độ phức tạp $\mathcal{O}(n\log{n})$. Thuật toán chuỗi đơn điệu được khuyên dùng ở mọi bài toán tìm bao lồi, do nó đơn giản hơn thuật toán Graham và nhanh hơn một chút (do ta không phải tính góc).</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_monotone_algorithm.gif" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Minh hoạ của thuật toán chuỗi đơn điệu<br/> source: <a href="https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain">wikibooks - Monotone chain</a>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 class="editable"><a class="anchor" id="cài-đặt-2" href="#cài-đặt-2"></a>Cài đặt</h3>
+<p>Link bài tập: <a href="https://cses.fi/problemset/task/2195/"><strong>CSES - Convex Hull</strong></a>
+</p><pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="c1">// Kiểu điểm</span>
+<span class="k">struct</span> <span class="nc">Point</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// A -&gt; B -&gt; C đi theo thứ tự ngược chiều kim đồng hồ</span>
+<span class="kt">bool</span> <span class="nf">ccw</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Trả về bao lồi với thứ tự các điểm được liệt kê theo chiều kim đồng hồ</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">convexHull</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Sắp xếp các điểm theo tọa độ x, nếu bằng nhau sắp xếp theo y</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">p</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="p">[](</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">x</span> <span class="o">!=</span> <span class="n">B</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="k">return</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">B</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">B</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Tập bao lồi</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">hull</span><span class="p">;</span>
+    <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+
+    <span class="c1">// Dựng bao trên</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">ccw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span> <span class="n">hull</span><span class="p">.</span><span class="n">back</span><span class="p">(),</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="n">hull</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Tiếp tục dựng bao dưới</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">ccw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span> <span class="n">hull</span><span class="p">.</span><span class="n">back</span><span class="p">(),</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="n">hull</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Xoá đỉểm đầu được lặp lại ở cuối</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="n">hull</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">hull</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">Point</span> <span class="o">&amp;</span><span class="n">a</span> <span class="o">:</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">hull</span> <span class="o">=</span> <span class="n">convexHull</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">Point</span> <span class="n">p</span> <span class="o">:</span> <span class="n">hull</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;&lt;</span> <span class="sc">'\n'</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="xử-lí-trường-hợp-suy-biến" href="#xử-lí-trường-hợp-suy-biến"></a>Xử lí trường hợp suy biến</h1>
+<p>Các thuật toán trên hoạt động tốt trong trường hợp lí tưởng, tức là không có hai điểm nào trùng nhau và không có ba điểm nào thẳng hàng. Tuy nhiên, trong hầu hết các bài toán, ta sẽ phải xử lí các điểm trùng nhau và các bộ ba điểm thẳng hàng. Biện luận tất cả các trường hợp sẽ là một công việc khó nhằn và nhàm chán. Vì vậy, hãy ghi nhớ những điều sau:</p>
+<ul>
+<li>Đọc kĩ đề bài để biết được dữ liệu vào có bị suy biến hay không, nếu có thì rơi vào trường hợp nào (lưu ý rằng không phải đề bài nào cũng nói rõ rằng dữ liệu bị suy biến).</li>
+<li>Nếu tồn tại các điểm trùng nhau:
+<ul>
+<li>Thuật toán bọc gói
+<ul>
+<li>Vấn đề về phép chia cho số $0$ (bởi vì tồn tại $\vec{0}$ nên phần tính góc gặp vấn đề).</li>
+</ul>
+</li>
+<li>Thuật toán Graham và thuật toán chuỗi đơn điệu
+<ul>
+<li>Nếu ta phải in ra các đỉnh của bao lồi, có ba thứ tự in các đỉnh mà đề bài có thể hỏi: cùng chiều kim đồng hồ (cw), ngược chiều kim đồng hồ (ccw), hoặc theo thứ tự xuất hiện trong dữ liệu vào.</li>
+<li>Nếu đề bài yêu cầu in các đỉnh theo thứ tự xuất hiện trong dữ liệu vào, đề bài có thể yêu cầu in ra đỉnh đầu tiên xuất hiện trong dữ liệu vào nếu các đỉnh trùng nhau, hoặc in ra tất cả các đỉnh.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Nếu có các bộ ba điểm thẳng hàng:
+<ul>
+<li>Đề bài yêu cầu bao lồi có số lượng đỉnh tối đa hay tối thiểu, từ đó mà ta quyết định có nên cho thêm các điểm thuộc cạnh của bao lồi hay không.
+<ul>
+<li>Thuật toán bọc gói: Chọn điểm xa nhất hay gần nhất nếu có hai điểm cùng số đo góc nhỏ nhất.</li>
+<li>Thuật toán Graham và thuật toán chuỗi đơn điệu: Đổi CCW thành CW và ngược lại.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Diện tích bao lồi bằng $0$. Có hai trường hợp như vậy: tất cả các điểm đều trùng nhau, hoặc tất cả điểm đều thẳng hàng.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="bao-lồi-3d" href="#bao-lồi-3d"></a>Bao lồi 3D</h1>
+<p><img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_3d.gif" /></p>
+<p>Tìm bao lồi trong 3D thực sự là một bài toán khó. Bài toán này chắc chắn sẽ không bao giờ được ra trong IOI, và học sinh trung học không cần phải đi sâu vào vấn đề này. Tuy nhiên, có một thuật toán $\mathcal{O}(n^2)$ khá là đơn giản:</p>
+<ul>
+<li>Đầu tiên, ta tìm hình chiếu của các điểm trên mặt phẳng $Oxy$, và tìm một cạnh chắc chắn thuộc bao bằng cách lấy một điểm có tung độ lớn nhất rồi tìm điểm kia bằng cách chạy vòng lặp của thuật toán bọc gói một lần. Đây là phần đầu tiên của bao lồi.</li>
+<li>Sau đó, xét cạnh vừa tìm được, tìm một điểm thứ ba để tạo thành một mặt tam giác của bao lồi. Ta chọn điểm thứ ba bằng cách tìm điểm để tất cả các điểm khác nằm ở phía bên phải của mặt tam giác đó (giống như thuật toán bọc gói, ta tìm cạnh để tất cả các điểm khác đều nằm về phía bên phải cạnh đó).</li>
+<li>Bây giờ ta đã có ba cạnh trong bao lồi, ta chọn ngẫu nhiên một trong ba cạnh đó, rồi tìm tiếp một tam giác với cạnh này, rồi tiếp tục cho đến khi không còn cạnh nào nữa (khi ta tìm thêm một mặt tam giác, ta phải thêm hai cạnh vào bao, tuy vậy hai cạnh này phải chưa có trong bao, nếu không ta phải đi tìm hai cạnh khác).</li>
+<li>Có tổng cộng $\mathcal{O}(n)$ mặt, và mỗi lần duyệt các điểm ta mất thời gian $\mathcal{O}(n)$ vì ta phải duyệt tất cả các điểm còn lại, do đó độ phức tạp của thuật toán là $\mathcal{O}(n^2)$. (Nếu bạn nghĩ bạn có thể cài đặt được thuật toán này, hãy nộp bài tại <a href="https://www.spoj.com/problems/CH3D/">SPOJ - CH3D</a>).</li>
+<li>Ta có thể tăng tốc độ thuật toán này bằng các loại bỏ các điểm chắc chắn không phải đỉnh của bao (tìm các điểm cực theo các trục tọa độ, rồi loại bỏ các điểm nằm trong bát diện mà các đỉnh đấy tạo ra).</li>
+</ul>
+<p>Ta có thể tìm bao lồi trong không gian với độ phức tạp $\mathcal{O}(n\log{n})$ bằng phương pháp chia để trị, tuy nhiên việc cài đặt thuật toán này là vô cùng khó.</p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng" href="#ứng-dụng"></a>Ứng dụng</h1>
+<h2 class="editable"><a class="anchor" id="vnoj-kmix" href="#vnoj-kmix"></a><a href="https://oj.vnoi.info/problem/kmix"><strong>VNOJ - KMIX</strong></a></h2>
+<h3 class="editable"><a class="anchor" id="tóm-tắt" href="#tóm-tắt"></a>Tóm tắt</h3>
+<p>Có $N$ loại cocktail khác nhau, mỗi loại có nồng độ cam và dâu lần lượt là $x$ và $y$ (tính theo đơn vị phần tỉ).
+Có $M$ vị khách, vị khách thứ $i$ yêu cầu loại cocktail có nồng độ cam và dâu lần lượt là $x$ và $y$.
+Hỏi có thể đáp ứng yêu cầu của từng vị khách hay không?</p>
+<h3 class="editable"><a class="anchor" id="ý-tưởng" href="#ý-tưởng"></a>Ý tưởng</h3>
+<p>Nếu xem mỗi loại cocktail là một điểm toạ độ $(x, y)$ trên mặt phẳng, vậy các loại cocktail có thể pha chế từ $2$ loại cocktail $i$ và $j$ khác nhau sẽ nằm trên đoạn thẳng nối $2$ điểm $(x_i, y_i)$ và $(x_j, y_j)$.
+Mở rộng, các loại cocktail có thể pha chế từ $N$ loại cocktail ban đầu sẽ nằm trong bao lồi của $N$ điểm $(x, y)$.</p>
+<p>Để kiểm tra nhanh một điểm có nằm trong bao lồi hay không trong $\mathcal{O}(\log{n})$, ta thực hiện như sau:</p>
+<ul>
+<li>Gọi tập bao lồi là $H$, giả sử tập $H$ được liệt kê theo chiều kim đồng hồ.</li>
+<li>Đầu tiên, ta kiểm tra $(H_0, H_1, P)$ có ngược chiều kim đồng hồ hay không ($P$ thoả thuộc vùng màu xanh).
+<img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_kmix1.png" />
+</li>
+<li>Tiếp theo, ta kiểm tra $(H_{n-1}, H_0, P)$ có ngược chiều kim đồng hồ hay không ($P$ thoả thuộc vùng màu cam).
+<img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_kmix2.png" />
+</li>
+<li>Bây giờ, ta chặt nhị phân để tìm <strong>tia</strong> $\overrightarrow{H_0H_x}$ thoả mãn $\overrightarrow{H_0H_x}$ là tia gần điểm $P$ nhất ở phía <strong>bên phải</strong> bằng cách kiểm tra $CCW(H_0,H_x,P)$ (chi tiết xem ở phần cài đặt).</li>
+<li>Sau khi có $x$ (ví dụ $x=4$), ta biết được rằng $P$ thuộc vùng tạo bởi $2$ tia $\overrightarrow{H_0H_{x-1}}$ và $\overrightarrow{H_0H_x}$ (vùng màu tím).
+<img src="https://vnoi.info/wiki/uploads/algo_geometry_convex_hull_kmix3.png" />
+</li>
+<li>Đến đây, ta kiểm tra $(H_{x-1}, H_x, P)$ có cùng chiều kim đồng hồ hay không (tức $P$ có thuộc tam giác $(H_0,H_{x-1},H_x)$ hay không).</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="cài-đặt-3" href="#cài-đặt-3"></a>Cài đặt</h3>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="c1">// Kiểu điểm</span>
+<span class="k">struct</span> <span class="nc">Point</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="n">o</span><span class="p">.</span><span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">==</span> <span class="n">o</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Tích có hướng của AB và AC</span>
+<span class="kt">long</span> <span class="kt">long</span> <span class="nf">cross</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Tích vô hướng của AB và AC</span>
+<span class="kt">long</span> <span class="kt">long</span> <span class="nf">dot</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1LL</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// C nằm trên đoạn AB nếu ABxAC = 0 và CA.CB &lt;= 0</span>
+<span class="kt">bool</span> <span class="nf">onSegment</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">cross</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">dot</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// A -&gt; B -&gt; C đi theo thứ tự cùng chiều kim đồng hồ</span>
+<span class="kt">bool</span> <span class="nf">cw</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">cross</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// A -&gt; B -&gt; C đi theo thứ tự ngược chiều kim đồng hồ</span>
+<span class="kt">bool</span> <span class="nf">ccw</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">cross</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Trả về bao lồi với thứ tự các điểm được liệt kê theo chiều kim đồng hồ</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">convexHull</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Sắp xếp các điểm theo tọa độ x, nếu bằng nhau sắp xếp theo y</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">p</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="p">[](</span><span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">A</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span> <span class="o">&amp;</span><span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">x</span> <span class="o">!=</span> <span class="n">B</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="k">return</span> <span class="n">A</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">B</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">A</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">B</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Tập bao lồi</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">hull</span><span class="p">;</span>
+    <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+
+    <span class="c1">// Dựng bao trên</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">ccw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span> <span class="n">hull</span><span class="p">.</span><span class="n">back</span><span class="p">(),</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="n">hull</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Tiếp tục dựng bao dưới</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">ccw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span> <span class="n">hull</span><span class="p">.</span><span class="n">back</span><span class="p">(),</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="n">hull</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="n">hull</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Xoá đỉểm đầu được lặp lại ở cuối</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="n">hull</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">hull</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Kiểm tra P có nằm trong bao lồi hull hay không</span>
+<span class="kt">bool</span> <span class="nf">checkInHull</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">hull</span><span class="p">,</span> <span class="n">Point</span> <span class="n">P</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">hull</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+
+    <span class="c1">// Xử lý trường hợp suy biến có diện tích bao lồi = 0</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="n">onSegment</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hull</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">);</span>
+
+    <span class="c1">// Nếu (hull[0], hull[1], P) ngược chiều kim đồng hồ thì P nằm ngoài bao lồi</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ccw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hull</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">))</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+
+    <span class="c1">// Nếu (hull[n - 1], hull[0], P) không cùng chiều kim đồng hồ thì P chỉ thoả</span>
+    <span class="c1">// nếu P nằm trên đoạn (hull[n - 1], hull[0])</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">hull</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">P</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">onSegment</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">hull</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">P</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Tìm x thoả mãn tia (hull[0], hull[x]) là tia gần nhất ở phía bên phải của P</span>
+    <span class="kt">int</span> <span class="n">lo</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">lo</span> <span class="o">&lt;=</span> <span class="n">hi</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="c1">// Nếu (hull[0], hull[mid], P) ngược chiều kim đồng hồ thì</span>
+        <span class="c1">// tia (hull[0], hull[mid]) nằm ở phía bên phải của P</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ccw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hull</span><span class="p">[</span><span class="n">mid</span><span class="p">],</span> <span class="n">P</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">x</span>  <span class="o">=</span> <span class="n">mid</span><span class="p">;</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// P nằm trong tam giác (hull[0], hull[x - 1], hull[x]) </span>
+    <span class="c1">// nếu (hull[x - 1], hull[x], P) không ngược chiều kim đồng hồ</span>
+    <span class="k">return</span> <span class="o">!</span><span class="n">ccw</span><span class="p">(</span><span class="n">hull</span><span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">hull</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">P</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">Point</span> <span class="o">&amp;</span><span class="n">a</span> <span class="o">:</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">hull</span> <span class="o">=</span> <span class="n">convexHull</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">m</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">m</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Point</span> <span class="n">P</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">P</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">checkInHull</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span> <span class="o">?</span> <span class="s">"YES</span><span class="se">\n</span><span class="s">"</span> <span class="o">:</span> <span class="s">"NO</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng</h1>
+<ul>
+<li><a href="https://open.kattis.com/problems/convexhull"><strong>Kattis - convexhull</strong></a></li>
+<li><a href="https://open.kattis.com/contests/vietnam-national17-open/problems/parade"><strong>ACM ICPC Vietnam National 2017 - K</strong></a></li>
+<li><a href="https://oj.vnoi.info/problem/military"><strong>VNOJ - MILITARY</strong></a></li>
+<li><a href="https://oj.vnoi.info/problem/headqrt"><strong>VNOJ - HEADQRT</strong></a></li>
+<li><a href="http://usaco.org/index.php?page=viewproblem2&amp;cpid=382"><strong>USACO - Cow Curling</strong></a></li>
+<li><a href="https://codeforces.com/contest/406/problem/D"><strong>Codeforces - 406D - Hill Climbing</strong></a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

@@ -1,0 +1,72 @@
+<div id="wiki-content">
+<h1 class="pt-4">Số học 4.5 - Nghịch đảo modulo</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/math/">math</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Nguồn: <a href="https://e-maxx-eng.appspot.com/algebra/module-inverse.html">e-maxx</a></p>
+<p>Người dịch: Nguyễn Thành Trung (RR)</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#định-nghĩa">Định nghĩa:</a></li><li><a href="#extended-euclid">Extended Euclid</a></li><li><a href="#tính-nghịch-đảo-modulo-bằng-a-b-c">Tính nghịch đảo modulo bằng a^b % c</a></li><li><a href="#tính-tất-cả-nghịch-đảo-modulo-m">Tính tất cả nghịch đảo modulo m</a></li><li><a href="#các-bài-luyện-tập">Các bài luyện tập</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="định-nghĩa" href="#định-nghĩa"></a>Định nghĩa:</h1>
+<p>Xét số nguyên dương $m$. Xét các số nguyên trên modulo $m$ (từ 0 đến $m-1$).</p>
+<p>Với một số nguyên $a$, ta gọi nghịch đảo modulo $m$ (modular multiplicative inverse) của $a$ là $a^{-1}$ là số nguyên thoả mãn:</p>
+<p>$a * a^{-1} \equiv 1 \; \pmod{m}$</p>
+<p>Ta cần chú ý rằng không phải lúc nào $a^{-1}$ cũng tồn tại. Ví dụ, với $m = 4, a = 2$, ta không thể tìm được $a^{-1}$ thoả mãn đẳng thức trên.</p>
+<p>Có thể chứng minh rằng $a^{-1}$ luôn luôn tồn tại nếu $gcd(a, m) = 1$.</p>
+<p>Trong bài viết này, mình sẽ trình bày 2 cách khác nhau để tìm nghịch đảo modulo, dựa trên các kiến thức đã được trình bày ở các bài viết trên VNOI:</p>
+<ul>
+<li><a class="internal absent" href="https://vnoi.info/wiki/translate/he/So-hoc-Phan-1-Modulo-gcd">Extended Euclid</a></li>
+<li><a class="internal absent" href="https://vnoi.info/wiki/translate/he/Number-Theory-3">Tính a^b % c bằng chia để trị</a></li>
+<li><a class="internal absent" href="https://vnoi.info/wiki/translate/he/Number-Theory-4">Phi hàm Euler</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="extended-euclid" href="#extended-euclid"></a>Extended Euclid</h1>
+<p>Như đã trình bày trong bài viết <a class="internal absent" href="https://vnoi.info/wiki/translate/he/So-hoc-Phan-1-Modulo-gcd">Số học 1</a>, nếu $gcd(a, m) = 1$, ta luôn luôn tìm được 2 số nguyên x và y thoả mãn:</p>
+<p>$a *x + m * y = 1$.</p>
+<p>Vì ta đang làm việc trên modulo $m$, ta có thể bỏ $m * y$ và viết lại đẳng thức trên như sau:</p>
+<p>$a * x \equiv 1 \pmod{m}$.</p>
+<p>Do đó, $x$ chính là $a^{-1}$.</p>
+<p>Cài đặt:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">g</span> <span class="o">=</span> <span class="n">extended_euclidean</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">g</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"No solution!"</span><span class="p">;</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">%</span> <span class="n">m</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span> <span class="o">%</span> <span class="n">m</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="tính-nghịch-đảo-modulo-bằng-a-b-c" href="#tính-nghịch-đảo-modulo-bằng-a-b-c"></a>Tính nghịch đảo modulo bằng a^b % c</h1>
+<p>Khi $gcd(a, m) = 1$, theo định lý Euler, ta có:</p>
+<p>$a^{phi(m)} \equiv 1 \pmod{m}$.</p>
+<p>Với Phi hàm Euler đã được giải thích ở bài viết <a class="internal absent" href="https://vnoi.info/wiki/translate/he/Number-Theory-4">Số học 4</a>.</p>
+<p>Trong trường hợp $m$ là số nguyên tố, $phi(m) = m - 1$, nên ta có:</p>
+<p>$a^{m-1} \equiv 1 \pmod{m}$.</p>
+<p>Nhân cả 2 vế với $a^{-1}$, ta được:</p>
+<ul>
+<li>Với $m$ bất kỳ, $a^{phi(m) - 1} \equiv a^{-1} \pmod{m}$,</li>
+<li>Với $m$ nguyên tố, $a^{m-2} \equiv a^{-1} \pmod{m}$.</li>
+</ul>
+<p>Như vậy, ta có thể dùng thuật toán <a class="internal absent" href="https://vnoi.info/wiki/translate/he/Number-Theory-3">Tính a^b % c bằng chia để trị</a> để tính nghịch đảo modulo với độ phức tạp $O(\log{m})$.</p>
+<h1 class="editable"><a class="anchor" id="tính-tất-cả-nghịch-đảo-modulo-m" href="#tính-tất-cả-nghịch-đảo-modulo-m"></a>Tính tất cả nghịch đảo modulo m</h1>
+<p>Trong trường hợp $m$ là số nguyên tố, ta cũng có thể tính tất cả nghịch đảo modulo của toàn bộ $[1, m-1]$ với độ phức tạp $O(m)$ như sau:</p>
+<pre class="highlight"><code><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="p">(</span><span class="n">m</span><span class="o">/</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span><span class="p">[</span><span class="n">m</span><span class="o">%</span><span class="n">i</span><span class="p">]</span> <span class="o">%</span> <span class="n">m</span><span class="p">)</span> <span class="o">%</span> <span class="n">m</span><span class="p">;</span></code></pre>
+<p><strong>Chứng minh:</strong></p>
+<p>$m \% i = m - floor(m/i) * i$</p>
+<p>$m \% i \equiv -floor(m/i) * i \pmod{m}$</p>
+<p>Nhân cả 2 vế với nghịch đảo modulo của $i$ và nghịch đảo modulo của $m \% i$:</p>
+<p>$r[i] \equiv -floor(m/i) * r[m \% i] \pmod{m}$</p>
+<h1 class="editable"><a class="anchor" id="các-bài-luyện-tập" href="#các-bài-luyện-tập"></a>Các bài luyện tập</h1>
+<ul>
+<li><a href="https://uva.onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=3055">UVa 11904 - One Unit Machine</a></li>
+<li><a href="https://www.hackerrank.com/contests/world-codesprint-5/challenges/longest-increasing-subsequence-arrays">Hackerrank - Longest Increasing Subsequence Arrays</a></li>
+<li><a href="http://codeforces.com/problemset/problem/300/C">Codeforces 300C - Beautiful Numbers</a></li>
+<li><a href="http://codeforces.com/problemset/problem/622/F">Codeforces 622F - The Sum of the k-th Powers</a></li>
+<li><a href="http://codeforces.com/problemset/problem/717/A">Codeforces 717A - Festival Organization</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

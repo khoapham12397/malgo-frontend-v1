@@ -1,0 +1,214 @@
+<div id="wiki-content">
+<h1 class="pt-4">Độ phức tạp tính toán</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/topcoder/">topcoder</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#tầm-quan-trọng-của-những-lý-luận">Tầm quan trọng của những lý luận</a><ul><li><a href="#ví-dụ-1">Ví dụ 1</a></li><li><a href="#mẹo-gộp-hai-thuật-toán">Mẹo gộp hai thuật toán</a></li></ul></li><li><a href="#thế-nào-là-độ-hiệu-quả-của-thuật-toán">Thế nào là độ hiệu quả của thuật toán?</a><ul><li><a href="#ví-dụ-2">Ví dụ 2</a></li><li><a href="#lưu-ý-về-kích-cỡ-tập-đầu-vào">Lưu ý về kích cỡ tập đầu vào</a></li><li><a href="#tính-toán-độ-hiệu-quả-của-thuật-toán-như-thế-nào">Tính toán độ hiệu quả của thuật toán như thế nào?</a></li></ul></li><li><a href="#các-khái-niệm-cơ-bản">Các khái niệm cơ bản</a><ul><li><a href="#xác-định-thời-gian-chạy-dựa-vào-đánh-giá-cận-trên">Xác định thời gian chạy dựa vào đánh giá cận trên</a></li></ul></li><li><a href="#lưu-ý-khi-phân-tích-độ-phức-tạp-thuật-toán">Lưu ý khi phân tích độ phức tạp thuật toán</a><ul><li><a href="#ví-dụ-3">Ví dụ 3</a></li></ul></li><li><a href="#kết-luận">Kết luận</a></li></ul></div>
+<p>Nguồn bài: <a href="https://www.topcoder.com/community/data-science/data-science-tutorials/computational-complexity-section-1/">Topcoder</a></p>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Trong bài viết này tôi sẽ giới thiệu tới các bạn về chủ đề độ phức tạp tính toán. Trước khi đi vào định nghĩa chính xác của các khái niệm, bài viết sẽ giải thích các lý luận đằng sau những khái niệm đó. Tôi cho rằng việc hiểu các lý luận này có thể còn quan trọng hơn bản thân định nghĩa của các khái niệm.</p>
+<h1 class="editable"><a class="anchor" id="tầm-quan-trọng-của-những-lý-luận" href="#tầm-quan-trọng-của-những-lý-luận"></a>Tầm quan trọng của những lý luận</h1>
+<h2 class="editable"><a class="anchor" id="ví-dụ-1" href="#ví-dụ-1"></a>Ví dụ 1</h2>
+<p>Giả sử bạn được phân công viết một chương trình để xử lý một tập dữ liệu gồm nhiều bản ghi mà công ty của bạn đã thu thập. Bạn cài đặt hai thuật toán và kiểm tra chúng bằng một vài tập dữ liệu khác nhau. Thời gian chạy được thống kê trong bảng 1.</p>
+<table>
+<tbody>
+<tr>
+<td>Số lượng bản ghi</td>
+<td>10</td>
+<td>20</td>
+<td>50</td>
+<td>100</td>
+<td>1000</td>
+<td>5000</td>
+</tr>
+<tr>
+<td>Thuật toán 1</td>
+<td>0.00s</td>
+<td>0.01s</td>
+<td>0.05s</td>
+<td>0.47s</td>
+<td>23.92s</td>
+<td>47min</td>
+</tr>
+<tr>
+<td>Thuật toán 2</td>
+<td>0.05s</td>
+<td>0.05s</td>
+<td>0.06s</td>
+<td>0.11s</td>
+<td>0.78s</td>
+<td>14.22s</td>
+</tr>
+</tbody>
+</table>
+<p><em>Bảng 1: Thời gian chạy của hai thuật toán 1, 2</em></p>
+<p>Từ bảng 1 ta có thể đánh giá một cách không chính thức rằng thuật toán nào tốt hơn (vì thường là ta có thể ước lượng số lượng bản ghi cần xử lý). Với một công ty thì kết luận dựa trên việc chạy thử như vậy có thể chấp nhận được. Nhưng với người lập trình, nó sẽ tốt hơn nếu có thể đánh giá thời gian chạy của hai thuật toán <strong>trước khi</strong> viết code và chạy thử - sau đó chỉ cần cài đặt thuật toán tốt hơn.</p>
+<p>Các kỳ thi lập trình cũng đòi hỏi việc đánh giá tương tự: kích cỡ của tập dữ liệu được cho trước trong đề bài. Giả sử ta đã nghĩ ra được một thuật toán. Câu hỏi cần đặt ra trước khi bắt tay vào cài đặt là: thuật toán này có đáng để cài đặt không? Liệu nó có thể chạy trên bộ test lớn nhất trong thời gian cho phép không? Nếu ta có thể nghĩ ra một vài thuật toán khác, nên chọn thuật nào để cài đặt?</p>
+<p>Các câu hỏi trên dẫn tới câu hỏi cốt lõi hơn: <strong>Làm sao để so sánh hai thuật toán với nhau?</strong> Quay trở lại ví dụ 1, ta có thể ước lượng rằng khi số bản ghi vượt quá 1000, thuật toán 2 sẽ chạy nhanh hơn nhiều lần thuật toán 1. Nói cách khác, xét trên tất cả các tập dữ liệu có thể, thuật toán 2 sẽ chạy tốt hơn trong hầu hết các trường hợp.</p>
+<p>Có thể kết luận được rằng trong hầu hết các trường hợp - cho trước 2 thuật toán, hoặc là một thuật toán gần như luôn luôn tốt hơn, hoặc là cả hai xấp xỉ tốt như nhau. Như vậy, chúng ta sẽ định nghĩa độ tốt của thuật toán dựa vào đánh giá độ hiệu quả chạy trên toàn bộ tập dữ liệu như trên. Đánh giá này sẽ là ý tưởng chính đằng sau các định nghĩa cụ thể mà chúng ta sẽ đề cập về sau.</p>
+<h2 class="editable"><a class="anchor" id="mẹo-gộp-hai-thuật-toán" href="#mẹo-gộp-hai-thuật-toán"></a>Mẹo gộp hai thuật toán</h2>
+<p>Nếu đối chiếu với hai thuật toán ví dụ 1, không khó để thấy rằng có một thuật toán với thời gian chạy tương tự với chúng trong bảng 2</p>
+<table>
+<tbody>
+<tr>
+<td>Số lượng bản ghi</td>
+<td>10</td>
+<td>20</td>
+<td>50</td>
+<td>100</td>
+<td>1000</td>
+<td>5000</td>
+</tr>
+<tr>
+<td>Thuật toán 3</td>
+<td>$N$ 0.00s</td>
+<td>0.01s</td>
+<td>0.05s</td>
+<td>0.11s</td>
+<td>0.78s</td>
+<td>14.22s</td>
+</tr>
+</tbody>
+</table>
+<p><em>Bảng 2: Thời gian chạy của thuật toán 3</em></p>
+<p>Ý tưởng của thuât toán 3: nếu số lượng bản ghi nhỏ thì ta áp dụng thuật toán 1, ngược lại áp dụng thuật toán 2.</p>
+<p>Ý tưởng tương tự thường được áp dụng vào thực tế. Một ví dụ là trong các hàm sắp xếp <code>sort()</code> được cung cấp bởi thư viện của các ngôn ngữ lập trình thường được cài đặt theo thuật toán <em>QuickSort</em> với nhiều cải tiến, ví dụ:</p>
+<ul>
+<li>Nếu số lượng phần tử quá nhỏ, chạy thuật toán sắp xếp chèn <em>InsertSort</em> (vì <em>InsertSort</em> chạy nhanh hơn với tập dữ liệu kích thước nhỏ).</li>
+<li>Nếu vị trí phần tử chốt không tốt, chuyển sang chạy thuật toán sắp xếp trộn <em>MergeSort</em>.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="thế-nào-là-độ-hiệu-quả-của-thuật-toán" href="#thế-nào-là-độ-hiệu-quả-của-thuật-toán"></a>Thế nào là độ hiệu quả của thuật toán?</h1>
+<h2 class="editable"><a class="anchor" id="ví-dụ-2" href="#ví-dụ-2"></a>Ví dụ 2</h2>
+<p>Giả sử bạn có đoạn mã sau:</p>
+<pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        	<span class="n">swap</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span></code></pre>
+<p>(Đây thực ra là một cách cài đặt của thuật toán <em>MinSort</em>) Giả sử chúng ta được cho một mảng dữ liệu đầu vào (mảng A và số phần tử N), ta có thể tính chính xác số bước chạy của thuật toán trên đầu vào đã cho. Ta thậm chí có thể tính chính xác số lệnh thực thi trong bộ vi xử lý nếu ta muốn (ND: chuyển đoạn mã C++ trên thành mã Assembly). Tuy nhiên, có rất nhiều giá trị mà bộ dữ liệu đầu vào có thể nhận nên việc tính toán số bước như trên với mọi khả năng đầu vào là không thể.</p>
+<p>Thực tế trên dẫn ta tới câu hỏi quan trọng hơn: đánh giá quan trọng nhất về độ hiệu quả mà chúng ta cần tới là gì? Thông thường thì đó là tốc độ chạy thuật toán trong <strong>trường hợp xấu nhất</strong> - ta cần tìm ra một đánh giá <strong>cận trên</strong> của tốc độ chạy thuật toán.</p>
+<p>Tuy nhiên, thế nào là là trường hợp xấu nhất? Một cách đơn giản để làm cho thuật toán chạy chậm hơn là tăng kích cỡ đầu vào. Vì cận trên của số phần tử đã bị chặn bởi đề bài, các câu hỏi quan trọng hơn là: tập đầu vào xấu nhất trong các tập có cùng số phần tử là tập nào? Khi tăng kích cỡ tập đầu vào thì độ phức tạp trong trường hợp xấu nhất <strong>tăng như thế nào</strong>?</p>
+<h2 class="editable"><a class="anchor" id="lưu-ý-về-kích-cỡ-tập-đầu-vào" href="#lưu-ý-về-kích-cỡ-tập-đầu-vào"></a>Lưu ý về kích cỡ tập đầu vào</h2>
+<p>Hiểu chính xác thì "kích cỡ tập đầu vào" là đại lượng gì? Theo định nghĩa chính thống, kích cỡ tập đầu vào được viết thành một tập hữu hạn các ký tự (với ít nhất 02 'ký tự'). Trong bài này ta có thể coi tập ký tự đó là các số tự nhiên từ 0 tới 255. Như vậy "kích cỡ tập đầu vào" được tính đúng bằng số bytes của tệp chứa dữ liệu đầu vào (input file).</p>
+<p>Thường thì một phần của bộ dữ liệu sẽ là một số (hoặc một vài số), mà kích cỡ của tập đầu vào sẽ tỉ lệ thuận với số này.</p>
+<p>Chẳng hạn như trong ví dụ 2, ta có một số tự nhiên $N$ và một mảng với $N$ số integer. Kích cỡ theo đơn vị bytes của file đầu vào sẽ xấp xỉ $5N$ (phụ thuộc vào hệ điều hành và cấu trúc máy tính, nhưng sẽ luôn tuyến tính với $N$).</p>
+<p>Trong các trường hợp này, ta có thể chọn số (hoặc các số) đó để biểu diễn kích cỡ tập đầu vào. Vì vậy khi nói về các bài toán có mảng / chuỗi, kích cỡ tập đầu vào là độ dài của mảng / chuỗi đó, khi nói về các bài toán đồ thị ta biểu thị bằng cả hai đại lượng số lượng đỉnh và số lượng cạnh,…</p>
+<p>Với cách tiếp cận đó, kể từ đây cho tới cuối bài viết ta ký hiệu $N$ là kích cỡ tập đầu vào.</p>
+<p>Một trường hợp cần lưu ý là khi viết một số $N$ ta chỉ cần $log(N)$ khoảng trống (ví dụ để viết 123456 trong hệ cơ số 10 ta chỉ cần $log_{10}(123456)$ chữ số). Cần phân biệt hai đại lượng này - với thuật toán kiểm tra số nguyên tố đơn giản có độ phức tạp đa thức trên <strong>độ lớn</strong> của số được kiểm tra chứ không phải là trên <strong>số lượng chữ số</strong> của số đó! Nếu bạn chưa từng gặp khái niệm <em>độ phức tạp đa thức</em> thì cũng không cần lo lắng vì khái niệm này sẽ được giải thích trong phần sau.</p>
+<h2 class="editable"><a class="anchor" id="tính-toán-độ-hiệu-quả-của-thuật-toán-như-thế-nào" href="#tính-toán-độ-hiệu-quả-của-thuật-toán-như-thế-nào"></a>Tính toán độ hiệu quả của thuật toán như thế nào?</h2>
+<p>Nhắc lại rằng cho trước một bộ dữ liệu đầu vào, ta có thể đếm số bước thực hiện các phép toán của một thuật toán bằng cách mô phỏng các bước chạy thuật toán đó trên bộ dữ liệu được cho. Giả sử ta tiến hành đếm như vậy với tất cả các bộ dữ liệu có kích thước tối đa $N$. Ký hiệu $f(N)$ là số bước cần thực hiện nhiều nhất (trường hợp xấu nhất). Hàm $f$ được gọi là <strong>độ phức tạp thời gian</strong>, hoặc ngắn gọn <strong>thời gian chạy</strong> của thuật toán.</p>
+<p>Nói cách khác, nếu ta có dữ liệu vào với kích cỡ $N$, việc thực hiện thuật toán mất tối đa $f(N)$ bước.</p>
+<p>Quay trở lai thuật toán trong ví dụ 2. Tập đầu vào xấu nhất có $N$ phần tử là tập nào? Nói cách khác, trong số các mảng có $N$ phần tử, mảng nào khiến cho thuật toán phải thực hiện nhiều bước nhất? Từ đoạn mã của thuật toán ta thấy:</p>
+<ul>
+<li>Bước thứ nhất được thực hiện đúng $N$ lần</li>
+<li>Bước thứ hai và thứ ba được thực hiện đúng $\frac{N(N-1)}{2}$ lần</li>
+<li>Bước thứ tư được thực hiện nhiều nhất $\frac{N(N-1)}{2}$ lần</li>
+</ul>
+<p>Dễ thấy nếu các phần tử trong mảng $A$ được sắp xếp theo chiều <em>giảm dần</em> ngay từ đầu, bước thứ 4 sẽ luôn luôn được thực hiện. Vì vậy thuật toán sẽ chạy trong $\frac{3N(N-1)}{2} + N = 1.5N^2 - 0.5N$ bước. Vì vậy thuật toán trên có số bước tối đa là $f(N) = 1.5N^2 - 0.5N$.</p>
+<p>Có thể thấy rằng việc xác định chính xác hàm $f$ cho các chương trình phức tạp hơn là khá khó khăn. Thêm vào đó, trong nhiều trường hợp dạng chính xác của hàm $f$ là không cần thiết. Trong tính toán trên giá trị $-0.5N$ có thể bỏ qua, vì khi $N$ lớn thì $0.5N$ nhỏ hơn rất nhiều so với $1.5N^2$ và không ảnh hưởng lớn tới thời gian chạy. Mệnh đề "$f(N)$ xấp xỉ bằng $1.5N^2$" cho ta tất cả thông tin mà ta cần. Tiếp theo chúng ta sẽ thấy rằng, khi so sánh thuật toán này với một thuật toán nào đó khác để giải cùng một bài toán, hằng số $1.5$ cũng không thật quan trọng.</p>
+<p>Xét hai thuật toán, một có thời gian chạy $N^2$ và một có thời gian chạy $0.0001N^3$. Dễ nhận thấy rằng với $N &gt; 1000$ thì thuật toán đầu tiên chạy nhanh hơn - khi $N$ tăng, khoảng cách về độ hiệu quả giữa hai thuật toán càng trở nên rõ ràng. Trong khi thuật toán đầu tiên có thể giải quyết bài toán với $N = 20 000$ chỉ trong thời gian tính bằng giây, thuật toán thứ hai phải mất tới vài phút trên các máy tính hiện đại.</p>
+<p>Sự khác biệt như trên sẽ luôn xảy ra nếu một trong hai thuật toán có <em>thời gian chạy</em> tăng <strong>tiệm cận nhanh hơn</strong> so với <em>thời gian chạy</em> của thuật toán còn lại (nói cách khác, khi $N$ đủ lớn để kết quả phép tính giới hạn <strong>lim</strong> của tỷ lệ giữa hai đại lượng này bằng 0 hoặc $\infty$. ND: trong bài này tác giả không nói rõ việc so sánh độ phức tạp theo phép tính giới hạn, chỉ cần hiểu khái niệm <strong>tiệm cận</strong> có nghĩa là <strong>kích cỡ đầu vào đủ lớn</strong>. Như vậy <strong>tiệm cận nhanh hơn</strong> có nghĩa là <strong>nhanh hơn khi đầu vào đủ lớn</strong>). Bất kể các hằng số nhận giá trị nào, một thuật toán có <em>thời gian chạy</em> tỷ lệ (thuận) với $N^2$ sẽ <strong>luôn luôn hiệu quả hơn</strong> một thuật toán khác có <em>thời gian chạy</em> tỷ lệ với $N^3$ trong <strong>hầu hết các trường hợp của tập đầu vào</strong>. Nhận định này chính là ý tưởng chủ đạo để xây dựng định nghĩa chính thức của các khái niệm.</p>
+<h1 class="editable"><a class="anchor" id="các-khái-niệm-cơ-bản" href="#các-khái-niệm-cơ-bản"></a>Các khái niệm cơ bản</h1>
+<p>Gọi $f, g$ là các hàm số dương không giảm trên tập số nguyên dương (lưu ý rằng <em>hàm thời gian chạy</em> thỏa mãn điều kiện này). Ta nói rằng "$f(N)$ thuộc $O(g(N))$" (cách đọc: "$f$ thuộc O-lớn của $g$") nếu tồn tại các giá trị $c$ và $N_0$ thỏa mãn điều kiện sau:</p>
+<div class="kdmath">$$
+\forall N &gt; N_0; f(N) &lt; c.g(N)
+$$</div>
+<p>Mệnh đề trên có thể diễn dịch như sau: $f(N)$ thuộc $O(g(N))$ nếu với $c$ nào đó toàn bộ đồ thị của hàm $f$ nằm dưới đồ thị của hàm $c.g$. Chú ý rằng điều này có nghĩa là tốc độ tăng của hàm $f$ không vượt quá độ tăng của hàm $g$. (ND: ký hiệu O-lớn là ký hiệu chỉ <strong>tập hợp của các hàm số</strong>, vì vậy ở đây quan hệ giữa $f$ và $O(g(N))$ là <em>(phần tử) thuộc (tập hợp)</em>.)</p>
+<p>Thay vì viết "$f(N)$ thuộc $O(g(N))$" ta thường viết là "$f(N)$ = $O(g(N))$". Chú ý là dấu "=" không có tính đối xứng - viết "$O(g(N)) = f (N)$" là sai và không có ý nghĩa gì, đồng thời mệnh đề "$g(N) = O(f (N))$" cũng không phải luôn đúng (sẽ được chỉ ra ở phần sau của bài viết).</p>
+<p>Định nghĩa trên được biết tới là ký pháp O-lớn và được sử dụng để chỉ ra cận trên của tốc độ tăng của một hàm số.</p>
+<p>Xét hàm số $f (N) = 1.5N^2 – 0.5N$ trong ví dụ 2. Ta có thể phát biểu rằng $f (N) = O(N^2)$ (một trường hợp khả dĩ cho các hằng số là $c = 2$ và $N_0 = 0$). Điều này có nghĩa là hàm $f$ <strong>không tăng (tiệm cận) nhanh hơn</strong> $N^2$.</p>
+<p>Lưu ý rằng <em>thời gian chạy</em> chính xác của hàm $f$ không cho ta câu trả lời cho câu hỏi "Chương trình trên chạy mất bao lâu trên máy tính?". Nhận định quan trọng rút ra từ ví dụ trên là <em>thời gian chạy</em> của hàm $f$ đó là hàm bậc hai. Nếu ta tăng gấp đôi kích cỡ đầu vào, thời gian chạy sẽ tăng xấp xỉ 4 lần thời gian chạy ban đầu, không quan trọng máy tính của ta nhanh như thế nào.</p>
+<p>Việc xác định được cận trên $O(N^2)$ của $f(N)$ cũng đưa ta tới cùng nhận định như trên - đảm bảo rằng độ tăng của hàm thời gian chạy tối đa là hàm bậc hai.</p>
+<p>Vì vậy, chúng ta sẽ sử dụng ký pháp O-lớn để mô tả độ phức tạp <em>thời gian</em> (và đôi khi là cả <em>bộ nhớ</em>) của các thuật toán. Với thuật toán trong ví dụ 2 ta sẽ nói "Độ phức tạp thời gian của thuật toán này là $O(N^2)$" hoặc ngắn gọn hơn "Thuật toán này là $O(N^2)$".</p>
+<p>Theo cách tương tự ta sẽ định nghĩa $ \Omega$ (Omega-lớn) and $ \Theta$ (Theta-lớn).</p>
+<p>Ta nói rằng $f (N)= \Omega(g(N))$ nếu $g(N) = O(f (N))$, nói cách khác nếu $f$ tăng nhanh hơn hoặc bằng $g$.</p>
+<p>Ta nói rằng $f (N) = \Theta(g(N))$ nếu $f (N) = O(g(N))$ và $g(N) = O(f (N))$, nói cách khác nếu cả hai hàm số có độ hiệu quả xấp xỉ bằng nhau.</p>
+<p>Dễ dàng nhận thấy là hàm Omega-lớn dùng để chỉ cận dưới và hàm Theta-lớn dùng để chỉ đánh giá chặt (cả hai cận) của một hàm số. Có những đánh giá cận khác tương tự nhưng ít phổ biến hơn.</p>
+<p>Một vài mệnh đề sử dụng các ký pháp trên:</p>
+<ul>
+<li>$1.5N^2 -0.5N = O(N^2)$.</li>
+<li>$47N log N = O(N^2)$.</li>
+<li>$N log N + 1 000 047N = \Theta(N log N)$.</li>
+<li>Tất cả các đa thức bậc $k$ là $O(N^k)$.</li>
+<li>Độ phức tạp thời gian của thuật toán trong ví dụ 2 là $ \Theta(N^2)$.</li>
+<li>Nếu một thuật toán thuộc $O(N^2)$, nó cũng thuộc $O(N^5)$.</li>
+<li>Các thuật toán sắp xếp dựa trên phép so sánh đều là $ \Omega(N log N)$.</li>
+<li>Thuật toán sắp xếp trộn <em>MergeSort</em> chạy trên mảng gồm $N$ phần tử thực hiện xấp xỉ $N log N$ phép so sánh. Vì vậy độ phức tạp thời gian của <em>MergeSort</em> là $ \Theta(N log N)$. Nếu mệnh đề trước đó là đúng thì MergeSort tiệm cận thuật toán tối ưu nhất trong các thuật toán sắp xếp dựa trên phép so sánh.</li>
+<li>Thuật toán trong ví dụ 2 sử dụng $ \Theta(N)$ bytes bộ nhớ.</li>
+<li>Hàm số cho biết số răng của một người ở một thời điểm xác định là $O(1)$.</li>
+<li>Một thuật toán quay lui đơn giản giải các bài toán trên bàn cờ vua là $O(1)$ vì cây vị trí mà thuật toán duyệt qua có kích cỡ giới hạn. (Tuy nhiên giá trị hằng số trong $O(1)$ này lại rất lớn)</li>
+<li>Mệnh đề "Độ phức tạp thời gian của thuật toán này tối thiểu là $O(N^2)$" là vô nghĩa. (Diễn dịch: "Giá trị tối thiểu của độ phức tạp thời gian của thuật toán này tối đa là xấp xỉ hàm bậc hai"). Phát biểu đúng là: "Độ phức tạp thời gian của thuật toán này là $ \Omega(N2)$."</li>
+</ul>
+<p>Khi nói về độ phức tạp thời gian/bộ nhớ của một thuật toán, thay vì sử dụng ký pháp Theta-lớn $ \Theta(f (N))$ ta có thể đơn giản chỉ ra tên của lớp hàm chứa hàm $f$. Ví dụ với $f (N) = \Theta(N)$, ta gọi thuật toán đó là <em>tuyến tính</em>. Một vài ví dụ khác:</p>
+<ul>
+<li>$f (N) = \Theta(log N)$: hàm log</li>
+<li>$f (N) = \Theta(N^2)$: hàm bậc 2</li>
+<li>$f (N) = \Theta(N^3)$: hàm bậc 3</li>
+<li>$f (N) = O(N^k)$ : hàm đa thức</li>
+<li>$f (N) = \Omega(2^N)$: hàm mũ</li>
+</ul>
+<p>Với các bài toán trên đồ thị, độ phức tạp $ \Theta$(N + M) được gọi là "tuyến tính theo độ lớn của đồ thị".</p>
+<h2 class="editable"><a class="anchor" id="xác-định-thời-gian-chạy-dựa-vào-đánh-giá-cận-trên" href="#xác-định-thời-gian-chạy-dựa-vào-đánh-giá-cận-trên"></a>Xác định thời gian chạy dựa vào đánh giá cận trên</h2>
+<p>Với hầu hết các thuật toán thường gặp trong thực tế, giá trị hằng số của $O$ (hoặc $ \Theta$) thường là khá nhỏ. Nếu một thuật toán là $ \Theta(N^2)$, độ phức tạp chính xác là vào khoảng $10N^2$ chứ không phải $10^7N^2$.</p>
+<p>Nói cách khác: nếu hằng số là lớn thì thường là các hằng số đó có liên quan tới các đại lượng có sẵn trong đề bài. Trong trường hợp này cách làm thông thường là gán một tên gọi cho hằng số đó và thêm nó vào đánh giá độ phức tạp theo ký pháp, thay vì bỏ qua như ta đã làm với số $1.5$ ở ví dụ 2.</p>
+<p>Ví dụ: bài toán yêu cầu đếm số lần xuất hiện của mỗi loại ký tự trong một chuỗi độ dài $N$ ký tự. Thuật toán đơn giản nhất là duyệt cả chuỗi một lần cho mỗi loại ký tự. Kích cỡ bảng chữ cái không thay đổi (ví dụ nhiều nhất là 255 ký tự trong ngôn ngữ C), vì vậy thuật toán là tuyến tính với $N$. Mặc dù vậy, ta nên viết độ phức tạp thời gian là $ \Theta(|S| \times N)$, trong đó $S$ là bảng chữ cái được sử dụng (Lưu ý là có một thuật toán tốt hơn giải bài toán này trong $ \Theta(|S| + N)$.</p>
+<p>Trong một kỳ thi trên TopCoder, một thuật toán thực thi 1 000 000 000 phép nhân hiếm khi chạy trong giới hạn thời gian cho phép. Thực tế này cộng với quan sát ở trên và một vài kinh nghiệm với các bài toán trên TopCoder giúp ta tổng kết bảng sau:</p>
+<table>
+<tbody>
+<tr>
+<th>complexity</th>
+<th>maximum N</th>
+</tr>
+<tr>
+<td>$ \Theta(N)$ </td>
+<td>100 000 000</td>
+</tr>
+<tr>
+<td>$ \Theta(N log N)$</td>
+<td> 40 000 000</td>
+</tr>
+<tr>
+<td>$ \Theta(N^2)$ </td>
+<td> 10 000</td>
+</tr>
+<tr>
+<td>$ \Theta(N^3)$ </td>
+<td> 500</td>
+</tr>
+<tr>
+<td>$ \Theta(N^4)$ </td>
+<td> 90</td>
+</tr>
+<tr>
+<td>$ \Theta(2^N)$ </td>
+<td> 20</td>
+</tr>
+<tr>
+<td>$ \Theta(N!)$ </td>
+<td> 11</td>
+</tr>
+</tbody>
+</table>
+<p>Bảng 3: Giá trị $N$ lớn nhất để các thuật toán có độ phức tạp khác nhau chạy trong tối đa 8 giây</p>
+<h1 class="editable"><a class="anchor" id="lưu-ý-khi-phân-tích-độ-phức-tạp-thuật-toán" href="#lưu-ý-khi-phân-tích-độ-phức-tạp-thuật-toán"></a>Lưu ý khi phân tích độ phức tạp thuật toán</h1>
+<p>Thông thường khi trình bày một thuật toán, cách tốt nhất để đánh giá độ phức tạp của nó là ký pháp Theta $\Theta$. Tuy nhiên, trong thực tế thường ta chỉ trình bày cận $O-lớn$ vì ký pháp này dễ viết hơn và phổ biến hơn. Nhắc lại rằng $O-lớn$ chỉ mang ý nghĩa cận trên. Thông thường ta tìm cận trên $O-lớn$ nhỏ nhất có thể.</p>
+<h2 class="editable"><a class="anchor" id="ví-dụ-3" href="#ví-dụ-3"></a>Ví dụ 3</h2>
+<p>Cho một mảng A đã được sắp xếp. Xác định xem liệu có tồn tại 02 phần tử trong mảng mà cách nhau D đơn vị hay không. Xét lời giải sau</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">while</span> <span class="p">(</span> <span class="p">(</span><span class="n">j</span> <span class="o">&lt;</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">D</span><span class="p">)</span> <span class="p">)</span>
+    	<span class="n">j</span><span class="o">++</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">D</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Thoạt nhìn ta có thể sẽ đánh giá thuật toán trên có cận $O(N^2)$ - vòng lặp trong cùng chạy $N$ lần, mỗi lần tăng biến $j$ tối đa $N$ lần. Phân tích kỹ hơn, ta thấy rằng cận trên có đánh giá tốt hơn là $O(N)$ - thật ra tổng thể số lần chạy câu lệnh $j$++ trong toàn bộ thuật toán không vượt quá $N$ lần.</p>
+<p>Mệnh đề "thuật toán trên là $O(N^2)$" vẫn là một mệnh đề đúng. Tuy nhiên bằng việc nói rằng "thuật toán trên là $O(N)$" ta cung cấp nhiều thông tin hơn về thuật toán đó.</p>
+<h1 class="editable"><a class="anchor" id="kết-luận" href="#kết-luận"></a>Kết luận</h1>
+<p>Chúng ta đã chỉ ra cách viết các cận (trên, dưới) theo độ phức tạp tính toán của thuật toán. Ta cũng đã chứng minh rằng các cận đó là các thuộc tính cơ bản và thường là hiệu quả để đánh giá các thuật toán.
+Trong phần sau chúng ta sẽ phân tích làm thế nào để ước lượng độ phức tạp tính toán của các thuật toán. Như ta đã thấy trong Ví dụ 3 việc phân tích này có thể trở nên khá khó khăn. Một nguyên nhân khác làm cho việc phân tích khó khăn là <em>các thuật toán đệ quy</em>. Các vấn đề này sẽ được xử lý trong <a class="internal absent" href="https://vnoi.info/wiki/translate/topcoder/Computational-Complexity-Section-2">phần 2</a> của bài viết.</p>
+</div>
+</div>
+</div>
+</div>

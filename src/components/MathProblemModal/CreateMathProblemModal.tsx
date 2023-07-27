@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { BiPlusCircle } from 'react-icons/bi';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import { processText, formatMathExpr } from '../../utils/utils';
 import parse from 'html-react-parser';
 import { useDispatch, useSelector } from 'react-redux';
@@ -51,11 +51,13 @@ function CreateMathProblemModal() {
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState(0);
   const [hint, setHint] = useState('');
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (categories.length == 0) dispatch(fetchMathCategoriesAndTags());
   }, []);
   const handleClose = () => {
+    if (descriptionRef.current) setRawContent(descriptionRef.current.value);
     setShow(false);
   };
   const [rawContent, setRawContent] = useState('');
@@ -71,23 +73,27 @@ function CreateMathProblemModal() {
   };
   const handleShowPreview = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (!descriptionRef.current) return;
 
-    const x = formatMathExpr(processText(rawContent));
+    const x = formatMathExpr(processText(descriptionRef.current.value));
     //const s = "\\( f(x)=\\left\\{\\begin{array}{ll}x^{2} & \\text { if } x<0 \\\\ 2 x & \\text { if } x \\geq 0\\end{array}\\right. \\)";
     setContent(x);
     setShowPreview(true);
   };
 
   const handleSubmit = () => {
+    if (!descriptionRef.current) return;
     const tagList = chosenTypes.map(item => tags[item].id);
     //const x = formatMathExpr(processText(rawContent));
-    console.log(tagList);
+    //console.log(tagList);
+
+    const description = descriptionRef.current.value;
     const params: CreateMathProblemParam = {
       categoryId: category,
-      description: rawContent,
+      description: description,
       title: title,
       tags: tagList,
-      username: myUsername ? myUsername: undefined,
+      username: myUsername ? myUsername : undefined,
       difficulty: difficulty,
       hint: hint
     };
@@ -98,7 +104,7 @@ function CreateMathProblemModal() {
 
   const handleAddTag = (e: any) => {
     const ind = e.currentTarget.value;
-    console.log('add tag: ind= ' + ind);
+    //console.log('add tag: ind= ' + ind);
     if (chosenTypes.includes(ind) || ind == 0) return;
     let lst = [...chosenTypes];
     lst.push(ind);
@@ -111,7 +117,7 @@ function CreateMathProblemModal() {
     (state: RootState) => state.mathProblemList.problemTags
   );
   const removeTypeTag = (ind: number) => {
-    console.log('remove ' + ind);
+    //console.log('remove ' + ind);
     if (chosenTypes.includes(ind as never)) {
       var lst = [...chosenTypes];
       let index = lst.indexOf(ind as never);
@@ -167,8 +173,8 @@ function CreateMathProblemModal() {
               <Form.Control
                 as='textarea'
                 rows={3}
-                value={rawContent}
-                onChange={e => setRawContent(e.currentTarget.value)}
+                ref={descriptionRef}
+                defaultValue={rawContent}
               />
             </Form.Group>
             <Form.Group
@@ -188,9 +194,7 @@ function CreateMathProblemModal() {
               className='mb-3'
               controlId='exampleForm.ControlTextarea1'
             >
-              <MathJaxContext>
-                <MathJax>{parse(content)}</MathJax>
-              </MathJaxContext>
+              <MathJax>{parse(content)}</MathJax>
             </Form.Group>
             <div style={{ display: 'flex' }}>
               <Form.Group style={{ width: '32%' }}>

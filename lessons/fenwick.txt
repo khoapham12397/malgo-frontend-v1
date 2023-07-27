@@ -1,0 +1,260 @@
+<div id="wiki-content">
+<h1 class="pt-4">Cây chỉ số nhị phân (Binary Indexed Tree)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/data-structures/">data-structures</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả:</strong></p>
+<ul>
+<li>Bùi Nguyễn Đức Tân - Phổ thông Năng khiếu, Đại học Quốc gia Thành phố Hồ Chí Minh</li>
+<li>Lê Minh Hoàng - Phổ thông Năng khiếu, Đại học Quốc gia Thành phố Hồ Chí Minh</li>
+</ul>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Nguyễn Xuân Tùng - Đại học Quốc Tế, Đại học Quốc gia Thành phố Hồ Chí Minh</li>
+</ul>
+<hr/>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#bài-toán">Bài toán</a><ul><li><a href="#ngây-thơ-1">Ngây thơ 1</a><ul><li><a href="#phân-tích">Phân tích</a></li></ul></li><li><a href="#ngây-thơ-2">Ngây thơ 2</a><ul><li><a href="#phân-tích-1">Phân tích</a></li></ul></li></ul></li><li><a href="#cây-chỉ-số-nhị-phân">Cây chỉ số nhị phân</a><ul><li><a href="#giới-thiệu-tổng-quát">Giới thiệu tổng quát</a></li><li><a href="#cài-đặt-bit">Cài đặt BIT</a><ul><li><a href="#thao-tác-tìm-tổng">Thao tác tìm tổng</a></li><li><a href="#thao-tác-cập-nhật">Thao tác cập nhật</a></li></ul></li><li><a href="#lưu-ý">Lưu ý</a></li></ul></li><li><a href="#cập-nhật-đoạn">Cập nhật đoạn</a><ul><li><a href="#truy-vấn-từng-phần-tử">Truy vấn từng phần tử</a></li><li><a href="#truy-vấn-trên-đoạn">Truy vấn trên đoạn</a></li></ul></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Cây chỉ số nhị phân (tên tiếng Anh là Binary Indexed Tree) hay cây Fenwick là một cấu trúc dữ liệu được sử dụng khá phổ biến trong lập trình thi đấu vì có thể cài đặt nhanh, dễ dàng so với các CTDL khác.</p>
+<h1 class="editable"><a class="anchor" id="bài-toán" href="#bài-toán"></a>Bài toán</h1>
+<p>Cho mảng $A$ gồm $N$ phần tử (đánh số từ $1$). Có $Q$ truy vấn thuộc 2 loại:</p>
+<ul>
+<li>$1$ $u$ $v$: cộng $v$ vào $A[u]$.</li>
+<li>$2$ $p$: tính tổng các phần tử từ $A[1]$, $A[2]$, $A[3]$, …, $A[p]$.</li>
+</ul>
+<p>Giới hạn: $N, Q \le 2 \cdot 10^5$</p>
+<h2 class="editable"><a class="anchor" id="ngây-thơ-1" href="#ngây-thơ-1"></a>Ngây thơ 1</h2>
+<p>Với truy vấn loại 1, ta đơn thuần tăng phần tử $a[u]$ thêm $v$.
+Với truy vấn loại 2, ta duyệt qua tất cả phần tử trong đoạn $[1 \dots p]$ và cộng giá trị vào biến kết quả.</p>
+<pre class="highlight"><code><span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">200003</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+
+<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">getSum</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">p</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="n">ans</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="phân-tích" href="#phân-tích"></a>Phân tích</h3>
+<ul>
+<li>Độ phức tạp khi update: $\mathcal{O}(1)$.</li>
+<li>Độ phức tạp khi truy vấn: $\mathcal{O}(p) = \mathcal{O}(N)$.
+</li>
+<li>Có $Q$ truy vấn, vì thế độ phức tạp là $\mathcal{O}(Q + Q \cdot N) = \mathcal{O}(Q \cdot N)$</li>
+<li>Nếu chưa biết về độ phức tạp tính toán, các bạn có thể đọc ở <a href="https://vnoi.info/wiki/translate/topcoder/Computational-Complexity-Section-1.md">đây</a>.</li>
+</ul>
+<p>Đối chiếu giới hạn, cách "ngây thơ" trên tỏ ra chậm chạp, không đủ để xử lí yêu cầu bài toán.</p>
+<h2 class="editable"><a class="anchor" id="ngây-thơ-2" href="#ngây-thơ-2"></a>Ngây thơ 2</h2>
+<p>Nhận thấy đây là một dạng của bài toán Range Sum Query, ta có thể áp dụng mảng cộng dồn (prefix sum) để tính nhanh tổng một đoạn.</p>
+<p>Khi cập nhật giá trị một phần tử, ta đồng thời cập nhật tất cả các prefix chứa phần tử đó.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">sum</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> 
+
+<span class="kt">void</span> <span class="nf">preprocess</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">sum</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">getSum</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">sum</span><span class="p">[</span><span class="n">p</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="phân-tích-1" href="#phân-tích-1"></a>Phân tích</h3>
+<ul>
+<li>Độ phức tạp tiền xử lý: $\mathcal{O}(N)$</li>
+<li>Độ phức tạp khi update: $\mathcal{O}(p)$ = $\mathcal{O}(N)$</li>
+<li>Độ phức tạp khi truy vấn: $\mathcal{O}(1)$</li>
+</ul>
+<p>Nếu bài toán không có truy vấn cập nhật, độ phức tạp là $\mathcal{O}(Q + N)$, đủ nhanh để giải quyết. Tuy nhiên, khi có thao tác cập nhật, độ phức tạp bị đẩy lên $\mathcal{O}(Q * N)$ - tương đương với độ phức tạp của cách ngây thơ 1.</p>
+<p>Để có thể giải quyết bài toán một cách hiệu quả, ta cần một CTDL có thể sử dụng tính chất prefix sum để trả về kết quả nhanh, đồng thời có thể nhanh chóng cập nhật giá trị cho prefix.</p>
+<h1 class="editable"><a class="anchor" id="cây-chỉ-số-nhị-phân" href="#cây-chỉ-số-nhị-phân"></a>Cây chỉ số nhị phân</h1>
+<p>Cấu trúc prefix sum được biểu diễn qua sơ đồ sau:</p>
+<p><img src="https://i.imgur.com/hllVMYY.png" /></p>
+<p><strong>Nhận xét:</strong> Mỗi phần tử $sum[i]$ chứa tổng của tất cả phần tử từ $[1\dots i]$; vì thế, phần tử $sum[i]$ sẽ chứa phần tử $a[j]$ nếu thỏa $i \ge j$, số phần tử $sum$ cần cập nhật là $j - i + 1$, gần tương đương độ dài của mảng.</p>
+<p>Để tăng tốc độ cập nhật phần tử, cần bố trí lại phạm vi của từng đoạn gắn với $sum[i]$ để cực tiểu số phần tử $sum$ cần cập nhật nhưng vẫn phải đảm bảo tính liên tục để áp dụng tính chất của prefix sum.</p>
+<h2 class="editable"><a class="anchor" id="giới-thiệu-tổng-quát" href="#giới-thiệu-tổng-quát"></a>Giới thiệu tổng quát</h2>
+<p>Mỗi chỉ số $n$ đều có thể biểu diễn bằng tổng của các lũy thừa cơ số $2$, vì thế, để tính tổng của các phần tử thuộc $[1 \ldots n]$, ta có thể tách đoạn này thành các đoạn nhỏ hơn có độ dài $2^k$ và cộng lại tổng tính được trên từng đoạn.</p>
+<p>Cụ thể, đặt $n = 2^{i_1} + 2^{i_2} + \ldots + 2^{i_k}$ $(i_1 &gt; i_2 &gt; \ldots &gt; i_k \ge 0)$. Để tính tổng từ $[1 \ldots n]$, ta tính tổng các phần tử thuộc đoạn $[1;2^{i_1}]$, sau đó tính tiếp tổng của đoạn $[2^{i_1} + 1;2^{i_1} + 2^{i_2}]$, lặp lại quá trình này cho đến khi ta đến đoạn cuối cùng là $[2^{i_1} + 2^{i_2} + \ldots + 2^{i_{k - 1}} + 1;n]$. $n$ có thể có tối đa $\log_2 n$ bits, vì thế độ phức tạp khi tính tổng theo cách này là $\mathcal{O}(C \log n)$, trong đó $\mathcal{O}(C)$ là độ phức tạp khi lấy tổng một đoạn.</p>
+<p><img src="https://i.imgur.com/brL1XCD.png" /></p>
+<p>Từ cách chia block trên, ta quan sát được rằng block cuối cùng đối với mỗi $n$ (là block tổng chứa phần tử ở chỉ số $n$) có độ dài bằng với bit nhỏ nhất trong biểu diễn nhị phân của $n$. Đây chính là ý tưởng của cây BIT, ta sẽ lưu thông tin về block cuối của từng phần tử và thực hiện thao tác truy vấn trên đấy.</p>
+<p>Dưới đây là hình ảnh minh họa cây BIT:
+<img src="https://i.imgur.com/SH4tJPN.png" /></p>
+<p>Trong hình trên, những đoạn được tô đậm là đoạn của phần tử chỉ số $n$ được BIT lưu trữ; những đoạn được tô nét mảnh không được lưu trữ trực tiếp mà sẽ được truy cập gián tiếp.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt-bit" href="#cài-đặt-bit"></a>Cài đặt BIT</h2>
+<p>Mặc dù có bản chất là cây, tính chất ở trên cho phép chúng ta lưu trữ BIT dưới dạng một mảng đơn giản có độ dài bằng với độ dài mảng ta đang làm việc.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="n">bit</span><span class="p">[</span><span class="n">N</span><span class="p">];</span></code></pre>
+<h3 class="editable"><a class="anchor" id="thao-tác-tìm-tổng" href="#thao-tác-tìm-tổng"></a>Thao tác tìm tổng</h3>
+<p>Để tìm tổng các phần tử trong đoạn $[1 \ldots n]$, ta sẽ lần lượt đi qua tất cả bit của $n$ theo giá trị tăng dần. Mỗi lần đi qua $n$, ta sẽ cộng $bit[n]$ vào kết quả hiện tại, rồi trừ đi bit nhỏ nhất của $n$ khỏi chính nó; quá trình lặp lại cho đến khi $n = 0$.</p>
+<p>Để lấy bit nhỏ nhất của một số $n$, ta có thể sử dụng công thức <code>n &amp; ~(n - 1)</code> được đề cập tại bài tại <a href="https://vnoi.info/wiki/translate/topcoder/fun-with-bits.md#t%C3%A1ch-t%E1%BB%ABng-bit/">đây</a>. Khi thao tác bit với số âm, C++ sử dụng phép bù 2: <code>~n = - n - 1</code>; vì vậy ta có phép biến đổi: <code>n &amp; ~(n - 1) = n &amp; (-(n - 1) - 1) = n &amp; (-n)</code> dễ sử dụng hơn.</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">getSum</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">p</span><span class="p">,</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ans</span> <span class="o">+=</span> <span class="n">bit</span><span class="p">[</span><span class="n">idx</span><span class="p">];</span>
+        <span class="n">idx</span> <span class="o">-=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">-</span><span class="n">idx</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Độ phức tạp khi truy vấn tổng: $\mathcal{O}(\log n)$.</p>
+<h3 class="editable"><a class="anchor" id="thao-tác-cập-nhật" href="#thao-tác-cập-nhật"></a>Thao tác cập nhật</h3>
+<p>Để cập nhật phần tử tại vị trí $u$, ta sẽ thực hiện quá trình ngược lại so với khi truy vấn tìm tổng: cộng bit nhỏ nhất vào $u$ cho đến khi $u$ vượt ngoài biên của mảng.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">bit</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">-</span><span class="n">idx</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Chứng minh tính đúng đắn của thuật trên như sau: mỗi khi ta cộng thêm 1 lượng bằng với $2^k$ ($k$ là bit nhỏ nhất của $u$) thì đoạn dịch qua phải một lượng $2^k$ thành $[l + 2^k, r + 2^k]$ (do bit nhỏ nhất lúc này vẫn có thể tính là $2^k$). Đồng thời lúc đó, bit nhỏ nhất tăng ít nhất 2 lần do $2^k$ (mới cộng thêm) + $2^k$ (có sẵn trong u) tạo thành $2^{k+1}$ làm cho biên trái dịch trái ít nhất $2^k$ lần thành $[l, r + 2^k]$ (nếu có sẵn $2^{k+1}$ trong $u$ thì tiếp tục gộp lại làm bit nhỏ nhất tăng lên là $2^{k+2}$, …), do đó biên trái luôn được giữ &lt;= biên $l$ ban đầu.</p>
+<p>Mỗi lần cộng thêm, bit cuối luôn bị dịch lên ít nhất 1 lần, dẫn đến có tối đa $\log n$ lần dịch bit. Vì thế độ phức tạp khi cập nhật là $\mathcal{O}(\log n)$.</p>
+<h2 class="editable"><a class="anchor" id="lưu-ý" href="#lưu-ý"></a>Lưu ý</h2>
+<p>Bằng cây chỉ số nhị phân (BIT), ta dễ dàng tính được prefix sum và cập nhật giá trị chỉ trong $\mathcal{O}(\log n)$, mặt khác so với các CTDL khác, BIT dễ dàng cài đặt hơn rất nhiều và không tốn quá nhiều thời gian để code.</p>
+<p>Quay lại bài toán đầu, nếu chúng ta thay đổi yêu cầu thành tìm tổng trên đoạn $[l \ldots r]$, tính chất của prefix sum dễ dàng cho ta tìm được kết quả thông qua phép $sum(r) - sum(l - 1)$. Tuy nhiên, không phải tất cả phép toán nào đều cho phép chúng ta dễ dàng lấy kết quả thông qua phép hiệu như vậy. Đối với các phép $min, gcd$, không tồn tại phép hiệu cho ta phép lấy kết quả của một đoạn dễ dàng, vì thế ta không thể áp dụng BIT đối với những bài toán loại này.</p>
+<p>Đây là một khuyết điểm mấu chốt của BIT, vì thế cần nắm rõ tính chất và những bài toán để quyết định có nên sử dụng BIT không.</p>
+<h1 class="editable"><a class="anchor" id="cập-nhật-đoạn" href="#cập-nhật-đoạn"></a>Cập nhật đoạn</h1>
+<p>Ta thay đổi nội dung bài toán ban đầu như sau:</p>
+<ul>
+<li>$1$ $v$ $l$ $r$: cộng $v$ vào tất cả phần tử $A[l]$, $A[l + 1]$, $A[l + 2]$, …, $A[r]$.</li>
+<li>$2$ $u$: tìm giá trị hiện tại của $A[u]$.</li>
+<li>$3$ $l$ $r$: tính tổng các phần tử từ $A[l]$, $A[l + 1]$, $A[l + 2]$, …, $A[r]$.</li>
+</ul>
+<p>Ta có thể cài đặt "ngây thơ" bằng cách áp dụng hàm <code>update()</code> trên tất cả phần tử cần được cập nhật, độ phức tạp khi này là $\mathcal{O}(Q \cdot N \log N)$. Dĩ nhiên cách này quá chậm, đòi hỏi ta cần tìm một cách cập nhật đoạn một cách nhanh hơn để giữ nguyên độ phức tạp $\mathcal{O}(N \log N)$.</p>
+<h2 class="editable"><a class="anchor" id="truy-vấn-từng-phần-tử" href="#truy-vấn-từng-phần-tử"></a>Truy vấn từng phần tử</h2>
+<p>Mảng hiệu (difference array) là một loại mảng lưu hiệu giữa các phần tử liền kề với nhau.</p>
+<p>Mảng hiệu được xây dựng bằng cách sau:</p>
+<ul>
+<li>Với $i = 1$ thì $diff[i] = A[i]$.</li>
+<li>Với $2 \le i \le N$ thì $diff[i] = A[i] - A[i - 1]$.</li>
+</ul>
+<p>Bạn có thể theo dõi hình dưới và code minh họa để hiểu rõ hơn:
+<img src="https://i.imgur.com/UaDoTx9.png" /></p>
+<p></p><pre class="highlight"><code><span class="kt">int</span> <span class="n">diff</span><span class="p">[</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+
+<span class="n">diff</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">diff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span> 
+    <span class="c1">// lấy phần tử thứ i trừ cho phần tử trước nó</span>
+<span class="p">}</span></code></pre>
+<p>Khi cộng tất cả phần tử $diff$ từ $1$ đến $i$, ta có:
+<span class="kdmath">$\begin{align}
+\displaystyle \sum_{j = 1}^{i} diff[j] &amp;= diff[1] + diff[2] + \ldots + diff[i] \\
+&amp;= a[1] + a[2] - a[1] + a[3] - a[2] + \ldots + a[i] - a[i - 1] \\
+&amp;= a[1] - a[1] + a[2] - a[2] + \ldots + a[i - 1] - a[i - 1] + a[i] \\
+&amp;= a[i]
+\end{align}$</span></p>
+<p>Từ tính chất này, khi tính được mảng hiệu, để tính được giá trị của $a[i]$ ta chỉ cần lấy tổng của $i$ phần tử $diff$ đầu tiên. Khi này, bài toán của chúng ta thực chất được đưa về tính tổng trên mảng $diff$, vấn đề hiện tại là thao tác <code>update()</code> cần được xử lí như thế nào.</p>
+<p>Hình dưới đây minh họa thao tác cập nhật trên một đoạn $[l \ldots r]$ - từ mảng trên, ta cộng $\Delta = 4$ vào đoạn $[4\dots 7]$:
+<img src="https://i.imgur.com/8CQUuuv.png" /></p>
+<p>Khi cập nhật, do các phần tử liền kề trong đoạn $[l\dots r]$ đều được cộng cùng một giá trị $\Delta$ nên hiệu giữa chúng thực chất vẫn không đổi. Khác biệt duy nhất khi cập nhật nằm ở 2 biên của đoạn: giữa $(a_{l - 1}, a_l)$ và $(a_r, a_{r+1})$; vì thế ta chỉ cần cập nhật điểm tại 2 biên trên mảng hiệu và dùng truy vấn lấy tổng để tính giá trị hiện tại của $a_i$.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">updatePoint</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">bit</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">-</span><span class="n">idx</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">updateRange</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">updatePoint</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+    <span class="n">updatePoint</span><span class="p">(</span><span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">get</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">u</span><span class="p">,</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ans</span> <span class="o">+=</span> <span class="n">bit</span><span class="p">[</span><span class="n">idx</span><span class="p">];</span>
+        <span class="n">idx</span> <span class="o">-=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">-</span><span class="n">idx</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+<h2 class="editable"><a class="anchor" id="truy-vấn-trên-đoạn" href="#truy-vấn-trên-đoạn"></a>Truy vấn trên đoạn</h2>
+<p><img src="https://i.imgur.com/K4d4qmh.png" /></p>
+<p>Hình trên sẽ giúp ta minh họa trực quan hơn mối quan hệ về tổng các phần tử với mảng $A$ và mảng hiệu $diff$.</p>
+<p>Nhắc lại: $A[i] = \sum_{j=1}^{i} diff[i]$. Dựa vào hình, ta có thể tính lần lượt tổng các phần tử từ $A_1$ đến $A_i$ như sau:</p>
+<ul>
+<li>$sum[1] = diff[1]$</li>
+<li>$sum[2] = 2 \cdot diff[1] + diff[2]$</li>
+<li>$sum[3] = 3 \cdot diff[1] + 2 \cdot diff[2] + diff[3]$</li>
+<li>$\ldots$</li>
+<li>$sum[i] = i \cdot diff[1] + (i - 1) \cdot diff[2] + \ldots + (i - j + 1) \cdot diff[j] + \ldots + 2 \cdot diff[i - 1] + diff[i]$</li>
+</ul>
+<p>Tuy nhiên, do sự biến động của hệ số khi nhân nên cách này không thuận tiện khi ta phải truy vấn liên tục. Để dễ dàng hơn, ta sẽ cố định mỗi $diff[i]$ nhân với hệ số $n - i + 1$, khi này:</p>
+<ul>
+<li>$sum[1] = n \cdot diff[1] - (n - 1) \cdot diff[1]$</li>
+<li>$sum[2] = n \cdot diff[1] + (n - 1) \cdot diff[2] - (n - 2) \cdot (diff[1] + diff[2])$</li>
+<li>$sum[3] = n \cdot diff[1] + (n - 1) \cdot diff[2] + (n - 2) \cdot diff[3] - (n - 3) \cdot (diff[1] + diff[2] + diff[3])$</li>
+<li>$\ldots$</li>
+<li>$sum[i] = n \cdot diff[1] + (n - 1) \cdot diff[2] + \ldots + (n - j + 1) \cdot diff[j] + \ldots + (n - i + 1) \cdot diff[i] - (n - i) \cdot (diff[1] + diff[2] + \ldots + diff[i])$</li>
+</ul>
+<p>Tóm lại, ta thu được:
+<span class="kdmath">$sum[i] = \displaystyle \sum_{j = 1}^{i} (n - j + 1) \cdot diff[j] - (n - i) \cdot \sum_{j = 1}^{i} diff[j]$</span>
+Cả hai giá trị $diff[j]$ và $(n - j + 1) \cdot diff[j]$ đã được đơn giản hóa, lúc này ta chỉ cần lưu toàn bộ giá trị $(n - j + 1) \cdot diff[j]$ vào mảng $S_1$ và $diff[j]$ vào mảng $S_2$ và dựng mảng cộng dồn trên hai mảng đó.</p>
+<p>Thao tác cập nhật trên mảng $S_2$ giống với thao tác cập nhật đã đề cập ở trên, còn ở mảng $S_1$ thì khác biệt duy nhất là việc xử lý nhân hệ số $(n - j + 1)$. Tuy vậy, hệ số trên không đổi trong quá trình tính toán với từng phần tử nên ta chỉ cần nhân hệ số này với giá trị cần cập nhật và áp dụng phương thức tương tự như ở cập nhật trên $S_2$.</p>
+<p>Code tham khảo:
+</p><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">bit1</span><span class="p">,</span> <span class="n">bit2</span><span class="p">;</span>
+<span class="cm">/* 
+    Các hàm update và sum cần làm việc trên một trong hai BIT riêng biệt.
+    Sử dụng vector cho phép truyền BIT vào làm việc trực tiếp dễ dàng hơn.
+*/</span>
+
+<span class="kt">void</span> <span class="nf">updatePoint</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">b</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">-</span><span class="n">idx</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">updateRange</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">updatePoint</span><span class="p">(</span><span class="n">bit1</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span><span class="p">);</span>
+    <span class="n">updatePoint</span><span class="p">(</span><span class="n">bit1</span><span class="p">,</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span><span class="p">);</span>
+    <span class="n">updatePoint</span><span class="p">(</span><span class="n">bit2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+    <span class="n">updatePoint</span><span class="p">(</span><span class="n">bit2</span><span class="p">,</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">getSumOnBIT</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">u</span><span class="p">,</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ans</span> <span class="o">+=</span> <span class="n">b</span><span class="p">[</span><span class="n">idx</span><span class="p">];</span>
+        <span class="n">idx</span> <span class="o">-=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">-</span><span class="n">idx</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">prefixSum</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">getSumOnBIT</span><span class="p">(</span><span class="n">bit1</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="n">getSumOnBIT</span><span class="p">(</span><span class="n">bit2</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">u</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">rangeSum</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">prefixSum</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="n">prefixSum</span><span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng</h1>
+<ul>
+<li><a href="https://lqdoj.edu.vn/problem/querysum">LQDOJ - Query-Sum</a></li>
+<li><a href="https://lqdoj.edu.vn/problem/querysum2">LQDOJ - Query-Sum 2</a></li>
+<li><a href="https://lqdoj.edu.vn/problem/candies">LQDOJ - Candies</a></li>
+<li><a href="https://cses.fi/problemset/task/1651">CSES - Range Update Queries</a></li>
+<li><a href="https://cses.fi/problemset/task/2169">CSES - Nested Range Count</a></li>
+<li><a href="https://codeforces.com/problemset/problem/1311/F">Codeforces - Moving Points</a></li>
+<li><a href="https://oj.vnoi.info/problem/nkinv">VNOJ - NKINV</a></li>
+<li><a href="https://oj.vnoi.info/problem/incvn">VNOJ - INCVN</a></li>
+</ul>
+<p>VNOI Online Judge có phân loại riêng các bài tập về BIT, các bạn có thể tham khảo tại <a href="https://oj.vnoi.info/problems/?type=14&amp;point_start=&amp;point_end=">đây</a>.</p>
+</div>
+</div>
+</div>
+</div>

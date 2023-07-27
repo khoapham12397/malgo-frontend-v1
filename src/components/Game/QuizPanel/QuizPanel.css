@@ -1,37 +1,37 @@
-.quiz-description{
-    padding: 10px;
-    background-color: darkseagreen;
-    border-radius: 5px;
-    margin: 10px;
-    font-size: 15px;
-    width: 430px;
+.quiz-description {
+  padding: 10px;
+  background-color: darkseagreen;
+  border-radius: 5px;
+  margin: 10px;
+  font-size: 15px;
+  width: 430px;
 }
-.btn-submit{
-    margin-left: 10px;
+.btn-submit {
+  margin-left: 10px;
 }
 .option-item {
-    background-color: darkseagreen; 
-    border-radius:  5px;
-    padding: 10px;
-    width: 40%;
-    margin: 10px;
+  background-color: darkseagreen;
+  border-radius: 5px;
+  padding: 10px;
+  width: 40%;
+  margin: 10px;
 }
-.option-item:hover{
-    cursor: pointer;
+.option-item:hover {
+  cursor: pointer;
 }
 .close-quiz {
-    position: absolute;
-    z-index: 1;
-    right: 0px;
-    font-weight: bold;
+  position: absolute;
+  z-index: 1;
+  right: 0px;
+  font-weight: bold;
 }
 
-.close-quiz:hover{
-    cursor: pointer;
+.close-quiz:hover {
+  cursor: pointer;
 }
-.panel{
-    width: 500;
-    height: 400;
-    color: white;
-    position: relative;
+.panel {
+  width: 500;
+  height: 400;
+  color: white;
+  position: relative;
 }

@@ -1,4 +1,4 @@
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import parse from 'html-react-parser';
 import { FunctionComponent } from 'react';
 import { Accordion } from 'react-bootstrap';
@@ -15,12 +15,10 @@ const Description: FunctionComponent<Props> = ({ problem }) => {
   return (
     <div id='description' style={{ padding: '10px' }}>
       <h2>{problem != null ? problem.title : ''}</h2>
-      <MathJaxContext>
-        <MathJax>
-          {problem == null ? '' : parse(formatMathExpr(problem.description))}
-        </MathJax>
-        <MathJax></MathJax>
-      </MathJaxContext>
+      <MathJax>
+        {problem == null ? '' : parse(formatMathExpr(problem.description))}
+      </MathJax>
+      <MathJax></MathJax>
       <Accordion style={{ marginTop: '30px' }}>
         <Accordion.Item eventKey='0'>
           <Accordion.Header>Similar Problems</Accordion.Header>

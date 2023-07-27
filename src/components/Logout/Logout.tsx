@@ -10,11 +10,11 @@ const Logout: FunctionComponent = () => {
   return (
     <button
       className='logout-button'
-      onClick={() =>{
+      onClick={() => {
         disconnectSocket();
-        logoutUser()
-     
-      }}>
+        logoutUser();
+      }}
+    >
       <span>Log Out</span>
     </button>
   );

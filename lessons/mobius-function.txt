@@ -1,0 +1,167 @@
+<div id="wiki-content">
+<h1 class="pt-4">Hàm Mobius</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/quora/">quora</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Nguồn: <a href="https://www.quora.com/profile/Surya-Kiran/Posts/A-Dance-with-Mobius-Function">Quora</a></p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#các-định-nghĩa">Các định nghĩa</a></li><li><a href="#công-thức-nghịch-đảo-mobius-möbius-inversion-formula">Công thức nghịch đảo Mobius (Möbius inversion formula)</a></li><li><a href="#ứng-dụng">Ứng dụng</a><ul><li><a href="#gcdex">GCDEX</a></li><li><a href="#bài-toán-tổng-quát">Bài toán tổng quát</a></li><li><a href="#coprime-triples">Coprime Triples</a></li></ul></li><li><a href="#một-số-bài-luyện-tập">Một số bài luyện tập</a></li></ul></div>
+<p>Trong bài viết này mình sẽ giới thiệu với các bạn một chủ đề vô cùng thú vị trong số học - Hàm nghịch đảo Mobius, cũng như cách ứng dụng để giải quyết một số bài toán.</p>
+<p>Một lời khuyên dành cho bạn đọc là các bạn nên tự chứng minh những công thức được đề cập để hiểu rõ hơn bản chất bài toán.</p>
+<h1 class="editable"><a class="anchor" id="các-định-nghĩa" href="#các-định-nghĩa"></a>Các định nghĩa</h1>
+<p>Trước khi bắt đầu, các bạn hãy ghi nhớ một số định nghĩa sau đây để việc tiếp thu những kiến thức ở dưới được dễ dàng hơn.</p>
+<p>Một hàm $f(n): N \rightarrow C$ được coi là <strong>hàm nhân tính</strong> (<a href="https://crypto.stanford.edu/pbc/notes/numbertheory/mult.html">Multiplicative Function</a>) nếu với mọi cặp số nguyên tố cùng nhau $n, m \in N$ ta có $f(mn)=f(m)f(n)$</p>
+<p>Một số $n$ phân tích ra thừa số nguyên tố sẽ có dạng $n={p_1}^{a_1}*{p_2}^{a_2}*{p_3}^{a_3}*…*{p_r}^{a_r}$, với $p_i$ là ước nguyên tố của $n$.</p>
+<p>Ký hiệu $a|b$ có nghĩa là $a$ là ước của $b$, hay $b$ chia hết cho $a$</p>
+<p><strong>Hàm định danh Dirichlet</strong> $e(n)$ (Dirichlet identity function):</p>
+<ul>
+<li>
+<p>$e(n)=1$ với $n=1$</p>
+</li>
+<li>
+<p>$e(n)=0$ với $n &gt; 1$</p>
+</li>
+</ul>
+<p>$I(n)=1$ với mọi $n \in N$</p>
+<p>$id(n)=n$ với mọi $n \in N$</p>
+<p><strong>Hàm Mobius</strong> $\mu(n)$:</p>
+<ul>
+<li>
+<p>$\mu(1)=1$</p>
+</li>
+<li>
+<p>$\mu(n)=0$ nếu tồn tại $a_i&gt;1$</p>
+</li>
+<li>
+<p>$\mu(n)=(-1)^r$ nếu $n={p_1}*{p_2}*{p_3}*…*{p_r}$, hay $a_i = 1$ với mọi $i$</p>
+</li>
+<li>
+<p>Có thể chứng minh được rằng $\mu(n)=\sum_{d|n,d &lt; n}\mu(d)$ với $n&gt;1$ và tính được $\mu(n)$ bằng cách sử dụng <a href="http://codeforces.com/blog/entry/8989">Sàng</a>:</p>
+<div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="n">mu</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span> <span class="o">+=</span> <span class="n">i</span><span class="p">)</span>
+      <span class="n">mu</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</code></pre></div> </div>
+</li>
+</ul>
+<p>Vỡi mỗi $f(n)$, ta gọi hàm tổng $S_f(n)$ là tổng các $f(d)$ với $d$ là ước của $n$: $S_f(n)=\sum_{d|n}{f(d)}$</p>
+<p><strong>Phi hàm Euler</strong> $\phi(n)$ (<a href="https://vi.wikipedia.org/wiki/Phi_h%C3%A0m_Euler">Euler totient function</a>): số lượng các số tự nhiên nhỏ hơn hoặc bằng $n$ và nguyên tố cùng nhau với $n$ (hay số lượng các số $d: 1 \leq d \leq n,gcd(d,n)=1$). Các bạn cũng có thể sử dụng sàng để tính $phi(n)$:
+</p><pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span>
+       <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span> <span class="o">+=</span> <span class="n">i</span><span class="p">)</span> 
+           <span class="n">phi</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">phi</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">/</span><span class="n">i</span><span class="p">;</span></code></pre>
+<h1 class="editable"><a class="anchor" id="công-thức-nghịch-đảo-mobius-möbius-inversion-formula" href="#công-thức-nghịch-đảo-mobius-möbius-inversion-formula"></a>Công thức nghịch đảo Mobius (Möbius inversion formula)</h1>
+<p>Ta định nghĩa Dirichlet Convolution là một phép toán với 2 hàm $f(n)$ và $g(n)$:</p>
+<p>$f \circ g(n)=\sum_{d_1*d_2=n}{f(d_1)*g(d_2)}$</p>
+<p>hay</p>
+<p>$f \circ g(n)=\sum_{d|n}{f(d)*g(n/d)}$</p>
+<p>Có thễ dễ dàng chứng minh phép toán này có tính giao hoán và kết hợp:</p>
+<p>$f\circ g(n)=g\circ f(n)$</p>
+<p>$(f\circ g)\circ h(n)=f\circ(g\circ h)(n)$</p>
+<p>Ta có nhận xét rằng:</p>
+<p>$S_f(n)=\sum_{d|n}{f(d)}=\sum_{d|n}{f(d)*I(n/d)}=f\circ I(n)$</p>
+<p>$S_{\phi}(n)=\sum_{d|n}{\phi(d)}=id(n)$</p>
+<p>$S_{\mu}(n)=\sum_{d|n}{\mu(d)}=I\circ \mu (n)=\mu \circ I(n)= e(n)$</p>
+<p>$f \circ e(n)=\sum_{d|n}{f(n/d)*e(d)}=f(n)$</p>
+<p>Từ đó suy ra:</p>
+<p>$S_f \circ \mu(n)=(f \circ I)\circ \mu (n)=f\circ (I\circ\mu)(n)=f\circ e(n)=f(n)$</p>
+<p>hay</p>
+<p>$f(n)=\sum_{d|n}{S_f(d)*\mu (n/d)}$ - đây gọi là <a href="https://en.wikipedia.org/wiki/M%C3%B6bius_inversion_formula">Công thức nghịch đảo Mobius</a></p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng" href="#ứng-dụng"></a>Ứng dụng</h1>
+<h2 class="editable"><a class="anchor" id="gcdex" href="#gcdex"></a>GCDEX</h2>
+<p><a href="http://www.spoj.com/problems/GCDEX/">Đề bài</a></p>
+<p>Tính $G=\sum_{i=1}^{n} \sum_{j=i+1}^{n}gcd(i,j)$ (1).</p>
+<p>Dễ thấy cách tiếp cận đơn giản nhất cho bài toán này là duyệt tất cả các cặp $(i,j)$. Độ phức tạp của thuật toán này là $O(k*n^2)$, với $k$ là số phép toán tối đa khi tính $gcd$. Chúng ta sẽ đi tìm một lời giải tối ưu hơn sử dụng những kiến thức ở trên.</p>
+<ol>
+<li>
+<p>Nhận xét rằng $1 \leq gcd(i,j) \leq n$ với mọi $1 \leq i &lt; j \leq n$.</p>
+<p>Như vậy, biểu thức trên có thể viết lại thành</p>
+<p>$G=\sum_{g=1}^{n}g*cnt[g]$ (2). Với $cnt[g]$ là số lượng cặp $(i,j)$ có $gcd$ bằng $g$.</p>
+<p>Công việc tính $cnt[g]$ thật sự không hề đơn giản. Ta để ý rằng $gcd(i,j)=g \Leftrightarrow gcd(i/g,j/g)=1$, hay nói cách khác, $i/g$ và $j/g$ phải là 2 số nguyên tố cùng nhau.</p>
+</li>
+<li>
+<p>Ta viết lại (2) thành</p>
+<p>$G=\sum_{g=1}^{n}h(g)*cnt[g]$ với $h(g)=g$</p>
+</li>
+<li>
+<p>Giờ chúng ta sẽ tìm cách phân tích $h(n)$ thành hàm tổng của hàm $f(n)$ nào đó, tức là $h(n)=S_f(n)=\sum_{d|n}f(d)$.</p>
+<p>Ứng dụng công thức nghịch đảo Mobius, bạn có thể tìm được $f(n)=\sum_{d|n}{h(d)*\mu (n/d)}$. Một kết quả rất đẹp trong bài toán này là $f(n)=\phi(n)$, việc chứng minh mình xin nhường bạn đọc.</p>
+<p>Khi đã biết được $h(n)$ và $\mu(n)$, ta có thể tính $f(n)$ bằng sàng như sau:</p>
+<div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+ <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span> <span class="o">+=</span> <span class="n">i</span><span class="p">)</span>
+     <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">mu</span><span class="p">[</span><span class="n">j</span><span class="o">/</span><span class="n">i</span><span class="p">];</span>
+</code></pre></div> </div>
+<p>Đoạn code trên chạy trong thời gian $O(NlogN)$ vì với mỗi $i$ vòng lặp trong sẽ chạy $N/i$ lần (số bội của $i$), và $O(\sum_{i=1}^{N}N/i)=O(NlogN)$.</p>
+</li>
+<li>
+<p>Viết lại (2) một lần nữa ta được:</p>
+<p>$G=\sum_{g=1}^{n}(\sum_{d|g}f(d))*cnt[g]$ (3)</p>
+<p>$\Leftrightarrow G=\sum_{d=1}^{n}f(d)*(\sum_{g:d|g}cnt[g])$ (4)</p>
+</li>
+<li>
+<p>Đặt $cnt2[d]=\sum_{g:d|g}cnt[g]$. Hàm này có ý nghĩa là số lượng cặp $(i,j)$ có $gcd$ là bội của $d$. Đến đây mọi việc đã đơn giản hơn rất nhiều. Các bạn chỉ cần tìm số lượng cặp $(i,j)$ mà $i$ và $j$ đều là bội của $d$. Có $n/d$ bội của $d$, nên sẽ có $n/d*(n/d-1)/2$ cặp.</p>
+<p>Vậy (4) trở thành $G=\sum_{d=1}^{n}f(d)*n/d*(n/d-1)/2$.</p>
+<p>Dễ dàng chứng minh là chỉ có $\sqrt n$ giá trị $n/d$ nên ta có thể duyệt từng giá trị của $n/d$ và cộng $n/d*(n/d-1)/2*\sum_{k:n/k=n/d}f(k)$ vào kết quả. Bằng tổng tiền tố các bạn có thể truy vấn được $\sum_{k:n/k=n/d}f(k)$ trong $O(1)$ và $G$ trong $O(\sqrt n)$:</p>
+<div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+ <span class="n">j</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="n">i</span><span class="p">);</span> <span class="c1">//vị trí j xa i nhất mà n/i=n/j</span>
+ <span class="n">res</span> <span class="o">+=</span> <span class="n">n</span><span class="o">/</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">Sf</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">Sf</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]);</span><span class="c1">//Sf[i]=f[1]+f[2]+f[3]+...+f[i]</span>
+<span class="p">}</span>
+</code></pre></div> </div>
+</li>
+</ol>
+<p>Như vậy thuật toán trên có độ phức tạp $O(NlogN+\sqrt N *T)$ với $T$ là số test.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-tổng-quát" href="#bài-toán-tổng-quát"></a>Bài toán tổng quát</h2>
+<p>Bài toán tổng quát hơn của bài toán trên là tính $G=\sum_{i=1}^{n} \sum_{j=i+1}^{n}h(gcd(i,j))$ với $h$ (nên) là một hàm nhân tính. Ví dụ muốn tính $G=\sum_{i=1}^{n} \sum_{j=i+1}^{n}gcd^3(i,j)$ thì $h(n)=n^3$.</p>
+<p>Các bước tính toán gần như giống với bài toán trên.</p>
+<h2 class="editable"><a class="anchor" id="coprime-triples" href="#coprime-triples"></a>Coprime Triples</h2>
+<p><a href="https://www.codechef.com/problems/COPRIME3">Đề bài</a></p>
+<p>Cho dãy số $a_1,a_2,…,a_n$. Tìm số bộ ba $(i,j,k)$ ($1 \leq i &lt; j &lt; k \leq n$) có $gcd(a_i,a_j,a_k)=1$. $n \leq 10^5$ và $a_i \leq 10^6$</p>
+<p>Ta đưa đề bài này về bài toán: tính $G=\sum_{i=1}^{n}\sum_{j=i+1}^{n}\sum_{k=j+1}^{n}e(gcd(a_i,a_j,a_k))$</p>
+<ol>
+<li>
+<p>Viết lại biểu thức trên:</p>
+<p>$G=\sum_{g}^{maxA}h(g)*cnt[g]$, ở đây $cnt[g]$ là số lượng bộ ba $(i,j,k)$ có $gcd(a_i,a_j,a_k)=1$. $maxA=10^6$</p>
+</li>
+<li>
+<p>Tìm $f(n)$ bằng công thức nghịch đảo Mobius.</p>
+<p>Ở bài toán này $f(n)$ chính bằng $\mu(n)$, việc chứng minh mình cũng xin nhường lại cho bạn đọc.</p>
+<p>Lúc này $G=\sum_{g=1}^{maxA}(\sum_{d|g}f(d))*cnt[g]$.</p>
+<p>$\Leftrightarrow G=\sum_{d=1}^{maxA}f(d)*cnt2[g]$.</p>
+</li>
+<li>
+<p>Tính $cnt2[d]$ là số bộ ba $(i,j,k)$ có $gcd(a_i,a_j,a_k)$ là bội của $d$.</p>
+</li>
+<li>
+<p>Duyệt lại $d$ và tính $G$.</p>
+</li>
+</ol>
+<h1 class="editable"><a class="anchor" id="một-số-bài-luyện-tập" href="#một-số-bài-luyện-tập"></a>Một số bài luyện tập</h1>
+<ul>
+<li>
+<p><a href="https://www.codechef.com/JULY10/problems/LCM/">https://www.codechef.com/JULY10/problems/LCM/</a></p>
+</li>
+<li>
+<p><a href="http://www.codechef.com/COOK29/problems/EXGCD">http://www.codechef.com/COOK29/problems/EXGCD</a></p>
+</li>
+<li>
+<p><a href="https://www.hackerrank.com/challenges/hyperrectangle-gcd">https://www.hackerrank.com/challenges/hyperrectangle-gcd</a></p>
+</li>
+<li>
+<p><a href="http://www.spoj.com/problems/LCMSUM/">http://www.spoj.com/problems/LCMSUM/</a></p>
+</li>
+<li>
+<p><a href="http://www.spoj.com/problems/GCDEX2/">http://www.spoj.com/problems/GCDEX2/</a></p>
+</li>
+</ul>
+<p>Nếu các bạn muốn tìm hiểu sâu và đầy đủ hơn về các bài toán liên quan thì có thể tham khảo <a href="http://mathcircle.berkeley.edu/original/Multiplicative.pdf">http://mathcircle.berkeley.edu/original/Multiplicative.pdf</a></p>
+</div>
+</div>
+</div>
+</div>

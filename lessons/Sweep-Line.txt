@@ -1,0 +1,596 @@
+<div id="wiki-content">
+<h1 class="pt-4">Thuật toán đường quét</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/geometry/">geometry</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Nguời viết:</strong></p>
+<ul>
+<li>Ngô Nhật Quang - HUS High School for Gifted Students</li>
+<li>Bùi Nguyễn Ngọc Thắng - Carnegie Mellon University in Qatar</li>
+<li>Trần Đình Khánh Dương - Michigan State University</li>
+</ul>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Trần Quang Lộc - ITMO University</li>
+<li>Hoàng Xuân Nhật - VNUHCM-University of Science</li>
+<li>Hồ Ngọc Vĩnh Phát - VNUHCM-University of Science</li>
+<li>Lê Minh Hoàng - VNUHCM-University of Science</li>
+<li>Nguyễn Phú Bình - VNUHCM-University of Science</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a><ul><li><a href="#lưu-ý-trước-khi-đọc-bài-viết">Lưu ý trước khi đọc bài viết</a></li></ul></li><li><a href="#bài-toán-tìm-cặp-điểm-gần-nhất">Bài toán tìm cặp điểm gần nhất</a><ul><li><a href="#đề-bài">Đề bài</a></li><li><a href="#phân-tích">Phân tích</a></li><li><a href="#cài-đặt-mẫu">Cài đặt mẫu</a></li></ul></li><li><a href="#bài-toán-tìm-giao-điểm-của-các-đoạn-thẳng-song-song-với-trục-toạ-độ">Bài toán tìm giao điểm của các đoạn thẳng song song với trục toạ độ</a><ul><li><a href="#đề-bài-1">Đề bài</a></li><li><a href="#phân-tích-1">Phân tích</a></li><li><a href="#cài-đặt-mẫu-1">Cài đặt mẫu</a></li></ul></li><li><a href="#bài-toán-tìm-tổng-diện-tích-phủ-bởi-các-hình-chữ-nhật">Bài toán tìm tổng diện tích phủ bởi các hình chữ nhật</a><ul><li><a href="#đề-bài-2">Đề bài</a></li><li><a href="#phân-tích-2">Phân tích</a></li><li><a href="#cài-đặt-mẫu-2">Cài đặt mẫu</a></li></ul></li><li><a href="#bài-toán-tìm-cây-khung-manhattan-nhỏ-nhất">Bài toán tìm cây khung Manhattan nhỏ nhất</a><ul><li><a href="#đề-bài-3">Đề bài</a></li><li><a href="#phân-tích-3">Phân tích</a></li><li><a href="#cài-đặt-mẫu-3">Cài đặt mẫu</a></li></ul></li><li><a href="#bài-tập-ví-dụ">Bài tập ví dụ</a></li><li><a href="#kết">Kết</a></li><li><a href="#tham-khảo">Tham khảo</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Trong bài viết này, chúng ta sẽ đi tìm hiểu về thuật toán đường quét - một thuật toán khá hữu ích trong hình học tính toán. Thuật toán này được xây dựa trên một ý tưởng mạnh mà đơn giản: sử dụng một đường thẳng dọc và "quét" qua mặt phẳng.</p>
+<p>Tuy vậy, trên thực tế, việc "quét" toàn bộ các điểm trên mặt phẳng là bất khả thi nên chúng ta chỉ có thể xét một vài điểm cần thiết mà thôi.</p>
+<h2 class="editable"><a class="anchor" id="lưu-ý-trước-khi-đọc-bài-viết" href="#lưu-ý-trước-khi-đọc-bài-viết"></a>Lưu ý trước khi đọc bài viết</h2>
+<p>Các khái niệm sau được đề cập xuyên suốt bài viết:</p>
+<p>Với hai điểm $P(x_P, y_P)$ và $Q(x_Q, y_Q)$:</p>
+<ul>
+<li>
+<strong>Khoảng cách Euclid</strong> giữa hai điểm $P$ và $Q$ là khoảng cách thu được khi tính bằng công thức Pythagoras $\sqrt{(x_Q - x_P)^2 + (y_Q - y_P)^2}$</li>
+<li>
+<strong>Khoảng cách Manhattan</strong> giữa hai điểm $P$ và $Q$ là khoảng cách giữa nếu ta chỉ được đi dọc hoặc ngang khi từ điểm này qua điểm kia, được tính bằng công thức: $\lvert x_Q - x_P \rvert + \lvert y_Q - y_P \rvert$</li>
+</ul>
+<center>
+<img src="https://vnoi.info/wiki/uploads/Sweep-Line_img1.png" width="300px" />
+</center>
+<center>
+Các đường màu đỏ, xanh lam, vàng biểu diễn khoảng cách Manhattan có cùng độ dài $(12)$, trong khi đường màu xanh lục biểu diễn khoảng cách Euclid với độ dài $6 * \sqrt2 \approx 8.48$.
+</center>
+<p>Như đã đề cập ở phía trên, khi ứng dụng thuật toán đường quét, việc quét qua tất cả các điểm trên mặt phẳng là bất khả thi, và chúng ta cần sử dụng một số kĩ thuật hay cấu trúc dữ liệu khác - chẳng hạn, <em><a href="https://vnoi.info/wiki/algo/basic/two-pointers.md">kĩ thuật hai con trỏ</a>, <a href="https://vnoi.info/wiki/algo/trick/Roi-rac-hoa-va-ung-dung.md">kĩ thuật nén số</a>, <a href="https://vnoi.info/wiki/algo/data-structures/segment-tree-basic.md">cây phân đoạn</a>, <a href="https://vnoi.info/wiki/algo/data-structures/fenwick.md">cây Fenwick (cây chỉ số nhị phân)</a></em> - để lọc ra và xử lí các điểm thiết yếu cần quan tâm. Do đó, độc giả nên nắm kĩ các chủ đề liên quan nêu trên trước khi đọc bài viết.</p>
+<p>Ngoài ra, bài viết gốc có đề cập tới bài toán bao lồi, nhưng chủ đề này sẽ không được đề cập trong bài viết này này bởi VNOI Wiki đã có một bài viết khá hoàn thiện ở <a href="https://vnoi.info/wiki/translate/wcipeg/Convex-Hull.md">đây</a>.</p>
+<h1 class="editable"><a class="anchor" id="bài-toán-tìm-cặp-điểm-gần-nhất" href="#bài-toán-tìm-cặp-điểm-gần-nhất"></a>Bài toán tìm cặp điểm gần nhất</h1>
+<p>Link bài: <a href="https://www.spoj.com/problems/CLOPPAIR/">SPOJ - CLOPPAIR</a></p>
+<h2 class="editable"><a class="anchor" id="đề-bài" href="#đề-bài"></a>Đề bài</h2>
+<p>Cho một danh sách $n$ điểm. Tìm khoảng cách Euclid ngắn nhất tạo bởi hai trong số các điểm đó.</p>
+<p>Giới hạn:</p>
+<ul>
+<li>$2 \leqslant n \leqslant 50000$</li>
+<li>Toạ độ các điểm là số nguyên $-10^6 \leqslant x, y \leqslant 10^6$</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="phân-tích" href="#phân-tích"></a>Phân tích</h2>
+<p>Ta có thể dễ dàng nhận thấy bài này có thể giải quyết với độ phức tạp $O(n^2)$, nhưng sẽ không thể qua được giới hạn thời gian 1 giây. Tuy vậy, áp dụng thuật toán đường quét, chúng ta có thể giảm độ phức tạp xuống $O(n\log{n})$.</p>
+<p>Trước tiên, chúng ta sẽ sắp xếp lại danh sách điểm theo thứ tự hoành độ các điểm tăng dần. Lần lượt duyệt qua từng điểm trong danh sách đã sắp xếp. Ý tưởng chính của thuật toán cải tiến so với thuật toán trâu bò đó là thay vì phải duyệt qua tất cả cặp điểm, với mỗi điểm, ta chỉ phải xét điểm đó với một số ít các điểm khác đáng quan tâm, chi phí để tìm các điểm đáng quan tâm là $O(\log{n})$, do đó thuật toán cải tiến có độ phức tạp $O(n \log{n})$.</p>
+<p>Giả sử chúng ta đã xử lí xong $N - 1$ điểm đầu tiên và khoảng cách ngắn nhất hiện có là $d$. Như vậy từ điểm thứ $N$ về sau, ta chỉ quan tâm đến các cặp điểm có khoảng cách bé hơn $d$. Gọi điểm thứ $N$ (cũng là điểm đang xét) là điểm $P$.</p>
+<blockquote>
+<p><strong>Bổ đề 1</strong></p>
+<p>Tại mỗi bước trong thuật toán, để tìm một cặp điểm có khoảng cách bé hơn $d$, ta chỉ cần quan tâm đến tối đa $8$ điểm khác.</p>
+<p><strong>Chứng minh</strong></p>
+<p>Từ $P$, vẽ $8$ hình vuông xung quanh, mỗi hình vuông có cạnh đúng bằng $d/2$, như hình dưới (điểm màu xanh là $P$).</p>
+</blockquote>
+<center>
+&gt; <img src="https://vnoi.info/wiki/uploads/Sweep-Line_img2.png" width="300px" />
+</center>
+<blockquote>
+<p>Hiển nhiên tất cả các điểm từ $1$ đến $N - 1$ đều nằm về phía bên trái của điểm đang xét do ta duyệt danh sách theo thứ tự tăng dần về hoành độ. Nhận xét rằng từ $P$, ta không cần quan tâm đến những điểm $T$ không nằm trong $8$ hình vuông bên trên do khi đó khoảng cách giữa $P$ và $T$ lớn hơn $d$.</p>
+<p>Xét $8$ hình vuông ta vừa vẽ. Do $d$ là khoảng cách ngắn nhất giữa hai cặp điểm bất kì trong $N - 1$ điểm đầu tiên nên trong mỗi hình vuông, có nhiều nhất một điểm. Do đó, tối đa ta chỉ cần xét $8$ điểm trong $8$ hình vuông để cập nhật kết quả.</p>
+</blockquote>
+<p>Từ bổ đề 1, ta nhận thấy cần duy trì một danh sách $L$ các điểm có hoành độ chênh lệch không quá $d$ so với điểm đang xét. Do $d$ giảm dần nên ta có thể thực hiện việc này bằng kĩ thuật hai con trỏ. Đồng thời, tại mỗi bước ta cần tìm các điểm có tung độ lân cận với điểm đang xét. Do đó các điểm trong $L$ cần được sắp xếp theo thứ tự tung độ tăng dần. Các tiêu chí trên có thể thoả mãn bằng cách cài đặt một cây nhị phân tìm kiếm như <code>std::set</code>.</p>
+<p>Thuật toán của chúng ta cụ thể như sau. Đầu tiên sắp xếp danh sách điểm theo thứ tự hoành độ tăng dần. Lần lượt duyệt qua các điểm trong danh sách, đồng thời duy trì một cây nhị phân tìm kiếm $T$. Gọi $d$ là khoảng cách nhỏ nhất giữa hai điểm bất kì đã xét. Tại mỗi bước:</p>
+<ul>
+<li>Loại bỏ khỏi $T$ các điểm có chênh lệch hoành độ so với điểm đang xét lớn hơn $d$.</li>
+<li>Tìm các điểm trong $T$ có chênh lệch tung độ không quá $d$, tính khoảng cách giữa các điểm này và điểm đang xét, và cập nhật $d$.</li>
+<li>Thêm điểm đang xét vào $T$.</li>
+</ul>
+<p>Ta nhận thấy mỗi điểm được thêm vào và xoá khỏi $T$ đúng một lần. Do đó tổng chi phí cho các thao tác thêm và xoá điểm là $O(n \log{n})$. Tại mỗi bước, chi phí tìm kiếm là $O(\log{n})$ và có $O(1)$ điểm ta cần xét. Tóm lại, độ phức tạp thời gian của thuật toán là $O(n \log{n})$.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt-mẫu" href="#cài-đặt-mẫu"></a>Cài đặt mẫu</h2>
+<p>Trong phần cài đặt này, các khoảng cách được lưu dưới dạng bình phương để tránh bị sai số.</p>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="cp">#define ll long long
+</span>
+<span class="k">struct</span> <span class="nc">Point</span><span class="p">{</span>
+    <span class="n">ll</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>
+    
+    <span class="kt">bool</span> <span class="k">operator</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="k">return</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">other</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">cmp</span><span class="p">{</span>
+    <span class="kt">bool</span> <span class="k">operator</span> <span class="p">()</span> <span class="p">(</span><span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">!=</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">points</span><span class="p">;</span> <span class="c1">// Vector chứa tất cả các điểm</span>
+<span class="n">set</span><span class="o">&lt;</span><span class="n">Point</span><span class="p">,</span> <span class="n">cmp</span><span class="o">&gt;</span> <span class="n">T</span><span class="p">;</span>
+
+<span class="n">ll</span> <span class="nf">squared_dist</span><span class="p">(</span><span class="n">Point</span> <span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Nhận vào hai điểm, trả vể </span>
+                                     <span class="c1">// bình phương khoảng cách giữa hai điểm</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">signed</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+    
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ll</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">y</span><span class="p">;</span>
+        <span class="n">points</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">i</span><span class="p">});</span>
+    <span class="p">}</span>
+    
+    <span class="n">ll</span> <span class="n">squared_d</span> <span class="o">=</span> <span class="n">squared_dist</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="c1">// Lưu bình phương của d</span>
+    <span class="kt">int</span> <span class="n">res_id1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">res_id2</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    
+    <span class="n">sort</span><span class="p">(</span><span class="n">points</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">points</span><span class="p">.</span><span class="n">end</span><span class="p">());</span> <span class="c1">// Sắp xếp các điểm theo hoành độ</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">p</span> <span class="o">:</span> <span class="n">points</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ll</span> <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+        
+        <span class="n">ll</span> <span class="n">d</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">squared_d</span><span class="p">);</span>
+        <span class="n">Point</span> <span class="n">cur</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1000001</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">d</span><span class="p">,</span> <span class="n">id</span><span class="p">};</span>
+        
+        <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Tìm tất cả các điểm có tung độ trong khoảng [y - d, y + d]</span>
+            <span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">T</span><span class="p">.</span><span class="n">upper_bound</span><span class="p">(</span><span class="n">cur</span><span class="p">);</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="n">it</span> <span class="o">==</span> <span class="n">T</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="k">break</span><span class="p">;</span>
+            
+            <span class="n">cur</span> <span class="o">=</span> <span class="o">*</span><span class="n">it</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">cur</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">y</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span> <span class="c1">// Dừng lại nếu điểm có tung độ lớn hơn y + d</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="n">cur</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">-</span> <span class="n">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">T</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span> <span class="c1">// Xóa điểm nếu điểm này có hoành độ bé hơn x - d</span>
+            
+            
+            <span class="k">if</span> <span class="p">(</span><span class="n">squared_dist</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">cur</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">squared_d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">squared_d</span> <span class="o">=</span> <span class="n">squared_dist</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">cur</span><span class="p">);</span>
+                <span class="n">res_id1</span> <span class="o">=</span> <span class="n">id</span><span class="p">;</span> <span class="n">res_id2</span> <span class="o">=</span> <span class="n">cur</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+            <span class="p">}</span> <span class="c1">// Gán đáp án mới nếu tìm được d nhỏ hơn</span>
+        <span class="p">}</span>
+        
+        <span class="n">T</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">p</span><span class="p">);</span> <span class="c1">// Thêm điểm hiện tại vào T</span>
+    <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">res_id1</span> <span class="o">&gt;</span> <span class="n">res_id2</span><span class="p">)</span> <span class="n">swap</span><span class="p">(</span><span class="n">res_id1</span><span class="p">,</span> <span class="n">res_id2</span><span class="p">);</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res_id1</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">res_id2</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">fixed</span> <span class="o">&lt;&lt;</span> <span class="n">setprecision</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">squared_d</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="bài-toán-tìm-giao-điểm-của-các-đoạn-thẳng-song-song-với-trục-toạ-độ" href="#bài-toán-tìm-giao-điểm-của-các-đoạn-thẳng-song-song-với-trục-toạ-độ"></a>Bài toán tìm giao điểm của các đoạn thẳng song song với trục toạ độ</h1>
+<p>Link bài: <a href="https://www.spoj.com/problems/CS345A1/">SPOJ - CS345A1</a></p>
+<h2 class="editable"><a class="anchor" id="đề-bài-1" href="#đề-bài-1"></a>Đề bài</h2>
+<p>Cho các đoạn thẳng song song trục $Ox$ hoặc trục $Oy$, yêu cầu trả lại số các giao điểm.</p>
+<p>Giới hạn:</p>
+<ul>
+<li>$1 \leqslant n \leqslant 100000$</li>
+<li>Toạ độ $x$, $y$ của mỗi điểm là số thực thỏa mãn $0 \leqslant x, y \leqslant 1$</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="phân-tích-1" href="#phân-tích-1"></a>Phân tích</h2>
+<p>Ta bắt đầu với ý tưởng quét qua tất cả đoạn thẳng tương tự như bài toán tìm cặp điểm gần nhất.</p>
+<p>Tuy nhiên, ta sẽ gặp phải vấn đề là một đoạn thẳng nằm ngang sẽ bao gồm các điểm có hoành độ khác nhau nên chúng ta khó có thể sắp xếp các đoạn thẳng theo một thứ tự nào đó liên quan đến hoành độ - giả sử có một đoạn thẳng nối $(0.5, 0.25)$ và $(0.5, 0.75)$ và một đoạn thẳng nối $(0.25, 0.5)$ và $(0.75, 0.5)$, chúng ta nên ưu tiên đoạn thẳng nào trước?</p>
+<p>Để giải quyết vấn đề trên, một ý tưởng thường được dùng là thay vì xem một đoạn thẳng nằm ngang là một phần tử duy nhất trong danh sách, ta sẽ tách nó ra thành hai phần tử riêng biệt - một phần tử biểu thị cho đầu mút bên trái và một phần tử biểu thị cho đầu mút bên phải của đoạn thẳng. Như vậy trong danh sách của chúng ta sẽ có ba loại phần tử:</p>
+<ol>
+<li>Đầu mút bên trái của một đoạn thẳng nằm ngang</li>
+<li>Đầu mút bên phải của một đoạn thẳng nằm ngang</li>
+<li>Một đoạn thẳng nằm dọc.</li>
+</ol>
+<p>Khi này ta sẽ có thể sắp xếp danh sách của chúng ta theo thứ tự tăng dần về hoành độ của các phần tử.</p>
+<p>Chúng ta sẽ quét từ trái sang phải. Khi đoạn quét di chuyển, ta duy trì một tập hợp $S$ các đoạn thẳng nằm ngang bị cắt ngang theo đoạn quét - tức là đoạn quét đang ở giữa hai đầu mút của đoạn ngang đó. Tập này được sắp xếp theo thứ tự $y$, và được tô màu đỏ trong hình dưới.</p>
+<center>
+<img src="https://vnoi.info/wiki/uploads/Sweep-Line_img3.png" width="200px" />
+</center>
+<p>Với mỗi đoạn thẳng nằm dọc $v_i$, để đếm $t_i$ là số đoạn thẳng nằm ngang cắt $v_i$, ta chỉ việc tìm trong tập $S$ những đoạn thẳng có tung độ nằm giữa hai đầu mút của $v$. Hiển nhiên ta thấy rằng tổng của các $t_i$ cũng là số giao điểm ta cần tìm.</p>
+<p>Như vậy ta thấy tập $S$ là một yếu tố quan trọng để giải quyết bài toán. Tập $S$ cần hỗ trợ các thao tác cụ thể sau:</p>
+<ol>
+<li>Thêm một phần tử có khoá $k$ vào trong tập (lưu ý các khoá có thể trùng nhau).</li>
+<li>Xoá một phần tử có khoá $k$ khỏi tập.</li>
+<li>Cho một khoảng $[L, R]$, trả về số lượng phần tử trong tập có khoá $k \in [L, R]$.</li>
+</ol>
+<p>Để thoả mãn các yêu cầu trên, ta sẽ cài đặt tập $S$ bằng kĩ thuật nén số và cây Fenwick. Ta sẽ nén tung độ của các đoạn thẳng thành $O(n)$ điểm. Dựng cây Fenwick dựa trên $O(n)$ điểm này, mỗi nút trong cây cho biết có bao nhiêu đoạn thẳng ngang đang cắt các điểm trong đoạn con mà nút quản lý. Như vậy, mỗi thao tác thêm một đoạn thẳng vào tập $S$ tương ứng với một thao tác cộng $1$ vào giá trị lưu ở các nút tương ứng và mỗi thao tác xoá một đoạn thẳng khỏi $S$ tương ứng với một thao tác giảm giá trị lưu ở các nút tương ứng đi $1$. Chi phí để thực hiện cả hai thao tác trên là $O(\log{n})$. Để tìm số lượng đoạn thẳng ngang có tung độ trong khoảng $[L, R]$, ta có thể tính tổng các điểm trong khoảng $[L, R]$ trong cây Fenwick trong $O(\log{n})$. Chi tiết tham khảo ở cài đặt mẫu.</p>
+<p>Dễ thấy thuật toán của chúng ta duyệt qua một danh sách có $O(n)$ phần tử, với mỗi phần tử chi phí xử lí là $O(\log{n})$. Do đó độ phức tạp thời gian của thuật toán là $O(n \log{n})$. Độ phức tạp bộ nhớ là $O(n)$.</p>
+<p>Minh họa thuật toán:</p>
+<center>
+<img src="https://i.imgur.com/xj1XD68.gif" style="width:60%;" />
+</center>
+<h2 class="editable"><a class="anchor" id="cài-đặt-mẫu-1" href="#cài-đặt-mẫu-1"></a>Cài đặt mẫu</h2>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="cp">#define ll long long
+</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">double</span> <span class="n">EPS</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">Event</span><span class="p">{</span>
+    <span class="kt">double</span> <span class="n">x</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">type</span><span class="p">;</span>
+    
+    <span class="kt">bool</span> <span class="k">operator</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">const</span> <span class="n">Event</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">FenwickTree</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">s</span><span class="p">;</span>
+
+    <span class="n">FenwickTree</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">:</span> <span class="n">n</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">s</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">&amp;</span> <span class="o">-</span><span class="n">i</span><span class="p">)</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">getsum</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span><span class="p">;</span> <span class="n">i</span> <span class="o">-=</span> <span class="n">i</span> <span class="o">&amp;</span> <span class="o">-</span><span class="n">i</span><span class="p">)</span> <span class="n">res</span> <span class="o">+=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">getsum</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="n">getsum</span><span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="kt">double</span> <span class="n">blue_x1</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">blue_x2</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">blue_y</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">red_y1</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">red_y2</span><span class="p">[</span><span class="n">N</span><span class="p">],</span> <span class="n">red_x</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">compress_y</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Event</span><span class="o">&gt;</span> <span class="n">events</span><span class="p">;</span>
+
+<span class="kt">signed</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">blue_x1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">blue_x2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">blue_y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">blue_x1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">blue_x2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">blue_x1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">blue_x2</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">compress_y</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">blue_y</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">red_y1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">red_y2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">red_x</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">red_y1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">red_y2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">red_y1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">red_y2</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">compress_y</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">red_y1</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">compress_y</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">red_y2</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="n">sort</span><span class="p">(</span><span class="n">compress_y</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+    <span class="n">compress_y</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">compress_y</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">end</span><span class="p">()),</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+    <span class="c1">// Rời rạc hóa các tung độ</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">compress_y</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">blue_y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">events</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">blue_x1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">EPS</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">});</span> <span class="c1">// Phần tử loại 1</span>
+        <span class="n">events</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">blue_x2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">EPS</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">});</span> <span class="c1">// Phần tử loại 2</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">compress_y</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">red_y1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">compress_y</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">red_y2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">compress_y</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">events</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">red_x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">3</span><span class="p">});</span> <span class="c1">// Phần tử loại 3</span>
+    <span class="p">}</span>
+
+    <span class="n">sort</span><span class="p">(</span><span class="n">events</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">events</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+    <span class="n">FenwickTree</span> <span class="n">FT</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">// Có tối đa n * 3 tung độ khác nhau</span>
+    <span class="n">ll</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">e</span> <span class="o">:</span> <span class="n">events</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">FT</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="n">FT</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">else</span> <span class="n">res</span> <span class="o">+=</span> <span class="n">FT</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">y2</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="bài-toán-tìm-tổng-diện-tích-phủ-bởi-các-hình-chữ-nhật" href="#bài-toán-tìm-tổng-diện-tích-phủ-bởi-các-hình-chữ-nhật"></a>Bài toán tìm tổng diện tích phủ bởi các hình chữ nhật</h1>
+<p>Link bài: <a href="https://oj.vnoi.info/problem/area">VNOJ - AREA</a></p>
+<h2 class="editable"><a class="anchor" id="đề-bài-2" href="#đề-bài-2"></a>Đề bài</h2>
+<p>Trên mặt phẳng toạ độ, ta vẽ $N$ hình chữ nhật có các cạnh song song với trục toạ độ. Tính tổng diện tích che phủ bởi $N$ hình chữ nhật này.</p>
+<p>Giới hạn:</p>
+<ul>
+<li>$1 \leqslant n \leqslant 10000$</li>
+<li>Mỗi hình chữ nhật có toạ độ góc trái dưới và góc phải trên lần lượt là $x_1$, $y_1$ và $x_2$, $y_2$ sao cho $0 \leqslant x_1 \leqslant x_2 \leqslant 30000$ và $0 \leqslant y_1 \leqslant y_2 \leqslant 30000$</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="phân-tích-2" href="#phân-tích-2"></a>Phân tích</h2>
+<p>Tương tự như bài toán tìm giao điểm của các đoạn thẳng, chúng ta có thể xử lí bằng cách biểu diễn mỗi hình chữ nhật thành hai "sự kiện" - một biểu thị cho cạnh bên trái và một biểu thị cho cạnh bên phải của hình chữ nhật - và duy trì một tập $S$ chứa các hình chữ nhật mà đoạn thẳng quét của chúng ta đang cắt qua. Khi chúng ta quét qua cạnh bên trái, ta thêm hình chữ nhật đó vào $S$, khi quét qua cạnh bên phải thì ta xoá hình chữ nhật tương ứng khỏi $S$.</p>
+<center>
+<img src="https://vnoi.info/wiki/uploads/Sweep-Line_img4.png" width="300px" />
+</center>
+<p>Ta biết được những hình chữ nhật nào đang bị cắt bởi đường quét của chúng ta (màu đỏ). Để tìm tổng diện tích được bao phủ, ta sẽ tìm diện tích từng phần bị bao phủ giữa mỗi cặp hai "sự kiện" liền nhau và tính tổng của chúng. Để tìm phần diện tích được bao phủ giữa hai sự kiện liền nhau, ta cần biết tổng độ dài phần đường quét đi qua chúng (nét liền màu xanh trong hình trên). Nhân độ dài này với khoảng cách giữa hai sự kiện liền nhau, ta được diện tích của phần hình chữ nhật giữa hai "sự kiện" đó.</p>
+<p>Vấn đề đặt ra là làm thế nào để tìm tổng độ dài của các phần "nét liền màu xanh" như trên hình. Nhớ rằng tại mỗi bước ta duy trì một tập $S$ các hình chữ nhật mà đường thẳng quét cắt qua. Hiển nhiên ta thấy tổng độ dài của phần "nét liền màu xanh" chính là hợp của tất cả các hình chữ nhật trong tập $S$ tại mỗi bước.</p>
+<p>Để tính hợp của tất cả các hình chữ nhật trong tập $S$, một thuật toán đơn giản là ta sẽ duyệt qua hết tất cả các hình chữ nhật hiện có trong $S$. Độ phức tạp thời gian để giải bài toán khi này là $O(n^2)$ - chúng ta duyệt qua $O(n)$ sự kiện, tại mỗi "sự kiện", ta lại duyệt qua $O(n)$ hình chữ nhật mà đường quét của chúng ta đang cắt (dĩ nhiên chúng ta cũng phải thêm các hình mới và xoá bớt những hình mà đường quét không còn cắt khỏi tập $S$).</p>
+<p>Minh họa thuật toán:</p>
+<center>
+<img src="https://i.imgur.com/h7RJef6.gif" style="width:60%;" />
+</center>
+<p><br/></p>
+<p>Để tối ưu thuật toán, chúng ta có thể sử dụng kĩ thuật nén số và cây phân đoạn. Ta sẽ nén hoành độ của các "sự kiện" thành $O(n)$ điểm, các điểm này chia đường thẳng quét của chúng ta thành $O(n)$ đoạn thẳng con. Ta dựng cây phân đoạn với $O(n)$ đoạn thẳng con này là các nút lá. Tại mỗi nút trong cây phân đoạn ta sẽ lưu hai giá trị để trả lời cho hai câu hỏi:</p>
+<p>1) Hiện có bao nhiêu hình chữ nhật đang phủ đoạn con mà nút quản lý?
+2) Tổng độ dài các phần được ít nhất một hình chữ nhật phủ trong đoạn con mà nút quản lý là bao nhiêu?</p>
+<p>Chi tiết việc cập nhật hai giá trị tại mỗi bước độc giả có thể tham khảo trong cài đặt mẫu.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt-mẫu-2" href="#cài-đặt-mẫu-2"></a>Cài đặt mẫu</h2>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">MX</span> <span class="o">=</span> <span class="mi">30000</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">Segment</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">type</span><span class="p">;</span>
+
+    <span class="kt">bool</span> <span class="k">operator</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">const</span> <span class="n">Segment</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">SegmentTree</span><span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">;</span>
+
+    <span class="n">SegmentTree</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">:</span> <span class="n">s</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">update</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="kt">int</span> <span class="n">tl</span><span class="p">,</span> <span class="kt">int</span> <span class="n">tr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">tr</span> <span class="o">||</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">tl</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">&gt;=</span> <span class="n">tl</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">tr</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">second</span> <span class="o">+=</span> <span class="n">val</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">second</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">first</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">!=</span> <span class="n">r</span><span class="p">)</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">first</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span><span class="p">].</span><span class="n">first</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">].</span><span class="n">first</span><span class="p">;</span>
+            <span class="k">else</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">first</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tl</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">tl</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">second</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">first</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">first</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span><span class="p">].</span><span class="n">first</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="n">id</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">].</span><span class="n">first</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Segment</span><span class="o">&gt;</span> <span class="n">segments</span><span class="p">;</span>
+
+<span class="kt">signed</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">x1</span> <span class="o">&gt;&gt;</span> <span class="n">y1</span> <span class="o">&gt;&gt;</span> <span class="n">x2</span> <span class="o">&gt;&gt;</span> <span class="n">y2</span><span class="p">;</span>
+
+        <span class="n">segments</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="mi">1</span><span class="p">});</span>
+        <span class="n">segments</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">x2</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="n">sort</span><span class="p">(</span><span class="n">segments</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">segments</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+    <span class="n">SegmentTree</span> <span class="n">ST</span><span class="p">(</span><span class="n">MX</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">segments</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ST</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">MX</span><span class="p">,</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y1</span><span class="p">,</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">type</span><span class="p">);</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="p">(</span><span class="n">segments</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">].</span><span class="n">x</span> <span class="o">-</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">ST</span><span class="p">.</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">first</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="bài-toán-tìm-cây-khung-manhattan-nhỏ-nhất" href="#bài-toán-tìm-cây-khung-manhattan-nhỏ-nhất"></a>Bài toán tìm cây khung Manhattan nhỏ nhất</h1>
+<p>Link bài: <a href="https://open.kattis.com/problems/gridmst">Kattis - GRIDMST</a></p>
+<h2 class="editable"><a class="anchor" id="đề-bài-3" href="#đề-bài-3"></a>Đề bài</h2>
+<p>Cho $N$ điểm (có thể trùng nhau). Trọng số giữa mỗi đỉnh là khoảng cách Manhattan giữa chúng. Tìm trọng số của cây khung nhỏ nhất qua $N$ điểm đó.</p>
+<p>Giới hạn:</p>
+<ul>
+<li>$1 \leqslant N \leqslant 100000$</li>
+<li>$N$ dòng, mỗi dòng 2 số nguyên $x$, $y$ sao cho $0 \leqslant x, y \leqslant 1000$ là toạ độ mỗi điểm.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="phân-tích-3" href="#phân-tích-3"></a>Phân tích</h2>
+<p>Ý tưởng chính của thuật giải là nếu như số cạnh ta cần xét là $O(n)$ thì ta có thể sử dụng các thuật toán tìm cây khung nhỏ nhất như Kruskal hay Prim để giải bài toán trong $O(n \log{n})$.</p>
+<blockquote>
+<p><strong>Bổ đề 2</strong></p>
+<p>Xét một điểm $P$ cho trước bất kì. Lấy gốc toạ độ tại $P$. Chia mặt phẳng toạ độ thành $8$ phần bằng nhau như hình dưới. Với mỗi phần tám, nối $P$ với một điểm bất kì trong phần tám đó có khoảng cách Manhattan gần nhất với $P$ (nếu có). Chẳng hạn trong ví dụ ở hình dưới, ta sẽ nối $P$ với $Q$.</p>
+</blockquote>
+<center>
+&gt; <img src="https://vnoi.info/wiki/uploads/Sweep-Line_img5.png" />
+</center>
+<blockquote>
+<p>Thực hiện thao tác trên với tất cả các điểm được cho, ta thu được một đồ thị $G$ có $O(n)$ cạnh. Ta sẽ chứng minh rằng cây khung nhỏ nhất trên đồ thị $G$ là một đáp án cho bài toán.</p>
+<p><strong>Chứng minh</strong></p>
+<p>Ta sẽ chứng minh rằng các cạnh trong cây khung nhỏ nhất $T$ của tập điểm ban đầu cũng thuộc đồ thị $G$.</p>
+<p>Xét cạnh $(u, v) \in T$. Không mất tính tổng quát, giả sử $v$ thuộc phần tám thứ nhất so với $u$. Giả sử tồn tại một điểm $w$ trong tập điểm ban đầu sao cho $d(u, w) &lt; d(u, v)$. Đồng thời ta biết rằng $d(v, w) &lt; d(u, v)$ (nhìn hình minh hoạ bên dưới). Do đó ta sẽ có một cây khung nhỏ hơn nếu ta bỏ $(u, v)$ và thay bằng một trong hai cạnh $(u, w)$ hay $(v, w)$. Điều này trái giả thiết $T$ là cây khung nhỏ nhất. Do đó, không tồn tại điểm $w$ sao cho $d(u, w) &lt; d(u, v)$ - tức $v$ là điểm trong phần tám thứ nhất của $u$ có khoảng cách Manhattan gần nhất. Chứng minh tương tự với các trường hợp $v$ thuộc các phần tám còn lại của $u$.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;"><img src="https://vnoi.info/wiki/uploads/Sweep-Line_img6.png" width="300px" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">$\forall w$ thuộc vùng màu xanh, $d(v, w) \leq d(u, v)$</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>Qua bổ đề 2, ta thấy bài toán đặt ra hiện tại là làm sao để dựng được đồ thị $G$ hiệu quả. Dễ thấy để dựng đồ thị $G$, với mỗi điểm $P$ cho trước, ta cần tìm $8$ điểm có khoảng cách Manhattan gần $P$ nhất cho mỗi phần tám. Dưới đây bài viết sẽ mô tả thuật toán tìm điểm có khoảng cách Manhattan gần nhất trong phần tám thứ $1$ cho $n$ điểm. Như vậy có thể tìm điểm khoảng cách Manhattan gần cho $7$ phần tám còn lại bằng cách tương tự.</p>
+<blockquote>
+<p><strong>Bổ để 3</strong></p>
+<p>Gọi $d(P, Q)$ là khoảng cách Manhattan giữa hai điểm $P$ và $Q$. Gọi $A(x_A, y_A)$, $B(x_B, y_B)$, $C(x_C, y_C)$, $D(x_D, y_D)$ là bốn điểm trên mặt phẳng sao cho $x_A, x_B \leqslant x_C, x_D$ và $y_A, y_B \leqslant y_C, y_D$. Ta có $d(A, C) \leqslant d(A, D)$ tương đương với $d(B, C) \leqslant d(B, D)$.</p>
+<p><strong>Chứng minh</strong>
+<span class="kdmath">$\begin{align}
+d(A, C) &amp;\leqslant d(A, D)\\
+x_C - x_A + y_C - y_A &amp;\leqslant x_D - x_A + y_D - y_A\\
+x_C + y_C &amp;\leqslant x_D + y_D\\
+x_C - x_B + y_C - y_B &amp;\leqslant x_D - x_B + y_D - y_B\\
+d(B, C) &amp;\leqslant d(B, D)
+\end{align}$</span></p>
+</blockquote>
+<p>Ta sẽ sử dụng phương pháp chia để trị để giải quyết bài toán. Đầu tiên ta sẽ sắp xếp $n$ điểm theo thứ tự tăng dần về hoành độ. Tại mỗi bước ta chia $n$ điểm thành $2$ tập con $L$ và $R$. Gọi đệ quy giải bài toán với từng tập con. Nhận xét rằng lời giải cho tập $R$ cũng chính là lời giải đúng, do đó ta chỉ cần cập nhật lời giải cho các điểm trong tập $L$.</p>
+<p>Sắp xếp các điểm trong $L$ và $R$ theo chiều giảm dần của tung độ. Ta sẽ duy trì $3$ con trỏ: con trỏ 1 duyệt các điểm trong $L$ theo chiều giảm dần về tung độ, con trỏ 2 và 3 duyệt các điểm trong $R$ cũng theo chiều giảm dần về tung độ.</p>
+<p>Dùng con trỏ 1 để duyệt các điểm trong $L$. Gọi điểm đang được con trỏ 1 trỏ đến là $T(x_T, y_T)$. Dùng con trỏ 2 để duyệt các điểm trong $R$ sao cho các điểm đi qua luôn có tung độ không bé hơn $y_T$. Con trỏ 3 trỏ đến điểm có khoảng cách Manhattan nhỏ nhất với $T$ hiện tại (gọi điểm con trỏ 3 đang trỏ đến là $U$). Tại mỗi bước trong quá trình lặp, có $3$ khả năng:</p>
+<p>1) Điểm được con trỏ 2 trỏ tới có tung độ bé hơn tung độ của $T$: Ta so sánh khoảng cách Manhattan giữa $T$ và $U$ và đáp án ta có nhờ gọi đệ quy lên $L$, cập nhật đáp án cho $T$, đồng thời di con trỏ 1 đến điểm tiếp theo.
+2) Điểm được con trỏ 2 trỏ tới có tung độ lớn hơn hoặc bằng tung độ của $T$ và có khoảng cách Manhattan tới $T$ lớn hơn khoảng cách Manhattan giữa $T$ và $U$: Khi này ta không làm gì cả.
+3) Điểm được con trỏ 2 trỏ tới có tung độ lớn hơn hoặc bằng tung độ của $T$ và có khoảng cách Manhattan tới $T$ bé hơn khoảng cách Manhattan giữa $T$ và $U$: Khi này ta trỏ con trỏ 3 đến điểm đang được trỏ bới con trỏ 2.</p>
+<p>Nhờ có tính chất được đề cập trong bổ đề 3, ta nhận thấy vòng lặp trên sẽ cho chúng ta đáp án chính xác. Cả ba con trỏ đều "thăm" mỗi điểm trong $L$ hoặc $R$ đúng một lần nên độ phức tập của mỗi "tầng" trong cây đệ quy của chúng ta sẽ là $O(n)$. Do ta sẽ có $O(\log{n})$, độ phức tạp của thuật toán trên là $O(n \log{n})$.</p>
+<h2 class="editable"><a class="anchor" id="cài-đặt-mẫu-3" href="#cài-đặt-mẫu-3"></a>Cài đặt mẫu</h2>
+<p>Cảm ơn bạn Trần Xuân Bách (HUS High School for Gifted Students) đã đóng góp vào đoạn code này.</p>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">INF</span> <span class="o">=</span> <span class="mf">1e8</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">Point</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">id</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">diff_yx</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">sum_xy</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">manhattan_dist</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">u</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">v</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">v</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">struct</span> <span class="nc">DSU</span> <span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">par</span><span class="p">;</span>
+    <span class="n">DSU</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="n">DSU</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span><span class="o">:</span> <span class="n">par</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{}</span>
+    
+    <span class="kt">int</span> <span class="n">find_set</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">u</span> <span class="o">:</span> <span class="n">par</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="n">u</span><span class="p">]);</span>
+    <span class="p">}</span>
+    
+    <span class="kt">bool</span> <span class="n">join</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">find_set</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">u</span> <span class="o">==</span> <span class="n">v</span><span class="p">)</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">-</span><span class="n">par</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">par</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="n">swap</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+        <span class="n">par</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+=</span> <span class="n">par</span><span class="p">[</span><span class="n">v</span><span class="p">];</span>
+        <span class="n">par</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Edge</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">cost</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span> <span class="n">Edge</span><span class="o">&amp;</span> <span class="n">u</span><span class="p">,</span> <span class="k">const</span> <span class="n">Edge</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">u</span><span class="p">.</span><span class="n">cost</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">.</span><span class="n">cost</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Edge</span> <span class="nf">edge_from_point</span><span class="p">(</span><span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">u</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">manhattan_dist</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)};</span>
+<span class="p">}</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">potential_edges</span><span class="p">;</span> <span class="c1">// Các cạnh tối ưu cần xét</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">solve_single_recur</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">upper_size</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">p</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">solve_single_recur</span><span class="p">({</span><span class="n">p</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">p</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="n">upper_size</span><span class="p">});</span>
+    <span class="k">auto</span> <span class="n">lower</span> <span class="o">=</span> <span class="n">solve_single_recur</span><span class="p">({</span><span class="n">p</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="n">upper_size</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">end</span><span class="p">()});</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">res</span><span class="p">;</span>
+    
+    <span class="n">Point</span> <span class="n">min_diff_yx</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="n">INF</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+    
+    <span class="kt">int</span> <span class="n">upper_ptr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">lo</span> <span class="o">:</span> <span class="n">lower</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">upper_ptr</span> <span class="o">&lt;</span> <span class="n">upper_size</span> <span class="n">and</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_ptr</span><span class="p">].</span><span class="n">sum_xy</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">lo</span><span class="p">.</span><span class="n">sum_xy</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">min_diff_yx</span><span class="p">.</span><span class="n">diff_yx</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_ptr</span><span class="p">].</span><span class="n">diff_yx</span><span class="p">())</span> <span class="p">{</span>
+                <span class="n">min_diff_yx</span> <span class="o">=</span> <span class="n">upper</span><span class="p">[</span><span class="n">upper_ptr</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">upper</span><span class="p">[</span><span class="n">upper_ptr</span><span class="p">]);</span>
+            <span class="o">++</span><span class="n">upper_ptr</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">min_diff_yx</span><span class="p">.</span><span class="n">id</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">potential_edges</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">edge_from_point</span><span class="p">(</span><span class="n">min_diff_yx</span><span class="p">,</span> <span class="n">lo</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">lo</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+    <span class="n">res</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">upper</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span> <span class="o">+</span> <span class="n">upper_ptr</span><span class="p">,</span> <span class="n">upper</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">solve_single</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Giải bài toán với một góc phần tám</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">p</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="p">[](</span><span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">u</span><span class="p">,</span> <span class="k">const</span> <span class="n">Point</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">u</span><span class="p">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">v</span><span class="p">.</span><span class="n">y</span> <span class="o">?</span> <span class="n">u</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">.</span><span class="n">x</span> <span class="o">:</span> <span class="n">u</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">});</span>
+    <span class="n">solve_single_recur</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">rotate_90</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Xoay tất cả các điểm 90 độ</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">cur</span><span class="o">:</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">cur</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">cur</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+        <span class="n">cur</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">y</span><span class="p">;</span>
+        <span class="n">cur</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">flip</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Đối xứng các điểm qua trục Ox</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">cur</span><span class="o">:</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cur</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">cur</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">solve</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">ft</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">ft</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="o">++</span><span class="n">ft</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">solve_single</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+            <span class="n">rotate_90</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">flip</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">DSU</span> <span class="n">dsu</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">p</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+    <span class="n">sort</span><span class="p">(</span><span class="n">potential_edges</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">potential_edges</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">e</span> <span class="o">:</span> <span class="n">potential_edges</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">dsu</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">u</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">v</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">ans</span> <span class="o">+=</span> <span class="n">e</span><span class="p">.</span><span class="n">cost</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// Thuật toán kruskal</span>
+    
+    <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">id</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">solve</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="bài-tập-ví-dụ" href="#bài-tập-ví-dụ"></a>Bài tập ví dụ</h1>
+<p><a href="https://community.topcoder.com/stat?c=problem_statement&amp;pm=4463">TopCoder - BoxUnion</a></p>
+<p><a href="https://community.topcoder.com/stat?c=problem_statement&amp;pm=3996">TopCoder - CultureGrowth</a></p>
+<p><a href="https://community.topcoder.com/stat?c=problem_statement&amp;pm=5969">TopCoder - PowerSupply</a></p>
+<p><a href="https://community.topcoder.com/stat?c=problem_statement&amp;pm=4559">TopCoder - ConvexPolygons</a></p>
+<p><a href="https://www.spoj.com/problems/CEPC08B/">SPOJ - CEPC08B</a></p>
+<p><a href="http://usaco.org/index.php?page=viewproblem2&amp;cpid=227">USACO - Square Overlap</a></p>
+<p><a href="https://codeforces.com/contest/1402/problem/B">CF - 1402B</a></p>
+<p><a href="https://csacademy.com/contest/archive/task/the-sprawl">CSA - The Sprawl</a></p>
+<h1 class="editable"><a class="anchor" id="kết" href="#kết"></a>Kết</h1>
+<p>Giống như quy hoạch động, thuật toán đường quét là một công cụ mạnh vì nó không chỉ là một thuật toán, mà còn là một dạng thuật toán mà có thể dùng để giải một phạm vi các bài toán rất rộng, bao gồm một số bài toán không được nêu ở đây (như phép tam giác hóa Delaunay) và cả các dạng mới chỉ xuất hiện lần đầu trong một cuộc thi.</p>
+<h1 class="editable"><a class="anchor" id="tham-khảo" href="#tham-khảo"></a>Tham khảo</h1>
+<ol>
+<li><a href="https://www.topcoder.com/thrive/articles/Line%20Sweep%20Algorithms">bmerry, TopCoder: Line Sweep Algorithm</a></li>
+<li><a href="https://www.sciencedirect.com/science/article/abs/pii/0020019083900455">Leo J. Guibas, Jorge Stolfi, On computing all north-east nearest neighbors in the L1 metric</a></li>
+<li>Các gif được tạo bởi <a href="https://www.manim.community/">manim</a>, mã nguồn tại <a href="https://pastebin.com/CnpTEibi">đây</a> và <a href="https://pastebin.com/irPSKyYm">đây</a>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>

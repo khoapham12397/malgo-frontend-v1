@@ -1,0 +1,96 @@
+<div id="wiki-content">
+<h1 class="pt-4">Các chủ đề cơ bản về đồ thị</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/graph-theory/">graph-theory</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p></p>
+<p><a class="internal absent" href="https://vnoi.info/wiki/algo/basic/Tai-Lieu-Thuat-Toan">Sách thầy Lê Minh Hoàng</a> đã trình bày rất chi tiết về phần lý thuyết đồ thị, do đó VNOI wiki sẽ không viết lại nữa.</p>
+<p>Trong bài viết này mình chỉ liệt kê lại các thuật toán trong đồ thị và dẫn link đến các tài liệu bổ sung:</p>
+<ul>
+<li>Biểu diễn đồ thị:
+<ul>
+<li><a href="http://cowboycoder.tech/article/ly-thuyet-do-thi-co-ban-phan-1-gioi-thieu">cowboycoder</a></li>
+<li>Bài tập:
+<ul>
+<li><a href="https://oj.vnoi.info/problem/graph/">VNOJ - GRAPH</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>BFS, DFS, Topo sort:
+<ul>
+<li><a href="http://cowboycoder.tech/article/ly-thuyet-do-thi-co-ban-tim-kiem-theo-chieu-rong-tren-do-thi-breadth-first-search-bfs">cowboycoder - BFS</a></li>
+<li><a href="http://cowboycoder.tech/article/ly-thuyet-do-thi-co-ban-phan-3-tim-kiem-theo-chieu-sau-tren-do-thi-depth-first-search-dfs">cowboycoder - DFS</a></li>
+<li><a href="http://cowboycoder.tech/article/ly-thuyet-do-thi-co-ban-phan-5-dag-va-sap-xep-topo-tren-do-thi">cowboycoder - Topo sort</a></li>
+<li><a href="https://vietcodes.github.io/algo/biconnect">vietcodes - Thành phần song liên thông</a></li>
+<li>
+<a href="https://vnoi.info/wiki/algo/graph-theory/Depth-First-Search-Tree.md">Bài toán khớp cầu, thành phần liên thông mạnh</a> (Cây DFS và ứng dụng)</li>
+<li>
+<a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/DfsTree/BridgeArticulation.h">Code tìm khớp cầu C++ - RR</a>; <a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/DfsTree/BridgeArticulation.cpp">cách sử dụng</a>
+</li>
+<li>
+<a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/DfsTree/StronglyConnected.h">Code tìm thành phần liên thông mạnh C++ - RR</a>; <a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/DfsTree/StronglyConnected.cpp">cách sử dụng</a>
+</li>
+<li>
+<a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/DfsTree/BiconnectedComponent.h">Code tìm thành phần song liên thông C++ - RR</a>; <a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/DfsTree/BiconnectedComponent.cpp">cách sử dụng</a>;</li>
+<li><a href="http://vnoi.info/problems/list/?tag=37&amp;page=1">Bài tập trên VNOI</a></li>
+<li>
+<a href="https://open.kattis.com/problems/heightpreservation">Bài H - ACM ICPC Vietnam Regional 2017</a>; <a href="http://icpcvn.github.io/2017/regional/Editorial.pdf">Lời giải</a>
+</li>
+</ul>
+</li>
+<li>Tìm đường đi ngắn nhất: Dijkstra, Floyd, Ford-Bellman:
+<ul>
+<li><a href="http://cowboycoder.tech/article/ly-thuyet-do-thi-co-ban-phan-4-duong-di-ngan-nhat-tren-do-thi-va-thuat-toan-dijkstra">cowboycoder - Dijkstra</a></li>
+<li><a href="https://vietcodes.github.io/algo/improved-dijkstra">vietcodes - Dijkstra cải tiến</a></li>
+<li><a href="http://vnoi.info/problems/list/?tag=39&amp;page=1">Bài tập</a></li>
+</ul>
+</li>
+<li>Cây khung nhỏ nhất:
+<ul>
+<li><a href="http://vnoi.info/contributor/algo/data-structures/disjoint-set">VNOI - Disjoint Set</a></li>
+<li><a href="http://vnoi.info/problems/list/?tag=40&amp;page=1">Bài tập</a></li>
+</ul>
+</li>
+<li>Chu trình Euler:
+<ul>
+<li><a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/Misc/EulerPath.h">Code C++ - RR</a></li>
+<li><a href="http://vnoi.info/problems/list/?tag=38&amp;page=1">Bài tập</a></li>
+</ul>
+</li>
+<li>Luồng cực đại:
+<ul>
+<li><a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/MaxFlow/MaxFlowDinic.h">Code luồng Dinic C++ - RR</a></li>
+<li><a href="http://vnoi.info/problems/list/?tag=41&amp;page=1">Bài tập</a></li>
+</ul>
+</li>
+<li>Cặp ghép:
+<ul>
+<li><a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/Matching/Matching.h">Code cặp ghép không trọng số C++ - RR</a></li>
+<li><a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/Matching/HungarianLMH.h">Code Cặp ghép có trọng số C++ - RR</a></li>
+<li><a href="http://vnoi.info/problems/list/?tag=42&amp;page=1">Bài tập</a></li>
+<li><a href="https://open.kattis.com/problems/engaging">Bài E - ACM ICPC Vietnam Regional 2017</a></li>
+</ul>
+</li>
+<li>2-SAT:
+<ul>
+<li><a href="https://drive.google.com/file/d/15UbO4GWo1G6cUBDnV6uWk0KxjuEdurCG/view?usp=sharing">2-SAT - Phạm Lê Quang</a></li>
+<li><a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/Graph/Misc/2sat.cpp">Code C++ - RR</a></li>
+<li><a href="http://vnoi.info/problems/list/?tag=70&amp;page=1">Bài tập</a></li>
+</ul>
+</li>
+<li>LCA:
+<ul>
+<li><a href="https://github.com/ngthanhtrung23/ACM_Notebook_new/blob/master/DataStructure/LCA_RMQ.h">Code C++ - RR</a></li>
+<li><a href="http://vnoi.info/problems/list/?tag=77&amp;page=1">Bài tập</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>

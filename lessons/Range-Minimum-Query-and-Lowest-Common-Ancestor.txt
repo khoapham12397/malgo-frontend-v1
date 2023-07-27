@@ -1,0 +1,431 @@
+<div id="wiki-content">
+<h1 class="pt-4">Bài toán RMQ và bài toán LCA</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/">translate</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/translate/topcoder/">topcoder</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Nguồn</strong>: <a href="https://www.topcoder.com/community/data-science/data-science-tutorials/range-minimum-query-and-lowest-common-ancestor/">Topcoder</a></p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#các-định-nghĩa">Các định nghĩa</a><ul><li><a href="#bài-toán-range-minimum-query-rmq">Bài toán Range Minimum Query (RMQ)</a></li><li><a href="#bài-toán-lowest-common-ancestor-lca">Bài toán Lowest Common Ancestor (LCA)</a></li></ul></li><li><a href="#bài-toán-rmq">Bài toán RMQ</a><ul><li><a href="#thuật-toán-o-1-o-n">Thuật toán $&lt; O(1), O(N) &gt;$</a></li><li><a href="#thuật-toán-o-n-2-o-1">Thuật toán $&lt; O(N^2),O(1) &gt;$</a></li><li><a href="#thuật-toán-o-n-o-sqrt-n">Thuật toán $&lt; O(N),O(\sqrt N) &gt;$</a></li><li><a href="#sparse-table-st">Sparse Table (ST)</a></li><li><a href="#cây-phân-đoạn-segment-tree-interval-tree-range-tree">Cây phân đoạn (segment tree, interval tree, range tree)</a></li></ul></li><li><a href="#bài-toán-lca">Bài toán LCA</a><ul><li><a href="#thuật-toán-o-n-o-n">Thuật toán $&lt; O(N), O(N) &gt;$</a></li><li><a href="#thuật-toán-o-n-o-sqrt-n-1">Thuật toán $&lt; O(N),O(\sqrt N) &gt;$</a></li><li><a href="#thuật-toán-o-nlogn-o-logn">Thuật toán $&lt; O(NlogN),O(logN) &gt;$</a></li></ul></li><li><a href="#từ-lca-đến-rmq">Từ LCA đến RMQ</a></li><li><a href="#từ-rmq-đến-lca">Từ RMQ đến LCA</a></li><li><a href="#thuật-toán-o-n-o-1-cho-bài-toán-rmq-thu-hẹp">Thuật toán $&lt; O(N),O(1) &gt;$ cho bài toán RMQ thu hẹp</a></li><li><a href="#một-số-bài-để-luyện-tập">Một số bài để luyện tập</a></li></ul></div>
+<p>Trong bài viết này, tác giả sẽ giới thiệu với bạn 2 bài toán cơ bản: Bài toán RMQ và bài toán LCA, cũng như mối liên hệ giữa 2 bài toán này.</p>
+<h1 class="editable"><a class="anchor" id="các-định-nghĩa" href="#các-định-nghĩa"></a>Các định nghĩa</h1>
+<p>Gỉa sử thuật toán có thời gian tiền xử lý là $f(n)$ và thời gian trả lời 1 truy vấn là $g(n)$. Ta ký hiệu độ phức tạp tổng quát của thuật toán là $&lt; f(n),g(n) &gt;$.</p>
+<p>Trong bài này, khi viết $\log{N}$, chúng ta hiểu là log cơ số 2 của $N$.</p>
+<h2 class="editable"><a class="anchor" id="bài-toán-range-minimum-query-rmq" href="#bài-toán-range-minimum-query-rmq"></a>Bài toán Range Minimum Query (RMQ)</h2>
+<p>Cho mảng $A[0,N-1]$. Bạn cần trả lời $Q$ truy vấn. Mỗi truy vấn gồm 2 số $i$, $j$ và bạn cần đưa ra vị trí của phần tử có giá trị nhỏ nhất trong đoạn từ $i$ đến $j$ của mảng $A$, ký hiệu là $RMQ_A(i,j)$.</p>
+<p><img src="http://community.topcoder.com/i/education/lca/RMQ_001.gif" /></p>
+<h2 class="editable"><a class="anchor" id="bài-toán-lowest-common-ancestor-lca" href="#bài-toán-lowest-common-ancestor-lca"></a>Bài toán Lowest Common Ancestor (LCA)</h2>
+<p>Cho cây có gốc $T$. Bạn cần trả lời $Q$ truy vấn. Mỗi truy vấn gồm 2 số $u$, $v$ và bạn cần tìm nút xa gốc nhất mà là tổ tiên của cả 2 nút $u$ và $v$, ký hiệu là $LCA_T(u,v)$.</p>
+<p><img src="http://community.topcoder.com/i/education/lca/LCA_001.gif" /></p>
+<h1 class="editable"><a class="anchor" id="bài-toán-rmq" href="#bài-toán-rmq"></a>Bài toán RMQ</h1>
+<h2 class="editable"><a class="anchor" id="thuật-toán-o-1-o-n" href="#thuật-toán-o-1-o-n"></a>Thuật toán $&lt; O(1), O(N) &gt;$</h2>
+<p>Thuật toán hiển nhiên nhất cho bài RMQ là ta không cần tiền xử lý gì cả. Với mỗi truy vấn, ta xét lần lượt từng phần tử từ $i$ đến $j$ để tìm phần tử nhỏ nhất. Hiển nhiên, độ phức tạp thuật toán này là $&lt; O(1), O(N) &gt;$.</p>
+<h2 class="editable"><a class="anchor" id="thuật-toán-o-n-2-o-1" href="#thuật-toán-o-n-2-o-1"></a>Thuật toán $&lt; O(N^2),O(1) &gt;$</h2>
+<p>Lưu giá trị của $RMQ_A(i,j)$ trong một bảng $M[0,N-1][0,N-1]$.</p>
+<p>Thuật toán sẽ có độ phức tạp $&lt; O(N^3),O(1) &gt;$. Tuy nhiên ta có thể sử dụng quy hoạch động để giảm độ phức tạp xuống $&lt; O(N^2),O(1) &gt;$ như sau:</p>
+<pre class="highlight"><code>    for i = 0 .. N-1
+        M[i][i] = i;
+
+    for i = 0 .. N-1
+        for j = i+1 .. N-1
+            if (A[M[i][j - 1]] &lt; A[j])
+                M[i][j] = M[i][j - 1];
+            else
+                M[i][j] = j;</code></pre>
+<p>Có thể thấy thuật toán này khá chậm và tốn bộ nhớ $O(N^2)$ nên sẽ không hữu ích với những dữ liệu lớn hơn.</p>
+<h2 class="editable"><a class="anchor" id="thuật-toán-o-n-o-sqrt-n" href="#thuật-toán-o-n-o-sqrt-n"></a>Thuật toán $&lt; O(N),O(\sqrt N) &gt;$</h2>
+<p>Ta có thể chia mảng thành $\sqrt N$ phần. Ta sử dụng một mảng $M[0, \sqrt N]$ để lưu giá trị mỗi phần. $M$ có thể dễ dàng tính được trong $O(N)$:</p>
+<p><img src="http://community.topcoder.com/i/education/lca/RMQ_002.gif" /></p>
+<p>Để tính $RMQ_A(i,j)$, chúng ta xét giá trị $M$ của $\sqrt N$ phần nằm trong đoạn $[i,j]$, và những phần tử ở đầu và cuối đoạn $[i,j]$ là giao giữa các phần. Ví dụ, để tính $RMQ_A(2,7)$ ta chỉ cần so sánh $A[2]$, $A[M[1]]$, $A[6]$ và $A[7]$.</p>
+<p>Dễ thấy thuật toán không sử dụng quá $3\sqrt N$ phép toán cho mỗi truy vấn.</p>
+<h2 class="editable"><a class="anchor" id="sparse-table-st" href="#sparse-table-st"></a>Sparse Table (ST)</h2>
+<p>Đây là một hướng tiếp cận tốt hơn để tiền xử lý $RMQ$ cho các đoạn con có độ dài $2^k$, sử dụng quy hoạch động.</p>
+<p>Ta sử dụng mảng $M[0,N-1][0,logN]$ với $M[i][j]$ là chỉ số của phần tử có giá trị nhỏ nhất trong đoạn có độ dài $2^j$ và bắt đầu ở $i$. Ví dụ:</p>
+<p><img src="http://community.topcoder.com/i/education/lca/RMQ_003.gif" /></p>
+<p>Để tính $M[i][j]$, ta xét $M$ của 2 nửa đầu và nửa cuối của đoạn, mỗi phần sẽ có độ dài $2^{j-1}$:</p>
+<p><img src="http://community.topcoder.com/i/education/lca/RMQ_007.gif" /></p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">process2</span><span class="p">(</span><span class="kt">int</span> <span class="n">M</span><span class="p">[</span><span class="n">MAXN</span><span class="p">][</span><span class="n">LOGMAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">A</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">;</span>
+
+  <span class="c1">// Khởi tạo M với các khoảng độ dài 1</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+
+  <span class="c1">// Tính M với các khoảng dài 2^j</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">j</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">A</span><span class="p">[</span><span class="n">M</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]])</span>
+        <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+      <span class="k">else</span>
+        <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<p>Để tính $RMQ_A(i,j)$ ta dựa vào 2 đoạn con độ dài $2^k$ phủ hết $[i,j]$, với $k= \lfloor log(j-i+1) \rfloor$:</p>
+<p><img src="http://community.topcoder.com/i/education/lca/RMQ_005.gif" /></p>
+<p>Độ phức tạp tổng quát của thuật toán này là $&lt; O(NlogN),O(1) &gt;$</p>
+<h2 class="editable"><a class="anchor" id="cây-phân-đoạn-segment-tree-interval-tree-range-tree" href="#cây-phân-đoạn-segment-tree-interval-tree-range-tree"></a>Cây phân đoạn (segment tree, interval tree, range tree)</h2>
+<p>Ta biểu diễn cây bằng một mảng $M[1,2*2^{[logN]+1}]$ với $M[i]$ là vị trí có giá trị nhỏ nhất trong đoạn mà nút $i$ quản lý.</p>
+<p><img src="http://community.topcoder.com/i/education/lca/RMQ_004.gif" /></p>
+<p>Khởi tạo:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">intnode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">e</span><span class="p">,</span> <span class="kt">int</span> <span class="n">M</span><span class="p">[</span><span class="n">MAXIND</span><span class="p">],</span> <span class="kt">int</span> <span class="n">A</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="n">e</span><span class="p">)</span>
+    <span class="n">M</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span>
+  <span class="k">else</span>
+  <span class="p">{</span>
+    <span class="c1">// Khởi tạo nút con trái và nút con phải</span>
+    <span class="n">initialize</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">node</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
+    <span class="n">initialize</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">node</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
+
+    <span class="c1">// Tính giá trị nhỏ nhất dựa trên 2 nút con</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">M</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">node</span><span class="p">]]</span> <span class="o">&lt;=</span> <span class="n">A</span><span class="p">[</span><span class="n">M</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">node</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
+      <span class="n">M</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">node</span><span class="p">];</span>
+    <span class="k">else</span>
+      <span class="n">M</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">node</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Truy vấn:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">node</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">e</span><span class="p">,</span> <span class="kt">int</span> <span class="n">M</span><span class="p">[</span><span class="n">MAXIND</span><span class="p">],</span> <span class="kt">int</span> <span class="n">A</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">;</span>
+
+  <span class="c1">// Đoạn cần tính không giao với đoạn của nút hiện tại</span>
+  <span class="c1">// --&gt; return -1</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">e</span> <span class="o">||</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+  <span class="c1">// Đoạn cần tính nằm trong hoàn toàn trong đoạn của nút hiện tại</span>
+  <span class="c1">// --&gt; return M[node]</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="n">i</span> <span class="o">&amp;&amp;</span> <span class="n">e</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">M</span><span class="p">[</span><span class="n">node</span><span class="p">];</span>
+
+  <span class="c1">// Tìm giá trị nhỏ nhất trong 2 cây con trái và cây con phải</span>
+  <span class="n">p1</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">node</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+  <span class="n">p2</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">node</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+
+  <span class="c1">// Tìm giá trị nhỏ nhất trong các cây con</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p1</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">M</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">p2</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p2</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">M</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">p1</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">p1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">A</span><span class="p">[</span><span class="n">p2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">M</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">p1</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">M</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">p2</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Mỗi truy vấn sẽ được thực hiện trong $O(logN)$ và thuật toán có độ phức tạp tổng quát là $&lt; O(N),O(logN) &gt;$</p>
+<h1 class="editable"><a class="anchor" id="bài-toán-lca" href="#bài-toán-lca"></a>Bài toán LCA</h1>
+<h2 class="editable"><a class="anchor" id="thuật-toán-o-n-o-n" href="#thuật-toán-o-n-o-n"></a>Thuật toán $&lt; O(N), O(N) &gt;$</h2>
+<p>Thuật toán đơn giản nhất như sau:</p>
+<ul>
+<li>Đặt $h(u)$ là độ cao của đỉnh $u$.</li>
+<li>Để trả lời truy vấn $u$, $v$. Không làm mất tính tổng quát, giả sử $h(u) &gt; h(v)$.
+<ul>
+<li>Ta đi từ $u$ đến $u'$, với $u'$ là tổ tiên của $u$ và $h(u') = h(v)$.</li>
+<li>Ta đồng thời đi từ $u$ và $v$ lên cha của nó, đến khi 2 đỉnh này trùng nhau (lúc đó cả 2 đỉnh đều ở LCA).</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/translate_topcoder_lca_rmq.png" /></p>
+<p>Ví dụ:</p>
+<ul>
+<li>Ta cần tìm LCA của $u$ và $v$. Ban đầu $h(u) &gt; h(v)$.</li>
+<li>Ta đi từ $u$ đến tổ tiên của $u$ mà có $h(u') = h(v)$: Đi từ $u$ lên $u4$ lên $u3$.</li>
+<li>Sau đó đồng thời đi từ $u$ và $v$ lên cha của nó đến khi 2 đỉnh bằng nhau:
+<ul>
+<li>$u = u2, v = v2$</li>
+<li>$u = u1, v = v1$</li>
+<li>$u = v = lca$</li>
+</ul>
+</li>
+</ul>
+<pre class="highlight"><code>function LCA(u, v):
+  if h(u) &lt; h(v):
+    swap(u, v)
+
+  while h(u) &gt; h(v):
+    u = parent(u)
+
+  while u != v:
+    u = parent(u)
+    v = parent(v)
+
+  return u</code></pre>
+<h2 class="editable"><a class="anchor" id="thuật-toán-o-n-o-sqrt-n-1" href="#thuật-toán-o-n-o-sqrt-n-1"></a>Thuật toán $&lt; O(N),O(\sqrt N) &gt;$</h2>
+<p>Ý tưởng chia input thành các phần bằng nhau như trong bài toán $RMQ$ cũng có thể được sử dụng với $LCA$. Chúng ta sẽ chia cây thành $\sqrt H$ phần, với $H$ là chiều cao cây. Phần đầu bao gồm các tầng từ $0$ đến $\sqrt H-1$, phần 2 sẽ gồm các tầng từ $\sqrt H$ đến $2\sqrt H-1$,…:</p>
+<p><img src="http://community.topcoder.com/i/education/lca/LCA_002.gif" /></p>
+<p>Giờ với mỗi nút chúng ta có thể biết được nút tổ tiên ở phần ngay trên nó. Ta sẽ tính giá trị này sử dụng mảng $P[1,MAXN]$:</p>
+<p><img src="http://community.topcoder.com/i/education/lca/LCA_003.gif" /></p>
+<p>Ta có thể tính $P$ bằng DFS ($T[i]$ là cha của $i$, $nr=\sqrt H$ và $L[i]$ là tầng của nút $i$)</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">node</span><span class="p">,</span> <span class="kt">int</span> <span class="n">T</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">N</span><span class="p">,</span> <span class="kt">int</span> <span class="n">P</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">L</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">nr</span><span class="p">)</span>  <span class="p">{</span>
+      <span class="kt">int</span> <span class="n">k</span><span class="p">;</span>
+
+  <span class="c1">// Nếu nút ở phần đầu tiên, thì P[node] = 1</span>
+  <span class="c1">// Nếu nút ở đầu của 1 phần, thì P[node] = T[node]</span>
+  <span class="c1">// Trường hợp còn lại, P[node] = P[T[node]]</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">nr</span><span class="p">)</span>
+    <span class="n">P</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">else</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">%</span> <span class="n">nr</span><span class="p">))</span>
+      <span class="n">P</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="n">node</span><span class="p">];</span>
+    <span class="k">else</span>
+      <span class="n">P</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">T</span><span class="p">[</span><span class="n">node</span><span class="p">]];</span>
+
+  <span class="c1">// DFS xuống các con</span>
+  <span class="k">for</span> <span class="n">each</span> <span class="n">son</span> <span class="n">k</span> <span class="n">of</span> <span class="n">node</span>
+    <span class="n">dfs</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">nr</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<p>Truy vấn:</p>
+<pre class="highlight"><code><span class="kt">int</span> <span class="nf">LCA</span><span class="p">(</span><span class="kt">int</span> <span class="n">T</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">P</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">L</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="c1">// Nếu còn nút ở phần tiếp theo không phải là tổ tiên của cả x và y,</span>
+  <span class="c1">// ta nhảy lên phần tiếp theo. Đoạn này cũng tương tự như thuật toán</span>
+  <span class="c1">// &lt;O(1), O(N)&gt; nhưng thay vì nhảy từng nút, ta nhảy từng đoạn.</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="n">P</span><span class="p">[</span><span class="n">y</span><span class="p">])</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L</span><span class="p">[</span><span class="n">y</span><span class="p">])</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
+    <span class="k">else</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">y</span><span class="p">];</span>
+
+  <span class="c1">// Giờ x và y ở cùng phần. Ta tìm LCA giống như thuật &lt;O(1), O(N)&gt;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L</span><span class="p">[</span><span class="n">y</span><span class="p">])</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
+    <span class="k">else</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="n">y</span><span class="p">];</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Hàm này sử dụng tối đa $2\sqrt H$ phép toán. Với cách tiếp cận này chúng ta có thuật toán $&lt; O(N),O(\sqrt H) &gt;$, trong trường hợp tệ nhất thì $N=H$ nên độ phức tạp tổng quát của thuật toán là $&lt; O(N),O(\sqrt N) &gt;$.</p>
+<h2 class="editable"><a class="anchor" id="thuật-toán-o-nlogn-o-logn" href="#thuật-toán-o-nlogn-o-logn"></a>Thuật toán $&lt; O(NlogN),O(logN) &gt;$</h2>
+<p>Ứng dụng Sparse Table chúng ta có một thuật toán nhanh hơn. Đầu tiên chúng ta tính một bảng $P[1,N][1,logN]$ với $P[i][j]$ là tổ tiên thứ $2^j$ của $i$:</p>
+<p><img src="https://community.topcoder.com/i/education/lca/LCA_005.gif" /></p>
+<p>Code:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">process3</span><span class="p">(</span><span class="kt">int</span> <span class="n">N</span><span class="p">,</span> <span class="kt">int</span> <span class="n">T</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">P</span><span class="p">[</span><span class="n">MAXN</span><span class="p">][</span><span class="n">LOGMAXN</span><span class="p">])</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">;</span>
+
+  <span class="c1">// Khởi tạo</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+      <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+  <span class="c1">// Khởi tạo cha thứ 2^0 = 1 của mỗi nút</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+  <span class="c1">// Quy hoạch động</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<p>Bước khởi tạo này tốn $O(NlogN)$ bộ nhớ lẫn thời gian.</p>
+<p>Cách tìm LCA giống hệt như thuật toán $&lt;O(1), O(N)&gt;$, nhưng để tăng tốc, thay vì nhảy lên cha ở mỗi bước, thì ta dùng mảng $P$ để nhảy, từ đó thu được độ phức tạp $O(logN)$ cho mỗi bước. Cụ thể:</p>
+<ul>
+<li>Gọi $h(u)$ là độ cao của nút $u$. Để tính $LCA(u, v)$, giả sử $h(u) &gt; h(v)$, đầu tiên ta tìm $u'$ là tổ tiên của $u$ và có $h(u') = h(v)$:
+<ul>
+<li>Rõ ràng, ta cần nhảy từ $u$ lên cha thứ $h(u) - h(v)$. Ta chuyển $h(u) - h(v)$ sang hệ 2. Duyệt $j$ từ $log(h(u))$ xuống $0$, nếu tổ tiên thứ $2^j$ của $u$ không cao hơn $v$ thì ta cho $p$ nhảy lên tổ tiên thứ $2^j$ của nó.</li>
+</ul>
+</li>
+<li>Sau khi $u$ và $v$ đã ở cùng tầng, ta sẽ tính $LCA(u, v)$: cũng như trên, ta sẽ duyệt $j$ từ $log(h(u))$ xuống $0$, nếu tổ tiên thứ $2^j$ của $u$ và $v$ khác nhau thì chắc chắn $LCA(u, v)$ sẽ ở cao hơn, khi đó ta sẽ cho cả $u$ và $v$ nhảy lên tổ tiên thứ $2^j$ của nó. Cuối cùng thì $u$ và $v$ sẽ có cùng cha, vậy nên khi đó $LCA(u, v) = T[u] = T[v]$.</li>
+</ul>
+<p>Code:</p>
+<pre class="highlight"><code>
+function LCA(N, P[MAXN][MAXLOGN], T[MAXN], h[MAXN], u, v):
+  if h(u) &lt; h(v):
+    // Đổi u và v
+    swap(u, v)
+
+  log = log2( h(u) )
+
+  // Tìm tổ tiên u' của u sao cho h(u') = h(v)
+
+  for i = log .. 0:
+    if h(u) - 2^i &gt;= h(v):
+      u = P[u][i]
+
+  if u == v:
+    return u
+
+  // Tính LCA(u, v):
+  for i = log .. 0:
+    if P[u][i] != -1 and P[u][i] != P[v][i]:
+      u = P[u][i]
+      v = P[v][i]
+
+  return T[u];</code></pre>
+<p>Mỗi lần gọi hàm này chỉ tốn tối đa $2logH$ phép toán. Trong trường hợp tệ nhất thì $H=N$ nên độ phức tạp tổng quát của thuật toán này là $&lt; O(NlogN),O(logN) &gt;$.</p>
+<p>Bài toán LCA còn có nhiều cách giải thú vị khác. Các bạn có thể tham khảo thêm trong <a class="internal absent" href="https://vnoi.info/wiki/algo/data-structures/lca">bài viết này</a>.</p>
+<h1 class="editable"><a class="anchor" id="từ-lca-đến-rmq" href="#từ-lca-đến-rmq"></a>Từ LCA đến RMQ</h1>
+<p>Ta có thể biến đổi bài toán LCA thành bài toán RMQ trong thời gian tuyến tính, do đó mà mọi thuật toán để giải bài toán RMQ đều có thể sử dụng để giải bài toán LCA. Hãy cùng xét ví dụ sau:</p>
+<p><img src="http://community.topcoder.com/i/education/lca/LCA_006.gif" /></p>
+<p><img src="http://community.topcoder.com/i/education/lca/LCA_007.gif" /></p>
+<p>Để ý rằng $LCA_T(u,v)$ là nút gần gốc nhất xuất hiện giữa lúc thăm $u$ và $v$ trong phép duyệt DFS. Vì thế ta có thể xét tất cả các phần tử giữa các cặp chỉ số bất kì của $u$ và $v$ trong dãy Euler Tour và tìm nút cao nhất. Ta xây dựng 3 mảng:</p>
+<ul>
+<li>
+<p>$E[1,2*N-1]$: dãy thứ tự thăm của các nút trên đường đi Euler, $E[i]$ là nút được thăm thứ $i$ trên đường đi.</p>
+</li>
+<li>
+<p>$L[1,2*N-1]$: tầng của các nút, $L[i]$ là tầng của nút $E[i]$</p>
+</li>
+<li>
+<p>$H[1,N]$: $H[i]$ là vị trí xuất hiện đầu tiên của nút $i$ trên Euler Tour</p>
+</li>
+</ul>
+<p>Gỉa sử $H[u]&lt;H[v]$. Dễ thấy việc cần làm lúc này là tìm nút có $L$ nhỏ nhất trên $E[H[u]..H[v]]$. Do đó $LCA_T(u,v)=E[RMQ_L(H[u],H[v]))]$. Ví dụ:</p>
+<p><img src="http://community.topcoder.com/i/education/lca/LCA_008.gif" /></p>
+<p>Cũng dễ thấy là mỗi 2 phần tử liên tiếp trong $L$ đều hơn kém nhau đúng 1 đơn vị.</p>
+<h1 class="editable"><a class="anchor" id="từ-rmq-đến-lca" href="#từ-rmq-đến-lca"></a>Từ RMQ đến LCA</h1>
+<p>Một <a href="http://wcipeg.com/wiki/Cartesian_tree"><strong>cây Cartesian</strong></a> của một dãy $A[0,N-1]$ là một cây nhị phân $C(A)$ có gốc là phần tử nhỏ nhất trong $A$ và có vị trí $i$. Cây con trái của $C(A)$ là cây Cartesian của $A[0,i-1]$ nếu $i&gt;0$, ngược lại thì không có. Cây con phải của $C(A)$ là cây Cartesian của $A[i+1,N-1]$.</p>
+<p>Dễ thấy rằng $RMQ_A(i,j)=LCA_C(i,j)$.</p>
+<p><img src="http://community.topcoder.com/i/education/lca/LCA_009.gif" /></p>
+<p><img src="http://community.topcoder.com/i/education/lca/LCA_010.gif" /></p>
+<p>Bây giờ việc cần làm chỉ còn là tính $C(A)$ trong thời gian tuyến tính. Chúng ta sẽ sử dụng một cái stack.</p>
+<ul>
+<li>
+<p>Ban đầu stack rỗng. Ta lần lượt đẩy các phần tử của $A$ vào stack.</p>
+</li>
+<li>
+<p>Tại bước thứ $i$, $A[i]$ sẽ được đẩy vào ngay cạnh phần tử cuối cùng không lớn hơn $A[i]$ trong stack, các phần tử lớn hơn $A[i]$ bị loại khỏi stack. Phần tử trong stack ở vị trí của $A[i]$ trước khi chèn $A[i]$ vào sẽ là con trái của $i$, còn $i$ sẽ là con phải của phần tử trước nó trong stack. Ở mỗi bước thì phần tử đầu tiên trong stack sẽ là gốc của cây Cartesian.</p>
+</li>
+</ul>
+<p>Ví dụ đối với cây ở trên:</p>
+<table>
+<thead>
+<tr>
+<th>Bước</th>
+<th>Stack</th>
+<th>Sự hình thành cây</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0 là nút duy nhất trong cây</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0 1</td>
+<td>1 được đẩy vào cuối stack. Giờ 1 là con phải của 0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0 2</td>
+<td>A[2] &lt; A[1]. Lúc này 2 là con phải của 0 và con trái của 2 là 1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3</td>
+<td>A[3] hiện đang là phần tử nhỏ nhất cho nên mọi phần tử của stack bị lấy ra ra và 3 trở thành gốc cây. Con trái của 3 là 0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>3 4</td>
+<td>4 được thêm vào cạnh 3 và con phải của 3 là 4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>3 4 5</td>
+<td>5 được thêm vào cạnh 4, con phải của 4 là 5</td>
+</tr>
+<tr>
+<td>6</td>
+<td>3 4 5 6</td>
+<td>6 được thêm vào cạnh 5, con phải của 5 là 6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>3 4 5 6 7</td>
+<td>7 được thêm vào cạnh 6, con phải của 6 là 7</td>
+</tr>
+<tr>
+<td>8</td>
+<td>3 8</td>
+<td>8 được thêm vào cạnh 3, các phần tử lớn hơn bị loại bỏ. 8 giờ là con phải của 3 và con trái của 8 là 4</td>
+</tr>
+<tr>
+<td>9</td>
+<td>3 8 9</td>
+<td>9 được thêm vào cạnh 8, con phải của 8 là 9</td>
+</tr>
+</tbody>
+</table>
+<p>Vì mỗi phần tử của $A$ đều chỉ đẩy vào và lấy ra 1 lần nên độ phức tạp thuật toán là $O(N)$.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">computeTree</span><span class="p">(</span><span class="kt">int</span> <span class="n">A</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="kt">int</span> <span class="n">N</span><span class="p">,</span> <span class="kt">int</span> <span class="n">T</span><span class="p">[</span><span class="n">MAXN</span><span class="p">])</span>  <span class="p">{</span>
+      <span class="kt">int</span> <span class="n">st</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+  <span class="c1">// Bắt đầu với stack rỗng</span>
+  <span class="c1">// Ở bước thứ i ta đẩy i và stack</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">//Tìm vị trí của phần tử đầu tiên nhỏ hơn hoặc bằng A[i] trong stack</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">top</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">k</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">A</span><span class="p">[</span><span class="n">st</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+      <span class="n">k</span><span class="o">--</span><span class="p">;</span>
+
+    <span class="c1">// Chỉnh sửa cây theo mô tả ở trên</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;</span> <span class="n">top</span><span class="p">)</span>
+      <span class="n">T</span><span class="p">[</span><span class="n">st</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+
+    <span class="c1">// Đẩy i vào stack rồi xóa các phần tử lớn hơn A[i]</span>
+    <span class="n">st</span><span class="p">[</span><span class="o">++</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">k</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="c1">// Phần tử đầu tiên trong stack là gốc cây nên nó không có cha</span>
+  <span class="n">T</span><span class="p">[</span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h1 class="editable"><a class="anchor" id="thuật-toán-o-n-o-1-cho-bài-toán-rmq-thu-hẹp" href="#thuật-toán-o-n-o-1-cho-bài-toán-rmq-thu-hẹp"></a>Thuật toán $&lt; O(N),O(1) &gt;$ cho bài toán RMQ thu hẹp</h1>
+<p>Bài toán $RMQ$ phát sinh khi giải bài toán LCA chỉ là trường hợp đặc biệt của bài toán RMQ tổng quát, do ta có điều kiện $|A[i]-A[i-1]|=1$ với mọi $i\in[1,N-1]$ (lý do là 2 phần tử liên tiếp có quan hệ cha con với nhau). Ta gọi bài toán $RMQ$ này là bài toán RMQ thu hẹp. Trong 1 số tài liệu còn được gọi là bài toán $\pm 1 RMQ$. Trong mục này, ta sẽ nghiên cứu một thuật toán có độ phức tạp tốt hơn cho bài toán RMQ thu hẹp.</p>
+<p>Hãy biến đổi $A$ thành một dãy nhị phân có $N-1$ phần tử, với $B[i]=A[i]-A[i-1]$. Như vậy $A[i]=A[0]+B[1]+..+B[i]$ và $B[i]$ chỉ nhận giá trị $1$ hoặc $-1$.</p>
+<p>Chúng ta chia $A$ thành các block kích thước $l=[log(N)/2]$. Gọi $M[i]$ là giá trị nhỏ nhất trong block thứ $i$ và $D[i]$ là vị trí của giá trị nhỏ nhất này trong $A$. Cả $M$ và $D$ đều có $N/l$ phần tử. Tính Sparse Table cho $M$, tốn $O(N/l*log(N/l))=O(N)$ về bộ nhớ và thời gian.</p>
+<p>Dùng sparse table cho mảng $M$, ta tính được giá trị nhỏ nhất của 1 vài block trong $O(1)$. Nhưng ta vẫn cần tính $RMQ$ giữa 2 vị trí bất kì trong cùng một block. Để làm được điều này, nhận thấy $B$ là một dãy nhị phân, mà mỗi block có $l$ phần tử. Vì số lượng dãy nhị phân độ dài $l$ là $2^l=\sqrt N$ là một số khá nhỏ nên chúng ta có thể tính được mảng $P[\sqrt(N)][l][l]$, với $P(b, i, j)$ là giá trị nhỏ nhất trong các bit từ $i$ đến $j$ của dãy nhị phân $b$. Dễ dàng khởi tạo $P$ bằng quy hoạch động trong cả thời gian và bộ nhớ $O(\sqrt N*l^2)$. Chú ý rằng, ta cũng cần biết giá trị $b$ trong $O(1)$ với mỗi block của mảng $A$. Do đó, ta cần khởi tạo mảng $T$ với $N/l$ phần tử, mỗi phần tử cho biết giá trị $b$ của block tương ứng.</p>
+<p>Kết hợp mảng $T$, $P$ với Sparse table cho mảng $M$, ta có thể trả lời truy vấn $RMQ_A(i, j)$ trong $O(1)$. Ta có 2 trường hợp:</p>
+<ol>
+<li>$i$ và $j$ thuộc cùng block.
+<ul>
+<li>Ta dùng mảng $T$ để biết dãy nhị phân $b$ ở block chứa $i$ và $j$.</li>
+<li>Tính $u$ và $v$ là vị trí của $i$ và $j$ trong block.</li>
+<li>Kết quả chính là $P(b, u, v)$.</li>
+</ul>
+</li>
+<li>$i$ và $j$ thuộc 2 block khác nhau: kết quả sẽ là giá trị nhỏ nhất của 3 giá trị:
+<ul>
+<li>Giá trị nhỏ nhất của các phần tử trong block chứa $i$ và nằm bên phải $i$:</li>
+</ul>
+<ul>
+<li>Dùng mảng $T$ để biết được giá trị của dãy nhị phân của block chứa $i$ là $b$.</li>
+<li>Tính chỉ số của $i$ trong block chứa $i$ là $u$.</li>
+<li>Kết quả chính là $P(b, i, l)$.
+- Giá trị nhỏ nhất của các phần tử trong block chứa $j$ và nằm bên trái $j$: làm tương tự trường hợp trên
+- Giá trị nhỏ nhất của các phần tử thuộc các block nằm giữa block chứa $i$ và block chứa $j$. Dùng Sparse table cho $M$, ta dễ dàng tính
+được giá trị này trong $O(1)$.</li>
+</ul>
+</li>
+</ol>
+<h1 class="editable"><a class="anchor" id="một-số-bài-để-luyện-tập" href="#một-số-bài-để-luyện-tập"></a>Một số bài để luyện tập</h1>
+<ul>
+<li><a href="http://codeforces.com/contest/487/problem/B">CF #278 Div 1 - B</a></li>
+<li><a href="http://codeforces.com/contest/475/problem/D">Bayan 2015 Contest Warm Up - D</a></li>
+<li><a href="http://codeforces.com/gym/100570/problem/A">Hello 2015 (Div.1) - A</a></li>
+<li><a href="http://www.spoj.com/problems/LCA/">LCA</a></li>
+<li><a href="http://www.spoj.pl/problems/QTREE2/">QTREE2</a></li>
+<li><a href="https://oj.vnoi.info/problem/hbtlca/">HBTLCA</a></li>
+<li><a href="https://oj.vnoi.info/problem/upgranet/">UPGRANET</a></li>
+<li><a href="https://oj.vnoi.info/problem/votree/">VOTREE</a></li>
+<li><a href="http://www.topcoder.com/stat?c=problem_statement&amp;pm=6551&amp;rd=9990">SRM 310 - Floating Median</a></li>
+<li><a href="http://codeforces.com/problemset/problem/697/C">Lorenzo Von Matterhorn</a></li>
+<li><a href="http://acm.pku.edu.cn/JudgeOnline/problem?id=1986">http://acm.pku.edu.cn/JudgeOnline/problem?id=1986</a></li>
+<li><a href="http://acm.pku.edu.cn/JudgeOnline/problem?id=2374">http://acm.pku.edu.cn/JudgeOnline/problem?id=2374</a></li>
+<li><a href="http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p=2045">http://acmicpc-live-archive.uva.es/nuevoportal/data/problem.php?p=2045</a></li>
+<li><a href="http://acm.pku.edu.cn/JudgeOnline/problem?id=2763">http://acm.pku.edu.cn/JudgeOnline/problem?id=2763</a></li>
+<li><a href="http://acm.uva.es/p/v109/10938.html">http://acm.uva.es/p/v109/10938.html</a></li>
+<li><a href="http://acm.sgu.ru/problem.php?contest=0&amp;problem=155">http://acm.sgu.ru/problem.php?contest=0&amp;problem=155</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

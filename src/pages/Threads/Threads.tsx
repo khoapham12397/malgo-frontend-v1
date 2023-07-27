@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import {  useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PaginationControl } from 'react-bootstrap-pagination-control';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
@@ -14,7 +14,7 @@ import { postThread } from '../../state/actions/threadAction';
 import { fetchCategoriesAndTags } from '../../state/actions/threadBaseAction';
 import { fetchThreads } from '../../state/actions/threadListAction';
 import { getUsernameFromStorage } from '../../utils/getUser';
-import "./Threads.css";
+import './Threads.css';
 
 const Threads = () => {
   const navigate = useNavigate();
@@ -22,13 +22,11 @@ const Threads = () => {
   const location = useLocation();
   const dispatch: Dispatch<any> = useDispatch();
   const [params] = useSearchParams();
-  const state :any= useSelector((state: RootState) => state.threadList);
-  
+  const state: ThreadListState = useSelector((state: RootState) => state.threadList);
   const threadCategories = useSelector(
     (state: RootState) => state.threadBase.categories
   );
 
-  
   useEffect(() => {
     if (threadCategories.length == 0) dispatch(fetchCategoriesAndTags());
   }, []);
@@ -48,8 +46,8 @@ const Threads = () => {
 
     let type = params.get('type');
     type = type ? type : 'latest';
-    const page = Number(params.get('page') ? params.get('page') : '1');
-
+    //const page = Number(params.get('page') ? params.get('page') : '1');
+    const page = params.get('page')?Number(params.get('page')):state.page>0?state.page:1;
     if (
       state.category !== category ||
       state.type !== type ||
@@ -65,7 +63,6 @@ const Threads = () => {
         )
       );
     }
-    
   }, [location, threadCategories]);
 
   useEffect(() => {
@@ -76,66 +73,68 @@ const Threads = () => {
           state.categoryId,
           state.type,
           state.page,
-          myUsername ? myUsername : undefined        )
+          myUsername ? myUsername : undefined
+        )
       );
   }, [myUsername]);
 
-  const handleSubmitThread = (params: CreateThreadParam)=>{
+  const handleSubmitThread = (params: CreateThreadParam) => {
     postThread(params);
-  }
-  
-  
+  };
+
   return (
     <div id='discuss-page'>
       <div className='container'>
-      
         <div>
-          <br/>
-          <div className='d-flex' style={{justifyContent:'center'}}>
-            <div style={{marginTop:'10px'}}>
-              <ModalWritePost handleSubmitThread={handleSubmitThread} type='thread'/>
-              </div>
+          <br />
+          <div className='d-flex' style={{ justifyContent: 'center' }}>
+            <div style={{ marginTop: '10px' }}>
+              <ModalWritePost
+                handleSubmitThread={handleSubmitThread}
+                type='thread'
+              />
+            </div>
             <div>
-              <SearchThreadBox/>
+              <SearchThreadBox />
             </div>
           </div>
 
           <div className='space-between'>
-          <ThreadTypeBar/>
+            <ThreadTypeBar />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              {state.itemPerPage > 0 ? (
-                <PaginationControl
-                  page={state.page}
-                  between={4}
-                  total={state.totalThreads}
-                  limit={state.itemPerPage}
-                  changePage={page => {
-                    navigate(
-                      '/threads/' +
-                        state.category +
-                        '?type=' +
-                        state.type +
-                        '&page=' +
-                        page
-                    );
-                  }}
-                  ellipsis={1}
-                />
-              ) : (
-                ''
-              )}
-              
-
-            </div>
+            {state.itemPerPage > 0 ? (
+              <PaginationControl
+                page={state.page}
+                between={4}
+                total={state.totalThreads}
+                limit={state.itemPerPage}
+                changePage={page => {
+                  navigate(
+                    '/threads/' +
+                      state.category +
+                      '?type=' +
+                      state.type +
+                      '&page=' +
+                      page
+                  );
+                }}
+                ellipsis={1}
+              />
+            ) : (
+              ''
+            )}
+          </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems:'center' }}>
-          
-          
-        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        ></div>
         <div className='d-flex'>
           <div className='thread-list'>
-           
             <ThreadSummaryList />
             <div style={{ display: 'flex', justifyContent: 'left' }}>
               {state.itemPerPage > 0 ? (
@@ -162,8 +161,8 @@ const Threads = () => {
             </div>
           </div>
 
-          <div style={{ width: '25%'}}>
-            <ThreadSideBar/>
+          <div style={{ width: '25%' }}>
+            <ThreadSideBar />
           </div>
         </div>
       </div>

@@ -6,10 +6,12 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { likeThreadInList } from '../../state/actions/threadListAction';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
-import { setShareResource, toggleFriendsModal } from '../../state/reducers/chatReducer';
+import { MathJax } from 'better-react-mathjax';
+import {
+  setShareResource,
+  toggleFriendsModal
+} from '../../state/reducers/chatReducer';
 import { getFixedUsername, getUsernameFromStorage } from '../../utils/getUser';
-
 
 interface ThreadItemProps {
   threadData: Thread;
@@ -17,28 +19,30 @@ interface ThreadItemProps {
 
 export const ThreadSummary = ({ threadData }: ThreadItemProps) => {
   // id, author(username) + avatar username: + summary , created date , title
-  
-  const dispatch: Dispatch<any> = useDispatch();
-  const myUsername = getUsernameFromStorage();  
 
-  const handleShareClick = ()=>{
+  const dispatch: Dispatch<any> = useDispatch();
+  const myUsername = getUsernameFromStorage();
+
+  const handleShareClick = () => {
     const shareResource = {
-      id: threadData.id, type: 'thread'
-    }
-    
-    dispatch(setShareResource({shareResource}));
+      id: threadData.id,
+      type: 'thread'
+    };
+
+    dispatch(setShareResource({ shareResource }));
 
     dispatch(toggleFriendsModal({}));
-    
-  }
+  };
   const handleLike = () => {
-    dispatch(likeThreadInList(threadData.id, myUsername ? myUsername : undefined));
+    dispatch(
+      likeThreadInList(threadData.id, myUsername ? myUsername : undefined)
+    );
   };
 
   return (
     <div className='thread-item'>
       <div className='space-between'>
-        <div className='d-flex' style={{alignItems:'center'}}>
+        <div className='d-flex' style={{ alignItems: 'center' }}>
           <img
             src={getAvatarLink(threadData.author.username)}
             className='avatar-icon'
@@ -60,9 +64,7 @@ export const ThreadSummary = ({ threadData }: ThreadItemProps) => {
         </Link>
       </div>
       <div id='summary-content'>
-        <MathJaxContext>
-          <MathJax>{parse(threadData.content)}</MathJax>
-        </MathJaxContext>
+        <MathJax>{parse(threadData.content)}</MathJax>
       </div>
 
       <div className='space-between'>
@@ -75,8 +77,7 @@ export const ThreadSummary = ({ threadData }: ThreadItemProps) => {
         </div>
         <div className='d-flex'>
           <div className='interact-item'>
-            <BiShare size={22} onClick = {handleShareClick}/>
-            
+            <BiShare size={22} onClick={handleShareClick} />
           </div>
           <div className='interact-item'>
             <BiCommentDetail size={22} />

@@ -1,0 +1,565 @@
+<div id="wiki-content">
+<h1 class="pt-4">Sắp xếp Tô-pô (Topological Sort)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/graph-theory/">graph-theory</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Nguồn:</strong> <a href="http://wcipeg.com/wiki/Topological_sort">wcipeg</a></p>
+<p><strong>Biên soạn:</strong></p>
+<ul>
+<li>Nguyễn Châu Khanh - VNU University of Engineering and Technology (VNU-UET)</li>
+<li>Bùi Minh Hoạt - VNU University of Engineering and Technology (VNU-UET)</li>
+</ul>
+<p><strong>Reviewer:</strong></p>
+<ul>
+<li>Hoàng Xuân Nhật</li>
+</ul>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#mở-đầu">Mở đầu</a></li><li><a href="#bài-toán-sắp-xếp-tô-pô">Bài toán sắp xếp Tô-pô</a></li><li><a href="#cảm-hứng">Cảm hứng</a></li><li><a href="#điều-kiện-tồn-tại-thứ-tự-tô-pô">Điều kiện tồn tại thứ tự Tô-pô</a></li><li><a href="#bài-toán-1-sắp-xếp-topo">Bài toán 1 - Sắp xếp TOPO</a><ul><li><a href="#đề-bài">Đề bài</a></li><li><a href="#thuật-toán-1">Thuật toán 1</a><ul><li><a href="#cài-đặt">Cài đặt</a></li><li><a href="#đánh-giá">Đánh giá</a></li></ul></li><li><a href="#thuật-toán-2">Thuật toán 2</a><ul><li><a href="#cài-đặt-1">Cài đặt</a></li><li><a href="#đánh-giá-1">Đánh giá</a></li></ul></li></ul></li><li><a href="#bài-toán-2-đường-đi-dài-nhất">Bài toán 2 - Đường đi dài nhất</a><ul><li><a href="#đề-bài-1">Đề bài</a></li><li><a href="#thuật-toán">Thuật toán</a><ul><li><a href="#cài-đặt-2">Cài đặt</a></li><li><a href="#đánh-giá-2">Đánh giá</a></li></ul></li></ul></li><li><a href="#bài-toán-3-fox-and-names">Bài toán 3 - Fox And Names</a><ul><li><a href="#đề-bài-2">Đề bài</a></li><li><a href="#thuật-toán-1">Thuật toán</a><ul><li><a href="#cài-đặt-3">Cài đặt</a></li><li><a href="#đánh-giá-3">Đánh giá</a></li></ul></li></ul></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="mở-đầu" href="#mở-đầu"></a>Mở đầu</h1>
+<ul>
+<li>Bài viết này sẽ giúp bạn tìm hiểu về <strong>bài toán sắp xếp Tô-pô</strong> <em>(Topological Sort)</em>. Sắp xếp Tô-pô là một trong những bài toán có tính ứng dụng cao trong Tin học lẫn Toán học và cả trong đời sống.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="bài-toán-sắp-xếp-tô-pô" href="#bài-toán-sắp-xếp-tô-pô"></a>Bài toán sắp xếp Tô-pô</h1>
+<ul>
+<li>
+<strong>Thứ tự Tô-pô</strong> của một đồ thị có hướng là một thứ tự sắp xếp của các đỉnh sao cho với mọi cung từ đỉnh $u$ đến đỉnh $v$ trong đồ thị, $u$ luôn nằm trước $v$.</li>
+<li>Bài toán xác định <strong>thứ tự Tô-pô</strong> gọi là <strong>Bài toán sắp xếp Tô-pô</strong>.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/topological_sort_img1.png" /></p>
+<h1 class="editable"><a class="anchor" id="cảm-hứng" href="#cảm-hứng"></a>Cảm hứng</h1>
+<ul>
+<li>Sắp xếp Tô-pô được áp dụng nhiều nhất đối với các bài toán biểu diễn mối quan hệ <strong>phụ thuộc</strong> giữa các đối tượng.</li>
+<li>Ví dụ như nó có thể được áp dụng trong việc lập ra lịch trình công việc. Một tập hợp các công việc phụ thuộc lẫn nhau có thể được sắp xếp theo một thứ tự nhất định để chúng được thực hiện.</li>
+<li>Ta có ví dụ thực tế như sau:
+<ul>
+<li>Để có được bằng cấp, sinh viên phải hoàn thành một số khóa học bắt buộc. Các khóa học này không nhất thiết phải được hoàn thành theo bất kỳ trình tự nhất định nào, nhưng có một số khóa học là <strong>điều kiện tiên quyết</strong> cho những khóa học khác.</li>
+<li>Ví dụ, khóa học "Giới thiệu về thuật toán trong Tin học" có thể <em>phụ thuộc</em> vào các khóa học “Nhập môn thuật toán”, “Giới thiệu về cấu trúc dữ liệu”, “Nhập môn lập trình”, … Đây là mối quan hệ <em>phụ thuộc</em>; việc tham gia các khóa học sau <em>phụ thuộc</em> vào việc tham gia các khóa học tiên quyết của nó.</li>
+<li>Từ đó, ta có thể xây dựng một đồ thị với mỗi đỉnh tương ứng với một khóa học và mỗi cạnh có hướng từ đỉnh $u$ đến đỉnh $v$ khi và chỉ khi khóa học tương ứng với đỉnh $u$ là <strong>điều kiện tiên quyết</strong> cho khóa học tương ứng với đỉnh $v$. Việc sắp xếp thứ tự các đỉnh của đồ thị này sẽ cung cấp một thứ tự khả thi mà các khóa học có thể được thực hiện.</li>
+<li>Tất nhiên, nó <strong>không thể</strong> được sử dụng để giải quyết vấn đề nghiêm trọng hơn về <strong>xung đột lịch trình</strong>.</li>
+</ul>
+</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="điều-kiện-tồn-tại-thứ-tự-tô-pô" href="#điều-kiện-tồn-tại-thứ-tự-tô-pô"></a>Điều kiện tồn tại thứ tự Tô-pô</h1>
+<ul>
+<li>Dễ nhận thấy rằng, một đồ thị <strong>tồn tại thứ tự Tô-pô</strong> thì đồ thị đó phải là đồ thị có hướng và không có chu trình <em>(Directed Acyclic Graph - DAG)</em>. Vì nếu đồ thị có chứa một chu trình, $v_1 v_2 … v_n v_1$ thì $v_2$ phải đứng sau $v_1$ theo thứ tự Tô-pô, $v_3$ phải đứng sau $v_2$, v.v…; nhưng sau đó $v_1$ phải đứng sau $v_1$, dẫn đến kết luận vô lý khi $v_1$ phải đứng sau chính nó trong danh sách.</li>
+<li>Vậy câu hỏi đặt ra là liệu điều kiện này có đủ hay không? Có đúng là một đồ thị có thể được sắp xếp theo thứ tự Tô-pô khi và chỉ khi đồ thị đó là một $DAG$ ? Câu trả lời là <strong><em>đúng</em></strong>.</li>
+<li><strong>Định lý : <em>Một đồ thị tồn tại thứ tự Tô-pô khi và chỉ khi đồ thị đó là DAG. Đồng nghĩa, mọi DAG đều luôn tồn tại ít nhất một thứ tự Tô-pô, và có thuật toán để tìm thứ tự Tô-pô trong thời gian tuyến tính.</em></strong></li>
+<li>
+<strong>Chứng minh :</strong>
+<ul>
+<li>Rõ ràng, một $DAG$ chỉ gồm $1$ đỉnh duy nhất luôn có thể được sắp xếp theo thứ tự Tô-pô. Khi đó, danh sách Tô-pô trong trường hợp này chỉ bao gồm chính đỉnh đó.</li>
+<li>Giả sử rằng bất kỳ $DAG$ nào có $n$ đỉnh đều có thể được sắp xếp theo thứ tự Tô-pô. Bây giờ hãy xem xét các $DAG$ có $n+1$ đỉnh. Nhớ lại rằng mọi $DAG$ đều có ít nhất một <strong>đỉnh nguồn</strong> (đỉnh không có cung vào). Hãy để <strong>đỉnh nguồn</strong> này làm giá trị đầu tiên trong danh sách Tô-pô, rồi loại bỏ đỉnh này cùng cách cạnh kề với nó ra khỏi đồ thị. Khi đó, ta sẽ có được đồ thị mới gồm $n$ đỉnh là đồ thị con của đồ thị ban đầu. Rõ ràng, các chu trình không thể được tạo ra bằng cách loại bỏ các cạnh và đỉnh. Bằng giả thiết ban đầu, ta có thể sắp xếp đồ thị con này theo thứ tự Tô-pô. Sau đó, ta nối thứ tự Tô-pô của đồ thị con vào cuối danh sách hiện tại để có được danh sách thứ tự Tô-pô của đồ thị $n+1$ đỉnh với <strong>đỉnh nguồn</strong> là giá trị đầu tiên trong danh sách.</li>
+<li>
+<strong>Ví dụ minh họa:</strong> Để xác định thứ tự Tô-pô của $DAG$ gồm $7$ đỉnh, ta thêm đỉnh nguồn $0$ vào trong danh sách Tô-pô rồi nối thêm thứ tự Tô-pô của đồ thị con $6$ đỉnh.
+<img src="https://vnoi.info/wiki/uploads/topological_sort_img2.png" />
+</li>
+<li>Bây giờ, với hai đỉnh bất kỳ $u$ và $v$ trong danh sách Tô-pô, giả sử $u$ đứng trước $v$:
+<ul>
+<li>Nếu $u$ là giá trị đầu tiên trong danh sách (đỉnh nguồn), trong trường hợp đó, rõ ràng là <strong>không thể</strong> tồn tại cạnh nối từ $v \rightarrow u$.</li>
+<li>Nếu cả hai đỉnh $u$ và $v$ đều không phải là giá trị đầu tiên trong danh sách, dù trong trường hợp nào thì chúng đều được sắp xếp đúng vì chúng thuộc phần đồ thị con được sắp xếp theo thứ tự Tô-pô.</li>
+</ul>
+</li>
+<li>Do đó, danh sách $n+1$ đỉnh mới này là một thứ tự Tô-pô của $DAG$ gồm $n+1$ đỉnh.</li>
+</ul>
+</li>
+<li>
+<strong>Tính chất</strong>
+<ul>
+<li>
+<strong>Thứ tự Tô-pô không nhất thiết phải là duy nhất</strong>. Có thể có một số thứ tự Tô-pô khác nhau trong một đồ thị.</li>
+<li>Tuy nhiên, thứ tự Tô-pô sẽ là duy nhất khi $DAG$ có đường đi $Hamilton$.</li>
+</ul>
+</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="bài-toán-1-sắp-xếp-topo" href="#bài-toán-1-sắp-xếp-topo"></a>Bài toán 1 - Sắp xếp TOPO</h1>
+<p><a href="http://csloj.ddns.net/problem/541">TOPOSORT – Sắp xếp TOPO</a></p>
+<h2 class="editable"><a class="anchor" id="đề-bài" href="#đề-bài"></a>Đề bài</h2>
+<p>Cho đồ thị có hướng không chu trình <em>(Directed Acyclic Graph - DAG)</em> $G(V, E)$. Hãy đánh số lại các đỉnh của $G$ sao cho chỉ có cung nối từ đỉnh có chỉ số nhỏ đến đỉnh có chỉ số lớn hơn.</p>
+<p><strong>Input</strong></p>
+<ul>
+<li>Dòng đầu chứa hai số nguyên $n$ và $m$ là số đỉnh và số cung của đồ thị $G$;</li>
+<li>$m$ dòng tiếp theo, mỗi dòng chứa một cặp số $u, v$ cho biết một cung nối từ $u$ tới $v$ trong $G$.</li>
+</ul>
+<p><strong>Output</strong></p>
+<ul>
+<li>Ghi ra $n$ số nguyên dương, số thứ $i$ là chỉ số của đỉnh thứ $i$ sau khi đánh số lại. Hai số trên cùng một dòng được ghi cách nhau một dấu cách.</li>
+</ul>
+<p><strong>Constraints</strong></p>
+<ul>
+<li>$1 \le n \le 100;$ $0 \le m \le \frac{n(n-1)}{2}$.</li>
+</ul>
+<p><strong>Example</strong></p>
+<p><strong>Input</strong>
+</p><pre class="highlight"><code>7 7
+1 2
+1 4
+2 3
+4 5
+6 5
+5 3
+7 4</code></pre>
+<strong>Output</strong>
+<pre class="highlight"><code>1 2 7 5 6 3 4</code></pre>
+<p><strong>Note</strong>
+<img src="https://vnoi.info/wiki/uploads/topological_sort_img3.png" /></p>
+<h2 class="editable"><a class="anchor" id="thuật-toán-1" href="#thuật-toán-1"></a>Thuật toán 1</h2>
+<ul>
+<li>Từ phần <strong>chứng minh</strong> của định lý trên <em>(trong mục <strong>Điều kiện tồn tại thứ tự Tô-pô</strong>)</em>, ta có thuật toán để tìm ra một thứ tự Tô-pô như sau:
+<ol>
+<li>Bắt đầu với một danh sách Tô-pô trống.</li>
+<li>Tìm đỉnh nguồn của $DAG$. Thêm đỉnh này vào cuối danh sách Tô-pô.</li>
+<li>Loại bỏ đỉnh này và tất cả các cạnh kề với nó ra khỏi $DAG$.</li>
+<li>Nếu số đỉnh của $DAG$ lớn hơn $0$, hãy quay lại bước $2$.</li>
+</ol>
+</li>
+<li>Sau khi kết thúc, danh sách sẽ chứa một thứ tự Tô-pô của $DAG$.</li>
+<li>Để thực hiện thuật toán này một cách hiệu quả, ta sẽ <strong>không</strong> thực sự loại bỏ các đỉnh khỏi đồ thị trong bước $3$, vì đây là một quá trình phức tạp nếu đồ thị được biểu diễn dưới dạng ma trận kề hoặc danh sách kề.</li>
+<li>Ta cũng sẽ <strong>không</strong> duyệt qua toàn bộ đồ thị ở mỗi bước $2$ để tìm <strong>đỉnh nguồn</strong>. Điều này cũng tốn kém về mặt thời gian và tính toán.</li>
+<li>Thay vào đó, ta có những <strong>nhận xét</strong> sau:
+<ul>
+<li>Một đỉnh là <strong>đỉnh nguồn</strong> khi và chỉ khi số lượng cung vào của nó bằng $0$.</li>
+<li>Nếu một đỉnh không phải là đỉnh nguồn, nó sẽ <strong>trở thành đỉnh nguồn</strong> sau khi tất cả các cung vào của nó đã bị xóa. Một cung vào của nó chỉ bị xóa khi đỉnh còn lại của cung đó bị xóa.</li>
+<li>Giả sử ta biết vị trí của tất cả các đỉnh nguồn trong $DAG$ và ta thực hiện các bước $2$ và $3$ một lần. Sau đó, những đỉnh duy nhất có thể <strong>trở thành đỉnh nguồn</strong> là những đỉnh có cung vào nối với đỉnh vừa bị xóa.</li>
+</ul>
+</li>
+<li>Sau khi xác định được thứ tự Tô-pô của đồ thị, ta sẽ đánh số lại các đỉnh của đồ thị theo thứ tự.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 110</code> .</li>
+<li>Mảng <code>ans[]</code> - Mảng đánh số lại các đỉnh.</li>
+<li>Mảng <code>indegree[]</code> - Lưu số lượng cung vào của mỗi đỉnh.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Vector <code>topo</code> - Danh sách thứ tự Tô-pô.</li>
+<li>Queue <code>listSource</code> - Danh sách các đỉnh không có cung vào.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span> <span class="o">=</span> <span class="mi">110</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">indegree</span><span class="p">[</span><span class="n">maxN</span><span class="p">],</span> <span class="n">ans</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">],</span> <span class="n">topo</span><span class="p">;</span>
+<span class="n">queue</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">listSource</span><span class="p">;</span>
+
+<span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">m</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+    	<span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span>
+    	<span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">;</span>
+    	<span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    	<span class="n">indegree</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">u</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">u</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">indegree</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="n">listSource</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">listSource</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+    	<span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">listSource</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+    	<span class="n">listSource</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+    	<span class="n">topo</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+    	<span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+    		<span class="n">indegree</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">--</span><span class="p">;</span>
+    		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">indegree</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="n">listSource</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    	<span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">topo</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Error: graph contains a cycle"</span><span class="p">;</span>
+    	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="cm">/* Sau khi xác định được thứ tự Tô-pô của đồ thị, ta sử dụng
+       mảng ans để đánh số lại các đỉnh */</span>
+    <span class="kt">int</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">x</span> <span class="o">:</span> <span class="n">topo</span><span class="p">)</span> <span class="n">ans</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="o">++</span><span class="n">cnt</span><span class="p">;</span>
+    	
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p><strong>Mô tả quá trình</strong></p>
+<ul>
+<li>Thứ tự Tô-pô <strong>không phải</strong> là duy nhất. Quá trình sau chỉ mô tả lại quá trình xác định $1$ thứ tự Tô-pô theo như code mẫu.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/topological_sort_gif1.gif" /></p>
+<ul>
+<li>Sau khi xác định được thứ tự Tô-pô của đồ thị là <code>topo = {1; 6; 7; 2; 4; 5; 3}</code>. Ta đánh số lại các đỉnh. Khi đó ta sẽ có mảng <code>ans = {1; 4; 7; 5; 6; 2; 3}</code>.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="đánh-giá" href="#đánh-giá"></a><strong>Đánh giá</strong></h3>
+<ul>
+<li>Để thực hiện thuật toán này một cách hiệu quả, ta cần phải có khả năng duyệt qua các đỉnh kề của một đỉnh một cách hiệu quả. Điều này được thực hiện tốt nhất bằng cách sử dụng danh sách kề (vector <code>g[]</code>).</li>
+<li>Ngoài ra, <code>listSource</code> nên là một ngăn xếp <em>(stack)</em> hoặc một hàng đợi <em>(queue)</em> để việc thêm và loại bỏ các phần tử có thể được thực hiện trong thời gian không đổi.</li>
+<li>Thuật toán sẽ luôn tìm ra một thứ tự Tô-pô nếu nó tồn tại. Còn nếu nó <strong>không</strong> tồn tại (nghĩa là đồ thị ban đầu <strong>không phải</strong> là $DAG$ ) thì danh sách <code>topo</code> sẽ không được điền đầy đủ và thông báo lỗi sẽ được in ra.</li>
+<li>Thứ tự Tô-pô sẽ là duy nhất khi và chỉ khi <code>listSource</code> chứa chính xác một đỉnh ở đầu mỗi lần lặp của vòng lặp <em>while</em>.</li>
+</ul>
+<p><strong>Độ phức tạp</strong></p>
+<ul>
+<li>Ở vòng lặp <em>while</em> để duyệt các đỉnh trong <code>listSource</code>, ta mất độ phức tạp $O(n)$ vì mỗi đỉnh chỉ được thêm vào nhiều nhất $1$ lần <em>(ở ban đầu hoặc ngay sau khi cạnh vào cuối cùng của nó bị loại bỏ)</em>. Và ta sẽ mất thêm độ phức tạp $O(m)$ để duyệt các cạnh vì mỗi cạnh chỉ được kiểm tra nhiều nhất $1$ lần trong vòng lặp while <em>(khi đỉnh nối với nó được lấy ra)</em>.</li>
+<li>Nhìn chung, độ phức tạp của thuật toán này là $O(n+m)$.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="thuật-toán-2" href="#thuật-toán-2"></a>Thuật toán 2</h2>
+<ul>
+<li>Có một thuật toán khác cho sắp xếp Tô-pô dựa trên <strong>tìm kiếm theo chiều sâu</strong> <em>(Depth-First Search - DFS)</em>.</li>
+<li>Đối với <strong>thuật toán 2</strong>, quá trình tìm kiếm theo chiều sâu sẽ trả ra <strong>danh sách nghịch đảo thứ tự Tô-pô</strong>. Đơn giản hơn, nó chính là danh sách Tô-pô bị đảo ngược lại.</li>
+<li>Điều này tương đương với việc nếu tồn tại cung $u \rightarrow v$ thì $u$ có <strong>số thứ tự cao hơn</strong> $v$ trong <strong>danh sách nghịch đảo Tô-pô</strong>.</li>
+<li>
+<strong>Ví dụ minh họa:</strong>
+<img src="https://vnoi.info/wiki/uploads/topological_sort_img4.png" />
+</li>
+<li>
+<strong>Chứng minh:</strong> Hãy xem xét <strong>cây <em>DFS</em></strong> của đồ thị <em>(tìm hiểu thêm về cây $DFS$ tại <a class="internal absent" href="https://vnoi.info/wiki/algo/graph-theory/Depth-First-Search-Tree.md">đây</a>)</em>:
+<ul>
+<li>Nếu $u$ là tổ tiên của $v$ trong cây $DFS$, thì quá trình duyệt xong cây con gốc $v$ sẽ kết thúc sớm hơn quá trình duyệt xong cây con gốc $u$. Do đó, $u$ sẽ có số thứ tự cao hơn $v$ trong danh sách.</li>
+<li>Nếu $u$ là tổ tiên của $v$ trong cây $DFS$ và tồn tại cung nối từ $1$ đỉnh thuộc cây con gốc $v$ đến đỉnh $u$ thì đồ thị có chu trình (không phải là <em>DAG</em>) nên sẽ không tồn tại thứ tự Tô-pô.</li>
+<li>Nếu $u$ <strong>không phải</strong> là tổ tiên của $v$ và $v$ cũng <strong>không phải</strong> là tổ tiên của $u$ trong cây $DFS$ thì khi đó, $2$ đỉnh $u$ và $v$ sẽ nằm trên $2$ nhánh khác nhau của cây $DFS$. Do đó cung nối từ nhánh chứa đỉnh $u$ đến nhánh chứa đỉnh $v$ là <strong>cung chéo</strong> và đỉnh $u$ sẽ được duyệt sau $v$ nên sẽ có số thứ tự cao hơn $v$ trong danh sách.
+<ul>
+<li>
+<strong>Ví dụ minh họa:</strong> Bắt đầu duyệt $DFS$ từ đỉnh $S$. Các "cạnh nét liền" là cung của cây $DFS$. Các "cạnh nét đứt" <strong>không phải</strong> là cung của cây $DFS$. Với cung chéo $u \rightarrow v$, đỉnh $v$ chắc chắn sẽ được duyệt trước $u$. Vì nếu $u$ được duyệt trước $v$ thì đỉnh $u$ sẽ là <strong>tổ tiên</strong> của đỉnh $v$ và cung $u \rightarrow v$ sẽ không còn là cung chéo nữa, khi đó ta xét giống như ở trường hợp đầu tiên.
+<img src="https://vnoi.info/wiki/uploads/topological_sort_img5.png" />
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Từ những nhận xét trên, ta có thuật toán để tìm ra một thứ tự Tô-pô như sau:
+<ul>
+<li>Xuất phát từ một điểm chưa được duyệt, ta bắt đầu duyệt $DFS$ trên đồ thị xuất phát từ điểm đó.</li>
+<li>Dùng một mảng để lưu trạng thái của mỗi đỉnh. Có $3$ trạng thái:
+<ul>
+<li>
+<strong>Trạng thái 0</strong> : Đỉnh chưa được duyệt (chưa từng được gọi hàm $DFS$).</li>
+<li>
+<strong>Trạng thái 1</strong> : Đỉnh vẫn đang duyệt (hàm $DFS$ với đỉnh này chưa kết thúc).</li>
+<li>
+<strong>Trạng thái 2</strong> : Đỉnh đã duyệt xong (hàm $DFS$ với đỉnh này đã kết thúc).</li>
+</ul>
+</li>
+<li>Hiển nhiên, khi đang duyệt mà ta gặp phải một đỉnh ở <strong>trạng thái 1</strong> thì điều đó chứng tỏ đồ thị đang xét có chứa chu trình, và không thể sắp xếp Tô-pô được.</li>
+<li>Sau khi kết thúc duyệt $DFS$ trên đồ thị, thứ tự hoàn tất duyệt của mỗi đỉnh chính là <strong>danh sách nghịch đảo thứ tự Tô-pô</strong>.</li>
+<li>Để có được thứ tự Tô-pô, đơn giản ta chỉ cần đảo ngược lại <strong>danh sách nghịch đảo thứ tự Tô-pô</strong>.</li>
+</ul>
+</li>
+<li>Sau khi xác định được thứ tự Tô-pô của đồ thị, ta sẽ đánh số lại các đỉnh của đồ thị theo thứ tự.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="cài-đặt-1" href="#cài-đặt-1"></a><strong>Cài đặt</strong></h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 110</code> .</li>
+<li>Mảng <code>ans[]</code> - Mảng đánh số lại các đỉnh.</li>
+<li>Mảng <code>visit[]</code> - Mảng lưu trạng thái của mỗi đỉnh.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Stack <code>topo</code> - Danh sách thứ tự Tô-pô.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span> <span class="o">=</span> <span class="mi">110</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">],</span> <span class="n">ans</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">stack</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">topo</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Error: graph contains a cycle"</span><span class="p">;</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="n">dfs</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">topo</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">m</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">dfs</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+
+    <span class="cm">/* Sau khi xác định được thứ tự Tô-pô của đồ thị, ta sử dụng
+       mảng ans để đánh số lại các đỉnh */</span>
+    <span class="kt">int</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">topo</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">ans</span><span class="p">[</span><span class="n">topo</span><span class="p">.</span><span class="n">top</span><span class="p">()]</span> <span class="o">=</span> <span class="o">++</span><span class="n">cnt</span><span class="p">;</span> 
+        <span class="n">topo</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p><strong>Mô tả quá trình</strong></p>
+<ul>
+<li>Thứ tự Tô-pô <strong>không phải</strong> là duy nhất. Quá trình sau chỉ mô tả lại quá trình xác định $1$ thứ tự Tô-pô theo như code mẫu.</li>
+</ul>
+<p><img src="https://vnoi.info/wiki/uploads/topological_sort_gif2.gif" /></p>
+<ul>
+<li>Sau khi xác định được thứ tự Tô-pô của đồ thị là <code>topo = {7; 6; 1; 4; 5; 2; 3}</code>. Ta đánh số lại các đỉnh. Khi đó ta sẽ có mảng <code>ans = {3; 6; 7; 4; 5; 2; 1}</code>.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="đánh-giá-1" href="#đánh-giá-1"></a><strong>Đánh giá</strong></h3>
+<ul>
+<li>
+<strong>Thuật toán 2</strong> đơn giản và dễ cài đặt so với hơn <strong>thuật toán 1</strong>.</li>
+<li>Ta sử dụng ngăn xếp <em>(stack)</em> để có thể dễ dàng <strong>đảo ngược</strong> lại thứ tự hoàn tất duyệt của mỗi đỉnh. Nói cách khác là ta đảo ngược lại <strong>danh sách nghịch đảo thứ tự Tô-pô</strong> để có được thứ tự Tô-pô.</li>
+<li>Với phương pháp sắp xếp Tô-pô bằng $DFS$, nếu đồ thị không phải là $DAG$ thì ta vẫn có thể tìm ra một thứ tự, nhưng ta lại có thế dùng $DFS$ để kiểm tra luôn xem đồ thị có là $DAG$ hay không.</li>
+<li>Nếu đồ thị <strong>không phải</strong> là $DAG$ thì thông báo lỗi sẽ được in ra.</li>
+</ul>
+<p><strong>Độ phức tạp</strong></p>
+<ul>
+<li>Ở hàm $DFS$, ta mất độ phức tạp $O(n)$ vì mỗi đỉnh chỉ được duyệt nhiều nhất $1$ lần và ta sẽ mất thêm độ phức tạp $O(m)$ để duyệt tất cả các cạnh của đồ thị.</li>
+<li>Nhìn chung, độ phức tạp của thuật toán này là $O(n + m)$.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="bài-toán-2-đường-đi-dài-nhất" href="#bài-toán-2-đường-đi-dài-nhất"></a>Bài toán 2 - Đường đi dài nhất</h1>
+<p><a href="https://lqdoj.edu.vn/problem/longestpath">Longestpath - Đường đi dài nhất</a></p>
+<h2 class="editable"><a class="anchor" id="đề-bài-1" href="#đề-bài-1"></a>Đề bài</h2>
+<p>Cho đồ thị có hướng gồm $N$ đỉnh và $M$ cạnh. Các đỉnh được đánh số $1,2,…,N$ và với mỗi $i$ $(1 \le i \le M)$, cạnh có hướng thứ $i$ sẽ đi từ đỉnh $x_i$ đến đỉnh $y_i$. $G$ không chứa bất kì chu trình có hướng nào !</p>
+<p>Tìm độ dài lớn nhất của đường đi có hướng trong $G$. Ở đây, độ dài của đường đi có hướng chính là số cạnh trong nó.</p>
+<p><strong>Input</strong></p>
+<ul>
+<li>Dòng thứ nhất chứa $2$ số nguyên $N,M$.</li>
+<li>$M$ dòng tiếp theo mỗi dòng chứa hai số nguyên $x_i,y_i$ $(1 \le x_i, y_i \le N)$ (Ở đây các cặp $(x_i,y_i)$ phân biệt nhau và đề đảm bảo rằng, $G$ không chứa bất kì chu trình có hướng nào).</li>
+</ul>
+<p><strong>Output</strong></p>
+<ul>
+<li>In ra $1$ số nguyên duy nhất là độ dài lớn nhất của đường đi có hướng trong $G$.</li>
+</ul>
+<p><strong>Constraints</strong></p>
+<ul>
+<li>$2 \le N \le 10^5;1 \le M \le 10^5$.</li>
+</ul>
+<p><strong>Example</strong></p>
+<p><strong>Input</strong>
+</p><pre class="highlight"><code>3 2
+1 2
+2 3</code></pre>
+<strong>Output</strong>
+<pre class="highlight"><code>2</code></pre>
+<p><strong>Note</strong></p>
+<ul>
+<li>Con đường có độ dài lớn nhất là : $1 \rightarrow 2 \rightarrow 3$.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="thuật-toán" href="#thuật-toán"></a>Thuật toán</h2>
+<ul>
+<li>Sắp xếp Tô-pô có rất nhiều ứng dụng quan trọng, đặc biệt là áp dụng quy hoạch động trên mảng thứ tự Tô-pô.</li>
+<li>Gọi $dp[i]$ là độ dài đường đi dài nhất bắt đầu từ đỉnh có chỉ số $i$. Ta có công thức quy hoạch động trên danh sách Tô-pô như sau:
+<ul>
+<li>$dp[topo[i]]=max(dp[topo[j]] + 1)$ (Với $i = n \rightarrow 1$ và tồn tại cung từ $topo[i] \rightarrow topo[j]$).</li>
+</ul>
+</li>
+<li>Theo định nghĩa của thứ tự Tô-pô, chỉ tồn tại các cung từ chỉ số nhỏ đến chỉ số lớn hơn. Nên khi ta tính toán đến $dp[topo[i]]$ thì chắc chắn $dp[topo[j]]$ đều đã được tính trước đó.</li>
+<li>Kết quả độ dài đường đi dài nhất của đồ thị là $max(dp[i])$.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="cài-đặt-2" href="#cài-đặt-2"></a>Cài đặt</h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 100007</code> .</li>
+<li>Mảng <code>dp[]</code> - Mảng quy hoạch động.</li>
+<li>Mảng <code>visit[]</code> - Mảng lưu trạng thái của mỗi đỉnh.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Vector <code>revTopo</code> - Danh sách nghịch đảo thứ tự Tô-pô.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">],</span> <span class="n">dp</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">],</span> <span class="n">revTopo</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="n">dfs</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">revTopo</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">m</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="n">v</span><span class="p">;</span>
+        <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">dfs</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">u</span> <span class="o">:</span> <span class="n">revTopo</span><span class="p">)</span> <span class="p">{</span>
+    	<span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span>
+            <span class="n">dp</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">u</span><span class="p">],</span> <span class="n">dp</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    	<span class="n">ans</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span> <span class="n">dp</span><span class="p">[</span><span class="n">u</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-2" href="#đánh-giá-2"></a>Đánh giá</h3>
+<ul>
+<li>Khi sắp xếp Tô-pô bằng $DFS$, thuật toán sẽ trả ra <strong>danh sách nghịch đảo thứ tự Tô-pô</strong> <em>(định nghĩa đã được viết ở mục <strong>Bài toán 1</strong> phần <strong>Thuật toán 2</strong>)</em>. Mà ở công thức quy hoạch động, ta cần duyệt ngược lại danh sách, nên ta sẽ giữ nguyên thứ tự <strong>nghịch đảo</strong> đó và xử lí luôn trên nó.</li>
+<li>Do đó, thay vì sử dụng ngăn xếp <em>(stack)</em> để đảo ngược lại danh sách. Ta sử dụng mảng động <em>(vector)</em> <code>revTopo</code> để lưu trữ lại thứ tự nghịch đảo Tô-pô đó.</li>
+<li>Với <strong>đồ thị tổng quát</strong>, bài này sẽ trở thành bài toán $NP$.</li>
+<li>Với $DAG$, quy hoạch động trên thứ tự Tô-pô <strong>có thể giải được</strong> trong $O(n + m)$, kể cả với trọng số dương/âm, kể cả tìm đường đi ngắn nhất/dài nhất.</li>
+</ul>
+<p><strong>Độ phức tạp</strong></p>
+<ul>
+<li>Độ phức tạp của thuật toán là $O(n + m)$.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="bài-toán-3-fox-and-names" href="#bài-toán-3-fox-and-names"></a>Bài toán 3 - Fox And Names</h1>
+<p><a href="https://codeforces.com/problemset/problem/510/C">Fox And Names - 510C Codeforces</a></p>
+<h2 class="editable"><a class="anchor" id="đề-bài-2" href="#đề-bài-2"></a>Đề bài</h2>
+<p>Fox Ciel sẽ xuất bản một bài báo trên FOCS <em>(Foxes Operated Computer Systems - Fox)</em>. Cô ấy nghe thấy một tin đồn: danh sách tên các tác giả trên bài báo luôn được sắp xếp theo <strong>thứ tự từ điển</strong>.</p>
+<p>Sau khi kiểm tra, cô phát hiện ra rằng đôi khi điều đó không đúng. Trên một số bài báo, tên của các tác giả không được sắp xếp theo tiêu chuẩn thông thường của <strong>thứ tự từ điển</strong>. Nhưng sau khi sửa đổi một số thứ tự của các chữ cái trong bảng chữ cái <em>Latin</em> thì thứ tự tên của các tác giả được sắp xếp đúng theo <strong>thứ tự từ điển</strong> mới.</p>
+<p>Cô ấy muốn biết liệu có tồn tại thứ tự các chữ cái trong bảng chữ cái <em>Latin</em> sao cho các tên trên bài báo mà cô ấy định xuất bản được sắp xếp theo <strong>thứ tự từ điển</strong> hay không. Nếu có, bạn hãy giúp cô ấy tìm ra một thứ tự thỏa mãn bất kỳ.</p>
+<p><strong>Thứ tự từ điển</strong> được xác định theo cách sau: Khi so sánh $2$ xâu kí tự $s$ và $t$, đầu tiên ta tìm vị trí ngoài cùng bên trái sao cho các ký tự khác nhau $(s_i≠t_i)$ rồi so sánh các ký tự $s_i$ và $t_i$ theo thứ tự của chúng trong <em>bảng chữ cái</em>, nếu $s_i &lt; t_i$ thì $s$ có thứ tự từ điển nhỏ hơn $t$ và ngược lại. Còn nếu không có vị trí như vậy (tức là $s$ là tiền tố của $t$ hoặc ngược lại) thì chuỗi ngắn hơn sẽ có thứ tự từ điển nhỏ hơn.</p>
+<p><strong>Input</strong></p>
+<ul>
+<li>Dòng đầu tiên chứa số nguyên dương $n$ là số lượng tên các tác giả.</li>
+<li>$n$ dòng tiếp theo, mỗi dòng chứa một chuỗi kí tự $name_i$ $(1 \le |name_i| \le 100)$ gồm các chữ cái <em>Latin</em> in thường là tên của tác giả thứ $i$. Tất cả tên của các tác giả đều khác nhau.</li>
+</ul>
+<p><strong>Output</strong></p>
+<ul>
+<li>Nếu tồn tại thứ tự các chữ cái mà các tên đã cho được sắp xếp theo <strong>thứ tự từ điển</strong>, hãy in ra bất kỳ thứ tự nào thỏa mãn là hoán vị của các ký tự $'a'$ $-$ $'z'$ <em>(tức là, đầu tiên in ra chữ cái đầu tiên của bảng chữ cái đã sửa đổi, sau đó in ra chữ cái thứ hai, v.v.. )</em>.</li>
+<li>Nếu không, in ra một từ duy nhất: $Impossible$</li>
+</ul>
+<p><strong>Constraints</strong></p>
+<ul>
+<li>$1 \le n \le 100$.</li>
+</ul>
+<p><strong>Example</strong></p>
+<p><strong>Input 1</strong>
+</p><pre class="highlight"><code>3
+rivest
+shamir
+adleman</code></pre>
+<strong>Output 1</strong>
+<pre class="highlight"><code>bcdefghijklmnopqrsatuvwxyz</code></pre>
+<p><strong>Input 2</strong>
+</p><pre class="highlight"><code>10
+tourist
+petr
+wjmzbmr
+yeputons
+vepifanov
+scottwu
+oooooooooooooooo
+subscriber
+rowdark
+tankengineer</code></pre>
+<strong>Output 2</strong>
+<pre class="highlight"><code>Impossible</code></pre>
+<h2 class="editable"><a class="anchor" id="thuật-toán-1" href="#thuật-toán-1"></a>Thuật toán</h2>
+<ul>
+<li>Giả sử, ta có hai xâu kí tự $s$ và $t$. Theo <strong>định nghĩa của thứ tự từ điển</strong>, hãy xem xét xem nếu $s &lt; t$ thì nó cho ta biết những dữ kiện gì.
+<ul>
+<li>Ví dụ: $s="abcxyz"$ và $t="abcuv"$. Để $s &lt; t$ thì $'x'$ phải có thứ tự nhỏ hơn $'u'$ trong <em>bảng chữ cái</em>.</li>
+</ul>
+</li>
+<li>Nói cách khác, nó sẽ cho ta biết được kí tự nào sẽ phải đứng trước kí tự nào trong <em>bảng chữ cái</em>.</li>
+<li>Do đó, ta có thể xây dựng một đồ thị với mỗi đỉnh tương ứng với $1$ kí tự ($'a'$ $-$ $'z'$) và mỗi cạnh có hướng từ đỉnh tương ứng với kí tự phải có thứ tự <strong>nhỏ hơn</strong> đến đỉnh tương ứng với kí tự phải có thứ tự <strong>lớn hơn</strong> đỉnh kia.</li>
+<li>Từ đó, ta có thể sử dụng thuật toán sắp xếp Tô-pô để tìm ra $1$ thứ tự chữ cái thỏa mãn.</li>
+<li>Nếu đồ thị <strong>không phải</strong> là $DAG$ thì <strong>không tồn tại</strong> thứ tự chữ cái nào thỏa mãn.</li>
+<li>
+<strong>Lưu ý trường hợp</strong>: Nếu $s$ đứng trước $t$ trong danh sách tên và $t$ là <strong>tiền tố</strong> của $s$ thì $s$ luôn luôn có thứ tự từ điển lớn hơn $t$ nên sẽ <strong>không tồn tại</strong> thứ tự chữ cái nào thỏa mãn.</li>
+</ul>
+<h3 class="editable"><a class="anchor" id="cài-đặt-3" href="#cài-đặt-3"></a>Cài đặt</h3>
+<p><strong>Cấu trúc dữ liệu:</strong></p>
+<ul>
+<li>Hằng số <code>maxN = 110</code> .</li>
+<li>Mảng <code>visit[]</code> - Mảng lưu trạng thái của mỗi đỉnh.</li>
+<li>Vector <code>g[]</code> - Danh sách cạnh kề của mỗi đỉnh.</li>
+<li>Stack <code>topo</code> - Danh sách thứ tự Tô-pô.</li>
+</ul>
+<pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxN</span>  <span class="o">=</span> <span class="mi">110</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">s</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">visit</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g</span><span class="p">[</span><span class="n">maxN</span><span class="p">];</span>
+<span class="n">stack</span> <span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">topo</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">printImpossible</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Impossible"</span><span class="p">;</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Sắp xếp Tô-pô bằng DFS</span>
+<span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">v</span> <span class="o">:</span> <span class="n">g</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">printImpossible</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="n">dfs</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">topo</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
+    <span class="n">visit</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Xây dựng các cạnh của đồ thị</span>
+<span class="kt">void</span> <span class="nf">solve</span><span class="p">(</span><span class="n">string</span> <span class="n">x</span><span class="p">,</span> <span class="n">string</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">y</span><span class="p">.</span><span class="n">size</span><span class="p">());</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
+            <span class="n">g</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'a'</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'a'</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="cm">/* Trường hợp y là tiền tố của x =&gt; x luôn lớn hơn y 
+         =&gt; không có cách xếp thỏa mãn */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="n">printImpossible</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">solve</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">26</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">dfs</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">topo</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="kt">char</span><span class="p">(</span><span class="n">topo</span><span class="p">.</span><span class="n">top</span><span class="p">()</span> <span class="o">+</span> <span class="sc">'a'</span><span class="p">);</span>
+        <span class="n">topo</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="đánh-giá-3" href="#đánh-giá-3"></a>Đánh giá</h3>
+<ul>
+<li>Để <strong>tối ưu độ phức tạp</strong>, với mỗi chuỗi kí tự ta không cần phải <em>so sánh</em> nó với tất cả các chuỗi còn lại. Mà ta chỉ cần <em>so sánh</em> $2$ chuỗi kí tự liên tiếp. Vì nó sẽ luôn đúng theo <strong>tính chất bắc cầu</strong>: Nếu $s &lt; x$ và $x &lt; t$ thì $s &lt; t$.</li>
+</ul>
+<p><strong>Độ phức tạp</strong></p>
+<ul>
+<li>Ở vòng <em>for</em> đầu tiên để xây dựng các cạnh của đồ thị, ta mất độ phức tạp $O(n * |name|)$.</li>
+<li>Ở vòng <em>for</em> thứ hai để xác định thứ tự Tô-pô, ta mất độ phức tạp $O(26 + m)$. Với $m$ là số cạnh của đồ thị. Trong <strong>trường hợp xấu nhất</strong>, với mỗi cặp kí tự liên tiếp đều tạo ra $1$ cạnh thì số lượng cạnh lớn nhất có thể tạo ra là $n-1$ cạnh.</li>
+<li>Nhìn chung, độ phức tạp của thuật toán này là $O(n * |name|)$.</li>
+</ul>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng</h1>
+<p><a href="https://vnoi.info/problems/list/?tag=117&amp;page=1">Danh sách bài tập Topo sort - VNOI</a></p>
+<p><a href="https://oj.vnoi.info/problem/nkleague">NKLEAGUE - Giải bóng đá</a></p>
+<p><a href="https://oj.vnoi.info/problem/kcollect">KCOLLECT - Thu hoạch</a></p>
+<p><a href="https://oj.vnoi.info/problem/nkjump">NKJUMP - VOI08 Lò cò</a></p>
+<p><a href="https://oj.vnoi.info/problem/bic">BIC - Vòng đua xe đạp</a></p>
+<p><a href="https://www.spoj.com/problems/TOPOSORT/">TOPOSORT - Topological Sorting</a></p>
+<p><a href="https://www.spoj.com/problems/RPLA/">RPLA - Answer the boss!</a></p>
+<p><a href="https://codeforces.com/contest/919/problem/D">Substring - 919D Codeforces</a></p>
+<p><a href="https://cses.fi/problemset/task/1679">CSES - Couse Schedule</a></p>
+<p><a href="https://cses.fi/problemset/task/1680">CSES - Longest Flight Route</a></p>
+<p><a href="https://cses.fi/problemset/task/1681">CSES - Game Routes</a></p>
+</div>
+</div>
+</div>
+</div>

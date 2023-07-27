@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=utf-8">
+<meta name="MobileOptimized" content="width">
+<meta name="HandheldFriendly" content="true">
+<meta name="viewport" content="width=device-width">
+
+<meta property="og:url" content="http://vnoi.info/wiki/Home" />
+<link rel="stylesheet" type="text/css" href="/wiki/gollum/assets/app-ad43ca64b295d8444b10f22ee868f18429268af498f1bc515434878b690e37a2.css" media="all">
+<link rel="stylesheet" type="text/css" href="/wiki/gollum/assets/print-512498c368be0d3fb1ba105dfa84289ae48380ec9fcbef948bd4e23b0b095bfb.css" media="print">
+<link rel="stylesheet" type="text/css" href="/wiki/custom.css" media="all">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '3854179708000474');
+  fbq('track', 'PageView');
+  </script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=3854179708000474&ev=PageView&noscript=1"
+  /></noscript>
+
+
+<script>
+  var criticMarkup = '';
+	var baseUrl = '/wiki';
+	var uploadDest = 'uploads';
+	var perPageUploads = '';
+	if (perPageUploads == 'true') {
+	  uploadDest = uploadDest + window.location.pathname.replace(/.*gollum\/[-\w]+\//, "/").replace(/\.[^/.]+$/, "").replace(baseUrl, "")
+	}
+	  var pageFullPath = 'Home.md';
+          var unescapedPath = 'Home.md';
+    var pageFormat   = 'markdown';
+
+  </script>
+<script src="https://vnoi.info/wiki/gollum/assets/app-0fd228e26bfbe6fe31a2da268eb0e98e780c1191c1a918adf383377946e9c838.js" type="text/javascript"></script>
+<script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {
+        inlineMath:  [ ['$','$'], ['\\(','\\)'] ],
+        displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
+        processEscapes: true
+      },
+      TeX: { extensions: ["autoload-all.js"] }
+    };
+  </script>
+<script type="text/javascript" src="https://vnoi.info/wiki/mathjax.config.js"></script>
+<script defer src="https://vnoi.info/wiki/gollum/assets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61806804-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-61806804-1');
+  </script>
+<title>VNOI Wiki</title>
+</head>
+<body>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=449532395210446";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+<script>
+      fbq('track', 'ViewContent');
+    </script>
+<div class="container-lg clearfix">
+<div id="wiki-wrapper" class="page">
+<div id="head">
+<nav class="actions pt-4">
+<div class="TableObject">
+<div class="TableObject-item">
+<a class="btn" href="/wiki/">Home</a>
+</div>
+<div class="TableObject-item TableObject-item--primary px-2">
+<form class="search-form" action="/wiki/gollum/search" method="get" id="search-form">
+<input type="text" class="form-control input-block" name="q" id="search-query" placeholder="Search" aria-label="Search site" autocomplete="off">
+</form> </div>
+<div class="TableObject-item">
+<a class="btn" href="/wiki/gollum/overview">Overview</a>
+</div>
+<div class="TableObject-item">
+<a class="btn" href="https://oj.vnoi.info/tickets/new?issue_url=https://vnoi.info/wiki/Home"><i class="fa fa-exclamation-triangle" style="color: red;"></i> Report</a>
+</div>
+</div>
+</nav>
+</div>
+<div id="wiki-content">
+<h1 class="pt-4">VNOI Wiki</h1>
+<div class="breadcrumb"></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Thư viện VNOI được xây dựng với mục đích chia sẻ kiến thức Tin học đến với tất cả mọi người. Bạn có thể đọc bài giới thiệu của bọn mình <a class="internal present" href="/lesson/about">ở đây</a>.</p>
+<p>Bạn đọc bài viết nhưng không hiểu? Hãy hỏi <a href="https://www.facebook.com/groups/163215593699283/">ở đây</a>.</p>
+<p>Ở trang chủ này, các bài viết về thuật toán được đánh dấu về độ khó từ (1*) đến (5*) với ý nghĩa:</p>
+<ul>
+<li>(1*): Cơ bản,</li>
+<li>(2*): Kiến thức cần biết để thi HSG QG, ACM ICPC,</li>
+<li>(3*): Kiến thức nâng cao, dành cho các bạn có mục tiêu đạt giải cao trong HSG QG,</li>
+<li>(4*): Kiến thức rất khó,</li>
+<li>(5*): Kiến thức rất chuyên sâu về 1 vấn đề nào đó, chỉ áp dụng được với rất ít bài khó.</li>
+</ul>
+<p>Hiện tại bọn mình chưa có bài viết về chủ đề Lý thuyết đồ thị, do phần này những quyển sách như sách thầy Lê Minh Hoàng, Tài liệu giáo khoa chuyên tin (download ở <a class="internal present" href="/lesson/Tai-Lieu-Thuat-Toan">Một số tài liệu hay về Thuật Toán</a>) đã viết rất chi tiết.</p>
+<h1 class="editable"><a class="anchor" id="thuật-toán" href="#thuật-toán"></a>Thuật toán</h1>
+<h2 class="editable"><a class="anchor" id="nhập-môn" href="#nhập-môn"></a>Nhập môn</h2>
+<ul>
+<li><a class="internal present" href="/lesson/The-Importance-of-Algorithm">Tầm quan trọng của Thuật Toán</a></li>
+<li><a class="internal present" href="/lesson/Tai-Lieu-Thuat-Toan">Một số tài liệu hay về Thuật Toán</a></li>
+<li><a class="internal present" href="/lesson/How-to-Find-a-Solution">Nghệ thuật giải bài</a></li>
+<li><a class="internal present" href="/lesson/Planning-an-Approach-to-a-Topcoder-Problem-Part-1">Những cách tiếp cận bài toán</a></li>
+<li><a class="internal present" href="/lesson/Computational-Complexity-Section-1">Độ phức tạp tính toán (1*)</a></li>
+<li><a class="internal present" href="/lesson/sorting">Sắp xếp (1*)</a></li>
+<li><a class="internal present" href="/lesson/binary-search">Tìm kiếm nhị phân</a></li>
+<li><a class="internal present" href="/lesson/two-pointers">Hai con trỏ (1*)</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="cấu-trúc-dữ-liệu" href="#cấu-trúc-dữ-liệu"></a>Cấu trúc dữ liệu</h2>
+<ul>
+<li><a class="internal present" href="/lesson/data-structures-overview">Tổng quan về cấu trúc dữ liệu (2*)</a></li>
+<li><a class="internal present" href="/lesson/array-vs-linked-lists">Mảng và danh sách liên kết (1*)</a></li>
+<li><a class="internal present" href="/lesson/Stack">Ngăn xếp (stack) (1*)</a></li>
+<li><a class="internal present" href="/lesson/prefix-sum-and-difference-array">Mảng cộng dồn và mảng hiệu</a></li>
+<li><a class="internal present" href="/lesson/deque-min-max">Deque và tìm min max trên đoạn tịnh tiến (2*)</a></li>
+<li><a class="internal present" href="/lesson/Binary-Heap">Heap (2*)</a></li>
+<li><a class="internal present" href="/lesson/hash-table">Bảng băm (Hash table) (2*)</a></li>
+<li><a class="internal present" href="/lesson/disjoint-set-union">Disjoint Set Union (2*)</a></li>
+<li><a class="internal present" href="/lesson/segment-tree-basic">Cây Phân Đoạn (cơ bản)</a></li>
+<li><a class="internal present" href="/lesson/segment-tree-extend">Segment Tree (Interval Tree) (2*)</a></li>
+<li><a class="internal present" href="/lesson/Efficient-and-easy-segment-trees">Cài đặt Segment Tree chạy nhanh hơn (3*)</a></li>
+<li><a class="internal present" href="/lesson/sqrt-decomposition">Chia căn - Part 1</a></li>
+<li><a class="internal present" href="/lesson/mo-algorithm">Mo Algorithm (3*)</a></li>
+<li><a class="internal present" href="/lesson/interval-tree-tap-doan-thang">Segment Tree (Interval Tree) trên tập đoạn thẳng (4*)</a></li>
+<li><a class="internal present" href="/lesson/fenwick">Fenwick Tree (Binary Indexed Tree) (2*)</a></li>
+<li><a class="internal present" href="/lesson/heavy-light-decomposition">Heavy Light Decomposition (3*)</a></li>
+<li><a class="internal present" href="/lesson/persistent-data-structures">Persistent Data Structures (3*)</a></li>
+<li><a class="internal present" href="/lesson/lca-binlift">Lowest Common Ancestor (LCA) - Binary Lifting</a></li>
+<li><a class="internal present" href="/lesson/Range-Minimum-Query-and-Lowest-Common-Ancestor">Bài toán RMQ &amp; bài toán LCA (2*)</a></li>
+<li><a class="internal present" href="/lesson/lca">Các phương pháp giải bài toán LCA (3*)</a></li>
+<li><a class="internal present" href="/lesson/trie">Trie (2*)</a></li>
+<li><a class="internal present" href="/lesson/suffix-array">Suffix Array (4*)</a></li>
+<li><a class="internal present" href="/lesson/palindrome-tree">Palindrome Tree (4*)</a></li>
+<li><a class="internal present" href="/lesson/Skip-Lists">Skip List (3*)</a></li>
+<li><a href="https://drive.google.com/file/d/0BwcTB8a10LBwbjB2elVmdzg1XzQ/view?usp=sharing&amp;resourcekey=0-JxqVgB488l3bVgUXg4VU2Q">Range Tree - thầy Lê Minh Hoàng (3*)</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="xử-lý-xâu" href="#xử-lý-xâu"></a>Xử lý xâu</h2>
+<ul>
+<li><a class="internal present" href="/lesson/basic">Tổng quan (2*)</a></li>
+<li><a class="internal present" href="/lesson/kmp">KMP (2*)</a></li>
+<li><a class="internal present" href="/lesson/trie">Trie (2*)</a></li>
+<li><a class="internal present" href="/lesson/hash">Hash (2*)</a></li>
+<li><a class="internal present" href="/lesson/suffix-array">Suffix Array (4*)</a></li>
+<li><a class="internal present" href="/lesson/palindrome-tree">Palindrome Tree (4*)</a></li>
+<li><a class="internal present" href="/lesson/z-algo">Z-function</a></li>
+<li><a class="internal present" href="/lesson/z-algo">Z Algorithm (3*)</a></li>
+<li><a href="https://drive.google.com/file/d/0BwcTB8a10LBwYUwwNVYzbmZiZnM/view?usp=sharing&amp;resourcekey=0-TyQK7KSoZJW-fVpHquw6NQ">Suffix Tree - thầy Lê Minh Hoàng(4*)</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="quy-hoạch-động" href="#quy-hoạch-động"></a>Quy hoạch động</h2>
+<ul>
+<li><a class="internal present" href="/lesson/dynamic-programming">Nhập môn Quy hoạch động (2*)</a></li>
+<li><a class="internal present" href="/lesson/basic-dynamic-programming-1">Quy hoạch động cơ bản (Phần 1)</a></li>
+<li><a class="internal present" href="/lesson/basic-dynamic-programming-2">Quy hoạch động cơ bản (Phần 2)</a></li>
+<li><a class="internal present" href="/lesson/palindrome-problems">Một vài bài tập về Palindrome (2*)</a></li>
+<li><a class="internal present" href="/lesson/basic-problems">Một số bài toán QHD điển hình (2*)</a></li>
+<li><a class="internal present" href="/lesson/thac-mac-ve-qhd">Phân tích về QHD - Thầy Lê Minh Hoàng</a></li>
+<li><a class="internal present" href="/lesson/Mot-so-ky-thuat-toi-uu-hoa-thuat-toan-Quy-Hoach-Dong">Một số kĩ thuật tối ưu hoá QHĐ (3*)</a></li>
+<li><a class="internal present" href="/lesson/Convex-Hull-Trick">Kĩ thuật bao lồi (3*)</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="đồ-thị" href="#đồ-thị"></a>Đồ thị</h2>
+<ul>
+<li><a class="internal present" href="/lesson/everything">Các chủ đề cơ bản về đồ thị (2*)</a></li>
+<li>
+<a class="internal present" href="/lesson/breadth-first-search">Thuật toán duyệt đồ thị theo chiều rộng</a> (BFS)</li>
+<li>
+<a class="internal present" href="/lesson/Depth-First-Search-Tree">Bài toán khớp cầu, thành phần liên thông mạnh</a> (Cây DFS và ứng dụng)</li>
+<li><a class="internal present" href="/lesson/minimum-spanning-tree">Cây khung nhỏ nhất trên đồ thị vô hướng</a></li>
+<li><a class="internal present" href="/lesson/shortest-path">Các thuật toán về tìm đường đi ngắn nhất</a></li>
+<li><a class="internal present" href="/lesson/topological-sort">Sắp xếp Tô-pô</a></li>
+<li><a class="internal present" href="/lesson/euler-cycle">Đường đi - Chu trình Euler</a></li>
+<li><a class="internal present" href="/lesson/euler-tour-on-tree">Đường đi Euler trên cây</a></li>
+<li><a class="internal present" href="/lesson/centroid-decomposition">Thuật toán phân tách trọng tâm</a></li>
+<li><a href="https://drive.google.com/file/d/15UbO4GWo1G6cUBDnV6uWk0KxjuEdurCG/view?usp=sharing">Bài toán 2-SAT (3*)</a></li>
+<li><a class="internal present" href="/lesson/max-flow-1-luong-cuc-dai-tren-mang-1">Luồng cực đại trên mạng (3*)</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="tham-lam" href="#tham-lam"></a>Tham lam</h2>
+<ul>
+<li><a class="internal present" href="/lesson/Greedy-is-Good">Tham lam (2*)</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="số-học" href="#số-học"></a>Số học</h2>
+<ul>
+<li>
+<a class="internal present" href="/lesson/So-hoc-Phan-1-Modulo-gcd">Số học 1 - Modulo và gcd (1*)</a>.</li>
+<li>
+<a class="internal present" href="/lesson/Number-Theory-2">Số học 2 - Số nguyên tố, Sàng Eratosthenes (1*)</a>.</li>
+<li>
+<a class="internal present" href="/lesson/Number-Theory-3">Số học 3 - Tính (a^b) % c (1*)</a>.</li>
+<li>
+<a class="internal present" href="/lesson/Number-Theory-4">Số học 4 - Phi hàm Euler (2*)</a>.</li>
+<li>
+<a class="internal present" href="/lesson/modular-inverse">Số học 4.5 - Nghịch đảo modulo (2*)</a>.</li>
+<li>
+<a class="internal present" href="/lesson/Number-Theory-5">Số học 5 - Các kiến thức cơ bản về Tổ hợp (Combinatorics) (2*)</a>.</li>
+<li>
+<a class="internal present" href="/lesson/Number-Theory-6">Số học 6 - Xác suất (Probabilities) (2*)</a>.</li>
+<li>
+<a class="internal present" href="/lesson/Number-Theory-7">Số học 7 - Bao hàm - Loại trừ (Inclusion-Exclusion) (2*)</a>.</li>
+</ul>
+<h2 class="editable"><a class="anchor" id="hình-học" href="#hình-học"></a>Hình học</h2>
+<ul>
+<li><a class="internal present" href="/lesson/basic-geometry-1">Hình học tính toán phần 1</a></li>
+<li><a class="internal present" href="/lesson/basic-geometry-2">Hình học tính toán phần 2</a></li>
+<li><a class="internal present" href="/lesson/Sweep-Line">Thuật toán đường quét (2*)</a></li>
+<li><a class="internal present" href="/lesson/Convex-Hull">Bao lồi (3*)</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="toán-học" href="#toán-học"></a>Toán học</h2>
+<ul>
+<li><a class="internal present" href="/lesson/Mathematics-for-Topcoders">Toán học trong Tin học (2*)</a></li>
+<li><a class="internal present" href="/lesson/Hieu-ve-xac-suat">Xác suất (2*)</a></li>
+<li><a class="internal present" href="/lesson/Wilsons-theorem">Định lý Wilson (3*)</a></li>
+<li><a class="internal present" href="/lesson/multiplicative-function">Hàm nhân tính (Multiplicative Function) (4*)</a></li>
+<li><a class="internal present" href="/lesson/mobius-function">Hàm Mobius (4*)</a></li>
+<li><a class="internal present" href="/lesson/FFT">Nhân nhanh đa thức - FFT (4*)</a></li>
+<li><a class="internal present" href="/lesson/game-theory">Lý thuyết trò chơi</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="tối-ưu-hoá" href="#tối-ưu-hoá"></a>Tối ưu hoá</h2>
+<ul>
+<li><a class="internal present" href="/lesson/Tim-kiem-tam-phan-Ternary-Search">Tìm kiếm tam phân - Ternary Search (3*)</a></li>
+<li><a class="internal present" href="/lesson/Local-Search">Local Search (3*)</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="kỹ-năng-khác" href="#kỹ-năng-khác"></a>Kỹ năng khác</h2>
+<ul>
+<li><a class="internal present" href="/lesson/Roi-rac-hoa-va-ung-dung">Rời rạc hoá (nén số) (1*)</a></li>
+<li><a class="internal present" href="/lesson/matrix-multiplication">Nhân ma trận (3*)</a></li>
+<li><a class="internal present" href="/lesson/counting-without-matrix-multiplication">Khử nhân ma trận (3*)</a></li>
+<li><a class="internal present" href="/lesson/mo-algorithm">Mo's algorithm (3*)</a></li>
+<li><a class="internal present" href="/lesson/fun-with-bits">Fun with bits</a></li>
+<li><a class="internal present" href="/lesson/Giai-Thuat-Cat-Tia-Alpha-beta">Giải thuật cắt tỉa Alpha-Beta</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="chia-sẻ" href="#chia-sẻ"></a>Chia sẻ</h1>
+<h2 class="editable"><a class="anchor" id="về-cách-học-tin-học" href="#về-cách-học-tin-học"></a>Về cách học Tin học</h2>
+<ul>
+<li><a class="internal present" href="/lesson/hoc-tin-the-nao-1">Tôi đã học Tin như thế nào - phần 1</a></li>
+<li><a class="internal present" href="/lesson/hoc-tin-the-nao-2">Tôi đã học Tin như thế nào - phần 2</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="kĩ-năng-thi-cử" href="#kĩ-năng-thi-cử"></a>Kĩ năng thi cử</h2>
+<ul>
+<li><a class="internal present" href="/lesson/viet-trinh-cham">Viết trình chấm</a></li>
+<li><a class="internal present" href="/lesson/Ki-nang-thi-cu">Tổng hợp lời khuyên cho các kỳ thi</a></li>
+<li><a class="internal present" href="/lesson/Kinh-nghiem-thi-VOI">Kinh nghiệm thi VOI</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="kinh-nghiệm-phỏng-vấn" href="#kinh-nghiệm-phỏng-vấn"></a>Kinh nghiệm phỏng vấn</h2>
+<ul>
+<li><a class="internal present" href="/lesson/general-experience">Những kinh nghiệm chung khi phỏng vấn</a></li>
+<li><a class="internal present" href="/lesson/experience-from-interviewer">Kinh nghiệm phỏng vấn - Góc nhìn từ người phỏng vấn</a></li>
+<li><a class="internal present" href="/lesson/Nhung-lan-phong-van-trong-thuc-te-va-bai-hoc-rut-ra">Những lần phỏng vấn và những kinh nghiệm rút ra</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="vnoi-interview" href="#vnoi-interview"></a>VNOI Interview</h2>
+<ul>
+<li><a class="internal present" href="/lesson/yen-thanh">Phỏng vấn Lê Yên Thanh</a></li>
+<li><a class="internal present" href="/lesson/xuan-khanh">Phỏng vấn Nguyễn Xuân Khánh</a></li>
+<li><a class="internal present" href="/lesson/Phong-van-team-IOI-VN-2017">Phỏng vấn Team IOI Việt Nam 2017</a></li>
+<li><a class="internal present" href="/lesson/Phong-van-team-IOI-Viet-Nam-2018">Phỏng vấn Team IOI Việt Nam 2018</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="khác" href="#khác"></a>Khác</h2>
+<ul>
+<li><a class="internal present" href="/lesson/Pascal-Vi-sao">Hoài niệm về Pascal - thầy Lê Minh Hoàng</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="các-kỳ-thi" href="#các-kỳ-thi"></a>Các kỳ thi</h1>
+<ul>
+<li><a href="http://acmicpc-vietnam.github.io/">ACM ICPC Regional Vietnam</a></li>
+<li><a class="internal present" href="/lesson/Cac-doi-Viet-Nam-tai-ACM-ICPC-World-Final">Việt Nam tại ACM ICPC World Final</a></li>
+</ul>
+<h1 class="editable"><a class="anchor" id="các-chủ-đề-trong-khoa-học-máy-tính" href="#các-chủ-đề-trong-khoa-học-máy-tính"></a>Các chủ đề trong Khoa học máy tính</h1>
+<h2 class="editable"><a class="anchor" id="ngôn-ngữ-lập-trình" href="#ngôn-ngữ-lập-trình"></a>Ngôn ngữ lập trình</h2>
+<ul>
+<li><a class="internal present" href="/lesson/string">Xử lý xâu trong C++</a></li>
+<li><a class="internal present" href="/lesson/Using-Regular-Expression">Sử dụng regex</a></li>
+<li><a href="https://drive.google.com/file/d/1iqlQ1TmgGy_CKwZ0_9KPfu_ZHsnrT3Tu/view?usp=sharing">C++ STL</a></li>
+<li><a class="internal present" href="/lesson/pointers">Con trỏ trong C++</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="machine-learning" href="#machine-learning"></a>Machine Learning</h2>
+<ul>
+<li><a class="internal present" href="/lesson/machine-learning-101">Machine Learning 101: Làm quen</a></li>
+<li><a class="internal present" href="/lesson/Machine-Learning-Classification-phan-1">Classification - Phần 1</a></li>
+<li><a class="internal present" href="/lesson/Machine-Learning-Classification-phan-2">Classification - Phần 2</a></li>
+<li><a class="internal present" href="/lesson/Machine-Learning-Classification-phan-3">Classification - Phần 3</a></li>
+<li><a class="internal present" href="/lesson/Machine-Learning-Classification-phan-3">Classification - Phần 3</a></li>
+<li><a class="internal present" href="/lesson/PyTorch-la-gi">PyTorch là gì?</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="các-chủ-đề-khác" href="#các-chủ-đề-khác"></a>Các chủ đề khác:</h2>
+<ul>
+<li>Xử lý ảnh
+<ul>
+<li><a class="internal present" href="/lesson/Seam-Carving">Seam Carving</a></li>
+</ul>
+</li>
+<li>Cryptography
+<ul>
+<li><a class="internal present" href="/lesson/Public-Key-Cryptography">Public Key Cryptography và RSA</a></li>
+</ul>
+</li>
+<li><a href="https://v0.vnoi.info">Trang Web VNOI phiên bản đầu tiên</a></li>
+<li><a href="https://v0.vnoi.info/ioicamp">Trang Web IOICAMP phiên bản đầu tiên</a></li>
+</ul>
+<h2 class="editable"><a class="anchor" id="trò-chơi-giải-trí-với-ai-hay" href="#trò-chơi-giải-trí-với-ai-hay"></a><a href="https://play.google.com/store/apps/dev?id=8454869713871668206">Trò chơi giải trí với AI hay</a></h2>
+<ul>
+<li><a href="http://play.google.com/store/apps/details?id=com.popoko.gomokuvn">Cờ Carô với AI hay</a></li>
+<li><a href="http://play.google.com/store/apps/details?id=com.popoko.chessru">Cờ Vua với AI hay</a></li>
+<li><a href="http://play.google.com/store/apps/details?id=com.popoko.gomokukr">Cờ Gomoku với AI hay</a></li>
+<li><a href="http://play.google.com/store/apps/details?id=com.popoko.minesweeper">Trò chơi Dò Mìn</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer" class="pt-4">
+</div>
+</div>
+<hr><br>
+<div class="fb-like" data-href="/wiki/Home" data-width="1080" data-layout="button_count" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
+<div class="fb-save" data-uri="/wiki/Home" data-size="large"></div>
+<br>
+<div class="fb-comments" data-href="vnoi.info//wiki/Home" data-width="100%" data-numposts="5"></div>
+</div>
+</div>
+</body>
+</html>

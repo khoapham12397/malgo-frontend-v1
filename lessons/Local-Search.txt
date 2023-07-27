@@ -1,0 +1,109 @@
+<div id="wiki-content">
+<h1 class="pt-4">Local Search</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/search/">search</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p>Tác giả: Nguyễn Thành Trung (RR)</p>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#bài-toán-mở-đầu-tsp">Bài toán mở đầu (TSP)</a></li><li><a href="#tham-lam">Tham Lam</a></li><li><a href="#local-search">Local Search</a></li><li><a href="#local-search-dưới-cách-hiểu-của-đại-số">Local Search dưới cách hiểu của đại số</a></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng:</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="bài-toán-mở-đầu-tsp" href="#bài-toán-mở-đầu-tsp"></a>Bài toán mở đầu (TSP)</h1>
+<p>Cho N điểm trên mặt phẳng, đánh số từ 1 đến N. Tìm một chu trình xuất phát từ điểm thứ 1, đi qua tất cả các điểm, mỗi đỉnh đúng 1 lần và quay trở về đỉnh ban đầu.</p>
+<p>Bài toán này là NP, không có thuật toán tối ưu với độ phức tạp đa thức. Tên gọi phổ biến của bài này là Traveling Salesman Problem (TSP).</p>
+<p>Khi gặp bài NP, ta chỉ có thể tìm cách đưa ra một kết quả càng tối ưu càng tốt. Một số phương pháp thường dùng là <a class="internal absent" href="https://vnoi.info/wiki/translate/topcoder/Greedy-is-Good">tham lam</a> hoặc local search - sẽ được nói trong bài viết này.</p>
+<p>Bạn có thể nộp thử bài này ở <a href="https://oj.vnoi.info/problem/torch/">VNOJ</a>.</p>
+<h1 class="editable"><a class="anchor" id="tham-lam" href="#tham-lam"></a>Tham Lam</h1>
+<p>Một thuật toán rất hồn nhiên nhất là, xuất phát từ điểm thứ 1, tại mỗi bước, ta sẽ di chuyển đến điểm gần nó nhất (mà chưa được di chuyển đến trước đó). Lặp lại N lần, ta thu được một chu trình.</p>
+<p>Cài đặt 1 số phần chính:</p>
+<pre class="highlight"><code><span class="k">struct</span> <span class="nc">Point</span> <span class="p">{</span>
+    <span class="kt">double</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+    <span class="n">Point</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">double</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="n">x</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">{}</span>
+
+    <span class="n">Point</span> <span class="k">operator</span> <span class="o">-</span> <span class="p">(</span><span class="n">Point</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">a</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">a</span><span class="p">.</span><span class="n">y</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">double</span> <span class="n">len</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">y</span><span class="p">);</span> <span class="p">}</span>
+<span class="p">}</span> <span class="n">a</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
+
+<span class="kt">bool</span> <span class="n">used</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>  <span class="c1">// Đánh dấu điểm đã được đi qua.</span>
+<span class="kt">int</span> <span class="n">id</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>  <span class="c1">// Lưu chỉ số của các điểm trong kết quả tìm được.</span>
+
+<span class="kt">void</span> <span class="nf">solve</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">used</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">used</span><span class="p">);</span>
+    <span class="n">used</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">bestDist</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">save</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">double</span> <span class="n">curDist</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">current</span><span class="p">.</span><span class="n">id</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]).</span><span class="n">len</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">used</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">curDist</span> <span class="o">&lt;</span> <span class="n">bestDist</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">bestDist</span> <span class="o">=</span> <span class="n">curDist</span><span class="p">;</span>
+                <span class="n">save</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">id</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">save</span><span class="p">;</span>
+        <span class="n">used</span><span class="p">[</span><span class="n">save</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<p>Dưới đây là kết quả khi mình chạy với một bộ test được sinh random gồm 50 đỉnh:</p>
+<p><img src="https://vnoi.info/wiki/uploads/local_search_greedy.png" /></p>
+<p>Khi quan sát kết quả của thuật toán trên, dễ thấy có rất nhiều cặp cạnh cắt nhau. Khi tồn tại 2 cạnh AB và CD cắt nhau, ta có thể đảo nó thành AC và BD hoặc AD và BC, và giữ nguyên phần còn lại của chu trình. Như vậy ta có thể thu được một kết quả tốt hơn. Nhận xét này đưa ta đến với ý tưởng thứ 2:</p>
+<h1 class="editable"><a class="anchor" id="local-search" href="#local-search"></a>Local Search</h1>
+<p>Xét một chu trình ban đầu bất kỳ. Xét tất cả $N^2$ cặp cạnh, với mỗi cặp cạnh u, v, ta có chu trình <code>1 --&gt; u-1 --&gt; u --&gt; v-1 --&gt; v --&gt; 1</code>, ta thử đổi nó thành <code>1 --&gt; u-1 --&gt; v-1 --&gt; u --&gt; v --&gt; 1</code>. Nếu việc đổi này cho ta một chu trình có trọng số nhỏ hơn, ta giữ lại chu trình mới này.</p>
+<p>Cài đặt:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">optimize</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">bool</span> <span class="n">stop</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">u</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">u</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">u</span><span class="p">;</span> <span class="o">--</span><span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// t1 = (cạnh (u-1) --&gt; u) + (cạnh (v --&gt; (v+1))</span>
+                <span class="kt">double</span> <span class="n">t1</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">u</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">u</span><span class="p">]]).</span><span class="n">len</span><span class="p">()</span>
+                        <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">v</span><span class="p">]]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">v</span><span class="o">+</span><span class="mi">1</span><span class="p">]]).</span><span class="n">len</span><span class="p">();</span>
+                <span class="c1">// t2 = (cạnh (u-1) --&gt; v) + (cạnh (u --&gt; (v+1))</span>
+                <span class="kt">double</span> <span class="n">t2</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">u</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">v</span><span class="p">]]).</span><span class="n">len</span><span class="p">()</span>
+                        <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">u</span><span class="p">]]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">id</span><span class="p">[</span><span class="n">v</span><span class="o">+</span><span class="mi">1</span><span class="p">]]).</span><span class="n">len</span><span class="p">();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">t1</span> <span class="o">&gt;</span> <span class="n">t2</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// Nếu đổi chu trình cho kết quả tốt hơn</span>
+                    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">u</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">j</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">,</span> <span class="o">--</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">swap</span><span class="p">(</span><span class="n">id</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">id</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                    <span class="n">stop</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">stop</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Minh họa cho test trên (chú ý rằng mình cài đặt sai và không xét cạnh nối từ đỉnh cuối đến đỉnh 1, nên còn một cặp cạnh cắt nhau ^_^):</p>
+<p><img src="https://vnoi.info/wiki/uploads/local_search_reverse.png" /></p>
+<p>Ý tưởng này chính là nền tảng của Local Search: Xuất phát từ một cấu hình kết quả, ta tìm cách thay đổi một phần của cấu hình để đạt được một cấu hình tốt hơn. Thông thường, cài đặt local search gồm 3 bước chính:</p>
+<ul>
+<li>Khởi tạo một cấu hình kết quả bất kỳ</li>
+<li>Gọi C là cấu hình hiện tại. Ta xét các cấu hình "kề" với C, chọn ra cấu hình tốt nhất. Cập nhật cấu hình này cho C.</li>
+<li>Lặp lại đến khi ta không thể cập nhật được C.</li>
+</ul>
+<p>Trong các bước trên có đề cập đến khái niệm "kề" của 2 cấu hình. Khái niệm này chỉ đơn giản là tập những cấu hình mà ta xét đến khi đang ở một cấu hình nhất định. Chẳng hạn trong bài toán mở đầu, với mỗi đường đi, các cấu hình kề nó là các đường đi nhận được khi đổi một cặp cạnh.</p>
+<h1 class="editable"><a class="anchor" id="local-search-dưới-cách-hiểu-của-đại-số" href="#local-search-dưới-cách-hiểu-của-đại-số"></a>Local Search dưới cách hiểu của đại số</h1>
+<p>Xét một bài toán tìm giá trị lớn nhất của một hàm 2 chiều J(theta0, theta1).</p>
+<p><img src="https://vnoi.info/wiki/uploads/local_search_2d_func.png" /></p>
+<p>Hình vẽ trên mô tả cách làm của local search: Xuất phát từ điểm xanh đậm, ta xét các điểm ở gần nó, tìm điểm mà J lớn nhất, rồi di chuyển đến điểm đó.</p>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng:</h1>
+<ul>
+<li>
+<a href="https://open.kattis.com/contests/vietnam-national17-open/problems/europeantrip">ACM ICPC National Vietnam 2017 - Bài E</a>
+<ul>
+<li>Đây là một bài tập điển hình về áp dụng Local Search trong lập trình thi đấu (Competitive programming). Các bạn nên làm thử bài này trước khi làm những bài khác.</li>
+<li><a href="https://docs.google.com/document/d/1cDQEaf_YabpefiG7PiQZErHbr7AJIFjt7IIiDv9n4N4/edit">Lời giải chi tiết</a></li>
+</ul>
+</li>
+<li><a href="http://www.spoj.com/problems/PANEL/">SPOJ - PANEL</a></li>
+<li><a href="http://ipsc.ksp.sk/2013/real/problems/i.html">IPSC 2013 - Invisible cats</a></li>
+<li><a href="https://www.facebook.com/note.php?note_id=10150106829298920">https://www.facebook.com/note.php?note_id=10150106829298920</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>

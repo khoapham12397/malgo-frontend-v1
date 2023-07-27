@@ -1,11 +1,7 @@
-import { FiEye } from 'react-icons/fi';
 import DropDownMenu from '../ThreadSummary/ThreeDotMenu';
-import { BiCommentDetail, BiLike } from 'react-icons/bi';
-import React, { useContext, useRef, useState } from 'react';
 import parse from 'html-react-parser';
-import { processText, formatMathExpr } from '../../utils/utils';
 import { Link } from 'react-router-dom';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import { Table } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state';
@@ -40,11 +36,9 @@ export const MathProblemSummary = ({ summary }: Props) => {
       </div>
 
       <div id='summary-content'>
-        <MathJaxContext>
-          <MathJax>
-            {summary.description ? parse(summary.description) : ''}
-          </MathJax>
-        </MathJaxContext>
+        <MathJax>
+          {summary.description ? parse(summary.description) : ''}
+        </MathJax>
       </div>
       <Table style={{ marginTop: '10px' }}>
         <tbody

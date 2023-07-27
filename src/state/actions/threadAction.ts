@@ -16,10 +16,9 @@ import store from '..';
 import { toggleLikeThreadInList } from '../reducers/threadListReducer';
 import { toast } from 'react-hot-toast';
 
-const host = (import.meta.env.VITE_API_URL as string)+ 'discussion';
+const host = (import.meta.env.VITE_API_URL as string) + 'discussion';
 
 export const fetchThread = (threadId: string, username: string | undefined) => {
-
   return function (dispatch: Dispatch<any>) {
     let url = host + '/thread/' + threadId;
     if (username != undefined) url += '?username=' + username;
@@ -29,7 +28,7 @@ export const fetchThread = (threadId: string, username: string | undefined) => {
       .then(result => {
         const data: setThreadDataParams = result.data;
         if (store.getState().thread.threadData.id != threadId) {
-          console.log('fetch thread');
+          //console.log('fetch thread');
           dispatch(setThread(data));
           if (data.thread.totalComments > 0) {
             dispatch(fetchRootComment(data.thread.id, username));
@@ -86,8 +85,8 @@ export const fetchChildComment = (
     fetch(url)
       .then(res => res.json())
       .then(result => {
-        console.log('fetch child cmt: ');
-        console.log(result.data);
+        //console.log('fetch child cmt: ');
+        //console.log(result.data);
         dispatch(addChildComments(result.data as addChildCommentParams));
       });
   };

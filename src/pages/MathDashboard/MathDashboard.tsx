@@ -32,9 +32,8 @@ const ProblemSetForm = ({
   const [title, setTitle] = useState('');
   const myUsername = getUsernameFromStorage();
   const handleSubmit = () => {
-    if(!myUsername) return;
+    if (!myUsername) return;
     const params: CreateMathProbSetParam = {
-
       numProb: problems.length,
       title: title,
       username: myUsername,
@@ -43,7 +42,7 @@ const ProblemSetForm = ({
         order: String(index + 1)
       }))
     };
-    const url = import.meta.env.VITE_API_URL + 'mathproblem/set'
+    const url = import.meta.env.VITE_API_URL + 'mathproblem/set';
     fetch(url, {
       method: 'POST',
       body: JSON.stringify(params),

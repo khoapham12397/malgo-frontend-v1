@@ -1,94 +1,95 @@
-import { GameManager } from "../GameManager/GameManager";
-import { CameraCfg, MapCfg, TileCfg } from "../GameType";
+import { GameManager } from '../GameManager/GameManager';
+import { CameraCfg, MapCfg, TileCfg } from '../GameType';
 
-export {}
-type Position ={
-    x: number;
-    y: number;
-}
+export {};
+type Position = {
+  x: number;
+  y: number;
+};
 type Action = {
-    isMoving: boolean;
-    isFlying: boolean;
-    isFalling: boolean;
-    isAttacking: boolean;
-    isHurting: boolean;
-}
+  isMoving: boolean;
+  isFlying: boolean;
+  isFalling: boolean;
+  isAttacking: boolean;
+  isHurting: boolean;
+};
 type AttackCtl = {
-    attackLv: number;
-    cntAttackLv: number;
-    pendingAttack: boolean;
-    attackType: number;
-}
+  attackLv: number;
+  cntAttackLv: number;
+  pendingAttack: boolean;
+  attackType: number;
+};
 
 type FlyCtl = {
-    flyDown: boolean;
-    flyTime: number;
-    fallingTime: number;
-    climbWall: boolean;
-    nextWall: boolean;
-
-}
+  flyDown: boolean;
+  flyTime: number;
+  fallingTime: number;
+  climbWall: boolean;
+  nextWall: boolean;
+};
 
 type OnGroundCtl = {
-    isOnGround : boolean,
-    colOnGround: number | null,
-    colOnGroundBegin: number | null,
-    colOnGroundEnd: number | null,
-}
+  isOnGround: boolean;
+  colOnGround: number | null;
+  colOnGroundBegin: number | null;
+  colOnGroundEnd: number | null;
+};
 
 type HurtCtl = {
-    cntHurt: number;
-}
+  cntHurt: number;
+};
 
 type CharShape = {
-    w: number;
-    h: number;
-}
+  w: number;
+  h: number;
+};
 
 const STATE = {
-    IDLE: 0,
-    RUNNING: 1,
-    FLYING: 2,
-    ATTACKING: 3,
-    HURTING_L1: 4,
-}
+  IDLE: 0,
+  RUNNING: 1,
+  FLYING: 2,
+  ATTACKING: 3,
+  HURTING_L1: 4
+};
 
-interface MainCharacter { 
-    gameManager: GameManager;
-    
-    position: Position;
-    step: number; gravity: number; vy: number; 
-    
-    indFrame: number; dir: number;
+interface MainCharacter {
+  gameManager: GameManager;
 
-    image : HTMLImageElement;
-    imageAttack : HTMLImageElement;
-    
-    attackCtl: AttackCtl;
-    flyCtl: FlyCtl;
-    onGroundCtl : OnGroundCtl;
-    hurtCtl : HurtCtl;
+  position: Position;
+  step: number;
+  gravity: number;
+  vy: number;
 
-    currentState: number;
-    action: Action;
+  indFrame: number;
+  dir: number;
 
-    cntFrameRun : number;
-    indFrameRun : number;
+  image: HTMLImageElement;
+  imageAttack: HTMLImageElement;
 
-    tileCfg: TileCfg;
-    cameraCfg: CameraCfg;
-    backgroundData: Array<any>;
+  attackCtl: AttackCtl;
+  flyCtl: FlyCtl;
+  onGroundCtl: OnGroundCtl;
+  hurtCtl: HurtCtl;
 
-    scale: number;
-    configLefts : Array<any>;
-    configRights: Array<any>;
-    
-    configAttackLefts: Array<any>;
-    configAttackRights: Array<any>;
+  currentState: number;
+  action: Action;
 
-    currentShape: CharShape;
-    mapCfg: MapCfg;
+  cntFrameRun: number;
+  indFrameRun: number;
 
-    prePosY: number;   
+  tileCfg: TileCfg;
+  cameraCfg: CameraCfg;
+  backgroundData: Array<any>;
 
+  scale: number;
+  configLefts: Array<any>;
+  configRights: Array<any>;
+
+  configAttackLefts: Array<any>;
+  configAttackRights: Array<any>;
+
+  currentShape: CharShape;
+  mapCfg: MapCfg;
+
+  prePosY: number;
 }

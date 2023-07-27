@@ -1,9 +1,9 @@
-import React, {  useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { BiPlusCircle } from 'react-icons/bi';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import { processText, formatMathExpr } from '../../utils/utils';
 import parse from 'html-react-parser';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,10 +39,10 @@ function TypeTag({ id, name, ind, removeTypeTag }: TypeTagProps) {
 }
 type Props = {
   type: string;
-  handleSubmitThread :(params: any) => void;
+  handleSubmitThread: (params: any) => void;
 };
 
-function ModalWritePost({handleSubmitThread,type}: Props) {
+function ModalWritePost({ handleSubmitThread, type }: Props) {
   const dispatch: Dispatch<any> = useDispatch();
   const myUsername = getUsernameFromStorage();
   const [show, setShow] = useState(false);
@@ -89,15 +89,15 @@ function ModalWritePost({handleSubmitThread,type}: Props) {
       tags: tagList,
       username: myUsername ? myUsername : undefined
     };
-    
+
     handleSubmitThread(params);
-    
+
     setShow(false);
   };
 
   const handleAddTag = (e: any) => {
     const ind = e.currentTarget.value;
-    console.log('add tag: ind= ' + ind);
+    //console.log('add tag: ind= ' + ind);
     if (chosenTypes.includes(ind) || ind == 0) return;
     let lst = [...chosenTypes];
     lst.push(ind);
@@ -108,7 +108,7 @@ function ModalWritePost({handleSubmitThread,type}: Props) {
   );
   const tags = useSelector((state: RootState) => state.threadBase.tags);
   const removeTypeTag = (ind: number) => {
-    console.log('remove ' + ind);
+    //console.log('remove ' + ind);
     if (chosenTypes.includes(ind as never)) {
       var lst = [...chosenTypes];
       let index = lst.indexOf(ind as never);
@@ -118,8 +118,11 @@ function ModalWritePost({handleSubmitThread,type}: Props) {
   };
   return (
     <>
-      <Button onClick={handleShow} className={type=='thread'?'btn-new-thread':'btn-new-postgroup'}>
-      <BiPlusCircle />  Thread
+      <Button
+        onClick={handleShow}
+        className={type == 'thread' ? 'btn-new-thread' : 'btn-new-postgroup'}
+      >
+        <BiPlusCircle /> Thread
       </Button>
 
       <Modal show={show} onHide={handleClose} size='lg'>
@@ -156,9 +159,7 @@ function ModalWritePost({handleSubmitThread,type}: Props) {
               className='mb-3'
               controlId='exampleForm.ControlTextarea1'
             >
-              <MathJaxContext>
-                <MathJax>{parse(content)}</MathJax>
-              </MathJaxContext>
+              <MathJax>{parse(content)}</MathJax>
             </Form.Group>
             <div style={{ display: 'flex' }}>
               <Form.Group style={{ width: '32%' }}>

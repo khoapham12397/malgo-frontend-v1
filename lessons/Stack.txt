@@ -1,0 +1,441 @@
+<div id="wiki-content">
+<h1 class="pt-4">Stack (ngăn xếp)</h1>
+<div class="breadcrumb"><nav aria-label="Breadcrumb"><ol>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/">algo</a></li>
+<li class="breadcrumb-item"><a href="https://vnoi.info/wiki/gollum/overview/algo/data-structures/">data-structures</a></li>
+</ol></nav></div>
+<div class>
+<div id="wiki-body" class="gollum-markdown-content overflow-hidden ">
+<div class="markdown-body ">
+<p><strong>Tác giả:</strong> Nguyễn Hà Duy - THPT Chuyên Hà Nội - Amsterdam</p>
+<p><strong>Reviewer:</strong> Hoàng Xuân Nhật</p>
+<hr/>
+<p></p><div class="toc"><div class="toc-title">Table of Contents</div><ul><li><a href="#giới-thiệu">Giới thiệu</a></li><li><a href="#cài-đặt">Cài đặt</a><ul><li><a href="#cài-đặt-thủ-công">Cài đặt thủ công</a></li><li><a href="#sử-dụng-thư-viện-chuẩn">Sử dụng thư viện chuẩn</a></li><li><a href="#phân-tích">Phân tích</a><ul><li><a href="#độ-phức-tạp-thời-gian">Độ phức tạp thời gian</a></li><li><a href="#độ-phức-tạp-bộ-nhớ">Độ phức tạp bộ nhớ</a></li></ul></li></ul></li><li><a href="#ứng-dụng">Ứng dụng</a><ul><li><a href="#sử-dụng-stack-để-xử-lý-xâu">Sử dụng Stack để xử lý xâu</a><ul><li><a href="#bài-toán-1">Bài toán 1</a><ul><li><a href="#cách-giải">Cách giải</a></li></ul></li><li><a href="#bài-toán-2">Bài toán 2</a><ul><li><a href="#nhận-xét">Nhận xét</a></li><li><a href="#bổ-đề-1">Bổ đề 1</a></li><li><a href="#chứng-minh">Chứng minh</a></li><li><a href="#bổ-đề-2">Bổ đề 2</a></li><li><a href="#chứng-minh-1">Chứng minh</a></li><li><a href="#hệ-quả-1">Hệ quả 1</a></li><li><a href="#cách-giải-1">Cách giải</a></li><li><a href="#cài-đặt-1">Cài đặt</a></li></ul></li><li><a href="#mở-rộng">Mở rộng</a></li></ul></li><li><a href="#sử-dụng-stack-để-khử-đệ-quy">Sử dụng Stack để khử đệ quy</a></li><li><a href="#stack-đơn-điệu">Stack đơn điệu</a><ul><li><a href="#bài-toán">Bài toán</a><ul><li><a href="#nhận-xét-1">Nhận xét</a></li><li><a href="#mô-hình-lại-bài-toán">Mô hình lại bài toán</a></li><li><a href="#cài-đặt-2">Cài đặt</a></li><li><a href="#đánh-giá-độ-phức-tạp">Đánh giá độ phức tạp</a></li></ul></li><li><a href="#mở-rộng-1">Mở rộng</a><ul><li><a href="#hình-chữ-nhật-lớn-nhất">Hình chữ nhật lớn nhất</a><ul><li><a href="#cách-giải-2">Cách giải</a></li></ul></li><li><a href="#hình-chữ-nhật-lớn-nhất-trong-lưới-ô-vuông">Hình chữ nhật lớn nhất trong lưới ô vuông</a><ul><li><a href="#cách-giải-3">Cách giải</a></li></ul></li></ul></li></ul></li></ul></li><li><a href="#bài-tập-áp-dụng">Bài tập áp dụng</a></li></ul></div>
+<h1 class="editable"><a class="anchor" id="giới-thiệu" href="#giới-thiệu"></a>Giới thiệu</h1>
+<p>Stack là một danh sách được bổ sung 2 thao tác: <strong>thêm một phần tử vào cuối danh sách</strong>, và <strong>loại bỏ một phần tử ở cuối danh sách</strong>. Ví trí cuối của Stack được gọi là đỉnh (<strong>top</strong>).</p>
+<p>Có thể hình dung Stack như một chồng sách. Việc đặt một quyển sách lên trên cùng chính là thao tác thêm phần tử, và lấy ra quyển sách ở trên đầu là thao tác loại bỏ phần tử. Như vậy, quyển sách được đặt vào sau cùng sẽ luôn được lấy ra trước tiên. Vì tính chất này, Stack còn được gọi là danh sách <strong>LIFO</strong> (Last In - First Out, hay vào sau - ra trước).</p>
+<p>Hình ảnh minh họa cho Stack chứa các phần tử kiểu <code>char</code>:
+<img src="https://i.imgur.com/hMPdsl6.png" /></p>
+<p>Stack có khá nhiều ứng dụng trong lập trình thi đấu. Bài viết này sẽ xem xét các ứng dụng điển hình của Stack.</p>
+<h1 class="editable"><a class="anchor" id="cài-đặt" href="#cài-đặt"></a>Cài đặt</h1>
+<h2 class="editable"><a class="anchor" id="cài-đặt-thủ-công" href="#cài-đặt-thủ-công"></a>Cài đặt thủ công</h2>
+<p>Ta có thể biểu diễn Stack bằng một mảng, cùng với biến <code>top</code> biểu diễn vị trí của phần tử nằm ở đỉnh Stack. Dưới đây là một cách cài đặt Stack chứa các phần tử thuộc kiểu <code>int</code>:
+</p><pre class="highlight"><code><span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">st</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">top</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">push</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="c1">// thêm x vào cuối Stack</span>
+<span class="p">{</span>
+    <span class="o">++</span><span class="n">top</span><span class="p">;</span>
+    <span class="n">st</span><span class="p">[</span><span class="n">top</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">pop</span><span class="p">()</span> <span class="c1">// loại bỏ phần tử ở cuối Stack</span>
+<span class="p">{</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">top</span><span class="p">);</span> <span class="c1">// đảm bảo Stack đang chứa ít nhất 1 phần tử</span>
+    <span class="o">--</span><span class="n">top</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">peek</span><span class="p">()</span> <span class="c1">// trả về giá trị của phần tử ở đỉnh Stack</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">st</span><span class="p">[</span><span class="n">top</span><span class="p">];</span>
+<span class="p">}</span></code></pre>
+<h2 class="editable"><a class="anchor" id="sử-dụng-thư-viện-chuẩn" href="#sử-dụng-thư-viện-chuẩn"></a>Sử dụng thư viện chuẩn</h2>
+<p>Thư viện chuẩn của C++ cho phép ta sử dụng Stack qua kiểu dữ liệu <code>stack</code> trong header cùng tên. Các thao tác chính trên <code>stack</code> là:</p>
+<ul>
+<li>
+<code>push</code>: thêm phần tử vào cuối danh sách</li>
+<li>
+<code>top</code>: trả về giá trị phần tử ở cuối danh sách</li>
+<li>
+<code>pop</code>: loại bỏ phần tử ở cuối danh sách</li>
+</ul>
+<p>Ngoài ra, <code>stack</code> cũng hỗ trợ các thao tác:</p>
+<ul>
+<li>
+<code>size</code>: trả về số phần tử hiện có trong stack</li>
+<li>
+<code>empty</code>: trả về trạng thái của stack (\(true\) nếu stack rỗng, \(false\) nếu stack có ít nhất 1 phần tử)</li>
+</ul>
+<p>Ví dụ:
+</p><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;stack&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">st</span><span class="p">;</span>
+    <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> <span class="c1">// thêm 5 vào stack</span>
+    <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span> <span class="c1">// thêm 10 vào stack</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">st</span><span class="p">.</span><span class="n">top</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// In ra 10</span>
+    <span class="n">st</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">// loại bỏ phần tử ở cuối</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">st</span><span class="p">.</span><span class="n">top</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// In ra 5</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<img src="https://i.imgur.com/Fm9OL7a.png" />
+<p>Ngoài ra, ta có thể dùng <code>vector</code> để biểu diễn một Stack. Các hàm <code>push</code>, <code>top</code> và <code>pop</code> sẽ được thay bằng <code>push_back</code>, <code>pop_back</code> và <code>back</code> khi sử dụng <code>vector</code>.</p>
+<h2 class="editable"><a class="anchor" id="phân-tích" href="#phân-tích"></a>Phân tích</h2>
+<p>Do Stack có thể được cài đặt bằng <code>vector</code> nên các thao tác trên Stack cũng có cùng độ phức tạp với <code>vector</code>.</p>
+<h3 class="editable"><a class="anchor" id="độ-phức-tạp-thời-gian" href="#độ-phức-tạp-thời-gian"></a>Độ phức tạp thời gian</h3>
+<p>Các hàm <code>push</code>, <code>pop</code>, <code>top</code>, <code>size</code> và <code>empty</code> của Stack đều hoạt động trong \(O(1)\). Hơn nữa, như ta đã thấy ở cách cài đặt thủ công, bản chất của Stack chính là mảng, nên tất cả các thao tác trên Stack đều hoạt động trong \(O(1)\).</p>
+<h3 class="editable"><a class="anchor" id="độ-phức-tạp-bộ-nhớ" href="#độ-phức-tạp-bộ-nhớ"></a>Độ phức tạp bộ nhớ</h3>
+<p>Độ phức tạp bộ nhớ của Stack là \(O(N)\), với \(N\) là số phần tử được đưa vào Stack.</p>
+<h1 class="editable"><a class="anchor" id="ứng-dụng" href="#ứng-dụng"></a>Ứng dụng</h1>
+<h2 class="editable"><a class="anchor" id="sử-dụng-stack-để-xử-lý-xâu" href="#sử-dụng-stack-để-xử-lý-xâu"></a>Sử dụng Stack để xử lý xâu</h2>
+<h3 class="editable"><a class="anchor" id="bài-toán-1" href="#bài-toán-1"></a>Bài toán 1</h3>
+<p>Cho xâu \(S\) chỉ gồm các số nguyên dương và các dấu \(+\), \(-\), \(\times\), \(\div\), trong \(S\) không có dấu khoảng trống. Bạn cần tính giá trị của biểu thức được biểu diễn bởi xâu đó.</p>
+<p>Đây là bài toán dễ hơn của <a href="https://cp-algorithms.com/string/expression_parsing.html"><strong>Expression Parsing</strong></a>.</p>
+<h4 class="editable"><a class="anchor" id="cách-giải" href="#cách-giải"></a>Cách giải</h4>
+<p>Vấn đề chính của bài toán là các toán tử \(+\), \(-\), \(\times\) và \(\div\) không có cùng độ ưu tiên. Cụ thể, ta cần tính kết quả của các cụm dấu \(\times\) và \(\div\) trước, do nhân và chia có độ ưu tiên cao hơn cộng và trừ.</p>
+<p>Xét bài toán đơn giản hơn: trong xâu \(S\) chỉ có các dấu \(+\) và \(-\). Rõ ràng, do \(+\) và \(-\) có cùng độ ưu tiên nên ta có thể xử lý bài toán bằng cách duyệt các toán hạng và toán tử từ trái sang phải và tính trực tiếp kết quả sau mỗi phép cộng hoặc trừ. Ta có thể cài đặt như sau: duy trì một danh sách chứa số (toán hạng) và một danh sách chứa toán tử. Duyệt xâu từ trái qua phải, nếu ký tự đang xét là chữ số thì ta đẩy nó vào danh sách chứa số. Nếu đó là toán tử, ta đẩy ký tự vào danh sách chứa toán tử. Cuối cùng, ta lần lượt tính kết quả dựa vào danh sách toán hạng và toán tử đã xây dựng.</p>
+<pre class="highlight"><code><span class="c1">// xử lý toán tử và cập nhật trực tiếp vào mảng val</span>
+<span class="kt">void</span> <span class="nf">process_op</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">val</span><span class="p">,</span> <span class="kt">char</span> <span class="n">op</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// l, r là 2 toán hạng, op là dấu giữa chúng</span>
+    <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="n">val</span><span class="p">.</span><span class="n">back</span><span class="p">();</span> <span class="n">val</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">val</span><span class="p">.</span><span class="n">back</span><span class="p">();</span> <span class="n">val</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+    <span class="k">switch</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="k">case</span> <span class="sc">'+'</span><span class="p">:</span>  <span class="n">val</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="sc">'-'</span><span class="p">:</span> <span class="n">val</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">r</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// tính giá trị của biểu thức biểu diễn bởi s</span>
+<span class="kt">int</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">val</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="n">op</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">isdigit</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// giá trị của toán hạng đang xét</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">isdigit</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="p">{</span>
+                <span class="n">number</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">'0'</span><span class="p">;</span>
+                <span class="o">++</span><span class="n">i</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">val</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">number</span><span class="p">);</span>
+            <span class="o">--</span><span class="n">i</span><span class="p">;</span> <span class="c1">// cẩn thận với index!</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">op</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+            <span class="p">{</span>
+                <span class="n">process_op</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">op</span><span class="p">.</span><span class="n">back</span><span class="p">());</span> <span class="c1">// xử lý biểu thức từ trái sang phải</span>
+                <span class="n">op</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="n">op</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">op</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">process_op</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">op</span><span class="p">.</span><span class="n">back</span><span class="p">());</span>
+        <span class="n">op</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">val</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
+<p>Do các toán tử có cùng độ ưu tiên, ta có thể xử lý chúng lần lượt theo danh sách đã xây dựng. Tuy nhiên, nếu danh sách \(op\) có các toán tử khác độ ưu tiên, thì ta vẫn có thể xử lý bài toán bằng việc luôn giữ cho danh sách toán tử \(op\) chứa các toán tử có độ ưu tiên <em>tăng dần</em>, sau đó xử lý danh sách toán tử từ dưới lên để đảm bảo các dấu có độ ưu tiên lớn hơn luôn được xử lý trước.</p>
+<p>Trong bài toán gốc, xâu \(S\) còn chứa ký tự \(\times\) và \(\div\). Ta cần xử lý danh sách toán tử sao cho các phép tính có độ ưu tiên lớn hơn luôn được thực hiện trước.</p>
+<p>Ta định nghĩa một thứ tự ưu tiên cho các dấu:
+</p><pre class="highlight"><code><span class="c1">// Trả về 2 nếu là nhân hoặc chia, 1 nếu là cộng hoặc trừ</span>
+<span class="kt">int</span> <span class="nf">priority</span><span class="p">(</span><span class="kt">char</span> <span class="n">op</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">op</span> <span class="o">==</span> <span class="sc">'+'</span> <span class="o">||</span> <span class="n">op</span> <span class="o">==</span> <span class="sc">'-'</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<p>Giống với bài toán đơn giản, ta vẫn duyệt xâu \(S\) từ trái sang phải. Khi gặp toán hạng, ta vẫn đẩy chúng vào danh sách. Tuy nhiên, khi gặp toán tử, ta cần xem xét thứ tự ưu tiên của toán tử ngay trước nó. Nếu toán tử trước có độ ưu tiên lớn hơn hoặc bằng toán tử đang xétxét, ta cần phải xử lý nó trước, và loại bỏ toán tử đứng trước đó khỏi danh sách. Ta sẽ lặp lại việc xử lý toán tử đứng trước này cho đến khi nó có độ ưu tiên không lớn hơn toán tử đang xét. Điều này đảm bảo phép tính sẽ luôn được thực hiện theo mức độ ưu tiên.</p>
+<p>Để ý rằng bản chất của danh sách ta sử dụng chính là Stack. Việc thêm toán tử/toán hạng vào danh sách chính là thao tác \(push\); cách ta xử lý toán tử gợi đến việc \(top\) và \(pop\) do trong các bước của lời giải, ta chỉ cần quan tâm tới những phần tử ở cuối danh sách. Lời giải sử dụng <code>vector</code> để biểu diễn Stack.</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">process_op</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">val</span><span class="p">,</span> <span class="kt">char</span> <span class="n">op</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="n">val</span><span class="p">.</span><span class="n">back</span><span class="p">();</span> <span class="n">val</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">val</span><span class="p">.</span><span class="n">back</span><span class="p">();</span> <span class="n">val</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+    <span class="k">switch</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="k">case</span> <span class="sc">'+'</span><span class="p">:</span> <span class="n">val</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="sc">'-'</span><span class="p">:</span> <span class="n">val</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">r</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="sc">'*'</span><span class="p">:</span> <span class="n">val</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">l</span> <span class="o">*</span> <span class="n">r</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="sc">'/'</span><span class="p">:</span> <span class="n">val</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">l</span> <span class="o">/</span> <span class="n">r</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">isdigit</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="p">{</span>
+            <span class="c1">// ...</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="kt">char</span> <span class="n">cur_op</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="c1">// toán tử hiện tại</span>
+            <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">op</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">priority</span><span class="p">(</span><span class="n">op</span><span class="p">.</span><span class="n">back</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="n">priority</span><span class="p">(</span><span class="n">cur_op</span><span class="p">))</span>
+            <span class="c1">// xử lý các toán tử ngay trước nó có độ ưu tiên bằng hoặc lớn hơn</span>
+            <span class="c1">// chú ý rằng nếu thay dấu &gt;= bằng dáu &gt; thì đápđáp</span>
+            <span class="p">{</span>
+                <span class="n">process_op</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">op</span><span class="p">.</span><span class="n">back</span><span class="p">());</span>
+                <span class="n">op</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="n">op</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cur_op</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// do danh sách toán tử có độ ưu tiên tăng dần nên ta có thể xử lý</span>
+    <span class="c1">// lần lượt như trong bài toán chỉ có + và -</span>
+    <span class="c1">// chú ý là ta xử lý ngược từ đáy về đầu, nên các toán tử được xử lý</span>
+    <span class="c1">// sẽ tạo thành một dãy giảm theo thứ tự ưu tiên</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">op</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">process_op</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">op</span><span class="p">.</span><span class="n">back</span><span class="p">());</span>
+        <span class="n">op</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">val</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
+<p>Xét ví dụ: \(S = 2 \times 3 - 4 \times 5\).</p>
+<p>Giá trị của \(val\) và \(op\) sau khi xử lý xâu \(S\):
+<img src="https://i.imgur.com/r2zmJwN.png" /></p>
+<p>Quá trình xử lý danh sách toán tử \(op\):
+<img src="https://i.imgur.com/UAV9GBN.png" /></p>
+<h3 class="editable"><a class="anchor" id="bài-toán-2" href="#bài-toán-2"></a>Bài toán 2</h3>
+<p>Cho xâu \(S\) chỉ gồm ký tự \((\) và \()\). Bạn cần kiểm tra xem \(S\) có phải là dãy ngoặc đúng không.</p>
+<p>Nếu \(S\) là dãy ngoặc đúng, với mỗi vị trí trong \(S\) bạn cần in ra vị trí của <strong>dấu ngoặc tương ứng</strong>.</p>
+<p>Định nghĩa:</p>
+<ul>
+<li>Xâu rỗng là dãy ngoặc đúng</li>
+<li>Nếu xâu \(A\) là dãy ngoặc đúng thì \((A)\) cũng là dãy ngoặc đúng. Khi đó, cặp dấu ngoặc quanh xâu \(A\) này là cặp <strong>dấu ngoặc tương ứng</strong>.</li>
+<li>Nếu xâu \(A\) và \(B\) đều là dãy ngoặc đúng thì xâu \(A + B\) cũng là dãy ngoặc đúng</li>
+</ul>
+<p>Hình ảnh minh họa cho một dãy ngoặc đúng. Các cặp dấu ngoặc tương ứng được tô cùng màu:
+<img src="https://i.imgur.com/K1Obiw8.png" /></p>
+<h4 class="editable"><a class="anchor" id="nhận-xét" href="#nhận-xét"></a>Nhận xét</h4>
+<p>Ta định nghĩa thêm: dãy ngoặc đúng cơ bản là dãy ngoặc đúng không thể tách được thành tổng của các dãy ngoặc đúng nhỏ hơn. Ví dụ, \((()())\) là dãy ngoặc đúng cơ bản, và \((())()\) không phải là dãy ngoặc đúng cơ bản, do nó có thể tách được thành \((()) + ()\).</p>
+<p>Từ các định nghĩa, có thể rút ra các tính chất của dãy ngoặc đúng:</p>
+<ul>
+<li>
+<strong>Tính chất 1</strong>: Giữa một cặp dấu ngoặc tương ứng là một dãy ngoặc đúng</li>
+<li>
+<strong>Tính chất 2</strong>: Một dãy ngoặc đúng độ dài \(2 \times n\) có \(n\) cặp dấu ngoặc tương ứng, tương ứng với \(n\) dấu ngoặc mở và \(n\) dấu ngoặc đóng. Dấu ngoặc tương ứng của một dấu ngoặc mở phải nằm ở sau nó trong dãy, và dấu ngoặc tương ứng của một dấu ngoặc đóng phải nằm trước nó. Do đó, dãy ngoặc đúng không thể bắt đầu bằng dấu đóng ngoặc, hay kết thúc bằng dầu mở ngoặc.</li>
+<li>
+<strong>Tính chất 3</strong>: Xét một dãy ngoặc đúng \(S\). Nếu một tiền tố hoặc hậu tố \(A\) của \(S\) là một dãy ngoặc đúng, thì dãy \(S \setminus A\), hay dãy con của \(S\) không chứa \(A\), cũng là một dãy ngoặc đúng.</li>
+<li>
+<strong>Tính chất 4</strong>: Nếu \(S\) là dãy ngoặc đúng thì nó có thể được tách ra thành tổng của các dãy ngoặc đúng độc lập nhau, hay \(S = s_1 + s_2 + … + s_k\), với \(s_1, s_2, …, s_k\) đều là dãy ngoặc đúng <em>cơ bản</em>.</li>
+<li>
+<strong>Tính chất 5</strong>: Ký tự đầu và cuối của dãy ngoặc đúng cơ bản tạo thành một cặp dấu ngoặc tương ứng.</li>
+</ul>
+<p>Ta có các bổ đề và hệ quả sau:</p>
+<h4 class="editable"><a class="anchor" id="bổ-đề-1" href="#bổ-đề-1"></a>Bổ đề 1</h4>
+<p>Trong dãy ngoặc đúng, mỗi dấu ngoặc tương ứng với một và chỉ một dấu ngoặc khác.</p>
+<h4 class="editable"><a class="anchor" id="chứng-minh" href="#chứng-minh"></a>Chứng minh</h4>
+<p>Giả sử tồn tại một dấu ngoặc có thể tương ứng với nhiều hơn một dấu ngoặc khác. Khi đó, sẽ có nhiều hơn một cách chia dãy ngoặc thành các cặp dấu ngoặc tương ứng. Do đó, tồn tại một dấu ngoặc đóng trong dãy tương ứng với nhiều hơn một dấu ngoặc khác.</p>
+<p>Giả sử dấu ngoặc ở vị trí \(k\) là dấu ngoặc đóng và có thể tương ứng với các dấu ngoặc mở ở vị trí \(i\) và \(j\), với \(i &lt; j &lt; k\). Theo <strong>tính chất 1</strong>, ta có:</p>
+<ul>
+<li>Dãy ngoặc con từ vị trí \(i + 1\) đến \(k - 1\) của dãy gốc là dãy ngoặc đúng.</li>
+<li>Dãy ngoặc con từ vị trí \(j + 1\) đến \(k - 1\) của dãy gốc là dãy ngoặc đúng.</li>
+</ul>
+<p>\(……(……(…)\)</p>
+<p>\(……i……j…k\)</p>
+<p>Theo <strong>tính chất 3</strong>, dãy ngoặc từ vị trí \(i + 1\) đến \(j\) cũng là dãy ngoặc đúng. Mà dãy ngoặc từ vị trí \(i + 1\) đến \(j\) lại kết thúc bằng dấu mở ngoặc, trái với <strong>tính chất 2</strong>. Vậy giả thiết tồn tại một dấu ngoặc tương ứng với nhiều hơn một dấu ngoặc khác là sai.</p>
+<p>Vậy ta có điều phải chứng minh.</p>
+<h4 class="editable"><a class="anchor" id="bổ-đề-2" href="#bổ-đề-2"></a>Bổ đề 2</h4>
+<p>Dãy ngoặc đúng khi và chỉ khi số dấu ngoặc mở bằng số dấu ngoặc đóng, và trong mọi tiền tố của dãy, số dấu ngoặc mở không nhỏ hơn số dấu ngoặc đóng.</p>
+<h4 class="editable"><a class="anchor" id="chứng-minh-1" href="#chứng-minh-1"></a>Chứng minh</h4>
+<ul>
+<li>
+<p><strong>Chiều thuận</strong>: dãy ngoặc đúng có số dấu ngoặc mở bằng số dấu ngoặc đóng, và trong mọi tiền tố của dãy, số dấu ngoặc mở không nhỏ hơn số dấu ngoặc đóng. Theo <strong>tính chất 2</strong>, dãy ngoặc mở có số dấu đóng ngoặc bằng số dấu mở ngoặc. Mặt khác, nếu tồn tại một tiền tố của dãy ngoặc đúng có số dấu mở ngoặc nhỏ hơn số dấu đóng ngoặc thì rõ ràng tồn tại ít nhất 1 dấu đóng ngoặc không tương ứng với dấu mở ngoặc nào, trái với <strong>bổ đề 1</strong>. Vậy ta chứng minh được chiều thuận.</p>
+</li>
+<li>
+<p><strong>Chiều đảo</strong>: trong mọi tiền tố của dãy, số dấu ngoặc mở không nhỏ hơn số dấu ngoặc đóng đảm bảo rằng mỗi dấu ngoặc đóng đều có dấu ngoặc mở tương ứng với nó. Hơn nữa, số dấu ngoặc mở bằng số dấu ngoặc đóng đảm bảo không có dấu ngoặc mở bị thừa ra (hay không tương ứng với dấu ngoặc nào) trong dãy ngoặc. Do đó, dãy có số dấu ngoặc mở bằng số dấu ngoặc đóng và trong mọi tiền tố của dãy, số dấu ngoặc mở không nhỏ hơn số dấu ngoặc đóng là dãy ngoặc đúng.</p>
+</li>
+</ul>
+<h4 class="editable"><a class="anchor" id="hệ-quả-1" href="#hệ-quả-1"></a>Hệ quả 1</h4>
+<p>Dãy ngoặc không đúng sẽ có số dấu ngoặc mở lớn hơn số ngoặc đóng, hoặc có một tiền tố mà số dấu ngoặc mở nhỏ hơn số dấu ngoặc đóng.</p>
+<h4 class="editable"><a class="anchor" id="cách-giải-1" href="#cách-giải-1"></a>Cách giải</h4>
+<p>Cho một Stack chứa các phần tử kiểu <code>char</code>, đang ở trạng thái rỗng. Xét quá trình sau:</p>
+<ul>
+<li>Duyệt xâu \(S\) từ trái qua phải</li>
+<li>Nếu ký tự đang xét là dấu \((\), thêm nó vào Stack</li>
+<li>Nếu ký tự đang xét là dấu \()\), xét phần tử đang ở đỉnh Stack. Nếu đó là dấu \((\), ta tìm được một cặp dấu ngoặc tương ứng, và loại bỏ dấu ngoặc mở khỏi Stack. Nếu ngược lại, hoặc Stack rỗng, xâu \(S\) không phải dãy ngoặc đúng.</li>
+<li>Sau khi thực hiện quá trình, nếu Stack không rỗng thì \(S\) không phải dãy ngoặc đúng.</li>
+</ul>
+<p>Trước hết, quá trình này sẽ luôn xác định xem xâu \(S\) có phải là dãy ngoặc đúng hay không. Nhắc lại, quá trình sẽ kết luận xâu \(S\) không phải dãy ngoặc đúng khi:</p>
+<ul>
+<li>Ký tự đang xét là dấu đóng ngoặc và Stack đang rỗng.</li>
+<li>Sau khi xử lý, Stack không rỗng.</li>
+</ul>
+<p>Trường hợp 1 xảy ra khi xâu \(S\) có một tiền tố mà số dấu ngoặc đóng nhiều hơn số dấu ngoặc mở. Trường hợp 2 xảy ra khi xâu \(S\) có số dấu ngoặc mở nhiều hơn số dấu ngoặc đóng. Cả hai trường hợp trên đều là dấu hiệu của dãy ngoặc không đúng nêu trong <strong>hệ quả 1</strong>. Vậy quá trình sẽ luôn xác định \(S\) là dãy đúng hay không.</p>
+<p>Từ bây giờ, ta mặc định \(S\) là dãy ngoặc đúng, và chứng minh rằng việc sử dụng Stack sẽ <strong>luôn chỉ ra các cặp dấu ngoặc tương ứng</strong>.</p>
+<p>Quan sát quá trình trên, ta có một nhận xét quan trọng: sau khi xử lý một dãy ngoặc đúng trên Stack \(st\) thì Stack sẽ giữ nguyên trạng thái. Điều này là đúng do mỗi dấu mở ngoặc được \(push\) vào Stack và \(pop\) khỏi Stack đúng một lần.</p>
+<p>Theo <strong>tính chất 4</strong>, \(S\) có thể được tách thành tổng của các dãy ngoặc đúng cơ bản \(s_1 + s_2 + … + s_k\). Theo <strong>tính chất 5</strong>, \(s_i = ( \ + s' + \ )\), với \(s'\) là dãy ngoặc đúng, có thể là xâu rỗng. Vì sau khi xử lý các dãy \(s_1, s_2, …\) thì Stack sẽ trở về trạng thái rỗng, nên ta chỉ cần xem xét quá trình với dãy ngoặc đúng cơ bản \(s_i\):</p>
+<ul>
+<li>Đẩy dấu ngoặc mở vào Stack</li>
+<li>Xử lý dãy ngoặc đúng \(s'\) để tìm các cặp dấu ngoặc tương ứng trong đó. Sau bước này, ta tìm được tất cả cặp dấu tương ứng trong \(s'\).</li>
+<li>Xét dấu ngoặc đóng ở cuối \(s_i\). Do sau khi xử lý dãy ngoặc đúng, Stack chỉ còn một phần tử là dấu ngoặc mở được thêm vào từ đầu, ta tìm được một cặp dấu ngoặc tương ứng, và xóa dấu ngoặc mở khỏi Stack</li>
+<li>Stack trở về trạng thái rỗng</li>
+</ul>
+<p>Như vậy, quá trình sẽ xác định tất cả các cặp dấu ngoặc tương ứng.</p>
+<h4 class="editable"><a class="anchor" id="cài-đặt-1" href="#cài-đặt-1"></a>Cài đặt</h4>
+<p>Ta có thể cài đặt bài toán đúng như mô tả của quá trình nêu trên:</p>
+<pre class="highlight"><code><span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">st</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">matches</span><span class="p">;</span> <span class="c1">// lưu các cặp dấu ngoặc tương ứng</span>
+
+<span class="kt">bool</span> <span class="nf">solve</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sc">'('</span><span class="p">)</span> <span class="c1">// chỉ đẩy dấu ngoặc mở vào Stack</span>
+            <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">st</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// dãy không phải là dãy ngoặc đúng</span>
+            <span class="n">matches</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">st</span><span class="p">.</span><span class="n">top</span><span class="p">(),</span> <span class="n">i</span><span class="p">});</span> <span class="c1">// tìm thấy một cặp tương ứng</span>
+            <span class="n">st</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">st</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// nếu Stack không rỗng thì dãy không đúng</span>
+    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+<h3 class="editable"><a class="anchor" id="mở-rộng" href="#mở-rộng"></a>Mở rộng</h3>
+<p>Bài toán 2 có thể được mở rộng thêm: dãy có thể có cả ngoặc vuông và ngoặc nhọn. Rõ ràng, ta có thể xử lý các loại ngoặc như cách ta làm với bài toán 2. Lưu ý duy nhất là ta cần phải kiểm soát thêm cả kiểu loại của dấu.</p>
+<p>Minh họa cho quá trình với \(S = \) "\(([{}])()\)":</p>
+<p><img src="https://i.imgur.com/p3JM7FF.png" /></p>
+<h2 class="editable"><a class="anchor" id="sử-dụng-stack-để-khử-đệ-quy" href="#sử-dụng-stack-để-khử-đệ-quy"></a>Sử dụng Stack để khử đệ quy</h2>
+<p>Vì tính chất <strong>LIFO</strong> của Stack, nó có thể được sử dụng để khử các hàm đệ quy. Trên thực tế, khi ta dùng hàm đệ quy, hệ thống sẽ tự động tạo một cấu trúc <strong>LIFO</strong> như Stack để chứa và thực hiện các lời gọi hàm.</p>
+<p>Xét thuật toán DFS với cách cài đặt sử dụng đệ quy:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">start</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">visited</span><span class="p">[</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> <span class="c1">// đánh dầu đỉnh đã thăm</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">u</span> <span class="o">:</span> <span class="n">adj</span><span class="p">[</span><span class="n">start</span><span class="p">])</span> <span class="c1">// với các đỉnh thuộc danh sách kề của đỉnh đang xét</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">visited</span><span class="p">[</span><span class="n">u</span><span class="p">])</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="n">dfs</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="c1">// đệ quy: thăm u</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Ta có thể cài đặt DFS sử dụng Stack:</p>
+<pre class="highlight"><code><span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">start</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">st</span><span class="p">;</span>
+    <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">start</span><span class="p">);</span> <span class="c1">// ta bắt đầu từ đỉnh "start"</span>
+    
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">st</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">st</span><span class="p">.</span><span class="n">top</span><span class="p">();</span> <span class="c1">// thăm đỉnh v ở đỉnh Stack</span>
+        <span class="n">st</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">// loại bỏ đỉnh v khỏi Stack do đã thăm</span>
+        <span class="n">visited</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> <span class="c1">// đánh dấu v đã thăm</span>
+        
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">u</span> <span class="o">:</span> <span class="n">adj</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="c1">// xét các đỉnh của đồ thị chung cạnh với v</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">visited</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="c1">// nếu đã thăm thì thôi</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="c1">// đẩy đỉnh u vào Stack thay vì gọi đệ quy đến u</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+<p>Trong cách cài đặt DFS đệ quy, một nhánh đệ quy luôn phải được xử lý trọn vẹn trước khi ta gọi đệ quy đến nhánh khác. Nói cách khác, khi ta thăm một đỉnh \(v\) thì ta phải thăm toàn bộ những đỉnh kề với nó, và cứ tiếp tục như vậy đến khi không còn đỉnh nào thăm được nữa. Stack hoạt động trên nguyên lý tương tự: những đỉnh được đẩy vào Stack sau đều được xử lý trọn vẹn trước những đỉnh được đẩy vào sớm hơn. Do đó, lời giải trên là đúng đắn.</p>
+<p>Việc dùng Stack để khử đệ quy có thể áp dụng với mọi hàm có tính chất đệ quy. Trên lý thuyết, độ phức tạp thời gian và bộ nhớ của 2 cách cài đặt dùng Stack và dùng đệ quy là như nhau, nhưng trên thực tế, cách cài đặt dùng Stack thường hiệu quả hơn về mặt bộ nhớ, do việc gọi đệ quy chịu ảnh hưởng bởi <a href="https://en.wikipedia.org/wiki/Overhead_(computing)">Function Overhead</a>. Đổi lại, cách cài đặt dùng Stack thường khiến code trở nên phức tạp và thiếu trực quan hơn.</p>
+<p>Trong lập trình thi đấu, ta có thể sử dụng đệ quy thông thường trong hầu hết các trường hợp. Ta chỉ cần dùng Stack khi hàm đệ quy quá sâu và có nguy cơ bị <a href="https://vi.wikipedia.org/wiki/L%E1%BB%97i_tr%C3%A0n_b%E1%BB%99_nh%E1%BB%9B_%C4%91%E1%BB%87m">tràn bộ nhớ</a>. Theo kinh nghiệm của người viết, ta cần khử đệ quy khi hàm có thể đạt độ sâu khoảng \(10^7\).</p>
+<h2 class="editable"><a class="anchor" id="stack-đơn-điệu" href="#stack-đơn-điệu"></a>Stack đơn điệu</h2>
+<p>Stack đơn điệu là ngăn xếp mà các phần tử của nó xét từ đáy của Stack đến đỉnh Stack tạo thành một dãy số đơn điệu.</p>
+<p>Hình ảnh minh họa cho một Stack đơn điệu giảm:</p>
+<p><img src="https://i.imgur.com/bzwD9F1.png" /></p>
+<h3 class="editable"><a class="anchor" id="bài-toán" href="#bài-toán"></a>Bài toán</h3>
+<p>Cho mảng \(A\) có \(n\) phần tử \(a_1, a_2, \dots, a_n\), \(n \leq 10^6\). Với mỗi \(i\) từ \(1\) đến \(n\) ta cần tìm \(j\) sao cho \(a_j &gt; a_i\), và \(\lvert i - j \rvert\) nhỏ nhất. Nếu không tồn tại \(j\), in ra \(-1\).</p>
+<h4 class="editable"><a class="anchor" id="nhận-xét-1" href="#nhận-xét-1"></a>Nhận xét</h4>
+<p>Ta sẽ bài toán đơn giản hơn: với mỗi \(i\) ta chỉ cần tìm \(j\) thỏa mãn điều kiện gốc, <em>mà \(j &lt; i\)</em>. Rõ ràng, nếu ta giải được bài toán này thì bài toán gốc cũng có thể dễ dàng giải được, vì nếu \(j &gt; i\) thì ta có thể duyệt ngược lại mảng \(A\), đưa bài toán về dạng đơn giản như đã nói.</p>
+<p>Do \(n \leq 10^6\) nên cách giải hồn nhiên: với mỗi \(i\) ta lại xét \(j\) từ \(1\) đến \(n\) là chưa đủ để giải quyết bài toán, do độ phức tạp thời gian lên tới \(O(n^2)\).</p>
+<h4 class="editable"><a class="anchor" id="mô-hình-lại-bài-toán" href="#mô-hình-lại-bài-toán"></a>Mô hình lại bài toán</h4>
+<p>Xét mô hình sau:</p>
+<ul>
+<li>Phần tử thứ \(i\) của mảng \(A\) tượng trưng cho một người có chiều cao \(a_i\).</li>
+<li>Lần lượt người từ \(1\) đến \(n\) xếp thành một hàng. Người thứ \(i\) sẽ <em>nhìn được</em> người thứ \(j\) nếu \(j\) đứng trước \(i\) trong hàng.</li>
+<li>Hàng luôn nhìn từ cuối về đầu.</li>
+</ul>
+<p>Theo mô hình này, giá trị \(j\) gần \(i\) nhất \((j &lt; i)\) mà \(a_i &lt; a_j\) chính là chỉ số của người gần nhất cao hơn người \(i\) mà anh ta có thể nhìn được.</p>
+<p>Hình ảnh minh họa, số ở hàng trên là chiều cao mỗi người, ở hàng dưới là chỉ số người gần nhất ở bên trái cao hơn họ:</p>
+<p><img src="https://i.imgur.com/KZWZoll.png" /></p>
+<p>Ta có thể cải tiến mô hình bằng việc chỉnh sửa cách thức xếp hàng.
+Khi người thứ \(i\) xếp hàng, họ sẽ thực hiện các thao tác sau:</p>
+<ol>
+<li>Xếp vào cuối hàng</li>
+<li>Nếu họ đứng đầu hàng thì ghi lại số \(-1\). Mặt khác, nếu người đứng trước họ có chiều cao thấp hơn hoặc bằng với \(a_i\), đuổi người đó ra khỏi hàng. Lặp lại quá trình đuổi người đứng trước thấp hơn cho tới khi người \(i\) đứng đầu hàng, hoặc người đứng trước có chiều cao lớn hơn. Ghi lại chỉ số của người đứng trước, hoặc \(-1\) nếu họ đứng đầu hàng.</li>
+</ol>
+<p>Ta sẽ chứng minh số mà mỗi người ghi lại chính là chỉ số của người gần nhất đứng trước mà cao hơn họ.</p>
+<p>Lúc đầu, cho một người có chỉ số \(-1\), chiều cao \(+\infty\). Việc đứng đầu hàng có thể coi như đứng ngay sau người chỉ số \(-1\) này. Xét một người \(i\) bất kỳ ghi lại số \(j\), \(j &lt; i\). Trước hết, \(a_j\) chắc chắn phải lớn hơn \(a_i\). Giả sử ngược lại, \(j\) không phải là người gần \(i\) nhất mà cao hơn người \(i\), mà \(k\) mới là người như vậy. Ta có \(j &lt; k &lt; i\) và \(a_k &gt; a_i\). Tại thời điểm người \(i\) xếp vào hàng thì người \(k\) này <em>không còn trong hàng nữa</em> (nếu còn thì họ sẽ ghi lại người \(k\) chứ không phải \(j\)). Do đó, người \(k\) đã bị đuổi khỏi hàng bởi một người nào đó đứng sau \(k\) và trước \(i\). Gọi chỉ số của người đó là \(l\). Để đuổi người \(k\) thì \(a_l \geq a_k\). Từ đó ta có \(k &lt; l &lt; i, \ \ a_l \geq a_k &gt; a_i\), trái với giả thiết \(k\) là người gần \(i\) nhất mà cao hơn \(i\).</p>
+<p>Như vậy, số mà mỗi người nhớ lại chính là <strong>chỉ số của người gần nhất cao hơn họ</strong> (\(-1\) nếu không tồn tại người như vậy). Đây chính là giá trị \(j\) cần tìm với mỗi \(i\).</p>
+<p>Giả sử mảng \(A = [1, 2, 7, 4, 3, 6]\). Các bước diễn ra như sau:</p>
+<p><img src="https://i.imgur.com/39cNzvd.png" /></p>
+<p>Dễ thấy chiều cao của người trong hàng luôn tạo thành một dãy đơn điệu.</p>
+<h4 class="editable"><a class="anchor" id="cài-đặt-2" href="#cài-đặt-2"></a>Cài đặt</h4>
+<p>Ta có thể biểu diễn mô hình nêu trên dưới dạng một Stack đơn điệu như sau:</p>
+<ul>
+<li>Người xếp vào hàng là phép \(push\)</li>
+<li>Đuổi người đứng trước là phép \(pop\)</li>
+</ul>
+<p>Từ các bước nêu trong mô hình, có thể cài đặt lời giải như sau:
+</p><pre class="highlight"><code><span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">st</span><span class="p">;</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">st</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">a</span><span class="p">[</span><span class="n">st</span><span class="p">.</span><span class="n">top</span><span class="p">()]</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">st</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> 
+    <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">st</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="n">st</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span> <span class="o">&lt;&lt;</span> <span class="sc">' '</span><span class="p">;</span>
+    <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+<h4 class="editable"><a class="anchor" id="đánh-giá-độ-phức-tạp" href="#đánh-giá-độ-phức-tạp"></a>Đánh giá độ phức tạp</h4>
+<p>Độ phức tạp bộ nhớ của lời giải là \(O(n)\) do sử dụng Stack và một mảng chứa \(n\) phần tử.</p>
+<p>Thoạt nhìn, độ phức tạp tính toán của lời giải có vẻ là \(O(n^2)\) do có vòng lặp \(while\) lồng trong vòng \(for\). Tuy nhiên, để ý rằng mỗi phần tử \(a_i\) đều được \(push()\) vào Stack đúng một lần, và bị \(pop()\) khỏi Stack tối đa 1 lần, nên độ phức tạp tính toán vẫn là \(O(n)\)</p>
+<h3 class="editable"><a class="anchor" id="mở-rộng-1" href="#mở-rộng-1"></a>Mở rộng</h3>
+<p>Bài toán gốc nêu trên có nhiều ứng dụng và mở rộng. Sau đây là một vài ví dụ.</p>
+<h4 class="editable"><a class="anchor" id="hình-chữ-nhật-lớn-nhất" href="#hình-chữ-nhật-lớn-nhất"></a>Hình chữ nhật lớn nhất</h4>
+<p><a href="https://www.spoj.com/PTIT/problems/SSAM219G/">Link SPOJ</a>.</p>
+<p>Vẽ \(n\) cột hình chữ nhật sát nhau. Cột thứ \(i\) có chiều rộng \(1\) và chiều cao \(h_i\). Tìm hình chữ nhật có diện tích lớn nhất tạo bởi các cột.</p>
+<p>Ví dụ:
+\(h = {2, 4, 4, 3, 2}\)</p>
+<p>Hình chữ nhật lớn nhất có diện tích \(10\)</p>
+<p><img src="https://i.imgur.com/wm76udO.png" /></p>
+<h5 class="editable"><a class="anchor" id="cách-giải-2" href="#cách-giải-2"></a>Cách giải</h5>
+<p>Để ý rằng hình chữ nhật lớn nhất luôn có chiều cao bằng với chiều cao của một cột đã có.</p>
+<p>Với mỗi cột \(i\), ký hiệu \(L_i\), \(R_i\) là cột gần nhất ở bên trái/phải \(i\) có chiều cao <strong>nhỏ hơn \(i\)</strong>. Việc tìm cột gần nhất ở bên trái/phải cột \(i\) mà thấp hơn \(h_i\) chính là bài toán gốc nêu ở mục trước. Ta chỉ cần sửa đổi thay vì tìm cột cao hơn thì phải tìm cột thấp hơn.</p>
+<p>Khi đã xác định các mảng \(L\) và \(R\), ta có thể xét từng cột \(i\) từ \(1\) đến \(n\). Giả sử hình chữ nhật có chiều cao bằng với cột đang xét. Khi đó, chiều dài lớn nhất của hình chữ nhật là từ cột gần nhất bên trái thấp hơn cột \(i\) đến cột gần nhất bên phải thấp hơn cột \(i\). Diện tích của hình chữ nhật lớn nhất qua cột \(i\) là: \((R_i - L_i - 1) * h_i\).</p>
+<p>Vậy diện tích hình chữ nhật lớn nhất chính là giá trị \((R_i - L_i - 1) * h_i\) lớn nhất với mọi \(i\) từ \(1\) đến \(n\).</p>
+<p>Độ phức tạp thời gian và bộ nhớ của lời giải là \(O(n)\).</p>
+<h4 class="editable"><a class="anchor" id="hình-chữ-nhật-lớn-nhất-trong-lưới-ô-vuông" href="#hình-chữ-nhật-lớn-nhất-trong-lưới-ô-vuông"></a>Hình chữ nhật lớn nhất trong lưới ô vuông</h4>
+<p><a href="https://oj.vnoi.info/problem/qbrect/">Link SPOJ</a></p>
+<p>Đây là một mở rộng của bài toán trước. Cho lưới ô vuông \(n \times m\), các ô có giá trị \(0\) hoặc \(1\). Ta cần tìm hình chữ nhật có diện tích lớn nhất có tất cả ô vuông có cùng giá trị.</p>
+<h5 class="editable"><a class="anchor" id="cách-giải-3" href="#cách-giải-3"></a>Cách giải</h5>
+<p>Ta có thể chia bài toán thành 2 trường hợp riêng biệt: tìm hình chữ nhật chỉ gồm các ô giá trị \(0\) và chỉ gồm các ô giá trị \(1\). Nếu giải được một trường hợp, ta cũng có thể dễ dàng giải trường hợp còn lại. Từ giờ, ta sẽ giải bài toán tìm hình chữ nhật lớn nhất <em>chỉ chứa giá trị \(1\)</em>.</p>
+<p>Ta xét lưới ô vuông con của lưới gốc, kích thước \(k \times m\). Nói cách khác, lưới ô vuông con này chính là \(k\) hàng đầu tiên của lưới gốc. Với mỗi \(k\) từ \(1\) đến \(n\), ta xét chiều cao của các cột chứa toàn số \(1\) dựng trên từng vị trí trong hàng. Sau đó, ta có thể áp dụng bài toán tìm hình chữ nhật lớn nhất tạo bởi các cột để giải quyết vấn đề.</p>
+<pre class="highlight"><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="n">h</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">k</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">++</span><span class="n">h</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+        <span class="k">else</span> <span class="n">h</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// giải bài toán tìm hình chữ nhật lớn nhất trong các cột...</span>
+<span class="p">}</span></code></pre>
+<p>Độ phức tạp thời gian và bộ nhớ của lời giải là \(O(n \times m)\).</p>
+<h1 class="editable"><a class="anchor" id="bài-tập-áp-dụng" href="#bài-tập-áp-dụng"></a>Bài tập áp dụng</h1>
+<ul>
+<li><a href="https://www.spoj.com/problems/JNEXT/">JNEXT</a></li>
+<li><a href="https://www.spoj.com/problems/STPAR/">STPAR</a></li>
+<li><a href="https://codeforces.com/problemset/problem/280/B">280B - Codeforces</a></li>
+<li><a href="https://codeforces.com/problemset/problem/1132/G">1132G - Codeforces</a></li>
+<li>Tham khảo thêm tại: <a href="https://vnoi.info/problems/list/">VNOI Problem List</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>

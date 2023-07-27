@@ -1,4 +1,4 @@
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax } from 'better-react-mathjax';
 import { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
@@ -13,12 +13,11 @@ export const SingleMathSet = () => {
 
   useEffect(() => {
     if (id) {
-        getMathSet(id)
-        .then(result => {
-          if (result.successed) {
-            setProblems(result.data.problemSet.problems);
-          }
-        });
+      getMathSet(id).then(result => {
+        if (result.successed) {
+          setProblems(result.data.problemSet.problems);
+        }
+      });
     }
   }, [id]);
   return (
@@ -46,13 +45,11 @@ export const SingleMathSet = () => {
                     </Link>
                   </td>
                   <td>
-                    <MathJaxContext>
-                      <MathJax>
-                        {parse(
-                          formatMathExpr(processText(item.problem.description))
-                        )}
-                      </MathJax>
-                    </MathJaxContext>
+                    <MathJax>
+                      {parse(
+                        formatMathExpr(processText(item.problem.description))
+                      )}
+                    </MathJax>
                   </td>
 
                   <td>{item.problem.difficulty}</td>

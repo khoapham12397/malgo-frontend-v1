@@ -217,7 +217,7 @@ const threadSlice = createSlice({
             active: false,
             replyFor: null
           };
-          console.log('add 1 comment in addedlst: ' + comment.id);
+          //console.log('add 1 comment in addedlst: ' + comment.id);
           state.addedCommentId.push({
             commentId: comment.id,
             index: rootCmt.manageChildCmt.childCommentList.length - 1
