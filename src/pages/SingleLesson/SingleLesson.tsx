@@ -4,14 +4,13 @@ import { MathJax } from 'better-react-mathjax';
 import { formatMathExpr } from '../../utils/utils';
 import { Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-const host = import.meta.env.VITE_FRONT_URL;
 
 export const SingleLesson = () => {
   const { file } = useParams();
   const link = `lessons/${file}.txt`;
   const [content, setContent] = useState<string>('');
   useEffect(() => {
-    fetch(host + link)
+    fetch(link)
       .then(res => res.text())
       .then(result => {
         let x = formatMathExpr(result);
