@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 export const SingleLesson = () => {
   const { file } = useParams();
-  const link = `lessons/${file}.txt`;
+  const link = `/lessons/${file}.txt`;
   const [content, setContent] = useState<string>('');
   useEffect(() => {
     fetch(link)
