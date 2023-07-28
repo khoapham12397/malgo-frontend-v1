@@ -8,7 +8,7 @@ const host = import.meta.env.VITE_FRONT_URL;
 
 export const SingleLesson = () => {
   const { file } = useParams();
-  const link = `/lessons/${file}.txt`;
+  const link = `lessons/${file}.txt`;
   const [content, setContent] = useState<string>('');
   useEffect(() => {
     fetch(host + link)
