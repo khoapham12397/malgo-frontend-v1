@@ -24,7 +24,7 @@ export const SingleLesson = () => {
 
   return (
     <Container>
-      <MathJax>{parse(content)}</MathJax>
+      <MathJax dynamic>{parse(content)}</MathJax>
     </Container>
   );
 };
