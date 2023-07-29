@@ -226,7 +226,7 @@ export const CodingProblemV3 = () => {
 
           <div style={{ marginTop: '10px' }}>
             <Editor
-              height={'81vh'}
+              height={'75vh'}
               defaultValue='#include&lt;bits/stdc++.h&gt;'
               language={languages[language].value}
               onMount={handleEditorDidMount}
@@ -248,7 +248,7 @@ export const CodingProblemV3 = () => {
               Submit
             </Button>
           </div>
-          
+          <br/>
         </div>
       </div>
     </div>

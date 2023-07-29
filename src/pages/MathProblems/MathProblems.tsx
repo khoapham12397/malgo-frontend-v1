@@ -163,7 +163,7 @@ const MathProblems = () => {
                     </td>
                     <td>
                       <MathJax dynamic>
-                        {parse(formatMathExpr(processText(item.description)))}
+                        {parse(item.description)}
                       </MathJax>
                     </td>
                     <td>{item.category.name}</td>

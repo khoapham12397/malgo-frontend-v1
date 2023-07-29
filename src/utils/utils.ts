@@ -11,9 +11,9 @@ export const processText = (s: string) => {
 export const formatMathExpr = (s: string) => {
   let rs = '',
     isInMathExp = false;
-
+  //s = s.replaceAll('$$','$')
   for (let i = 0; i < s.length; i++) {
-    if (s[i] == '~' || s[i] == '$') {
+    if (s[i] == '~') {
       if (!isInMathExp) {
         rs += '<span style="font-weight:bold">' + '\\(';
       } else rs += '\\)' + '</span>';

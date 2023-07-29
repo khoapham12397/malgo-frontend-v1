@@ -18,6 +18,7 @@ import { LessonHome } from './pages/Lessons/Lessons';
 import MathDashboardV2 from './pages/MathDashboard/MathDashboardV2';
 import MathProblems from './pages/MathProblems/MathProblems';
 import Profile from './pages/Profile/Profile';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 import Rank from './pages/Rank/Rank';
 import { CodingProblemV2 } from './pages/SingleCodingProblem/CodingProblemV2';
 import { CodingProblemV3 } from './pages/SingleCodingProblem/CodingProblemV3';
@@ -64,7 +65,7 @@ function App() {
 
               <Route path='rank' element={<Rank />} />
 
-              <Route path='profile' element={<Profile />} />
+              <Route path='profile' element={<ProfilePage />} />
 
               <Route path='admin' element={<Admin />} />
               <Route path='admin/users' element={<AdminUsers />} />

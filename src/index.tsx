@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MathJaxContext } from 'better-react-mathjax';
+import { MathJax3Config, MathJaxContext } from 'better-react-mathjax';
 // import { UserProvider } from './contexts/UserContext';
 
 const client = new QueryClient({
@@ -15,9 +15,23 @@ const client = new QueryClient({
   }
 });
 
+const config: MathJax3Config = {
+  loader: { load: ['[tex]/html'] },
+  tex: {
+    packages: { '[+]': ['html'] },
+    inlineMath: [
+      ['$', '$'],
+      ['\\(', '\\)']
+    ],
+    displayMath: [
+      ['$$', '$$'],
+      ['\\[', '\\]']
+    ]
+  }
+};
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <MathJaxContext>
+    <MathJaxContext config={config}>
       <Auth0Provider
         domain={import.meta.env.VITE_AUTH0_DOMAIN as string}
         clientId={import.meta.env.VITE_AUTH0_CLIENT_ID as string}

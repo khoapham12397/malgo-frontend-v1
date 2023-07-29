@@ -1,0 +1,19 @@
+<b>S</b>olved with <b>L567</b>, <b>M.V. Adhitya</b> and <b>Siddharth03</b>
+
+ solution <div>Construct a  $n \times n$  stone donut, with  $n^2$  cells. We treat the matches as cells  $(i, j)$  of this donut, and in one move we either move right or up. The given conditon is the same as a valid sequence of moves which covers everything in the donut exactly once, starting with the sugar sprinkle at   $(1, 1)$ .  Further, on all cells except for the last one (which we shall now refer to as the salty cell) we engrave  $R$  or  $U$  depending on the direction we went from that cell.
+
+Claim 1: Across all bread crusts formed by cells  $(i, j)$  for fixed  $(i+j) \bmod n$  avoiding the salty cell, the characters engraved on these are identical.
+Proof: Suppose otherwise. Then there must be some cell  $(i, j)$  with  $R$  engraved on it such that it's successor  $(i+1, j-1)$  has  $U$  engraved on it. But then these cells both fight over the sugar sprinkle on   $(i+1, j)$ ;  resulting in the Fourth Shinobi World War, contradiction.
+
+Claim 2: The salty cell lies on the main bread crust.
+Proof: Suppose otherwise. Then all cells on the main bread crust have the same character engraved on them. But the top-left cell and the bottom-right cell must have  $R, U$  engraved on them respectively, so as to avoid fighting over the sprinkle at   $(1, 1)$ .  In fact this also shows that the cells on the main bread crust are engraved with   $R$ s , then the salty cell and   $U$ s .
+
+Consider the main bread crust. We shall call cells lying on this (other than the salty one) sugary cells henceforth. For each  $1 \leq i \leq n$  with  $(1-i, i)$  not salty, let  $(1-k_i, k_i)$  be the first other sugary cell visited upon following the directions from   $(1-i, i)$ .  It is easy to see that the number of   $U$ s  encountered along the path from  $(1-i, i)$  determines the value of   $k_i$ .  But because of Claim 1, this number is fixed across all values of  $i$  below the salty cell and then decreases by one above it. This is because an extra  $U$  is contributed to each sugary cell below the salty one. If we let  $a$  denote the height of the salty cell and  $b$  the number of   $U$ s  encountered, the problem reduces to showing the following
+
+Reformulation:
+Let  $G$  be a digraph over  $\{1, 2, \dots, n\}$  and let  $a, b$  be in  $\{1, 2, \dots, n\}$  such that for all vertices  $1 \leq i &lt; a$  we have an edge  $i \mapsto i+b+1$  and for all vertices  $a &lt; i \leq n$  we have an edge  $i \mapsto i+b$  (everything modulo   $n$ ) . Then if  $G$  is hamiltonian,  $a$  is odd.
+
+Proof: If   $a &gt; b$ ,  we can replace  $a$  with  $n+1-a$  and  $b$  with  $n+1-b$  and reverse the hamiltonian  $G$  to reduce to   $a \leq b$ .  Becuase there is no edge leading out of   $a$ ,  it must be the end of the Hamiltonian path, and because there is no edge leading into   $b+1$ .  When  $a \leq b$  we look at the process modulo   $n-1$ ,  with  $a$  &quot;deleted&quot;. We add exactly  $b$  each time. Observe that before  $a$  we must have visited   $n+a-b-1$ .  Thus, we obtain that   $n+a-b-1 \equiv (n-1)b \pmod {(n-1)}$ ,  imypling that   $a-b \equiv 0 \pmod {(n-1)}$ .  Now since adding  $b$  covers all residues, we must have   $\gcd(b, n-1) = 1$ .  Since  $a \equiv b \pmod {(n-1)}$  we have that  $a$  and  $n-1$  are relatively prime as well. Since  $n-1$  is even,  $a$  is odd.
+
+Now, coming back to the original problem, the salty cell was   $(a, n+1-a)$ .  Since  $a$  is odd, both coordinates are odd and we are done.</div>
+ note for confused ppl <div>Stone Donut is a  $n \times n$  board wrapping around itself. A bread crust is a diagonal of the board. The main bread crust is the one with   $i+j \equiv 1 \bmod n$ .  A sugar sprinkle was used instead of a cell at some places.</div>
