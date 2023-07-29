@@ -162,7 +162,7 @@ const MathProblems = () => {
                       </Link>
                     </td>
                     <td>
-                      <MathJax dynamic>
+                      <MathJax>
                         {parse(item.description)}
                       </MathJax>
                     </td>
